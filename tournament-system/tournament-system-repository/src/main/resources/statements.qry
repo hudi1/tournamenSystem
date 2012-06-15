@@ -1,0 +1,139 @@
+INSERT_GAME(CRUD)=
+	insert into GAME(playerResult_id,opponent_id, result_id)
+	{= values (:playerResult.playerResultId, :opponent.playerResultId, :result.resultId) }
+	;
+	
+UPDATE_GAME(CRUD)=
+	update game {= set playerResult_id = :playerResult.playerResultId,  opponent_id = :opponent.playerResultId }
+	{= where {& id = :gameId^long^notnull}}
+	;
+	
+DELETE_GAME(CRUD)=
+	delete from game
+	{= where {& id = :gameId^long^notnull} }
+	;
+	
+INSERT_PLAYER(CRUD)=
+	insert into PLAYER(name,surname,club)
+	{= values (:name,:surname,:club) }
+	;
+	
+UPDATE_PLAYER(CRUD)=
+	  update player {= set (name = :name, surname = :surname, club = :surname)}
+	  {= where {& id = :playerId^long^notnull} }
+	  ;
+
+DELETE_PLAYER(CRUD)=
+	delete from player
+	{= where {& id = :playerId^long^notnull} }
+	;
+	
+GET_ALL_PLAYER(QRY)=
+	select id @playerId, name @name, surname @surname, club @club
+	from PLAYER
+	;
+	
+INSERT_PLAYER_RESULT(CRUD)=	
+	insert into PLAYERRESULT(points,rank,tournament_table_id,player_id)
+	{= values (:points, :rank, :tournamentTable.tournamentId, :player.playerId) }
+	;
+	
+UPDATE_PLAYER_RESULT(CRUD)=	
+	update PLAYERRESULT{= set player_id = :player.playerId, point = :points, rank = :rank, tournament_table_id = :tournamentTable.tableId, player_id = :player.playerId }
+	{= where {& id = :playerResultId^long^notnull} }
+	;
+	
+DELETE_PLAYER_RESULT(CRUD)=	
+	delete from PLAYERRESULT
+	{= where {& id = :playerResultId^long^notnull} }
+	;
+	
+GET_PLAYER_RESULT(QRY)=
+	select id @playerResultId, points @points, rank @rank, tournament_table @tournamentTable, player @player 
+	from PLAYERRESULT PR
+	LEFT JOIN PLAYER on P on PR.PLAYER_ID = P.ID
+	LEFT JOIN TABLE on T on PR.TABLE_ID = T.ID	
+	{= where {& id = :tournamentTable.tableId}}
+	;	
+	
+INSERT_RESULT(CRUD)=	
+	insert into RESULT(left_side, right_side, overtime)
+	{= values (:leftSide, :rightSide, :overtime) }
+	;	
+
+UPDATE_RESULT(CRUD)=	
+	update RESULT{= set left_side = :leftSide, right_side = :rightSide, overtime = :overtime }
+	{= where {& id = :resultId^long^notnull} }
+	;
+
+DELETE_RESULT(CRUD)=	
+	delete from RESULT
+	{= where {& id = :resultId^long^notnull} }
+	;
+	
+GET_ALL_RESULT(QRY)=
+	select id @leftSide, name @resultId, surname @rightSide, club @overtime
+	from RESULT
+	;
+
+INSERT_SEASON(CRUD)=	
+	insert into SEASON(name)
+	{= values (:name) }
+	;	
+	
+UPDATE_SEASON(CRUD)=	
+	update SEASON {= set name = :name }
+	{= where  {& id = :seasonId^long^notnull} }
+	;	
+	
+DELETE_SEASON(CRUD)=	
+	delete from SEASON
+	{= where  {& id = :seasonId^long^notnull} }
+	;	
+	
+GET_ALL_SEASON(QRY)=
+	select id @seasonId, name @name
+	from SEASON 
+	;
+	
+INSERT_TABLE(CRUD)=	
+	insert into TABLE(name,index_of_first_hockey, number_of_hockey, table_type, tournament_id )
+	{= values (:name, :indexOfFirstHockey, :numberOfHockey, :tableType, :tournamentId) }
+	;	
+	
+UPDATE_TABLE(CRUD)=	
+	update TABLE{= set name = :name,  index_of_first_hockey :indexOfFirstHockey, number_of_hockey :numberOfHockey, table_type :tableType, tournament_id :tournamentId  }
+	{= where  {& id = :tableId^long^notnull} }
+	;
+	
+DELETE_TABLE(CRUD)=	
+	delete from TABLE
+	{= where  {& id = :tableId^long^notnull} }
+	;
+	
+GET_TABLE(QRY)=
+	select id @tableId, name @name, index_of_first_hockey @indexOfFirstHockey, tournament_table @numberOfHockey, table_type @tableType, tournament_id @tournamentId
+	from TABLE 
+	{= where {& tournament_id :tournament.tournamentId}} 
+	;	
+	
+INSERT_TOURNAMENT(CRUD)=	
+	insert into TOURNAMENT(name)
+	{= values (:name) }
+	;		
+	
+UPDATE_TOURNAMENT(CRUD)=	
+	update SEASON{= set name = :name }
+	{= where  {& id = :tournamentId^long^notnull} }
+	;	
+	
+DELETE_TOURNAMENT(CRUD)=	
+	delete from SEASON
+	{= where  {& id = :tournamentId^long^notnull} }
+	;		
+	
+GET_TOURNAMENT(QRY)=
+	select id @tournamentId, season_id @seasonId name @name
+	from TABLE 
+	{= where {& season_id :season.seasonId}} 
+	;

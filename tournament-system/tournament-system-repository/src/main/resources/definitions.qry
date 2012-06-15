@@ -1,0 +1,55 @@
+resolve references ON;
+database online OFF;
+
+pojo gameForm org.toursys.repository.form.GameForm;
+pojo playerResultForm org.toursys.repository.form.PlayerResultForm;
+pojo tournamentForm org.toursys.repository.form.TournamentForm;
+pojo tableForm org.toursys.repository.form.TableForm;
+pojo game org.toursys.repository.model.Game;
+pojo player org.toursys.repository.model.Player;
+pojo playerResult org.toursys.repository.model.PlayerResult;
+pojo result org.toursys.repository.model.Result;
+pojo season org.toursys.repository.model.Season;
+pojo tournamentTable org.toursys.repository.model.Table;
+pojo tournament org.toursys.repository.model.Tournament;
+
+ident INSERT_GAME game;
+ident UPDATE_GAME game;
+ident DELETE_GAME game;
+ident INSERT_PLAYER player;
+ident UPDATE_PLAYER player;
+ident DELETE_PLAYER player;
+ident GET_ALL_PLAYER player;
+ident INSERT_PLAYER_RESULT playerResult;
+ident UPDATE_PLAYER_RESULT playerResult;
+ident DELETE_PLAYER_RESULT playerResult;
+ident GET_PLAYER_RESULT playerResultForm;
+ident INSERT_RESULT result;
+ident UPDATE_RESULT result;
+ident DELETE_RESULT result;
+ident GET_ALL_RESULT result;
+ident INSERT_SEASON season;
+ident UPDATE_SEASON season;
+ident DELETE_SEASON season;
+ident GET_ALL_SEASON season;
+ident INSERT_TABLE tournamentTable;
+ident UPDATE_TABLE tournamentTable;
+ident DELETE_TABLE tournamentTable;
+ident GET_TABLE tableForm;
+ident INSERT_TOURNAMENT tournament;
+ident UPDATE_TOURNAMENT tournament;
+ident DELETE_TOURNAMENT tournament;
+ident GET_TOURNAMENT tournamentForm;
+
+col GET_ALL_PLAYER player;
+col GET_PLAYER_RESULT playerResult;
+col GET_ALL_RESULT result;
+col GET_ALL_SEASON season;
+col GET_TABLE tournamentTable;
+col GET_TOURNAMENT tournament;
+
+
+
+
+
+

@@ -19,6 +19,7 @@
 		<version.sql-processor>1.7.0</version.sql-processor>
 		<version.slf4j>1.6.1</version.slf4j>
 		<version.wicket>1.5.5</version.wicket>
+		<version.cglib>2.2</version.cglib>
 
 		<version.tournament.system>0.0.1-SNAPSHOT</version.tournament.system>
 	</properties>
@@ -256,7 +257,30 @@
 				<version>${version.junit}</version>
 				<scope>test</scope>
 			</dependency>
-
+			<!-- CGLIB -->
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>${version.cglib}</version>
+			</dependency>
+			<!-- Testy -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${version.spring}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.2.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.20</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

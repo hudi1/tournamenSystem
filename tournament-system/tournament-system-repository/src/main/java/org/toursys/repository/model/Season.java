@@ -1,8 +1,6 @@
 package org.toursys.repository.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.sqlproc.engine.annotation.Pojo;
 
@@ -11,29 +9,19 @@ public class Season implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private long idSeason;
+	private long seasonId;
 
 	private String name;
-
-	private List<Tournament> tournaments = new ArrayList<Tournament>();
 
 	public Season() {
 	}
 
-	public List<Tournament> getTournaments() {
-		return tournaments;
+	public long getSeasonId() {
+		return seasonId;
 	}
 
-	public void setTournaments(List<Tournament> tournaments) {
-		this.tournaments = tournaments;
-	}
-
-	public long getIdSeason() {
-		return idSeason;
-	}
-
-	public void setIdSeason(long idSeason) {
-		this.idSeason = idSeason;
+	public void setSeasonId(long seasonId) {
+		this.seasonId = seasonId;
 	}
 
 	public String getName() {

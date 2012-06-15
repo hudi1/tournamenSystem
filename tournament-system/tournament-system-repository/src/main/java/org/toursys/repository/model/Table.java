@@ -1,8 +1,6 @@
 package org.toursys.repository.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.sqlproc.engine.annotation.Pojo;
 
@@ -11,7 +9,7 @@ public class Table implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private long idTable;
+	private long tableId;
 
 	private String name;
 
@@ -19,29 +17,19 @@ public class Table implements Serializable {
 
 	private TableType tableType;
 
-	private Integer numberOfFirstHokcey;
+	private Integer indexOfFirstHockey;
 
-	private Tournament tournamen;
-
-	private List<PlayerResult> playerResults = new ArrayList<PlayerResult>();
+	private long tournamentId;
 
 	public Table() {
 	}
 
-	public List<PlayerResult> getPlayerResults() {
-		return playerResults;
+	public long getTableId() {
+		return tableId;
 	}
 
-	public void setPlayerResults(List<PlayerResult> playerResults) {
-		this.playerResults = playerResults;
-	}
-
-	public long getIdTable() {
-		return idTable;
-	}
-
-	public void setIdTable(long idTable) {
-		this.idTable = idTable;
+	public void setTableId(long tableId) {
+		this.tableId = tableId;
 	}
 
 	public String getName() {
@@ -68,19 +56,20 @@ public class Table implements Serializable {
 		this.tableType = tableType;
 	}
 
-	public Integer getNumberOfFirstHokcey() {
-		return numberOfFirstHokcey;
+	public Integer getIndexOfFirstHockey() {
+		return indexOfFirstHockey;
 	}
 
-	public void setNumberOfFirstHokcey(Integer numberOfFirstHokcey) {
-		this.numberOfFirstHokcey = numberOfFirstHokcey;
+	public void setIndexOfFirstHockey(Integer indexOfFirstHockey) {
+		this.indexOfFirstHockey = indexOfFirstHockey;
 	}
 
-	public Tournament getTournamen() {
-		return tournamen;
+	public long getTournamentId() {
+		return tournamentId;
 	}
 
-	public void setTournamen(Tournament tournamen) {
-		this.tournamen = tournamen;
+	public void setTournamentId(long tournamentId) {
+		this.tournamentId = tournamentId;
 	}
+
 }

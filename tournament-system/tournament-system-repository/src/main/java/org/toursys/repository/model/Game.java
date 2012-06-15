@@ -12,6 +12,8 @@ public class Game implements Serializable {
 
 	private PlayerResult opponent;
 
+	private Result result;
+
 	public long getGameId() {
 		return gameId;
 	}
@@ -34,5 +36,13 @@ public class Game implements Serializable {
 
 	public void setOpponent(PlayerResult opponent) {
 		this.opponent = opponent;
+	}
+
+	public Result getResult() {
+		return result;
+	}
+
+	public void setResult(Result result) {
+		this.result = result;
 	}
 }

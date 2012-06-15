@@ -9,7 +9,7 @@ public class Player implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private long idPlayer;
+	private long playerId;
 
 	private String name;
 
@@ -20,12 +20,12 @@ public class Player implements Serializable {
 	public Player() {
 	}
 
-	public long getIdPlayer() {
-		return idPlayer;
+	public long getPlayerId() {
+		return playerId;
 	}
 
-	public void setIdPlayer(long idPlayer) {
-		this.idPlayer = idPlayer;
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
 	}
 
 	public String getName() {

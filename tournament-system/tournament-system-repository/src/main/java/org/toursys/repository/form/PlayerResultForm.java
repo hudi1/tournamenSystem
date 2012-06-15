@@ -6,17 +6,14 @@ import org.toursys.repository.model.Table;
 @Pojo
 public class PlayerResultForm {
 
-	private Table table;
+	private Table tournamentTable;
 
-	public Table getTable() {
-		return table;
+	public Table getTournamentTable() {
+		return tournamentTable;
 	}
 
-	public void setTable(Table table) {
-		this.table = table;
+	public void setTournamentTable(Table tournamentTable) {
+		this.tournamentTable = tournamentTable;
 	}
 
-	public PlayerResultForm(Table table) {
-		this.table = table;
-	}
 }

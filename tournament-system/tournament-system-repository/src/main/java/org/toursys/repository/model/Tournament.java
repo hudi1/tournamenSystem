@@ -13,7 +13,7 @@ public class Tournament implements Serializable {
 
 	private String name;
 
-	private Season season;
+	private long seasonId;
 
 	public String getName() {
 		return name;
@@ -34,12 +34,12 @@ public class Tournament implements Serializable {
 		this.name = name;
 	}
 
-	public Season getSeason() {
-		return season;
+	public long getSeasonId() {
+		return seasonId;
 	}
 
-	public void setSeason(Season seasonId) {
-		this.season = seasonId;
+	public void setSeasonId(long seasonId) {
+		this.seasonId = seasonId;
 	}
 
 }

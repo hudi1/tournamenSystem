@@ -15,7 +15,7 @@ public class PlayerResult implements Serializable {
 
 	private Integer rank;
 
-	private Table table;
+	private Table tournamentTable;
 
 	private Player player;
 
@@ -46,12 +46,12 @@ public class PlayerResult implements Serializable {
 		this.rank = rank;
 	}
 
-	public Table getTable() {
-		return table;
+	public Table getTournamentTable() {
+		return tournamentTable;
 	}
 
-	public void setTable(Table table) {
-		this.table = table;
+	public void setTournamentTable(Table tournamentTable) {
+		this.tournamentTable = tournamentTable;
 	}
 
 	public Player getPlayer() {
