@@ -8,6 +8,10 @@ public class PlayerResultForm {
 
 	private Table tournamentTable;
 
+	public PlayerResultForm(Table tournamentTable) {
+		this.tournamentTable = tournamentTable;
+	}
+
 	public Table getTournamentTable() {
 		return tournamentTable;
 	}

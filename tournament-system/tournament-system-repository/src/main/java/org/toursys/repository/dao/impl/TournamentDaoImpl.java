@@ -27,13 +27,6 @@ public class TournamentDaoImpl extends BaseDaoImpl implements TournamentDao {
 		getCrudEngine("DELETE_TOURNAMENT").delete(session, tournament);
 	}
 
-	@Override
-	public List<Tournament> getAllTournament() {
-		SqlSession session = getSqlSession();
-		return getQueryEngine("GET_ALL_TOURNAMENT").query(session,
-				Tournament.class);
-	}
-
 	public List<Tournament> findTournament(TournamentForm tournamentForm) {
 		SqlSession session = getSqlSession();
 		return getQueryEngine("GET_TOURNAMENT").query(session,

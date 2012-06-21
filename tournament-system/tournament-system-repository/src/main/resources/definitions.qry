@@ -16,6 +16,7 @@ pojo tournament org.toursys.repository.model.Tournament;
 ident INSERT_GAME game;
 ident UPDATE_GAME game;
 ident DELETE_GAME game;
+ident GET_GAME gameForm;
 ident INSERT_PLAYER player;
 ident UPDATE_PLAYER player;
 ident DELETE_PLAYER player;
@@ -47,6 +48,7 @@ col GET_ALL_RESULT result;
 col GET_ALL_SEASON season;
 col GET_TABLE tournamentTable;
 col GET_TOURNAMENT tournament;
+col GET_GAME game;
 
 
 

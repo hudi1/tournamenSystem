@@ -36,14 +36,24 @@
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
 	</bean>
 
-	<bean id="obyvatelDao" class="org.toursys.repository.dao.impl.GameDaoImpl" parent="baseDao" />
+	<bean id="gameDao" class="org.toursys.repository.dao.impl.GameDaoImpl" parent="baseDao" />
 	<bean id="playerDao" class="org.toursys.repository.dao.impl.PlayerDaoImpl" parent="baseDao" />
 	<bean id="playerResultDao" class="org.toursys.repository.dao.impl.PlayerResultDaoImpl" parent="baseDao" />
 	<bean id="resultDao" class="org.toursys.repository.dao.impl.ResultDaoImpl" parent="baseDao" />
 	<bean id="seasonDao" class="org.toursys.repository.dao.impl.SeasonDaoImpl" parent="baseDao" />
 	<bean id="tableDao" class="org.toursys.repository.dao.impl.TableDaoImpl" parent="baseDao" />
 	<bean id="tournamentDao" class="org.toursys.repository.dao.impl.TournamentDaoImpl" parent="baseDao" />
-
+	
+    <bean id="tournamentAggregationDao" class="org.toursys.repository.service.impl.TournamentAggregationDaoImpl">
+        <property name="gameDao" ref="gameDao"/>
+        <property name="playerDao" ref="playerDao"/>
+        <property name="playerResultDao" ref="playerResultDao"/>
+        <property name="resultDao" ref="resultDao"/>
+        <property name="tableDao" ref="tableDao"/>
+        <property name="tournamentDao" ref="tournamentDao"/>
+        <property name="seasonDao" ref="seasonDao"/>        
+    </bean>    
+    
 	<bean id="sqlFactory" class="org.sqlproc.engine.jdbc.JdbcEngineFactory"
 		init-method="init">
 		<property name="metaFilesNames">

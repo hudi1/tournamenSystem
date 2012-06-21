@@ -15,9 +15,11 @@ public class PlayerResult implements Serializable {
 
 	private Integer rank;
 
-	private Table tournamentTable;
+	private long tournamentTableId;
 
-	private Player player;
+	private long playerId;
+
+	private String score;
 
 	public PlayerResult() {
 	}
@@ -46,20 +48,28 @@ public class PlayerResult implements Serializable {
 		this.rank = rank;
 	}
 
-	public Table getTournamentTable() {
-		return tournamentTable;
+	public long getTournamentTableId() {
+		return tournamentTableId;
 	}
 
-	public void setTournamentTable(Table tournamentTable) {
-		this.tournamentTable = tournamentTable;
+	public void setTournamentTableId(long tournamentTableId) {
+		this.tournamentTableId = tournamentTableId;
 	}
 
-	public Player getPlayer() {
-		return player;
+	public long getPlayerId() {
+		return playerId;
 	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
+	}
+
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
 	}
 
 }

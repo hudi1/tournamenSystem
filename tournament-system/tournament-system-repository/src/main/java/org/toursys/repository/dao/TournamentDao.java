@@ -13,8 +13,6 @@ public interface TournamentDao {
 
 	public void deleteTournament(Tournament tournament);
 
-	public List<Tournament> getAllTournament();
-
 	public List<Tournament> findTournament(TournamentForm tournamentForm);
 
 }

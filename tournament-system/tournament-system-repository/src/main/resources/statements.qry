@@ -1,30 +1,38 @@
 INSERT_GAME(CRUD)=
-	insert into GAME(playerResult_id,opponent_id, result_id)
-	{= values (:playerResult.playerResultId, :opponent.playerResultId, :result.resultId) }
+	insert into GAME({? :gameId | id, } player_result_id,opponent_id, result_id)
+	{= values ({? :gameId | :gameId, } :playerResultId, :opponentId, :result.resultId) }
 	;
 	
 UPDATE_GAME(CRUD)=
-	update game {= set playerResult_id = :playerResult.playerResultId,  opponent_id = :opponent.playerResultId }
-	{= where {& id = :gameId^long^notnull}}
+	update GAME {= set player_result_id = :playerResultId,  opponent_id = :opponentId, result_id = :result.resultId }
+	{= where {& id = :gameId^long^notnull} } 
 	;
 	
 DELETE_GAME(CRUD)=
-	delete from game
+	delete from GAME
 	{= where {& id = :gameId^long^notnull} }
 	;
 	
+GET_GAME(QRY)=
+	select g.result_id @result.resultId, g.opponent_id @opponentId, g.player_result_id @playerResultId, r.left_side @result.leftSide, r.right_side @result.rightSide, r.overtime @result.overtime
+	from GAME g left join RESULT r on g.result_id = r.id
+	{= where {& g.opponent_id = :opponent.playerResultId} 
+		     {& g.player_result_id = :playerResult.playerResultId}			    
+	} 
+	;
+	
 INSERT_PLAYER(CRUD)=
-	insert into PLAYER(name,surname,club)
-	{= values (:name,:surname,:club) }
+	insert into PLAYER({? :playerId | id, }name,surname,club)
+	{= values ({? :playerId | :playerId, } :name,:surname,:club) }
 	;
 	
 UPDATE_PLAYER(CRUD)=
-	  update player {= set (name = :name, surname = :surname, club = :surname)}
+	  update PLAYER {= set name = :name, surname = :surname, club = :club}
 	  {= where {& id = :playerId^long^notnull} }
 	  ;
 
 DELETE_PLAYER(CRUD)=
-	delete from player
+	delete from PLAYER
 	{= where {& id = :playerId^long^notnull} }
 	;
 	
@@ -34,35 +42,33 @@ GET_ALL_PLAYER(QRY)=
 	;
 	
 INSERT_PLAYER_RESULT(CRUD)=	
-	insert into PLAYERRESULT(points,rank,tournament_table_id,player_id)
-	{= values (:points, :rank, :tournamentTable.tournamentId, :player.playerId) }
+	insert into PLAYER_RESULT({? :playerResultId | id, } points,rank,tournament_table_id,player_id, score)
+	{= values ({? :playerResultId | :playerResultId, } :points, :rank, :tournamentTableId, :playerId, :score) }
 	;
 	
 UPDATE_PLAYER_RESULT(CRUD)=	
-	update PLAYERRESULT{= set player_id = :player.playerId, point = :points, rank = :rank, tournament_table_id = :tournamentTable.tableId, player_id = :player.playerId }
+	update PLAYER_RESULT {= set points = :points, rank = :rank, tournament_table_id = :tournamentTableId, player_id = :playerId, score = :score }
 	{= where {& id = :playerResultId^long^notnull} }
 	;
 	
 DELETE_PLAYER_RESULT(CRUD)=	
-	delete from PLAYERRESULT
+	delete from PLAYER_RESULT
 	{= where {& id = :playerResultId^long^notnull} }
 	;
 	
 GET_PLAYER_RESULT(QRY)=
-	select id @playerResultId, points @points, rank @rank, tournament_table @tournamentTable, player @player 
-	from PLAYERRESULT PR
-	LEFT JOIN PLAYER on P on PR.PLAYER_ID = P.ID
-	LEFT JOIN TABLE on T on PR.TABLE_ID = T.ID	
+	select id @playerResultId, points @points, rank @rank, tournament_table_id @tournamentTableId, player_id @playerId, score @score
+	from PLAYER_RESULT 
 	{= where {& id = :tournamentTable.tableId}}
 	;	
 	
 INSERT_RESULT(CRUD)=	
-	insert into RESULT(left_side, right_side, overtime)
-	{= values (:leftSide, :rightSide, :overtime) }
+	insert into RESULT({? :resultId | id, }left_side, right_side, overtime)
+	{= values ({? :resultId | :resultId, } :leftSide, :rightSide, :overtime) }
 	;	
 
 UPDATE_RESULT(CRUD)=	
-	update RESULT{= set left_side = :leftSide, right_side = :rightSide, overtime = :overtime }
+	update RESULT {= set left_side = :leftSide, right_side = :rightSide, overtime = :overtime }
 	{= where {& id = :resultId^long^notnull} }
 	;
 
@@ -77,8 +83,9 @@ GET_ALL_RESULT(QRY)=
 	;
 
 INSERT_SEASON(CRUD)=	
-	insert into SEASON(name)
-	{= values (:name) }
+	insert into SEASON({? :seasonId | id, } name
+	)
+	{= values (  {? :seasonId | :seasonId, } :name) }
 	;	
 	
 UPDATE_SEASON(CRUD)=	
@@ -97,43 +104,43 @@ GET_ALL_SEASON(QRY)=
 	;
 	
 INSERT_TABLE(CRUD)=	
-	insert into TABLE(name,index_of_first_hockey, number_of_hockey, table_type, tournament_id )
-	{= values (:name, :indexOfFirstHockey, :numberOfHockey, :tableType, :tournamentId) }
+	insert into TOURNAMENT_TABLE({? :tableId | id, }name,index_of_first_hockey, number_of_hockey, table_type, tournament_id )
+	{= values ({? :tableId | :tableId, } :name, :indexOfFirstHockey, :numberOfHockey, :tableType, :tournamentId) }
 	;	
 	
 UPDATE_TABLE(CRUD)=	
-	update TABLE{= set name = :name,  index_of_first_hockey :indexOfFirstHockey, number_of_hockey :numberOfHockey, table_type :tableType, tournament_id :tournamentId  }
+	update TOURNAMENT_TABLE {= set name = :name,  index_of_first_hockey = :indexOfFirstHockey, number_of_hockey = :numberOfHockey, table_type = :tableType, tournament_id = :tournamentId  }
 	{= where  {& id = :tableId^long^notnull} }
 	;
 	
 DELETE_TABLE(CRUD)=	
-	delete from TABLE
+	delete from TOURNAMENT_TABLE
 	{= where  {& id = :tableId^long^notnull} }
 	;
 	
 GET_TABLE(QRY)=
-	select id @tableId, name @name, index_of_first_hockey @indexOfFirstHockey, tournament_table @numberOfHockey, table_type @tableType, tournament_id @tournamentId
-	from TABLE 
-	{= where {& tournament_id :tournament.tournamentId}} 
+	select id @tableId, name @name, index_of_first_hockey @indexOfFirstHockey, number_of_hockey @numberOfHockey, table_type @tableType, tournament_id @tournamentId
+	from TOURNAMENT_TABLE 
+	{= where {& tournament_id = :tournament.tournamentId}} 
 	;	
 	
 INSERT_TOURNAMENT(CRUD)=	
-	insert into TOURNAMENT(name)
-	{= values (:name) }
+	insert into TOURNAMENT({? :tournamentId | id, }name,season_id)
+	{= values ({? :tournamentId | :tournamentId, }:name, :seasonId) }
 	;		
 	
 UPDATE_TOURNAMENT(CRUD)=	
-	update SEASON{= set name = :name }
+	update TOURNAMENT {= set name = :name }
 	{= where  {& id = :tournamentId^long^notnull} }
 	;	
 	
 DELETE_TOURNAMENT(CRUD)=	
-	delete from SEASON
+	delete from TOURNAMENT
 	{= where  {& id = :tournamentId^long^notnull} }
 	;		
 	
 GET_TOURNAMENT(QRY)=
-	select id @tournamentId, season_id @seasonId name @name
-	from TABLE 
-	{= where {& season_id :season.seasonId}} 
+	select id @tournamentId, season_id @seasonId, name @name
+	from TOURNAMENT 
+	{= where {& season_id = :season.seasonId}} 
 	;

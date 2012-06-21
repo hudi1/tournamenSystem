@@ -8,9 +8,9 @@ public class Game implements Serializable {
 
 	private long gameId;
 
-	private PlayerResult playerResult;
+	private long playerResultId;
 
-	private PlayerResult opponent;
+	private long opponentId;
 
 	private Result result;
 
@@ -22,20 +22,20 @@ public class Game implements Serializable {
 		this.gameId = gameId;
 	}
 
-	public PlayerResult getPlayerResult() {
-		return playerResult;
+	public long getPlayerResultId() {
+		return playerResultId;
 	}
 
-	public void setPlayerResult(PlayerResult playerResult) {
-		this.playerResult = playerResult;
+	public void setPlayerResultId(long playerResultId) {
+		this.playerResultId = playerResultId;
 	}
 
-	public PlayerResult getOpponent() {
-		return opponent;
+	public long getOpponentId() {
+		return opponentId;
 	}
 
-	public void setOpponent(PlayerResult opponent) {
-		this.opponent = opponent;
+	public void setOpponentId(long opponentId) {
+		this.opponentId = opponentId;
 	}
 
 	public Result getResult() {
@@ -45,4 +45,5 @@ public class Game implements Serializable {
 	public void setResult(Result result) {
 		this.result = result;
 	}
+
 }
