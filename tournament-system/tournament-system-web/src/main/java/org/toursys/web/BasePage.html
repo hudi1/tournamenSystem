@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs" dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
-	<meta name="keywords" content="java, html, css" lang="cs" /> 
-	<meta name="language" http-equiv="content-language" content="cs" /> 
-	<meta name="author" content="hudi1" lang="cs" /> 
-	<meta name="copyright" content="&copy; hudi1" /> 
-	<link rel="stylesheet" type="text/css" href="css/screen.css" media="screen" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="java, html, css" lang="cs" />
+<meta name="language" http-equiv="content-language" content="cs" />
+<meta name="author" content="hudi1" lang="cs" />
+<meta name="copyright" content="&copy; hudi1" />
+<link rel="stylesheet" type="text/css" href="css/screen.css"
+	media="screen" />
 </head>
 <body>
 	<div id="main">
 		<div id="head">
-			<a href="#"><img id="logo" src="img/tourSys.png" alt="Tournament system" /></a>
+			<a href="#"><img id="logo" src="img/tourSys.png"
+				alt="Tournament system" /></a>
 		</div>
 		<div id="content">
-			<h1 wicket:id="heading">[heading text]</h1>			
+			<h1 wicket:id="heading">[heading text]</h1>
 
-			
+
 			<ul id="menu">
 				<li><a wicket:id="homePageMain">Hlavní stránka</a></li>
+				<li><a wicket:id="seasonPage">Sezóny</a></li>
 				<li><a wicket:id="publicPage">Veřejná stránka</a></li>
 			</ul>
 
-		<div id="page">
-			<wicket:child />
-		</div>
+			<div id="page">
+				<wicket:child />
+			</div>
 		</div>
 		<div id="footer">
 			&copy; 2012 <a href="mailto:hudec.tomas1@gmail.com">hudi1</a><br />
-		</div>		
+		</div>
 	</div>
 </body>
 

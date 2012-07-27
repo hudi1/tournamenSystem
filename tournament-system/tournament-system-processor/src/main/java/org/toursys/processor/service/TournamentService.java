@@ -9,19 +9,24 @@ import org.toursys.repository.service.TournamentAggregationDao;
 
 public class TournamentService {
 
-    private TournamentAggregationDao tournamentAggregationDao;
+	private TournamentAggregationDao tournamentAggregationDao;
 
-    public void createPlayer(Player player) {
-        tournamentAggregationDao.createPlayer(player);
-    }
+	public void createPlayer(Player player) {
+		tournamentAggregationDao.createPlayer(player);
+	}
 
-    public List<Season> getAllSeason() {
-        return tournamentAggregationDao.getAllSeason();
-    }
+	public List<Season> getAllSeason() {
+		return tournamentAggregationDao.getAllSeason();
+	}
 
-    @Required
-    public void setTournamentAggregationDao(TournamentAggregationDao tournamentAggregationDao) {
-        this.tournamentAggregationDao = tournamentAggregationDao;
-    }
+	public void createSeason(Season season) {
+		tournamentAggregationDao.createSeason(season);
+	}
+
+	@Required
+	public void setTournamentAggregationDao(
+			TournamentAggregationDao tournamentAggregationDao) {
+		this.tournamentAggregationDao = tournamentAggregationDao;
+	}
 
 }

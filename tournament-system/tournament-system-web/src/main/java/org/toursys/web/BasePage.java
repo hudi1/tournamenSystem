@@ -47,6 +47,8 @@ public abstract class BasePage extends WebPage {
         add(new Label("heading", headingModel));
         add(new BookmarkablePageLink<Void>("homePageMain", HomePage.class).add(new AttributeModifier("class",
                 new ActiveReplaceModel(this instanceof HomePage))));
+        add(new BookmarkablePageLink<Void>("seasonPage", SeasonPage.class).add(new AttributeModifier("class",
+                new ActiveReplaceModel(this instanceof SeasonPage))));
         add(new BookmarkablePageLink<Void>("publicPage", PublicPage.class).add(new AttributeModifier("class",
                 new ActiveReplaceModel(this instanceof PublicPage))));
     }
@@ -61,10 +63,10 @@ public abstract class BasePage extends WebPage {
         addMyComponents();
     }
 
-    public BasePage(IModel<?> model) {
+    /*public BasePage(IModel<?> model) {
         super(model);
         addMyComponents();
-    }
+    }*/
 
     public BasePage(PageParameters parameters) {
         super(parameters);

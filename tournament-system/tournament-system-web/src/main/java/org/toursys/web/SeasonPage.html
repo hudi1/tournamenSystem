@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+	<table>
+		<tr>
+			<th>Name</th>
+			<th></th>
+		</tr>
+		<tr wicket:id="rows">
+			<td><a wicket:id="details" href="#"> <span wicket:id="name">name</span>
+			</a></td>
+
+			<!--td><button wicket:id="editSeason" class="button">edit season</button></td-->
+
+		</tr>
+	</table>
+
+	<form wicket:id="seasonForm">
+		<div>
+			<input class="button" type="submit" wicket:id="newSeason"
+				value="new season" />
+		</div>
+	</form>
+</wicket:extend>
+</html>
+
