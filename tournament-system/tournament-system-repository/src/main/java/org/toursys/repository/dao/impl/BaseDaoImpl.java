@@ -11,35 +11,35 @@ import org.sqlproc.engine.spring.SpringSimpleSession;
 
 public class BaseDaoImpl {
 
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	protected JdbcTemplate jdbcTemplate;
-	protected SqlEngineFactory sqlFactory;
+    protected JdbcTemplate jdbcTemplate;
+    protected SqlEngineFactory sqlFactory;
 
-	protected SqlSession getSqlSession() {
-		SqlSession session = new SpringSimpleSession(jdbcTemplate);
-		return session;
-	}
+    protected SqlSession getSqlSession() {
+        SqlSession session = new SpringSimpleSession(jdbcTemplate);
+        return session;
+    }
 
-	public SqlCrudEngine getCrudEngine(String name) {
-		SqlCrudEngine queryEngine = sqlFactory.getCrudEngine(name);
-		if (queryEngine == null)
-			throw new RuntimeException("Missing SqlQueryEngine " + name);
-		return queryEngine;
-	}
+    public SqlCrudEngine getCrudEngine(String name) {
+        SqlCrudEngine queryEngine = sqlFactory.getCrudEngine(name);
+        if (queryEngine == null)
+            throw new RuntimeException("Missing SqlQueryEngine " + name);
+        return queryEngine;
+    }
 
-	public SqlQueryEngine getQueryEngine(String name) {
-		SqlQueryEngine queryEngine = sqlFactory.getQueryEngine(name);
-		if (queryEngine == null)
-			throw new RuntimeException("Missing SqlQueryEngine " + name);
-		return queryEngine;
-	}
+    public SqlQueryEngine getQueryEngine(String name) {
+        SqlQueryEngine queryEngine = sqlFactory.getQueryEngine(name);
+        if (queryEngine == null)
+            throw new RuntimeException("Missing SqlQueryEngine " + name);
+        return queryEngine;
+    }
 
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
-	public void setSqlFactory(SqlEngineFactory sqlFactory) {
-		this.sqlFactory = sqlFactory;
-	}
+    public void setSqlFactory(SqlEngineFactory sqlFactory) {
+        this.sqlFactory = sqlFactory;
+    }
 }

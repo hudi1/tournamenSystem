@@ -7,69 +7,69 @@ import org.sqlproc.engine.annotation.Pojo;
 @Pojo
 public class Table implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private long tableId;
+    private long tableId;
 
-	private String name;
+    private String name;
 
-	private Integer numberOfHockey;
+    private Integer numberOfHockey;
 
-	private TableType tableType;
+    private TableType tableType;
 
-	private Integer indexOfFirstHockey;
+    private Integer indexOfFirstHockey;
 
-	private long tournamentId;
+    private long tournamentId;
 
-	public Table() {
-	}
+    public Table() {
+    }
 
-	public long getTableId() {
-		return tableId;
-	}
+    public long getTableId() {
+        return tableId;
+    }
 
-	public void setTableId(long tableId) {
-		this.tableId = tableId;
-	}
+    public void setTableId(long tableId) {
+        this.tableId = tableId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Integer getNumberOfHockey() {
-		return numberOfHockey;
-	}
+    public Integer getNumberOfHockey() {
+        return numberOfHockey;
+    }
 
-	public void setNumberOfHockey(Integer numberOfHockey) {
-		this.numberOfHockey = numberOfHockey;
-	}
+    public void setNumberOfHockey(Integer numberOfHockey) {
+        this.numberOfHockey = numberOfHockey;
+    }
 
-	public TableType getTableType() {
-		return tableType;
-	}
+    public TableType getTableType() {
+        return tableType;
+    }
 
-	public void setTableType(TableType tableType) {
-		this.tableType = tableType;
-	}
+    public void setTableType(TableType tableType) {
+        this.tableType = tableType;
+    }
 
-	public Integer getIndexOfFirstHockey() {
-		return indexOfFirstHockey;
-	}
+    public Integer getIndexOfFirstHockey() {
+        return indexOfFirstHockey;
+    }
 
-	public void setIndexOfFirstHockey(Integer indexOfFirstHockey) {
-		this.indexOfFirstHockey = indexOfFirstHockey;
-	}
+    public void setIndexOfFirstHockey(Integer indexOfFirstHockey) {
+        this.indexOfFirstHockey = indexOfFirstHockey;
+    }
 
-	public long getTournamentId() {
-		return tournamentId;
-	}
+    public long getTournamentId() {
+        return tournamentId;
+    }
 
-	public void setTournamentId(long tournamentId) {
-		this.tournamentId = tournamentId;
-	}
+    public void setTournamentId(long tournamentId) {
+        this.tournamentId = tournamentId;
+    }
 
 }

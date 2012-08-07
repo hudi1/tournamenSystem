@@ -6,11 +6,11 @@ import org.toursys.repository.model.Result;
 
 public interface ResultDao {
 
-	public void createResult(Result result);
+    public void createResult(Result result);
 
-	public void updateResult(Result result);
+    public void updateResult(Result result);
 
-	public void deleteResult(Result result);
+    public void deleteResult(Result result);
 
-	public List<Result> getAllResult();
+    public List<Result> getAllResult();
 }

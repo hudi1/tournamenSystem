@@ -6,18 +6,18 @@ import org.toursys.repository.model.Tournament;
 @Pojo
 public class TableForm {
 
-	private Tournament tournament;
+    private Tournament tournament;
 
-	public Tournament getTournament() {
-		return tournament;
-	}
+    public Tournament getTournament() {
+        return tournament;
+    }
 
-	public void setTournament(Tournament tournament) {
-		this.tournament = tournament;
-	}
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
 
-	public TableForm(Tournament tournament) {
-		this.tournament = tournament;
-	}
+    public TableForm(Tournament tournament) {
+        this.tournament = tournament;
+    }
 
 }

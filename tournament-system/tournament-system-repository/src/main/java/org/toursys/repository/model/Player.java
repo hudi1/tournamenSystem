@@ -7,49 +7,49 @@ import org.sqlproc.engine.annotation.Pojo;
 @Pojo
 public class Player implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private long playerId;
+    private long playerId;
 
-	private String name;
+    private String name;
 
-	private String surname;
+    private String surname;
 
-	private String club;
+    private String club;
 
-	public Player() {
-	}
+    public Player() {
+    }
 
-	public long getPlayerId() {
-		return playerId;
-	}
+    public long getPlayerId() {
+        return playerId;
+    }
 
-	public void setPlayerId(long playerId) {
-		this.playerId = playerId;
-	}
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getSurname() {
-		return surname;
-	}
+    public String getSurname() {
+        return surname;
+    }
 
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 
-	public String getClub() {
-		return club;
-	}
+    public String getClub() {
+        return club;
+    }
 
-	public void setClub(String club) {
-		this.club = club;
-	}
+    public void setClub(String club) {
+        this.club = club;
+    }
 
 }

@@ -8,28 +8,28 @@ import org.toursys.repository.model.Result;
 
 public class ResultDaoImpl extends BaseDaoImpl implements ResultDao {
 
-	@Override
-	public void createResult(Result result) {
-		SqlSession session = getSqlSession();
-		getCrudEngine("INSERT_RESULT").insert(session, result);
-	}
+    @Override
+    public void createResult(Result result) {
+        SqlSession session = getSqlSession();
+        getCrudEngine("INSERT_RESULT").insert(session, result);
+    }
 
-	@Override
-	public void updateResult(Result result) {
-		SqlSession session = getSqlSession();
-		getCrudEngine("UPDATE_RESULT").update(session, result);
-	}
+    @Override
+    public void updateResult(Result result) {
+        SqlSession session = getSqlSession();
+        getCrudEngine("UPDATE_RESULT").update(session, result);
+    }
 
-	@Override
-	public void deleteResult(Result result) {
-		SqlSession session = getSqlSession();
-		getCrudEngine("DELETE_RESULT").delete(session, result);
-	}
+    @Override
+    public void deleteResult(Result result) {
+        SqlSession session = getSqlSession();
+        getCrudEngine("DELETE_RESULT").delete(session, result);
+    }
 
-	@Override
-	public List<Result> getAllResult() {
-		SqlSession session = getSqlSession();
-		return getQueryEngine("GET_ALL_RESULT").query(session, Result.class);
-	}
+    @Override
+    public List<Result> getAllResult() {
+        SqlSession session = getSqlSession();
+        return getQueryEngine("GET_ALL_RESULT").query(session, Result.class);
+    }
 
 }

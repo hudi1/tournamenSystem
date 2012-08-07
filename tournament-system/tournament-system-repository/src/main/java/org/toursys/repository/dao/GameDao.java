@@ -7,11 +7,11 @@ import org.toursys.repository.model.Game;
 
 public interface GameDao {
 
-	public void createGame(Game game);
+    public void createGame(Game game);
 
-	public void updateGame(Game game);
+    public void updateGame(Game game);
 
-	public void deleteGame(Game game);
+    public void deleteGame(Game game);
 
-	public List<Game> findGame(GameForm gameForm);
+    public List<Game> findGame(GameForm gameForm);
 }

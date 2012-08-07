@@ -7,12 +7,12 @@ import org.toursys.repository.model.Tournament;
 
 public interface TournamentDao {
 
-	public void createTournament(Tournament tournament);
+    public void createTournament(Tournament tournament);
 
-	public void updateTournament(Tournament tournament);
+    public void updateTournament(Tournament tournament);
 
-	public void deleteTournament(Tournament tournament);
+    public void deleteTournament(Tournament tournament);
 
-	public List<Tournament> findTournament(TournamentForm tournamentForm);
+    public List<Tournament> findTournament(TournamentForm tournamentForm);
 
 }

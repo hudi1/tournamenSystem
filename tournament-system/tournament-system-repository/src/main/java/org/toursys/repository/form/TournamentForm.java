@@ -1,23 +1,27 @@
 package org.toursys.repository.form;
 
+import java.io.Serializable;
+
 import org.sqlproc.engine.annotation.Pojo;
 import org.toursys.repository.model.Season;
 
 @Pojo
-public class TournamentForm {
+public class TournamentForm implements Serializable {
 
-	private Season season;
+    private static final long serialVersionUID = 1L;
 
-	public Season getSeason() {
-		return season;
-	}
+    private Season season;
 
-	public void setSeason(Season season) {
-		this.season = season;
-	}
+    public Season getSeason() {
+        return season;
+    }
 
-	public TournamentForm(Season season) {
-		this.season = season;
-	}
+    public void setSeason(Season season) {
+        this.season = season;
+    }
+
+    public TournamentForm(Season season) {
+        this.season = season;
+    }
 
 }
