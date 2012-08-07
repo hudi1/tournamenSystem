@@ -4,11 +4,12 @@ import java.util.Locale;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.RequestUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 public abstract class BasePage extends WebPage {
@@ -44,7 +45,9 @@ public abstract class BasePage extends WebPage {
 
     private void addMyComponents() {
         headingModel = newHeadingModel();
-        add(new Label("heading", headingModel));
+        add(new ExternalLink("heading", Model.of(RequestUtils.toAbsolutePath(
+                urlFor(getApplication().getHomePage(), null).toString(), urlFor(HomePage.class, null).toString()
+                        .toString())), headingModel));
         add(new BookmarkablePageLink<Void>("homePageMain", HomePage.class).add(new AttributeModifier("class",
                 new ActiveReplaceModel(this instanceof HomePage))));
         add(new BookmarkablePageLink<Void>("seasonPage", SeasonPage.class).add(new AttributeModifier("class",
@@ -62,11 +65,6 @@ public abstract class BasePage extends WebPage {
         super();
         addMyComponents();
     }
-
-    /*public BasePage(IModel<?> model) {
-        super(model);
-        addMyComponents();
-    }*/
 
     public BasePage(PageParameters parameters) {
         super(parameters);

@@ -22,42 +22,55 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.service.TournamentService;
+import org.toursys.repository.form.TournamentForm;
 import org.toursys.repository.model.Season;
+import org.toursys.repository.model.Tournament;
 
-public class SeasonPage extends BasePage {
+public class TournamentPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
     @SpringBean(name = "tournamentService")
     TournamentService tournamentService;
 
-    public SeasonPage() {
+    private TournamentForm tournamentForm;
+
+    public TournamentPage() {
+        this.tournamentForm = new TournamentForm(new Season());
+        createPage();
+    }
+
+    public TournamentPage(Season season) {
+        TournamentForm tournamentForm = new TournamentForm(season);
+        this.tournamentForm = tournamentForm;
+        // this.season = Season;
         createPage();
     }
 
     private void createPage() {
-        IDataProvider<Season> seasonDataProvider = new IDataProvider<Season>() {
+        IDataProvider<Tournament> tournamentDataProvider = new IDataProvider<Tournament>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator<Season> iterator(int first, int count) {
-                return tournamentService.getAllSeason().subList(first, first + count).iterator();
+            public Iterator<Tournament> iterator(int first, int count) {
+
+                return tournamentService.findTournament(tournamentForm).subList(first, first + count).iterator();
             }
 
             @Override
             public int size() {
-                return tournamentService.getAllSeason().size();
+                return tournamentService.findTournament(tournamentForm).size();
             }
 
             @Override
-            public IModel<Season> model(final Season object) {
-                return new LoadableDetachableModel<Season>() {
+            public IModel<Tournament> model(final Tournament object) {
+                return new LoadableDetachableModel<Tournament>() {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected Season load() {
+                    protected Tournament load() {
                         return object;
                     }
                 };
@@ -68,24 +81,24 @@ public class SeasonPage extends BasePage {
             }
         };
 
-        DataView<Season> dataView = new DataView<Season>("rows", seasonDataProvider, 10) {
+        DataView<Tournament> dataView = new DataView<Tournament>("rows", tournamentDataProvider, 10) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final Item<Season> listItem) {
-                final Season season = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<Season>(season));
-                listItem.add(link("details", season));
-                listItem.add(new EditSeasonForm(((Season) listItem.getDefaultModelObject()).clone()));
-                listItem.add(new AjaxLink<Void>("deleteSeason") {
+            protected void populateItem(final Item<Tournament> listItem) {
+                final Tournament tournament = listItem.getModelObject();
+                listItem.setModel(new CompoundPropertyModel<Tournament>(tournament));
+                listItem.add(link("details", tournament));
+                listItem.add(new EditTournamentForm(((Tournament) listItem.getDefaultModelObject()).clone()));
+                listItem.add(new AjaxLink<Void>("deleteTournament") {
 
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deleteSeason(((Season) listItem.getDefaultModelObject()));
+                        tournamentService.deleteTournament(((Tournament) listItem.getDefaultModelObject()));
 
-                        setResponsePage(new SeasonPage() {
+                        setResponsePage(new TournamentPage(tournamentForm.getSeason()) {
                             private static final long serialVersionUID = 1L;
                         });
                     }
@@ -98,7 +111,7 @@ public class SeasonPage extends BasePage {
 
                             @Override
                             public CharSequence decorateScript(Component c, CharSequence script) {
-                                return "if(confirm('Opravdu odstranit tuto sezonu ?')){" + script
+                                return "if(confirm('Opravdu odstranit tento turnaj ?')){" + script
                                         + "}else{return false;}";
                             }
 
@@ -112,24 +125,29 @@ public class SeasonPage extends BasePage {
 
         add(dataView);
         add(new PagingNavigator("navigator", dataView));
-        add(new SeasonForm());
+        add(new TournamentWebForm());
         add(new FeedbackPanel("feedbackPanel"));
 
     }
 
-    private class SeasonForm extends Form<Void> {
+    private class TournamentWebForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
 
-        public SeasonForm() {
-            super("seasonForm");
-            add(new Button("newSeason") {
+        public TournamentWebForm() {
+            super("tournamentForm");
+            add(new Button("newTournament") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new SeasonEditPage(SeasonPage.this, new Season()) {
+                    Tournament tournament = new Tournament();
+
+                    if (tournamentForm.getSeason() != null) {
+                        tournament.setSeasonId(tournamentForm.getSeason().getSeasonId());
+                    }
+                    setResponsePage(new TournamentEditPage(TournamentPage.this, tournament) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -138,18 +156,18 @@ public class SeasonPage extends BasePage {
         }
     }
 
-    private class EditSeasonForm extends Form<Void> {
+    private class EditTournamentForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
 
-        public EditSeasonForm(final Season season) {
-            super("editSeasonForm");
-            add(new Button("editSeason") {
+        public EditTournamentForm(final Tournament tournament) {
+            super("editTournamentForm");
+            add(new Button("editTournament") {
 
                 private static final long serialVersionUID = 1L;
 
                 private void edit() {
-                    setResponsePage(new SeasonEditPage(SeasonPage.this, season) {
+                    setResponsePage(new TournamentEditPage(TournamentPage.this, tournament) {
 
                         private static final long serialVersionUID = 1L;
 
@@ -165,23 +183,23 @@ public class SeasonPage extends BasePage {
         }
     }
 
-    public static Link<Void> link(final String name, final Season season) {
+    public static Link<Void> link(final String name, final Tournament tournament) {
         Link<Void> link = new Link<Void>(name) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick() {
-                setResponsePage(new TournamentPage(season));
+                // setResponsePage(new TournamentPage(tournament));
             }
         };
 
-        link.add(new Label("name", season.getName()));
+        link.add(new Label("name", tournament.getName()));
         return link;
     }
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("List of seasons");
+        return Model.of("List of tournaments belongs to season: " + tournamentForm.getSeason().getName());
     }
 }

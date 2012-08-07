@@ -8,9 +8,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.service.TournamentService;
-import org.toursys.repository.model.Season;
+import org.toursys.repository.model.Tournament;
 
-public abstract class SeasonEditPage extends BasePage {
+public abstract class TournamentEditPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,12 +19,12 @@ public abstract class SeasonEditPage extends BasePage {
     @SpringBean(name = "tournamentService")
     TournamentService tournamentService;
 
-    private class SeasonForm extends Form<Season> {
+    private class TournamentForm extends Form<Tournament> {
 
         private static final long serialVersionUID = 1L;
 
-        public SeasonForm(final Season season) {
-            super("seasonEditForm", new CompoundPropertyModel<Season>(season));
+        public TournamentForm(final Tournament tournament) {
+            super("tournamentEditForm", new CompoundPropertyModel<Tournament>(tournament));
             setOutputMarkupId(true);
             add(new TextField<String>("name"));
 
@@ -34,10 +34,10 @@ public abstract class SeasonEditPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    if (season.getSeasonId() != 0) {
-                        tournamentService.updateSeason(season);
+                    if (tournament.getTournamentId() != 0) {
+                        tournamentService.updateTournament(tournament);
                     } else {
-                        tournamentService.createSeason(season);
+                        tournamentService.createTournament(tournament);
                     }
                     setResponsePage(pageFrom);
                 }
@@ -63,14 +63,14 @@ public abstract class SeasonEditPage extends BasePage {
 
     }
 
-    public SeasonEditPage(BasePage pageFrom, Season season) {
+    public TournamentEditPage(BasePage pageFrom, Tournament tournament) {
         this.pageFrom = pageFrom;
-        add(new SeasonForm(season));
+        add(new TournamentForm(tournament));
     }
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("Edit season");
+        return Model.of("Edit tournament");
     }
 
 }

@@ -32,8 +32,12 @@ public class WicketApplication extends WebApplication {
     }
 
     private void mountPages() {
-        mountPage("login", HomePage.class);
-        mountPage("logout", PublicPage.class);
+        mountPage("home", HomePage.class);
+        mountPage("public", PublicPage.class);
+        mountPage("seasonEdit", SeasonEditPage.class);
+        mountPage("season", SeasonPage.class);
+        mountPage("tournament", TournamentPage.class);
+        mountPage("tournamentEdit", TournamentEditPage.class);
     }
 
     @Override

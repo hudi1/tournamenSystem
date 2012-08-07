@@ -6,16 +6,16 @@ import org.apache.wicket.model.Model;
 
 public class PublicPage extends BasePage {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public PublicPage() {
-		super();
-		add(new BookmarkablePageLink<Void>("homePage", HomePage.class));
-	}
+    public PublicPage() {
+        super();
+        add(new BookmarkablePageLink<Void>("homePage", HomePage.class));
+    }
 
-	@Override
-	protected IModel<String> newHeadingModel() {
-		return Model.of("Examples - Public Page");
-	}
+    @Override
+    protected IModel<String> newHeadingModel() {
+        return Model.of("Examples - Public Page");
+    }
 
 }
