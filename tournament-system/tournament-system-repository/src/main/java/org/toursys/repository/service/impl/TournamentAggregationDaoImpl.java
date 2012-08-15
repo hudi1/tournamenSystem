@@ -10,6 +10,7 @@ import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.dao.TableDao;
 import org.toursys.repository.dao.TournamentDao;
 import org.toursys.repository.form.GameForm;
+import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.form.PlayerResultForm;
 import org.toursys.repository.form.TableForm;
 import org.toursys.repository.form.TournamentForm;
@@ -70,6 +71,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     @Override
     public List<Player> getAllPlayer() {
         return playerDao.getAllPlayer();
+    }
+
+    @Override
+    public List<Player> getNotRegistrationPlayer(PlayerForm playerForm) {
+        return playerDao.getNotRegistrationPlayer(playerForm);
     }
 
     @Override

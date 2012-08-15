@@ -2,6 +2,7 @@ package org.toursys.repository.dao;
 
 import java.util.List;
 
+import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.model.Player;
 
 public interface PlayerDao {
@@ -13,4 +14,7 @@ public interface PlayerDao {
     public void deletePlayer(Player player);
 
     public List<Player> getAllPlayer();
+
+    public List<Player> getNotRegistrationPlayer(PlayerForm playerForm);
+
 }

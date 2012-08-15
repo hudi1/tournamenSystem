@@ -3,6 +3,7 @@ package org.toursys.repository.service;
 import java.util.List;
 
 import org.toursys.repository.form.GameForm;
+import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.form.PlayerResultForm;
 import org.toursys.repository.form.TableForm;
 import org.toursys.repository.form.TournamentForm;
@@ -31,6 +32,8 @@ public interface TournamentAggregationDao {
     public void deletePlayer(Player player);
 
     public List<Player> getAllPlayer();
+
+    public List<Player> getNotRegistrationPlayer(PlayerForm playerForm);
 
     public void createPlayerResult(PlayerResult playerResult);
 

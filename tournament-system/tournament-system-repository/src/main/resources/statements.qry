@@ -41,13 +41,23 @@ GET_ALL_PLAYER(QRY)=
 	from PLAYER
 	;
 	
+GET_PLAYER_NOT_IN_TOURNAMENT(QRY)=
+	select p.id @playerId, name @name, surname @surname, club @club
+	from PLAYER p left join PLAYER_RESULT r on p.id = r.player_id 
+	{= where p.id not in 
+		(select p.player_id from PLAYER_RESULT p left join TOURNAMENT_TABLE t on p.tournament_table_id = t.id
+			where t.tournament_id = :tournament.tournamentId		
+		)	
+	}
+	;	
+	
 INSERT_PLAYER_RESULT(CRUD)=	
 	insert into PLAYER_RESULT({? :playerResultId | id, } points,rank,tournament_table_id,player_id, score)
-	{= values ({? :playerResultId | :playerResultId, } :points, :rank, :tournamentTableId, :playerId, :score) }
+	{= values ({? :playerResultId | :playerResultId, } :points, :rank, :tournamentTable.tableId, :player.playerId, :score) }
 	;
 	
 UPDATE_PLAYER_RESULT(CRUD)=	
-	update PLAYER_RESULT {= set points = :points, rank = :rank, tournament_table_id = :tournamentTableId, player_id = :playerId, score = :score }
+	update PLAYER_RESULT {= set points = :points, rank = :rank, tournament_table_id = :tournamentTable.tableId, player_id = :player.playerId, score = :score }
 	{= where {& id = :playerResultId^long^notnull} }
 	;
 	
@@ -57,9 +67,14 @@ DELETE_PLAYER_RESULT(CRUD)=
 	;
 	
 GET_PLAYER_RESULT(QRY)=
-	select id @playerResultId, points @points, rank @rank, tournament_table_id @tournamentTableId, player_id @playerId, score @score
-	from PLAYER_RESULT 
-	{= where {& id = :tournamentTable.tableId}}
+	select r.id @playerResultId, r.points @points, r.rank @rank, r.score @score,
+	p.name @player.name, p.surname @player.surname, p.club @player.club, p.id @player.playerId,
+	t.id @tournamentTable.tableId, t.name @tournamentTable.name, t.index_of_first_hockey @tournamentTable.indexOfFirstHockey, t.number_of_hockey @tournamentTable.numberOfHockey, t.table_type @tournamentTable.tableType, t.tournament_id @tournamentTable.tournamentId
+	from PLAYER_RESULT r left join PLAYER p on r.player_id = p.id
+	left join TOURNAMENT_TABLE t on r.tournament_table_id = t.id
+	{= where {& r.tournament_table_id = :tournamentTable.tableId}
+		     {& t.tournament_id = :tournament.tournamentId}		
+	}
 	;	
 	
 INSERT_RESULT(CRUD)=	
@@ -121,7 +136,9 @@ DELETE_TABLE(CRUD)=
 GET_TABLE(QRY)=
 	select id @tableId, name @name, index_of_first_hockey @indexOfFirstHockey, number_of_hockey @numberOfHockey, table_type @tableType, tournament_id @tournamentId
 	from TOURNAMENT_TABLE 
-	{= where {& tournament_id = :tournament.tournamentId}} 
+	{= where {& tournament_id = :tournament.tournamentId}
+			 {& name = :name}
+	} 
 	;	
 	
 INSERT_TOURNAMENT(CRUD)=	

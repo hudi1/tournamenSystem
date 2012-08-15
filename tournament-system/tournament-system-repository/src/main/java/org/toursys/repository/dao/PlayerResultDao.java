@@ -14,4 +14,5 @@ public interface PlayerResultDao {
     public void deletePlayerResult(PlayerResult playerResult);
 
     public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm);
+
 }

@@ -4,10 +4,13 @@ import org.sqlproc.engine.annotation.Pojo;
 import org.toursys.repository.model.Tournament;
 
 @Pojo
-public class TableForm {
+public class PlayerForm {
 
     private Tournament tournament;
-    private String name;
+
+    public PlayerForm(Tournament tournament) {
+        this.tournament = tournament;
+    }
 
     public Tournament getTournament() {
         return tournament;
@@ -16,18 +19,4 @@ public class TableForm {
     public void setTournament(Tournament tournament) {
         this.tournament = tournament;
     }
-
-    public TableForm(String name, Tournament tournament) {
-        this.tournament = tournament;
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 }

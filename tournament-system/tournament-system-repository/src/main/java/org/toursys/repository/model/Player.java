@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.sqlproc.engine.annotation.Pojo;
 
 @Pojo
-public class Player implements Serializable {
+public class Player implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,6 +50,16 @@ public class Player implements Serializable {
 
     public void setClub(String club) {
         this.club = club;
+    }
+
+    @Override
+    public Player clone() {
+        Player player = new Player();
+        player.setClub(getClub());
+        player.setName(getName());
+        player.setPlayerId(getPlayerId());
+        player.setSurname(getSurname());
+        return player;
     }
 
 }

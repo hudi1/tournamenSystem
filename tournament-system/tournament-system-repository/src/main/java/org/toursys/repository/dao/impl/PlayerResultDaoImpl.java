@@ -33,4 +33,5 @@ public class PlayerResultDaoImpl extends BaseDaoImpl implements PlayerResultDao 
         SqlSession session = getSqlSession();
         return getQueryEngine("GET_PLAYER_RESULT").query(session, PlayerResult.class, playerResultForm);
     }
+
 }
