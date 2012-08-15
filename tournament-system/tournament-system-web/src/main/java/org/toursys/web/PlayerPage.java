@@ -10,7 +10,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
@@ -22,56 +21,42 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.service.TournamentService;
-import org.toursys.repository.form.TournamentForm;
-import org.toursys.repository.model.Season;
-import org.toursys.repository.model.Table;
-import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.Player;
 
-public class TournamentPage extends BasePage {
+public class PlayerPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
     @SpringBean(name = "tournamentService")
     TournamentService tournamentService;
 
-    private TournamentForm tournamentForm;
-
-    public TournamentPage() {
-        this.tournamentForm = new TournamentForm(new Season());
-        createPage();
-    }
-
-    public TournamentPage(Season season) {
-        TournamentForm tournamentForm = new TournamentForm(season);
-        this.tournamentForm = tournamentForm;
-        // this.season = Season;
+    public PlayerPage() {
         createPage();
     }
 
     private void createPage() {
-        IDataProvider<Tournament> tournamentDataProvider = new IDataProvider<Tournament>() {
+        IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator<Tournament> iterator(int first, int count) {
-
-                return tournamentService.findTournament(tournamentForm).subList(first, first + count).iterator();
+            public Iterator<Player> iterator(int first, int count) {
+                return tournamentService.getAllPlayer().subList(first, first + count).iterator();
             }
 
             @Override
             public int size() {
-                return tournamentService.findTournament(tournamentForm).size();
+                return tournamentService.getAllPlayer().size();
             }
 
             @Override
-            public IModel<Tournament> model(final Tournament object) {
-                return new LoadableDetachableModel<Tournament>() {
+            public IModel<Player> model(final Player object) {
+                return new LoadableDetachableModel<Player>() {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected Tournament load() {
+                    protected Player load() {
                         return object;
                     }
                 };
@@ -82,24 +67,26 @@ public class TournamentPage extends BasePage {
             }
         };
 
-        DataView<Tournament> dataView = new DataView<Tournament>("rows", tournamentDataProvider, 10) {
+        DataView<Player> dataView = new DataView<Player>("rows", playerDataProvider, 10) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final Item<Tournament> listItem) {
-                final Tournament tournament = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<Tournament>(tournament));
-                listItem.add(link("details", tournament));
-                listItem.add(new EditTournamentForm(((Tournament) listItem.getDefaultModelObject()).clone()));
-                listItem.add(new AjaxLink<Void>("deleteTournament") {
+            protected void populateItem(final Item<Player> listItem) {
+                final Player player = listItem.getModelObject();
+                listItem.setModel(new CompoundPropertyModel<Player>(player));
+                listItem.add(new Label("name", player.getName()));
+                listItem.add(new Label("surname", player.getSurname()));
+                listItem.add(new Label("club", player.getClub()));
+                listItem.add(new EditPlayerForm(((Player) listItem.getDefaultModelObject()).clone()));
+                listItem.add(new AjaxLink<Void>("deletePlayer") {
 
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deleteTournament(((Tournament) listItem.getDefaultModelObject()));
+                        tournamentService.deletePlayer(((Player) listItem.getDefaultModelObject()));
 
-                        setResponsePage(new TournamentPage(tournamentForm.getSeason()) {
+                        setResponsePage(new PlayerPage() {
                             private static final long serialVersionUID = 1L;
                         });
                     }
@@ -112,7 +99,7 @@ public class TournamentPage extends BasePage {
 
                             @Override
                             public CharSequence decorateScript(Component c, CharSequence script) {
-                                return "if(confirm('Opravdu odstranit tento turnaj ?')){" + script
+                                return "if(confirm('Opravdu odstranit tohto hrace ?')){" + script
                                         + "}else{return false;}";
                             }
 
@@ -126,29 +113,24 @@ public class TournamentPage extends BasePage {
 
         add(dataView);
         add(new PagingNavigator("navigator", dataView));
-        add(new TournamentWebForm());
+        add(new PlayerForm());
         add(new FeedbackPanel("feedbackPanel"));
 
     }
 
-    private class TournamentWebForm extends Form<Void> {
+    private class PlayerForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
 
-        public TournamentWebForm() {
-            super("tournamentForm");
-            add(new Button("newTournament") {
+        public PlayerForm() {
+            super("playerForm");
+            add(new Button("newPlayer") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    Tournament tournament = new Tournament();
-
-                    if (tournamentForm.getSeason() != null) {
-                        tournament.setSeasonId(tournamentForm.getSeason().getSeasonId());
-                    }
-                    setResponsePage(new TournamentEditPage(TournamentPage.this, tournament) {
+                    setResponsePage(new PlayerEditPage(PlayerPage.this, new Player()) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -157,18 +139,18 @@ public class TournamentPage extends BasePage {
         }
     }
 
-    private class EditTournamentForm extends Form<Void> {
+    private class EditPlayerForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
 
-        public EditTournamentForm(final Tournament tournament) {
-            super("editTournamentForm");
-            add(new Button("editTournament") {
+        public EditPlayerForm(final Player player) {
+            super("editPlayerForm");
+            add(new Button("editPlayer") {
 
                 private static final long serialVersionUID = 1L;
 
                 private void edit() {
-                    setResponsePage(new TournamentEditPage(TournamentPage.this, tournament) {
+                    setResponsePage(new PlayerEditPage(PlayerPage.this, player) {
 
                         private static final long serialVersionUID = 1L;
 
@@ -184,23 +166,9 @@ public class TournamentPage extends BasePage {
         }
     }
 
-    public static Link<Void> link(final String name, final Tournament tournament) {
-        Link<Void> link = new Link<Void>(name) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick() {
-                setResponsePage(new RegistrationPage(tournament, new Table()));
-            }
-        };
-
-        link.add(new Label("name", tournament.getName()));
-        return link;
-    }
-
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("List of tournaments");
+        return Model.of("List of players");
     }
+
 }

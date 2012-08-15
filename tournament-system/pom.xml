@@ -19,6 +19,7 @@
         <version.sql-processor>1.7.0</version.sql-processor>
         <version.slf4j>1.6.1</version.slf4j>
         <version.wicket>1.5.5</version.wicket>
+        <version.wicket-minis>1.5.5</version.wicket-minis>
         <version.cglib>2.2</version.cglib>
 
         <version.tournament.system>0.0.1-SNAPSHOT</version.tournament.system>
@@ -116,13 +117,18 @@
                 <artifactId>wicket-datetime</artifactId>
                 <version>${version.wicket}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wicketstuff</groupId>
+                <artifactId>wicketstuff-minis</artifactId>
+                <version>${version.wicket-minis}</version>
+            </dependency>
             <!-- Wicket-Spring -->
             <dependency>
                 <groupId>org.apache.wicket</groupId>
                 <artifactId>wicket-spring</artifactId>
                 <version>${version.wicket}</version>
             </dependency>
-
+            
             <!-- LOG -->
             <dependency>
                 <groupId>log4j</groupId>

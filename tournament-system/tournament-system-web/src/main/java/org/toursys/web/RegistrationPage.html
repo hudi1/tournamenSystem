@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+	<div wicket:id="feedbackPanel"></div>
+	<span wicket:id="navigator">[dataview navigator]</span>
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Surname</th>
+		</tr>
+		<tr wicket:id="rows">
+			<td><span wicket:id="name">name</span></td>
+			<td><span wicket:id="surname">surname</span></td>
+		</tr>
+	</table>
+
+
+	<form wicket:id="registrationForm">
+		<div>
+			<label wicket:for="name">Table:</label><input type="text"
+				wicket:id="name" />
+		</div>
+		<div>
+			<input class="button" type="submit" wicket:id="submit"
+				value="Registration" />
+		</div>
+	</form>
+
+	<span wicket:id="registeredNavigator">[dataview navigator]</span>
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Surname</th>
+			<th>Table name</th>
+			<th></th>
+		</tr>
+		<tr wicket:id="registeredRows">
+			<td><span wicket:id="name">name</span></td>
+			<td><span wicket:id="surname">surname</span></td>
+			<td><span wicket:id="tableName">table name</span></td>
+			<td><a wicket:id="deletePlayer" title="delete player"
+				class="button">delete player</a></td>
+		</tr>
+	</table>
+
+	<form wicket:id="createTournamentForm">
+		<div>
+			<input class="button" type="submit" wicket:id="submit"
+				value="Create tournament" />
+		</div>
+	</form>
+
+</wicket:extend>
+</html>
+

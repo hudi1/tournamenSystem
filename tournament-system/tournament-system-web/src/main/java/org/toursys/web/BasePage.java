@@ -54,6 +54,8 @@ public abstract class BasePage extends WebPage {
                 new ActiveReplaceModel(this instanceof SeasonPage))));
         add(new BookmarkablePageLink<Void>("publicPage", PublicPage.class).add(new AttributeModifier("class",
                 new ActiveReplaceModel(this instanceof PublicPage))));
+        add(new BookmarkablePageLink<Void>("playerPage", PlayerPage.class).add(new AttributeModifier("class",
+                new ActiveReplaceModel(this instanceof PlayerPage))));
     }
 
     @Override

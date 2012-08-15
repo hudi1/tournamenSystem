@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+	<div wicket:id="feedbackPanel"></div>
+	<span wicket:id="navigator">[dataview navigator]</span>
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Surname</th>
+			<th>Club</th>
+			<th></th>
+			<th></th>
+		</tr>
+		<tr wicket:id="rows">
+			<td><span wicket:id="name">name</span></td>
+			<td><span wicket:id="surname">surname</span></td>
+			<td><span wicket:id="club">club</span></td>
+
+			<td>
+
+				<form wicket:id="editPlayerForm">
+					<div>
+						<input class="button" type="submit" wicket:id="editPlayer"
+							value="edit player" />
+					</div>
+				</form>
+			</td>
+			<td><a wicket:id="deletePlayer" title="delete player"
+				class="button">detete player</a></td>
+		</tr>
+	</table>
+
+	<form wicket:id="playerForm">
+		<div>
+			<input class="button" type="submit" wicket:id="newPlayer"
+				value="new player" />
+		</div>
+	</form>
+</wicket:extend>
+</html>
+
