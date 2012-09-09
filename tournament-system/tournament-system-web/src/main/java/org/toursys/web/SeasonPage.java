@@ -19,17 +19,12 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.model.Season;
 
 public class SeasonPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-
-    @SpringBean(name = "tournamentService")
-    TournamentService tournamentService;
 
     public SeasonPage() {
         createPage();
@@ -123,7 +118,7 @@ public class SeasonPage extends BasePage {
 
         public SeasonForm() {
             super("seasonForm");
-            add(new Button("newSeason") {
+            add(new Button("newSeason", new StringResourceModel("newSeason", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -144,7 +139,7 @@ public class SeasonPage extends BasePage {
 
         public EditSeasonForm(final Season season) {
             super("editSeasonForm");
-            add(new Button("editSeason") {
+            add(new Button("editSeason", new StringResourceModel("editSeason", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -182,6 +177,6 @@ public class SeasonPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("List of seasons");
+        return new StringResourceModel("selectSeason", null);
     }
 }

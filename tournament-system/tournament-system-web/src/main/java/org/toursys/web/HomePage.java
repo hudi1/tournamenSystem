@@ -1,7 +1,7 @@
 package org.toursys.web;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 
 /**
  * Welcome screen
@@ -17,6 +17,6 @@ public class HomePage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("Welcome to the tournament system");
+        return new StringResourceModel("welcome", null);
     }
 }

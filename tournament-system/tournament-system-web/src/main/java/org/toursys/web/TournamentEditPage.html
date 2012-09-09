@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs" dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
 <wicket:head>
 	<title>Tournament System</title>
 </wicket:head>
-<wicket:extend>			
+<wicket:extend>
 
 	<!--  div wicket:id="feedbackPanel"></div-->
-	
+
 	<form wicket:id="tournamentEditForm">
 		<fieldset>
-			<legend>Tournament:</legend>
-			<div><label wicket:for="name">Name:</label><input type="text" wicket:id="name" /></div>
+			<legend>
+				<wicket:message key="tournament">
+            Tournament
+        </wicket:message>
+			</legend>
+			<div>
+				<label wicket:for="name"><wicket:message key="name">
+            Name:
+        </wicket:message></label><input type="text" wicket:id="name" />
+			</div>
 		</fieldset>
 
 		<div>
-			<input class="button" type="submit" wicket:id="submit" value="Save" />
-			<input class="button" type="submit" wicket:id="back" value="Back" />
+			<input class="seasoneButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="seasoneButton" type="submit"
+				wicket:id="back" value="Back" />
 		</div>
 
 	</form>

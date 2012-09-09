@@ -6,17 +6,21 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.RequestUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.toursys.processor.service.TournamentService;
 
 public abstract class BasePage extends WebPage {
 
     private static final long serialVersionUID = 1L;
 
-    private Locale locale = new Locale("cs_CZ");
+    @SpringBean(name = "tournamentService")
+    protected TournamentService tournamentService;
 
     private IModel<String> headingModel = new Model<String>();
 
@@ -56,11 +60,20 @@ public abstract class BasePage extends WebPage {
                 new ActiveReplaceModel(this instanceof PublicPage))));
         add(new BookmarkablePageLink<Void>("playerPage", PlayerPage.class).add(new AttributeModifier("class",
                 new ActiveReplaceModel(this instanceof PlayerPage))));
-    }
 
-    @Override
-    public Locale getLocale() {
-        return locale;
+        add(new Link("goSk") {
+            @Override
+            public void onClick() {
+                getSession().setLocale(new Locale("sk", "SK"));
+            }
+        });
+
+        add(new Link("goEn") {
+            @Override
+            public void onClick() {
+                getSession().setLocale(Locale.US);
+            }
+        });
     }
 
     public BasePage() {

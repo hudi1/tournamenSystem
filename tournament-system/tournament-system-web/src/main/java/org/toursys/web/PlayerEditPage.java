@@ -5,9 +5,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.model.Player;
 
 public abstract class PlayerEditPage extends BasePage {
@@ -15,9 +13,6 @@ public abstract class PlayerEditPage extends BasePage {
     private static final long serialVersionUID = 1L;
 
     private BasePage pageFrom;
-
-    @SpringBean(name = "tournamentService")
-    TournamentService tournamentService;
 
     private class PlayerForm extends Form<Player> {
 
@@ -30,7 +25,7 @@ public abstract class PlayerEditPage extends BasePage {
             add(new TextField<String>("surname"));
             add(new TextField<String>("club"));
 
-            add(new Button("submit") {
+            add(new Button("submit", new StringResourceModel("submit", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -46,7 +41,7 @@ public abstract class PlayerEditPage extends BasePage {
 
             });
 
-            add(new Button("back") {
+            add(new Button("back", new StringResourceModel("back", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -72,7 +67,7 @@ public abstract class PlayerEditPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("Edit player");
+        return new StringResourceModel("editPlayer", null);
     }
 
 }

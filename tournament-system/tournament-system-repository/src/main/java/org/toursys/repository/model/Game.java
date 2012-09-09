@@ -8,11 +8,25 @@ public class Game implements Serializable {
 
     private long gameId;
 
-    private long playerResultId;
+    private PlayerResult playerResult;
 
-    private long opponentId;
+    private PlayerResult opponent;
 
     private Result result;
+
+    private Integer hockey;
+
+    private Integer round;
+
+    public Game() {
+
+    }
+
+    public Game(PlayerResult playerResult, PlayerResult opponent) {
+        this.playerResult = playerResult;
+        this.opponent = opponent;
+        result = new Result();
+    }
 
     public long getGameId() {
         return gameId;
@@ -22,20 +36,20 @@ public class Game implements Serializable {
         this.gameId = gameId;
     }
 
-    public long getPlayerResultId() {
-        return playerResultId;
+    public PlayerResult getPlayerResult() {
+        return playerResult;
     }
 
-    public void setPlayerResultId(long playerResultId) {
-        this.playerResultId = playerResultId;
+    public void setPlayerResult(PlayerResult playerResult) {
+        this.playerResult = playerResult;
     }
 
-    public long getOpponentId() {
-        return opponentId;
+    public PlayerResult getOpponent() {
+        return opponent;
     }
 
-    public void setOpponentId(long opponentId) {
-        this.opponentId = opponentId;
+    public void setOpponent(PlayerResult opponent) {
+        this.opponent = opponent;
     }
 
     public Result getResult() {
@@ -44,6 +58,49 @@ public class Game implements Serializable {
 
     public void setResult(Result result) {
         this.result = result;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (gameId ^ (gameId >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Game other = (Game) obj;
+        if (gameId != other.gameId)
+            return false;
+        return true;
+    }
+
+    public Integer getHockey() {
+        return hockey;
+    }
+
+    public void setHockey(Integer hockey) {
+        this.hockey = hockey;
+    }
+
+    public Integer getRound() {
+        return round;
+    }
+
+    public void setRound(Integer round) {
+        this.round = round;
+    }
+
+    @Override
+    public String toString() {
+        return "Game [gameId=" + gameId + ", result=" + result + ", hockey=" + hockey + ", round=" + round + "]";
     }
 
 }

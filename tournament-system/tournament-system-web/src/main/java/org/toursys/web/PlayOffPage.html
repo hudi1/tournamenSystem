@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Schedule</title>
+</wicket:head>
+<wicket:extend>
+	<form wicket:id="playOffForm">
+		<table class="dataview">
+			<tr>
+				<th><wicket:message key="player">
+            Player
+        </wicket:message></th>
+				<th><wicket:message key="result">
+            Result
+        </wicket:message></th>
+			</tr>
+			<tr wicket:id="rows">
+				<td><span wicket:id="players"></span></td>
+				<td wicket:id="gameList"><input wicket:id="leftSide"
+					style="width: 25px;"></input><label>:</label> <input
+					wicket:id="rightSide" style="width: 25px;"></input></td>
+			</tr>
+
+		</table>
+		<div>
+			<input class="seasoneButton" type="submit" wicket:id="back"
+				value="Back" /> <input class="seasoneButton" type="submit"
+				wicket:id="submit" value="Save" />
+		</div>
+	</form>
+</wicket:extend>
+</html>

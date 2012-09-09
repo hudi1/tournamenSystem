@@ -19,20 +19,14 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.form.TournamentForm;
 import org.toursys.repository.model.Season;
-import org.toursys.repository.model.Table;
 import org.toursys.repository.model.Tournament;
 
 public class TournamentPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-
-    @SpringBean(name = "tournamentService")
-    TournamentService tournamentService;
 
     private TournamentForm tournamentForm;
 
@@ -44,7 +38,6 @@ public class TournamentPage extends BasePage {
     public TournamentPage(Season season) {
         TournamentForm tournamentForm = new TournamentForm(season);
         this.tournamentForm = tournamentForm;
-        // this.season = Season;
         createPage();
     }
 
@@ -137,7 +130,7 @@ public class TournamentPage extends BasePage {
 
         public TournamentWebForm() {
             super("tournamentForm");
-            add(new Button("newTournament") {
+            add(new Button("newTournament", new StringResourceModel("newTournament", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -154,6 +147,16 @@ public class TournamentPage extends BasePage {
                     });
                 }
             });
+
+            add(new Button("back", new StringResourceModel("back", null)) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(new SeasonPage());
+                }
+            });
         }
     }
 
@@ -163,7 +166,7 @@ public class TournamentPage extends BasePage {
 
         public EditTournamentForm(final Tournament tournament) {
             super("editTournamentForm");
-            add(new Button("editTournament") {
+            add(new Button("editTournament", new StringResourceModel("editTournament", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -184,14 +187,14 @@ public class TournamentPage extends BasePage {
         }
     }
 
-    public static Link<Void> link(final String name, final Tournament tournament) {
+    private Link<Void> link(final String name, final Tournament tournament) {
         Link<Void> link = new Link<Void>(name) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick() {
-                setResponsePage(new RegistrationPage(tournament, new Table()));
+                setResponsePage(new RegistrationPage(tournament, TournamentPage.this));
             }
         };
 
@@ -201,6 +204,6 @@ public class TournamentPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("List of tournaments");
+        return new StringResourceModel("selectTournament", null);
     }
 }

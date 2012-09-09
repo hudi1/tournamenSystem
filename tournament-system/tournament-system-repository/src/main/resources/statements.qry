@@ -1,10 +1,13 @@
+SEQ_RESULT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'RESULT';
+SEQ_PLAYER_RESULT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'PLAYER_RESULT';
+
 INSERT_GAME(CRUD)=
 	insert into GAME({? :gameId | id, } player_result_id,opponent_id, result_id)
-	{= values ({? :gameId | :gameId, } :playerResultId, :opponentId, :result.resultId) }
+	{= values ({? :gameId | :gameId, } :playerResult.playerResultId, :opponent.playerResultId, :result.resultId) }
 	;
 	
 UPDATE_GAME(CRUD)=
-	update GAME {= set player_result_id = :playerResultId,  opponent_id = :opponentId, result_id = :result.resultId }
+	update GAME {= set player_result_id = :playerResult.playerResultId,  opponent_id = :opponent.playerResultId, result_id = :result.resultId }
 	{= where {& id = :gameId^long^notnull} } 
 	;
 	
@@ -14,10 +17,17 @@ DELETE_GAME(CRUD)=
 	;
 	
 GET_GAME(QRY)=
-	select g.result_id @result.resultId, g.opponent_id @opponentId, g.player_result_id @playerResultId, r.left_side @result.leftSide, r.right_side @result.rightSide, r.overtime @result.overtime
-	from GAME g left join RESULT r on g.result_id = r.id
+	select g.id @gameId, g.opponent_id @opponent.playerResultId, g.player_result_id @playerResult.playerResultId, 
+	p1.name @playerResult.player.name, p1.surname @playerResult.player.surname,  
+	p2.name @opponent.player.name, p2.surname @opponent.player.surname,  	
+	r.left_side @result.leftSide, r.right_side @result.rightSide, r.overtime @result.overtime, r.id @result.resultId
+	from GAME g  join RESULT r on g.result_id = r.id
+				 join PLAYER_RESULT pr1 on g.player_result_id = pr1.id
+				 join PLAYER_RESULT pr2 on g.opponent_id = pr2.id
+				 join PLAYER p1 on pr1.player_id = p1.id
+				 join PLAYER p2 on pr2.player_id = p2.id				
 	{= where {& g.opponent_id = :opponent.playerResultId} 
-		     {& g.player_result_id = :playerResult.playerResultId}			    
+		     {& g.player_result_id = :playerResult.playerResultId}			     		    
 	} 
 	;
 	
@@ -42,7 +52,7 @@ GET_ALL_PLAYER(QRY)=
 	;
 	
 GET_PLAYER_NOT_IN_TOURNAMENT(QRY)=
-	select p.id @playerId, name @name, surname @surname, club @club
+	select distinct p.id @playerId, name @name, surname @surname, club @club
 	from PLAYER p left join PLAYER_RESULT r on p.id = r.player_id 
 	{= where p.id not in 
 		(select p.player_id from PLAYER_RESULT p left join TOURNAMENT_TABLE t on p.tournament_table_id = t.id
@@ -52,8 +62,8 @@ GET_PLAYER_NOT_IN_TOURNAMENT(QRY)=
 	;	
 	
 INSERT_PLAYER_RESULT(CRUD)=	
-	insert into PLAYER_RESULT({? :playerResultId | id, } points,rank,tournament_table_id,player_id, score)
-	{= values ({? :playerResultId | :playerResultId, } :points, :rank, :tournamentTable.tableId, :player.playerId, :score) }
+	insert into PLAYER_RESULT(id, points,rank,tournament_table_id,player_id, score)
+	{= values (:playerResultId^long^seq=SEQ_PLAYER_RESULT, :points, :rank, :tournamentTable.tableId, :player.playerId, :score) }
 	;
 	
 UPDATE_PLAYER_RESULT(CRUD)=	
@@ -67,19 +77,45 @@ DELETE_PLAYER_RESULT(CRUD)=
 	;
 	
 GET_PLAYER_RESULT(QRY)=
-	select r.id @playerResultId, r.points @points, r.rank @rank, r.score @score,
-	p.name @player.name, p.surname @player.surname, p.club @player.club, p.id @player.playerId,
-	t.id @tournamentTable.tableId, t.name @tournamentTable.name, t.index_of_first_hockey @tournamentTable.indexOfFirstHockey, t.number_of_hockey @tournamentTable.numberOfHockey, t.table_type @tournamentTable.tableType, t.tournament_id @tournamentTable.tournamentId
-	from PLAYER_RESULT r left join PLAYER p on r.player_id = p.id
-	left join TOURNAMENT_TABLE t on r.tournament_table_id = t.id
-	{= where {& r.tournament_table_id = :tournamentTable.tableId}
+	select r.id @playerResultId^long^id, r.points @points, r.rank @rank, r.score @score,
+	p.name @player.name, p.surname @player.surname, p.club @player.club, p.id @player.playerId^long^id,
+    re.id @games.result.resultId^long^id, re.left_side @games.result.leftSide, re.right_side @games.result.rightSide, re.overtime @games.result.overtime,
+    g.opponent_id @games.opponent.playerResultId^long^id, g.player_result_id @games.playerResult.playerResultId^long^id, g.id @games.gameId^long^id,
+    p2.id @games.opponent.player.playerId, p.id @games.playerResult.player.playerId,    
+	t.id @tournamentTable.tableId^long^id, t.name @tournamentTable.name, t.index_of_first_hockey @tournamentTable.indexOfFirstHockey, t.number_of_hockey @tournamentTable.numberOfHockey, t.table_type @tournamentTable.tableType, t.tournament_id @tournamentTable.tournamentId
+	from PLAYER_RESULT r 	left join PLAYER p on r.player_id = p.id
+							left join TOURNAMENT_TABLE t on r.tournament_table_id = t.id
+							left join GAME g on g.player_result_id = r.id
+							left join RESULT re on g.result_id = re.id	
+							left join PLAYER_RESULT pr2 on g.opponent_id = pr2.id
+							left join PLAYER p2 on pr2.player_id = p2.id
+	{= where {? :table     |{& r.tournament_table_id = :tournamentTable.tableId}}
 		     {& t.tournament_id = :tournament.tournamentId}		
-	}
+		     {& t.table_type = :tournamentTable.tableType}		
+		     {& p.id = :player.playerId}		
+	} order by r.id
 	;	
 	
+	GET_GAME(QRY)=
+	select g.id @gameId, r.id @result.resultId, g.opponent_id @opponent.playerResultId, g.player_result_id @playerResult.playerResultId, 
+	p1.name @playerResult.player.name, p1.surname @playerResult.player.surname,  
+	p2.name @opponent.player.name, p2.surname @opponent.player.surname,  	
+	r.left_side @result.leftSide, r.right_side @result.rightSide, r.overtime @result.overtime
+	from GAME g  join RESULT r on g.result_id = r.id
+				 join PLAYER_RESULT pr1 on g.player_result_id = pr1.id
+				 join PLAYER_RESULT pr2 on g.opponent_id = pr2.id
+				 join PLAYER p1 on pr1.player_id = p1.id
+				 join PLAYER p2 on pr2.player_id = p2.id				
+	{= where {& g.opponent_id = :opponent.playerResultId} 
+		     {& g.player_result_id = :playerResult.playerResultId}			     		    
+	} 
+	;
+	
+	
+	
 INSERT_RESULT(CRUD)=	
-	insert into RESULT({? :resultId | id, }left_side, right_side, overtime)
-	{= values ({? :resultId | :resultId, } :leftSide, :rightSide, :overtime) }
+	insert into RESULT(id,left_side, right_side, overtime)
+	{= values (:resultId^long^seq=SEQ_RESULT, :leftSide, :rightSide, :overtime) }
 	;	
 
 UPDATE_RESULT(CRUD)=	
@@ -93,7 +129,7 @@ DELETE_RESULT(CRUD)=
 	;
 	
 GET_ALL_RESULT(QRY)=
-	select id @leftSide, name @resultId, surname @rightSide, club @overtime
+	select left_side @leftSide, id @resultId, right_side @rightSide, overtime @overtime
 	from RESULT
 	;
 
@@ -138,16 +174,17 @@ GET_TABLE(QRY)=
 	from TOURNAMENT_TABLE 
 	{= where {& tournament_id = :tournament.tournamentId}
 			 {& name = :name}
+			 {& table_type in :tableType}
 	} 
 	;	
 	
 INSERT_TOURNAMENT(CRUD)=	
-	insert into TOURNAMENT({? :tournamentId | id, }name,season_id)
-	{= values ({? :tournamentId | :tournamentId, }:name, :seasonId) }
+	insert into TOURNAMENT({? :tournamentId | id, }name,season_id, promotingAGroup, promotingLowerGroup, winPoints, playOffA, playOffLower)
+	{= values ({? :tournamentId | :tournamentId, }:name, :seasonId, :promotingA, :promotingLower, :winPoints, :playOffA, :playOffLower}
 	;		
 	
 UPDATE_TOURNAMENT(CRUD)=	
-	update TOURNAMENT {= set name = :name }
+	update TOURNAMENT {= set name = :name, promotingAGroup = :promotingA, promotingLowerGroup = :promotingLower, winPoints = :winPoints, playOffA = :playOffA, playOffLower = :playOffLower  }
 	{= where  {& id = :tournamentId^long^notnull} }
 	;	
 	
@@ -157,7 +194,7 @@ DELETE_TOURNAMENT(CRUD)=
 	;		
 	
 GET_TOURNAMENT(QRY)=
-	select id @tournamentId, season_id @seasonId, name @name
+	select id @tournamentId, season_id @seasonId, name @name, promotingAGroup @promotingA, promotingLowerGroup @promotingLower, winPoints @winPoints, playOffA @playOffA, playOffLower @playOffLower
 	from TOURNAMENT 
 	{= where {& season_id = :season.seasonId}} 
 	;

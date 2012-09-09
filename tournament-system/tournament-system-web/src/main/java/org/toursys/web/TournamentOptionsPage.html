@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament options</title>
+</wicket:head>
+<wicket:extend>
+	<form wicket:id="tableOptionsForm">
+		<fieldset>
+			<legend wicket:id="tableLegend"></legend>
+			<div>
+				<label><wicket:message key="hockeyNumber">
+            Number of hockey per basic group: 
+        </wicket:message></label><input type="text" wicket:id="hockey" />
+			</div>
+			<div>
+				<label><wicket:message key="startHockey">
+           Start hockey: 
+        </wicket:message></label><input type="text" wicket:id="hockeyIndex" />
+			</div>
+		</fieldset>
+
+		<div>
+			<input class="seasoneButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="seasoneButton" type="submit"
+				wicket:id="back" value="Back" />
+		</div>
+
+	</form>
+
+	<form wicket:id="tournamentOptionsForm">
+		<fieldset>
+			<legend wicket:id="tournamentLegend"></legend>
+			<div>
+				<label><wicket:message key="win">
+          Points for win
+        </wicket:message> </label><input type="text" wicket:id="points" />
+			</div>
+			<div>
+				<label><wicket:message key="promotingA">
+          Promoting to A group
+        </wicket:message> </label><input type="text" wicket:id="promotingA" />
+			</div>
+
+			<div>
+				<label><wicket:message key="promotingLower">
+          Promoting to lower groups
+        </wicket:message> </label><input type="text" wicket:id="promotingLower" />
+			</div>
+			<div>
+				<label><wicket:message key="playOffA">
+					</wicket:message> </label><input type="text" wicket:id="playOffA" />
+			</div>
+			<div>
+				<label><wicket:message key="playOffLower">
+					</wicket:message> </label><input type="text" wicket:id="playOffLower" />
+			</div>
+		</fieldset>
+
+		<div>
+			<input class="seasoneButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="seasoneButton" type="submit"
+				wicket:id="back" value="Back" />
+		</div>
+
+	</form>
+
+</wicket:extend>
+</html>

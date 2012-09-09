@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.sqlproc.engine.annotation.Pojo;
 
 @Pojo
-public class Table implements Serializable {
+public class Table implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,6 +22,8 @@ public class Table implements Serializable {
     private long tournamentId;
 
     public Table() {
+        numberOfHockey = 1;
+        indexOfFirstHockey = 1;
     }
 
     public long getTableId() {
@@ -70,6 +72,32 @@ public class Table implements Serializable {
 
     public void setTournamentId(long tournamentId) {
         this.tournamentId = tournamentId;
+    }
+
+    @Override
+    public Table clone() {
+        Table table = new Table();
+        table.setIndexOfFirstHockey(getIndexOfFirstHockey());
+        table.setName(getName());
+        table.setNumberOfHockey(getNumberOfHockey());
+        table.setTableId(getTableId());
+        table.setTableType(getTableType());
+        table.setTournamentId(getTournamentId());
+        return table;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Table other = (Table) obj;
+        if (tableId != other.tableId)
+            return false;
+        return true;
     }
 
 }

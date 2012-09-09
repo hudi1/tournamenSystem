@@ -6,7 +6,7 @@ import org.toursys.repository.model.Result;
 
 public interface ResultDao {
 
-    public void createResult(Result result);
+    public Result createResult(Result result);
 
     public void updateResult(Result result);
 

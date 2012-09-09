@@ -7,51 +7,79 @@
 </wicket:head>
 <wicket:extend>
 	<div wicket:id="feedbackPanel"></div>
-	<span wicket:id="navigator">[dataview navigator]</span>
-	<table>
-		<tr>
-			<th>Name</th>
-			<th>Surname</th>
-		</tr>
-		<tr wicket:id="rows">
-			<td><span wicket:id="name">name</span></td>
-			<td><span wicket:id="surname">surname</span></td>
-		</tr>
-	</table>
+	<div class="leftColumn">
+		<form wicket:id="registrationForm">
+
+			<table class="player">
+				<thead>
+					<tr class="scrolableRow">
+						<th style="width: 100px;"><wicket:message key="name">
+            Name
+        </wicket:message></th>
+						<th style="width: 100px;"><wicket:message key="surname">
+            Surname
+        </wicket:message></th>
+					</tr>
+				</thead>
+				<tbody class="scrolableBody">
+					<tr wicket:id="rows">
+						<td style="width: 100px;"><span wicket:id="name">name</span></td>
+						<td style="width: 100px;"><span wicket:id="surname">surname</span></td>
+					</tr>
+				</tbody>
+			</table>
 
 
-	<form wicket:id="registrationForm">
-		<div>
-			<label wicket:for="name">Table:</label><input type="text"
-				wicket:id="name" />
-		</div>
-		<div>
-			<input class="button" type="submit" wicket:id="submit"
-				value="Registration" />
-		</div>
-	</form>
+			<div>
+				<label><wicket:message key="group">
+            Group:
+        </wicket:message> </label> <input type="text" wicket:id="name" style="width: 30px;" />
+			</div>
+			<div>
+				<input class="seasoneButton" type="submit" wicket:id="submit"
+					value="Registration" />
+			</div>
+		</form>
+	</div>
+	<table class="registratedPlayerTable">
+		<thead>
+			<tr class="scrolableRow">
+				<th style="width: 100px;"><wicket:message key="name">
+            Name
+        </wicket:message></th>
+				<th style="width: 100px;"><wicket:message key="surname">
+            Surname
+        </wicket:message></th>
+				<th style="width: 100px;"><wicket:message key="tableName">
+            Table name
+        </wicket:message></th>
+				<th style="width: 140px;"><wicket:message key="delete">
+            Delete
+        </wicket:message></th>
+			</tr>
+		</thead>
+		<tbody class="scrolableBody">
+			<tr wicket:id="registeredRows">
+				<td style="width: 108px;"><span wicket:id="name">name</span></td>
+				<td style="width: 108px;"><span wicket:id="surname">surname</span></td>
+				<td style="width: 108px;"><span wicket:id="tableName">table
+						name</span></td>
 
-	<span wicket:id="registeredNavigator">[dataview navigator]</span>
-	<table>
-		<tr>
-			<th>Name</th>
-			<th>Surname</th>
-			<th>Table name</th>
-			<th></th>
-		</tr>
-		<tr wicket:id="registeredRows">
-			<td><span wicket:id="name">name</span></td>
-			<td><span wicket:id="surname">surname</span></td>
-			<td><span wicket:id="tableName">table name</span></td>
-			<td><a wicket:id="deletePlayer" title="delete player"
-				class="button">delete player</a></td>
-		</tr>
+				<td style="width: 130px;"><a wicket:id="deletePlayer"
+					title="delete player" class="seasoneButton"><wicket:message
+							key="deletePlayer">
+            delete player
+        </wicket:message></a></td>
+			</tr>
+		</tbody>
 	</table>
 
 	<form wicket:id="createTournamentForm">
 		<div>
-			<input class="button" type="submit" wicket:id="submit"
-				value="Create tournament" />
+			<span><input class="seasoneButton" type="submit"
+				wicket:id="submit" value="Create tournament" /> </span> <span><input
+				class="seasoneButton" type="submit" wicket:id="back" value="Back" />
+			</span>
 		</div>
 	</form>
 

@@ -43,7 +43,7 @@ public interface TournamentAggregationDao {
 
     public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm);
 
-    public void createResult(Result result);
+    public Result createResult(Result result);
 
     public void updateResult(Result result);
 

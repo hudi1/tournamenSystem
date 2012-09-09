@@ -2,10 +2,11 @@ package org.toursys.repository.model;
 
 import java.io.Serializable;
 
+import org.apache.wicket.IClusterable;
 import org.sqlproc.engine.annotation.Pojo;
 
 @Pojo
-public class Player implements Serializable, Cloneable {
+public class Player implements Serializable, Cloneable, IClusterable {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,6 +54,20 @@ public class Player implements Serializable, Cloneable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Player other = (Player) obj;
+        if (playerId != other.playerId)
+            return false;
+        return true;
+    }
+
+    @Override
     public Player clone() {
         Player player = new Player();
         player.setClub(getClub());
@@ -62,4 +77,8 @@ public class Player implements Serializable, Cloneable {
         return player;
     }
 
+    @Override
+    public String toString() {
+        return "Player:" + playerId + " " + surname + " " + name;
+    }
 }

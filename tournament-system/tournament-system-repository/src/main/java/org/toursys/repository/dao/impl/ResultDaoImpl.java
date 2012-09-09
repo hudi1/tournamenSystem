@@ -9,9 +9,10 @@ import org.toursys.repository.model.Result;
 public class ResultDaoImpl extends BaseDaoImpl implements ResultDao {
 
     @Override
-    public void createResult(Result result) {
+    public Result createResult(Result result) {
         SqlSession session = getSqlSession();
         getCrudEngine("INSERT_RESULT").insert(session, result);
+        return result;
     }
 
     @Override

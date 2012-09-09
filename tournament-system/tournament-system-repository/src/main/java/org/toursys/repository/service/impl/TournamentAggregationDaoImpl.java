@@ -99,8 +99,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public void createResult(Result result) {
-        resultDao.createResult(result);
+    public Result createResult(Result result) {
+        return resultDao.createResult(result);
     }
 
     @Override

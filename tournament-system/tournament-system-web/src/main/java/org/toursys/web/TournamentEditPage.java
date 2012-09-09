@@ -6,8 +6,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.model.Tournament;
 
 public abstract class TournamentEditPage extends BasePage {
@@ -15,9 +14,6 @@ public abstract class TournamentEditPage extends BasePage {
     private static final long serialVersionUID = 1L;
 
     private BasePage pageFrom;
-
-    @SpringBean(name = "tournamentService")
-    TournamentService tournamentService;
 
     private class TournamentForm extends Form<Tournament> {
 
@@ -28,7 +24,7 @@ public abstract class TournamentEditPage extends BasePage {
             setOutputMarkupId(true);
             add(new TextField<String>("name"));
 
-            add(new Button("submit") {
+            add(new Button("submit", new StringResourceModel("save", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -44,7 +40,7 @@ public abstract class TournamentEditPage extends BasePage {
 
             });
 
-            add(new Button("back") {
+            add(new Button("back", new StringResourceModel("back", null)) {
 
                 private static final long serialVersionUID = 1L;
 

@@ -74,10 +74,9 @@ public class TournamentFactory {
 
     public static Game createGame() {
         Game game = new Game();
-        game.setGameId(id);
-        game.setOpponentId(id);
-        game.setPlayerResultId(id);
-        game.setResult(createResult());
+        /*
+         * game.setGameId(id); game.setOpponentId(id); game.setPlayerResultId(id); game.setResult(createResult());
+         */
         return game;
     }
 

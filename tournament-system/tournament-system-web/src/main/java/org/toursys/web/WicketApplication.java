@@ -39,6 +39,11 @@ public class WicketApplication extends WebApplication {
         mountPage("tournament", TournamentPage.class);
         mountPage("tournamentEdit", TournamentEditPage.class);
         mountPage("registration", RegistrationPage.class);
+        mountPage("group", GroupPage.class);
+        mountPage("player", PlayerPage.class);
+        mountPage("playerEdit", PlayerEditPage.class);
+        mountPage("schedule", SchedulePage.class);
+        mountPage("options", TournamentOptionsPage.class);
     }
 
     @Override
@@ -53,7 +58,7 @@ public class WicketApplication extends WebApplication {
             getMarkupSettings().setStripWicketTags(true);
             getMarkupSettings().setCompressWhitespace(true);
             getMarkupSettings().setDefaultAfterDisabledLink("");
-
+            this.getResourceSettings().setResourcePollFrequency(null);
         }
     }
 
@@ -72,6 +77,11 @@ public class WicketApplication extends WebApplication {
 
     public String getAppProp(String key) {
         return appProps.getProperty(key);
+    }
+
+    public static String getFilesPath() {
+        String path = WebApplication.get().getServletContext().getRealPath("/") + "/files/";
+        return path;
     }
 
 }

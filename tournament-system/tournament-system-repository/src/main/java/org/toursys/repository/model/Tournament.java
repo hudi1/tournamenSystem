@@ -15,11 +15,26 @@ public class Tournament implements Serializable, Cloneable {
 
     private long seasonId;
 
+    private int promotingA;
+
+    private int promotingLower;
+
+    private int winPoints;
+
+    private int playOffA;
+
+    private int playOffLower;
+
     public String getName() {
         return name;
     }
 
     public Tournament() {
+        winPoints = 2;
+        promotingA = 6;
+        promotingLower = 5;
+        playOffA = 16;
+        playOffLower = 8;
     }
 
     public long getTournamentId() {
@@ -48,7 +63,49 @@ public class Tournament implements Serializable, Cloneable {
         tournament.setSeasonId(getSeasonId());
         tournament.setName(getName());
         tournament.setTournamentId(getTournamentId());
+        tournament.setPromotingA(getPromotingA());
+        tournament.setPromotingLower(getPromotingLower());
         return tournament;
+    }
+
+    public int getPromotingA() {
+        return promotingA;
+    }
+
+    public void setPromotingA(int promotingA) {
+        this.promotingA = promotingA;
+    }
+
+    public int getPromotingLower() {
+        return promotingLower;
+    }
+
+    public void setPromotingLower(int promotingLower) {
+        this.promotingLower = promotingLower;
+    }
+
+    public int getWinPoints() {
+        return winPoints;
+    }
+
+    public void setWinPoints(int winPoints) {
+        this.winPoints = winPoints;
+    }
+
+    public int getPlayOffA() {
+        return playOffA;
+    }
+
+    public void setPlayOffA(int playOffA) {
+        this.playOffA = playOffA;
+    }
+
+    public int getPlayOffLower() {
+        return playOffLower;
+    }
+
+    public void setPlayOffLower(int playOffLower) {
+        this.playOffLower = playOffLower;
     }
 
 }

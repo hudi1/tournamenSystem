@@ -22,13 +22,30 @@
 				<a wicket:id="heading" href="#" title="Show main mage"> [heading
 					text] </a>
 			</h2>
-
-
+			<div class="language">
+				<wicket:message key="language">
+            language
+        </wicket:message>
+				<a href="#" wicket:id="goEn">EN</a>&#160; <a href="#"
+					wicket:id="goSk">SK</a>&#160;
+			</div>
 			<ul id="menu">
-				<li><a wicket:id="homePageMain">Main Page</a></li>
-				<li><a wicket:id="seasonPage">Season</a></li>
-				<li><a wicket:id="publicPage">Public page</a></li>
-				<li><a wicket:id="playerPage">Player page</a></li>
+				<li><a wicket:id="homePageMain"><wicket:message
+							key="homePageMain">
+            Main Page
+        </wicket:message></a></li>
+				<li><a wicket:id="seasonPage"><wicket:message
+							key="seasonPage">
+            Season
+        </wicket:message></a></li>
+				<li><a wicket:id="publicPage"><wicket:message
+							key="publicPage">
+            Public page
+        </wicket:message></a></li>
+				<li><a wicket:id="playerPage"><wicket:message
+							key="playerPage">
+            Player page
+        </wicket:message></a></li>
 			</ul>
 
 			<div id="page">

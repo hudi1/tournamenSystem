@@ -7,11 +7,18 @@
 </wicket:head>
 <wicket:extend>
 	<div wicket:id="feedbackPanel"></div>
-	<span wicket:id="navigator">[dataview navigator]</span>
-	<table>
+	<div class="naginator" wicket:id="navigator">[dataview navigator]</div>
+	<table class="seasoneTable">
 		<tr>
-			<th>Name</th>
-			<th></th>
+			<th><wicket:message key="name">
+           Name
+        </wicket:message></th>
+			<th><wicket:message key="edit">
+            Edit
+        </wicket:message></th>
+			<th><wicket:message key="delete">
+            Delete
+        </wicket:message></th>
 		</tr>
 		<tr wicket:id="rows">
 			<td><a wicket:id="details" href="#"> <span wicket:id="name">name</span>
@@ -21,20 +28,25 @@
 
 				<form wicket:id="editTournamentForm">
 					<div>
-						<input class="button" type="submit" wicket:id="editTournament"
-							value="edit tournament" />
+						<input class="seasoneButton" type="submit"
+							wicket:id="editTournament" value="edit tournament" />
 					</div>
 				</form>
 			</td>
 			<td><a wicket:id="deleteTournament" title="delete tournament"
-				class="button">detete tournament</a></td>
+				class="seasoneButton"><wicket:message key="deleteTournament">
+            delete tournament
+        </wicket:message></a></td>
 		</tr>
 	</table>
 
 	<form wicket:id="tournamentForm">
 		<div>
-			<input class="button" type="submit" wicket:id="newTournament"
-				value="new tournament" />
+			<span><input class="seasoneButton" type="submit"
+				wicket:id="newTournament" value="new tournament" /> </span> <span>
+				<input class="seasoneButton" type="submit" wicket:id="back"
+				value="Back" />
+			</span>
 		</div>
 	</form>
 </wicket:extend>

@@ -52,4 +52,9 @@ public class Result implements Serializable {
         this.overtime = overtime;
     }
 
+    @Override
+    public String toString() {
+        return "Result [leftSide=" + leftSide + ", rightSide=" + rightSide + "]";
+    }
+
 }

@@ -18,17 +18,12 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.model.Player;
 
 public class PlayerPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-
-    @SpringBean(name = "tournamentService")
-    TournamentService tournamentService;
 
     public PlayerPage() {
         createPage();
@@ -84,7 +79,11 @@ public class PlayerPage extends BasePage {
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deletePlayer(((Player) listItem.getDefaultModelObject()));
+                        try {
+                            tournamentService.deletePlayer(player);
+                        } catch (Exception e) {
+                            error("Cannot delete player. Make sure this player is not in any tournament");
+                        }
 
                         setResponsePage(new PlayerPage() {
                             private static final long serialVersionUID = 1L;
@@ -124,7 +123,7 @@ public class PlayerPage extends BasePage {
 
         public PlayerForm() {
             super("playerForm");
-            add(new Button("newPlayer") {
+            add(new Button("newPlayer", new StringResourceModel("newPlayer", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -145,7 +144,7 @@ public class PlayerPage extends BasePage {
 
         public EditPlayerForm(final Player player) {
             super("editPlayerForm");
-            add(new Button("editPlayer") {
+            add(new Button("editPlayer", new StringResourceModel("editPlayer", null)) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -168,7 +167,7 @@ public class PlayerPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("List of players");
+        return new StringResourceModel("playerList", null);
     }
 
 }
