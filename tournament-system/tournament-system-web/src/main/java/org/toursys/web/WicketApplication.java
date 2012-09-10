@@ -44,6 +44,7 @@ public class WicketApplication extends WebApplication {
         mountPage("playerEdit", PlayerEditPage.class);
         mountPage("schedule", SchedulePage.class);
         mountPage("options", TournamentOptionsPage.class);
+        mountPage("playOff", PlayOffPage.class);
     }
 
     @Override

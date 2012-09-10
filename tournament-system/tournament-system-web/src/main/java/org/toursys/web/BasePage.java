@@ -61,14 +61,20 @@ public abstract class BasePage extends WebPage {
         add(new BookmarkablePageLink<Void>("playerPage", PlayerPage.class).add(new AttributeModifier("class",
                 new ActiveReplaceModel(this instanceof PlayerPage))));
 
-        add(new Link("goSk") {
+        add(new Link<Void>("goSk") {
+
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick() {
                 getSession().setLocale(new Locale("sk", "SK"));
             }
         });
 
-        add(new Link("goEn") {
+        add(new Link<Void>("goEn") {
+
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick() {
                 getSession().setLocale(Locale.US);

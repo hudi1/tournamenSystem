@@ -1,6 +1,7 @@
 package org.toursys.web;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -27,11 +28,13 @@ public class SchedulePage extends BasePage {
     private Table table;
     private Tournament tournament;
     private BasePage basePage;
+    private List<Game> schedule;
 
     public SchedulePage(Tournament tournament, Table table, BasePage basePage) {
         this.table = table;
         this.tournament = tournament;
         this.basePage = basePage;
+        this.schedule = tournamentService.getSchedule(table, tournament);
         createPage();
     }
 
@@ -51,12 +54,12 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public Iterator<Game> iterator(int first, int count) {
-                    return tournamentService.getSchedule(table, tournament).subList(first, first + count).iterator();
+                    return schedule.subList(first, first + count).iterator();
                 }
 
                 @Override
                 public int size() {
-                    return tournamentService.getSchedule(table, tournament).size();
+                    return schedule.size();
                 }
 
                 @Override

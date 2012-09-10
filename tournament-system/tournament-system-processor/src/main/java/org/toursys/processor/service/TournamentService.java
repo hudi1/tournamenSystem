@@ -2,10 +2,13 @@ package org.toursys.processor.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.toursys.processor.cache.TournamentCache;
 import org.toursys.processor.comparators.AdvantageComparator;
 import org.toursys.processor.comparators.BasicComparator;
 import org.toursys.processor.comparators.RankComparator;
@@ -160,9 +163,7 @@ public class TournamentService {
         tournamentAggregationDao.updateResult(game1.getResult());
     }
 
-    public void createGames(Table table, Tournament tournament) {
-        List<PlayerResult> playerResults = tournamentAggregationDao.findPlayerResult(new PlayerResultForm(tournament,
-                table));
+    public void createGames(List<PlayerResult> playerResults) {
         if (!playerResults.isEmpty() && playerResults.get(0).getGames().size() < playerResults.size()) {
             for (PlayerResult playerResult1 : playerResults) {
                 for (PlayerResult playerResult2 : playerResults) {
@@ -409,19 +410,13 @@ public class TournamentService {
 
         if (!finalTables.isEmpty()) {
             for (Table finalTable : finalTables) {
-                List<PlayerResult> tablePlayerResult = tournamentAggregationDao.findPlayerResult(new PlayerResultForm(
-                        tournament, finalTable));
-                for (PlayerResult playerResult : tablePlayerResult) {
-                    for (Game game : playerResult.getGames()) {
-                        if (game.getGameId() != 0) {
-                            tournamentAggregationDao.deleteGame(game);
-                            tournamentAggregationDao.deleteResult(game.getResult());
-                        }
-                    }
-                }
-                for (PlayerResult playerResult : tablePlayerResult) {
-                    tournamentAggregationDao.deletePlayerResult(playerResult);
-                }
+                /*
+                 * List<PlayerResult> tablePlayerResult = tournamentAggregationDao.findPlayerResult(new
+                 * PlayerResultForm( tournament, finalTable)); for (PlayerResult playerResult : tablePlayerResult) { for
+                 * (Game game : playerResult.getGames()) { if (game.getGameId() != 0) {
+                 * tournamentAggregationDao.deleteGame(game); tournamentAggregationDao.deleteResult(game.getResult()); }
+                 * } }
+                 */
                 tournamentAggregationDao.deleteTable(finalTable);
             }
         }
@@ -491,9 +486,14 @@ public class TournamentService {
                 countLowerGroup++;
             }
 
-            // TODO ostatne skupiny
         }
-        createGames(finalTable, tournament);
+
+        finalTables = tournamentAggregationDao.findTable(new TableForm(tournament, TableType.F));
+        for (Table table : finalTables) {
+            List<PlayerResult> finalPlayer = tournamentAggregationDao.findPlayerResult(new PlayerResultForm(tournament,
+                    table));
+            createGames(finalPlayer);
+        }
     }
 
     public void copyResult(Tournament tournament) {
@@ -599,6 +599,11 @@ public class TournamentService {
         List<Table> finalTables = tournamentAggregationDao.findTable(new TableForm(tournament, TableType.F));
         List<Game> playOffGames = new LinkedList<Game>();
         for (Table table : finalTables) {
+
+            Game game = new Game();
+            game.setGameId(-1);
+            playOffGames.add(game);
+
             Table playOffTable = new Table();
             String playOffTableName = "P" + table.getName();
             playOffTable.setName(playOffTableName);
@@ -606,7 +611,6 @@ public class TournamentService {
             playOffTable.setTournamentId(tournament.getTournamentId());
 
             List<Table> playOffTables = tournamentAggregationDao.findTable(new TableForm(playOffTableName, tournament));
-            // TODO pridat unique na meno tabulky
             if (playOffTables.isEmpty()) {
                 tournamentAggregationDao.createTable(playOffTable);
                 playOffTable = tournamentAggregationDao.findTable(new TableForm(playOffTableName, tournament)).get(0);
@@ -633,7 +637,7 @@ public class TournamentService {
                     PlayerResult betterPlayer = new PlayerResult();
                     PlayerResult worsePlayer = new PlayerResult();
 
-                    if (currentPlayOff != playOffPlayer.size()) { // ??
+                    if (currentPlayOff != playOffPlayer.size()) {
                         for (PlayerResult playerResult : playOffPlayer) {
                             tournamentAggregationDao.deletePlayerResult(playerResult);
                         }
@@ -670,15 +674,17 @@ public class TournamentService {
             List<PlayerResult> finalPlayerResults = tournamentAggregationDao.findPlayerResult(new PlayerResultForm(
                     tournament, playOffTable));
             createPlayOffGames(finalPlayerResults, playOffGames);
+
         }
 
         return playOffGames;
     }
 
     private void createPlayOffGames(List<PlayerResult> finalPlayerResults, List<Game> playOffGames) {
-        playOffGames.add(new Game());
         List<PlayerResult> nextPlayerResults = new LinkedList<PlayerResult>();
         if (finalPlayerResults.size() > 1) {
+            playOffGames.add(new Game());
+
             for (int i = 0; i < finalPlayerResults.size() / 2; i++) {
 
                 List<Game> games = tournamentAggregationDao.findGame(new GameForm(finalPlayerResults.get(i),
@@ -730,5 +736,30 @@ public class TournamentService {
             tournamentAggregationDao.createResult(game.getResult());
             tournamentAggregationDao.createGame(game);
         }
+    }
+
+    // TODO
+    public void inicialize(Tournament tournament) {
+        Map<String, List<Table>> tablesMap = new HashMap<String, List<Table>>();
+        Map<Table, List<PlayerResult>> playersMap = new HashMap<Table, List<PlayerResult>>();
+
+        List<Table> tables = tournamentAggregationDao.findTable(new TableForm(tournament));
+
+        for (Table table : tables) {
+            if (tablesMap.get(table.getName()) == null) {
+                tablesMap.put(table.getName(), new ArrayList<Table>());
+            }
+            tablesMap.get(table.getName()).add(table);
+            List<PlayerResult> player = tournamentAggregationDao.findPlayerResult(new PlayerResultForm(tournament,
+                    table));
+            if (playersMap.get(table) == null) {
+                playersMap.put(table, new ArrayList<PlayerResult>());
+            }
+            playersMap.get(table).addAll(player);
+        }
+        TournamentCache tournamentCache = TournamentCache.getInstance();
+        tournamentCache.setTables(tablesMap);
+        tournamentCache.setPlayers(playersMap);
+
     }
 }

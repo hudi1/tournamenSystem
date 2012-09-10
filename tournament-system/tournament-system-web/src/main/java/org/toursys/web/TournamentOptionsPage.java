@@ -20,6 +20,8 @@ public abstract class TournamentOptionsPage extends BasePage {
     private Tournament tournament;
     private Table table;
     private BasePage basePage;
+    boolean isTournamentOptionsOn;
+    boolean isTableOptionsOn;
 
     private class TableOptionsForm extends Form<Table> {
 
@@ -43,8 +45,8 @@ public abstract class TournamentOptionsPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.updateTable(table);
-                    tournamentService.updateTournament(tournament);
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage) {
+                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, isTableOptionsOn,
+                            isTournamentOptionsOn) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -90,7 +92,8 @@ public abstract class TournamentOptionsPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.updateTournament(tournament);
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage) {
+                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, isTableOptionsOn,
+                            isTournamentOptionsOn) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -111,12 +114,61 @@ public abstract class TournamentOptionsPage extends BasePage {
         }
     }
 
-    public TournamentOptionsPage(Tournament tournament, Table table, BasePage basePage) {
+    private class SelectOptionsForm extends Form<Void> {
+
+        private static final long serialVersionUID = 1L;
+
+        public SelectOptionsForm() {
+            super("selectOptionsForm");
+            setOutputMarkupId(true);
+
+            add(new Button("table", new StringResourceModel("table", null)) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, true, false) {
+
+                        private static final long serialVersionUID = 1L;
+                    });
+                }
+
+            });
+
+            add(new Button("tournament", new StringResourceModel("tournament", null)) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, false, true) {
+
+                        private static final long serialVersionUID = 1L;
+                    });
+                }
+
+            });
+
+        }
+    }
+
+    public TournamentOptionsPage(Tournament tournament, Table table, BasePage basePage, boolean isTableOptionsOn,
+            boolean isTournamentOptionsOn) {
         this.basePage = basePage;
         this.tournament = tournament;
         this.table = table;
-        add(new TableOptionsForm(table));
-        add(new TournamentOptionsForm(tournament));
+        this.isTableOptionsOn = isTableOptionsOn;
+        this.isTournamentOptionsOn = isTournamentOptionsOn;
+        TableOptionsForm tableForm = new TableOptionsForm(table);
+        add(tableForm);
+        tableForm.setVisible(isTableOptionsOn);
+
+        TournamentOptionsForm tournamentForm = new TournamentOptionsForm(tournament);
+        add(tournamentForm);
+        tournamentForm.setVisible(isTournamentOptionsOn);
+
+        add(new SelectOptionsForm());
     }
 
     @Override

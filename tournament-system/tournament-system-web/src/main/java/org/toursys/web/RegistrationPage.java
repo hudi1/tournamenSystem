@@ -213,7 +213,9 @@ public class RegistrationPage extends BasePage {
                     List<Table> tables = tournamentService.findTable(new TableForm(null, tournament));
                     if (!tables.isEmpty()) {
                         table = tables.get(0);
-                        tournamentService.createGames(table, tournament);
+                        List<PlayerResult> player = tournamentService.findPlayerResult(new PlayerResultForm(tournament,
+                                table));
+                        tournamentService.createGames(player);
                     }
                     setResponsePage(new GroupPage(tournament, table, basePage));
                 }

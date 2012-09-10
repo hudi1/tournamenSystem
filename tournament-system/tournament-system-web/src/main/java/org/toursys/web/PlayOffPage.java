@@ -1,5 +1,6 @@
 package org.toursys.web;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
@@ -21,7 +23,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
+import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.form.GameForm;
 import org.toursys.repository.form.TableForm;
 import org.toursys.repository.model.Game;
@@ -88,6 +92,7 @@ public class PlayOffPage extends BasePage {
 
                 private static final long serialVersionUID = 1L;
                 private Integer round = 1;
+                private byte[] nextTableByte = new byte[1];
 
                 @Override
                 protected void populateItem(final Item<Game> listItem) {
@@ -95,6 +100,10 @@ public class PlayOffPage extends BasePage {
                     listItem.setModel(new CompoundPropertyModel<Game>(game));
                     PlayerResult playerResult = game.getPlayerResult();
                     PlayerResult opponent = game.getOpponent();
+
+                    if (listItem.getIndex() == 0) {
+                        nextTableByte[0] = (byte) 65;
+                    }
 
                     List<Game> actualGames;
                     if (playerResult != null && opponent != null) {
@@ -106,7 +115,7 @@ public class PlayOffPage extends BasePage {
                                 + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
                                         + opponent.getPlayer().getSurname())));
                         actualGames = tournamentService.findGame(new GameForm(playerResult, opponent));
-                    } else {
+                    } else if (game.getGameId() == 0) {
 
                         ValueMap map = new ValueMap();
                         map.put("roundCount", round);
@@ -118,6 +127,13 @@ public class PlayOffPage extends BasePage {
                             listItem.add(new Label("players", ""));
                         }
                         actualGames = new ArrayList<Game>();
+                    } else {
+                        ValueMap map = new ValueMap();
+                        map.put("groupName", new String(nextTableByte));
+                        listItem.add(new Label("players", new StringResourceModel("group", new Model<ValueMap>(map))));
+                        actualGames = new ArrayList<Game>();
+                        round = 1;
+                        nextTableByte[0]++;
                     }
 
                     ListView<Game> gameList = new ListView<Game>("gameList", actualGames) {
@@ -179,6 +195,25 @@ public class PlayOffPage extends BasePage {
                     setResponsePage(new PlayOffPage(tournament, basePage));
                 }
             });
+
+            DownloadLink pdfPlayOff = new DownloadLink("pdfPlayOff", new AbstractReadOnlyModel<File>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public File getObject() {
+                    File tempFile;
+                    try {
+                        tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), games);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                    return tempFile;
+                }
+            }/* , new ResourceModel("sheets") /* TODO this doesnt work ?? */);
+            pdfPlayOff.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+
+            add(pdfPlayOff);
         }
     }
 

@@ -87,6 +87,14 @@ public class Table implements Serializable, Cloneable {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (tournamentId ^ (tournamentId >>> 32));
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -95,7 +103,7 @@ public class Table implements Serializable, Cloneable {
         if (getClass() != obj.getClass())
             return false;
         Table other = (Table) obj;
-        if (tableId != other.tableId)
+        if (tournamentId != other.tournamentId)
             return false;
         return true;
     }

@@ -239,7 +239,7 @@ public class GroupPage extends BasePage {
 
                         @Override
                         public void onSubmit() {
-                            tournamentService.createGames(table, tournament);
+                            tournamentService.createGames(playerResults);
                             setResponsePage(new GroupPage(tournament, table, basePage));
                         }
                     };
@@ -277,7 +277,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage) {
+                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, false, false) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -375,6 +375,25 @@ public class GroupPage extends BasePage {
                     });
                 }
             });
+
+            DownloadLink printTable = new DownloadLink("pdfTable", new AbstractReadOnlyModel<File>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public File getObject() {
+                    File tempFile;
+                    try {
+                        tempFile = PdfFactory.createTable(WicketApplication.getFilesPath(), playerResults, table);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                    return tempFile;
+                }
+            }/* , new ResourceModel("sheets") /* TODO this doesnt work ?? */);
+            sheets.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+
+            add(printTable);
 
             if (table.getTableId() == 0) {
                 options.setVisible(false);
