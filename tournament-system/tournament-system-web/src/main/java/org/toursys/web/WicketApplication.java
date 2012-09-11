@@ -1,20 +1,20 @@
 package org.toursys.web;
 
 import java.util.Locale;
-import java.util.Properties;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
+import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
 public class WicketApplication extends WebApplication {
 
     boolean isInitialized = false;
-    private Locale locale;
-    private Properties appProps;
 
     public static WicketApplication get() {
         Application application = Application.get();
@@ -27,13 +27,9 @@ public class WicketApplication extends WebApplication {
         return (WicketApplication) application;
     }
 
-    public Locale getLocale() {
-        return locale;
-    }
-
     private void mountPages() {
         mountPage("home", HomePage.class);
-        mountPage("public", PublicPage.class);
+        mountPage("statistic", StatisticPage.class);
         mountPage("seasonEdit", SeasonEditPage.class);
         mountPage("season", SeasonPage.class);
         mountPage("tournament", TournamentPage.class);
@@ -64,7 +60,13 @@ public class WicketApplication extends WebApplication {
     }
 
     private void initConfiguration() {
+    }
 
+    @Override
+    public Session newSession(Request request, Response response) {
+        Session session = super.newSession(request, response);
+        session.setLocale(Locale.US);
+        return session;
     }
 
     private void addListeners() {
@@ -76,12 +78,8 @@ public class WicketApplication extends WebApplication {
         return HomePage.class;
     }
 
-    public String getAppProp(String key) {
-        return appProps.getProperty(key);
-    }
-
     public static String getFilesPath() {
-        String path = WebApplication.get().getServletContext().getRealPath("/") + "/files/";
+        String path = WebApplication.get().getServletContext().getRealPath("/") + "/";
         return path;
     }
 

@@ -3,6 +3,7 @@ package org.toursys.web;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -21,8 +22,8 @@ public abstract class PlayerEditPage extends BasePage {
         public PlayerForm(final Player player) {
             super("playerEditForm", new CompoundPropertyModel<Player>(player));
             setOutputMarkupId(true);
-            add(new TextField<String>("name"));
-            add(new TextField<String>("surname"));
+            add(new TextField<String>("name").setRequired(true));
+            add(new TextField<String>("surname").setRequired(true));
             add(new TextField<String>("club"));
 
             add(new Button("submit", new StringResourceModel("submit", null)) {
@@ -63,6 +64,7 @@ public abstract class PlayerEditPage extends BasePage {
     public PlayerEditPage(BasePage pageFrom, Player player) {
         this.pageFrom = pageFrom;
         add(new PlayerForm(player));
+        add(new FeedbackPanel("feedbackPanel"));
     }
 
     @Override

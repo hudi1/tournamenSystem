@@ -38,7 +38,7 @@ public class PdfFactory {
 
     public static File createTable(String path, List<PlayerResult> players, Table table) throws Exception {
         Document document = new Document();
-        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH:mm:ss");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
         File file = new File(path + "table" + df.format(new Date()) + ".pdf");
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
@@ -106,7 +106,7 @@ public class PdfFactory {
 
     public static File createSchedule(String path, List<Game> schedule) throws Exception {
         Document document = new Document();
-        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH:mm:ss");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
         File file = new File(path + "schedule" + df.format(new Date()) + ".pdf");
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
@@ -205,119 +205,121 @@ public class PdfFactory {
 
     public static File createSheets(String path, List<Game> schedule, Table table) throws Exception {
         Document document = new Document();
-        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH:mm:ss");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
         File file = new File(path + "sheets" + df.format(new Date()) + ".pdf");
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
         document.open();
 
         LinkedHashMap<PlayerResult, List<Game>> wholeSheets = new LinkedHashMap<PlayerResult, List<Game>>();
-        int maxRound = schedule.get(schedule.size() - 1).getRound();
-        int spaceCount = 0;
-        if (maxRound > 30) {
-            spaceCount = 1;
-        } else if (maxRound > 20) {
-            spaceCount = 2;
-        } else if (maxRound > 10) {
-            spaceCount = 4;
-        } else {
-            spaceCount = 6;
-        }
-        for (Game game : schedule) {
-            if (wholeSheets.get(game.getOpponent()) == null) {
-                wholeSheets.put(game.getOpponent(), new ArrayList<Game>());
+        if (!schedule.isEmpty()) {
+            int maxRound = schedule.get(schedule.size() - 1).getRound();
+            int spaceCount = 0;
+            if (maxRound > 30) {
+                spaceCount = 1;
+            } else if (maxRound > 20) {
+                spaceCount = 2;
+            } else if (maxRound > 10) {
+                spaceCount = 4;
+            } else {
+                spaceCount = 6;
             }
-            if (wholeSheets.get(game.getPlayerResult()) == null) {
-                wholeSheets.put(game.getPlayerResult(), new ArrayList<Game>());
-            }
+            for (Game game : schedule) {
+                if (wholeSheets.get(game.getOpponent()) == null) {
+                    wholeSheets.put(game.getOpponent(), new ArrayList<Game>());
+                }
+                if (wholeSheets.get(game.getPlayerResult()) == null) {
+                    wholeSheets.put(game.getPlayerResult(), new ArrayList<Game>());
+                }
 
-            wholeSheets.get(game.getOpponent()).add(game);
-            wholeSheets.get(game.getPlayerResult()).add(game);
-        }
-
-        for (int i = 0; i <= wholeSheets.size() / PLAYERS_PER_PAGE; i++) {
-            int toIndex = i * PLAYERS_PER_PAGE + PLAYERS_PER_PAGE - 1;
-            if (i == wholeSheets.size()) {
-                toIndex = i * PLAYERS_PER_PAGE + wholeSheets.size() % PLAYERS_PER_PAGE;
-            }
-            Map sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
-
-            if (sheets.size() == 0) {
-                break;
+                wholeSheets.get(game.getOpponent()).add(game);
+                wholeSheets.get(game.getPlayerResult()).add(game);
             }
 
-            PdfPTable pdfTable = new PdfPTable(sheets.size());
-            pdfTable.setHeaderRows(1);
+            for (int i = 0; i <= wholeSheets.size() / PLAYERS_PER_PAGE; i++) {
+                int toIndex = i * PLAYERS_PER_PAGE + PLAYERS_PER_PAGE - 1;
+                if (i == wholeSheets.size()) {
+                    toIndex = i * PLAYERS_PER_PAGE + wholeSheets.size() % PLAYERS_PER_PAGE;
+                }
+                Map sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
 
-            pdfTable.setTotalWidth(LISTS_TABLE_WIDTH * sheets.size());
-            pdfTable.setLockedWidth(true);
-            pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+                if (sheets.size() == 0) {
+                    break;
+                }
 
-            document.setPageSize(PageSize.A4.rotate());
-            document.newPage();
+                PdfPTable pdfTable = new PdfPTable(sheets.size());
+                pdfTable.setHeaderRows(1);
 
-            Set<Entry<PlayerResult, List<Game>>> entrySet = sheets.entrySet();
+                pdfTable.setTotalWidth(LISTS_TABLE_WIDTH * sheets.size());
+                pdfTable.setLockedWidth(true);
+                pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
 
-            // hlavicka
-            for (Map.Entry<PlayerResult, List<Game>> entry : entrySet) {
-                PlayerResult playerResult = entry.getKey();
-                pdfTable.addCell(createCell("(" + table.getName() + ") " + playerResult.getPlayer().getSurname() + " "
-                        + playerResult.getPlayer().getName().charAt(0)));
-            }
+                document.setPageSize(PageSize.A4.rotate());
+                document.newPage();
 
-            // hokeje
-            for (int j = 0; j < sheets.size(); j++) {
-                PdfPCell cell = new PdfPCell(new Phrase("         H", new Font(Font.FontFamily.TIMES_ROMAN, 10)));
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBorder(Rectangle.NO_BORDER);
-                pdfTable.addCell(cell);
-            }
+                Set<Entry<PlayerResult, List<Game>>> entrySet = sheets.entrySet();
 
-            for (Map.Entry<PlayerResult, List<Game>> entry : entrySet) {
-                PlayerResult playerResult = entry.getKey();
-                List<Game> games = entry.getValue();
+                // hlavicka
+                for (Map.Entry<PlayerResult, List<Game>> entry : entrySet) {
+                    PlayerResult playerResult = entry.getKey();
+                    pdfTable.addCell(createCell("(" + table.getName() + ") " + playerResult.getPlayer().getSurname()
+                            + " " + playerResult.getPlayer().getName().charAt(0)));
+                }
 
-                PdfPTable nestedTable = new PdfPTable(3);
-                nestedTable.setHeaderRows(0);
-                nestedTable.setTotalWidth(LISTS_TABLE_WIDTH);
-                nestedTable.setLockedWidth(true);
-                nestedTable.setWidths(new float[] { 2f, 2f, 10f });
+                // hokeje
+                for (int j = 0; j < sheets.size(); j++) {
+                    PdfPCell cell = new PdfPCell(new Phrase("         H", new Font(Font.FontFamily.TIMES_ROMAN, 10)));
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setBorder(Rectangle.NO_BORDER);
+                    pdfTable.addCell(cell);
+                }
 
-                int round = 1;
-                for (Game game : games) {
-                    Player player;
-                    if (game.getOpponent().equals(playerResult)) {
-                        player = game.getPlayerResult().getPlayer();
-                    } else {
-                        player = game.getOpponent().getPlayer();
-                    }
+                for (Map.Entry<PlayerResult, List<Game>> entry : entrySet) {
+                    PlayerResult playerResult = entry.getKey();
+                    List<Game> games = entry.getValue();
 
-                    while (round != game.getRound()) {
-                        nestedTable.addCell(createCell(round + ")"));
-                        nestedTable.addCell(createCell("-"));
-                        nestedTable.addCell(createCell("-------"));
+                    PdfPTable nestedTable = new PdfPTable(3);
+                    nestedTable.setHeaderRows(0);
+                    nestedTable.setTotalWidth(LISTS_TABLE_WIDTH);
+                    nestedTable.setLockedWidth(true);
+                    nestedTable.setWidths(new float[] { 2f, 2f, 10f });
+
+                    int round = 1;
+                    for (Game game : games) {
+                        Player player;
+                        if (game.getOpponent().equals(playerResult)) {
+                            player = game.getPlayerResult().getPlayer();
+                        } else {
+                            player = game.getOpponent().getPlayer();
+                        }
+
+                        while (round != game.getRound()) {
+                            nestedTable.addCell(createCell(round + ")"));
+                            nestedTable.addCell(createCell("-"));
+                            nestedTable.addCell(createCell("-------"));
+
+                            for (int j = 0; j < spaceCount; j++) {
+                                nestedTable.addCell(createEmptyCell());
+                            }
+                            round++;
+                        }
+
+                        nestedTable.addCell(createCell(game.getRound() + ")"));
+                        nestedTable.addCell(createCell(game.getHockey().toString()));
+                        nestedTable.addCell(createCell(player.getSurname() + " " + player.getName().charAt(0)));
+
+                        round++;
 
                         for (int j = 0; j < spaceCount; j++) {
                             nestedTable.addCell(createEmptyCell());
                         }
-                        round++;
                     }
-
-                    nestedTable.addCell(createCell(game.getRound() + ")"));
-                    nestedTable.addCell(createCell(game.getHockey().toString()));
-                    nestedTable.addCell(createCell(player.getSurname() + " " + player.getName().charAt(0)));
-
-                    round++;
-
-                    for (int j = 0; j < spaceCount; j++) {
-                        nestedTable.addCell(createEmptyCell());
-                    }
+                    PdfPCell cell = createEmptyCell();
+                    cell.addElement(nestedTable);
+                    pdfTable.addCell(cell);
                 }
-                PdfPCell cell = createEmptyCell();
-                cell.addElement(nestedTable);
-                pdfTable.addCell(cell);
-            }
-            document.add(pdfTable);
+                document.add(pdfTable);
 
+            }
         }
 
         if (document.getPageNumber() == 0) {
@@ -412,7 +414,7 @@ public class PdfFactory {
     public static File createPlayOff(String path, List<Game> games) throws Exception {
 
         Document document = new Document();
-        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH:mm:ss");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
         File file = new File(path + "playOff" + df.format(new Date()) + ".pdf");
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 

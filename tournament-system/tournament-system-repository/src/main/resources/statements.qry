@@ -94,24 +94,7 @@ GET_PLAYER_RESULT(QRY)=
 		     {& t.table_type = :tournamentTable.tableType}		
 		     {& p.id = :player.playerId}		
 	} order by r.id
-	;	
-	
-	GET_GAME(QRY)=
-	select g.id @gameId, r.id @result.resultId, g.opponent_id @opponent.playerResultId, g.player_result_id @playerResult.playerResultId, 
-	p1.name @playerResult.player.name, p1.surname @playerResult.player.surname,  
-	p2.name @opponent.player.name, p2.surname @opponent.player.surname,  	
-	r.left_side @result.leftSide, r.right_side @result.rightSide, r.overtime @result.overtime
-	from GAME g  join RESULT r on g.result_id = r.id
-				 join PLAYER_RESULT pr1 on g.player_result_id = pr1.id
-				 join PLAYER_RESULT pr2 on g.opponent_id = pr2.id
-				 join PLAYER p1 on pr1.player_id = p1.id
-				 join PLAYER p2 on pr2.player_id = p2.id				
-	{= where {& g.opponent_id = :opponent.playerResultId} 
-		     {& g.player_result_id = :playerResult.playerResultId}			     		    
-	} 
-	;
-	
-	
+	;		
 	
 INSERT_RESULT(CRUD)=	
 	insert into RESULT(id,left_side, right_side, overtime)

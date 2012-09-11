@@ -47,10 +47,9 @@ public class GroupPage extends BasePage {
         this.basePage = basePage;
         this.table = group;
         this.tournament = tournament;
-        this.playerResults = tournamentService.findPlayerResult(new PlayerResultForm(tournament, table));
+        this.playerResults = tournamentService.findPlayerResult(new PlayerResultForm(tournament, group));
         calculatePlayerResults();
         createPage();
-
     }
 
     private void calculatePlayerResults() {
@@ -239,12 +238,14 @@ public class GroupPage extends BasePage {
 
                         @Override
                         public void onSubmit() {
-                            tournamentService.createGames(playerResults);
+                            tournamentService.createGames(tournamentService.findPlayerResult(new PlayerResultForm(
+                                    tournament, table)));
                             setResponsePage(new GroupPage(tournament, table, basePage));
                         }
                     };
 
-                    if (GroupPage.this.table.equals(table)) {
+                    if (GroupPage.this.table.getName().equals(table.getName())) {
+                        System.out.println("?????????");
                         button.add(new AttributeModifier("class", "activeSeasoneButton"));
                     }
 
