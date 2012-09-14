@@ -1,5 +1,7 @@
 package org.toursys.web;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -86,6 +88,12 @@ public class RegistrationPage extends BasePage {
 
                 @Override
                 public Iterator<Player> iterator(int first, int count) {
+                    Collections.sort(notRegistratedPlayer, new Comparator<Player>() {
+                        @Override
+                        public int compare(Player p1, Player p2) {
+                            return p1.getSurname().compareTo(p2.getSurname());
+                        }
+                    });
                     return notRegistratedPlayer.subList(first, first + count).iterator();
                 }
 

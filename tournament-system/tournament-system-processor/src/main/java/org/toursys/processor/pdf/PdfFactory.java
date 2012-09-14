@@ -34,7 +34,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PdfFactory {
 
     private static final int PLAYERS_PER_PAGE = 6;
-    private static final int LISTS_TABLE_WIDTH = 120;
+    private static final int LISTS_TABLE_WIDTH = 134;
 
     public static File createTable(String path, List<PlayerResult> players, Table table) throws Exception {
         Document document = new Document();
@@ -214,15 +214,16 @@ public class PdfFactory {
         if (!schedule.isEmpty()) {
             int maxRound = schedule.get(schedule.size() - 1).getRound();
             int spaceCount = 0;
-            if (maxRound > 30) {
-                spaceCount = 1;
-            } else if (maxRound > 20) {
-                spaceCount = 2;
+            if (maxRound > 15) {
+                spaceCount = 0;
             } else if (maxRound > 10) {
-                spaceCount = 4;
+                spaceCount = 1;
+            } else if (maxRound > 5) {
+                spaceCount = 3;
             } else {
                 spaceCount = 6;
             }
+
             for (Game game : schedule) {
                 if (wholeSheets.get(game.getOpponent()) == null) {
                     wholeSheets.put(game.getOpponent(), new ArrayList<Game>());
@@ -240,7 +241,7 @@ public class PdfFactory {
                 if (i == wholeSheets.size()) {
                     toIndex = i * PLAYERS_PER_PAGE + wholeSheets.size() % PLAYERS_PER_PAGE;
                 }
-                Map sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
+                Map<PlayerResult, List<Game>> sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
 
                 if (sheets.size() == 0) {
                     break;
@@ -267,7 +268,8 @@ public class PdfFactory {
 
                 // hokeje
                 for (int j = 0; j < sheets.size(); j++) {
-                    PdfPCell cell = new PdfPCell(new Phrase("         H", new Font(Font.FontFamily.TIMES_ROMAN, 10)));
+                    PdfPCell cell = new PdfPCell(new Phrase("                H", new Font(Font.FontFamily.TIMES_ROMAN,
+                            10)));
                     cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell.setBorder(Rectangle.NO_BORDER);
                     pdfTable.addCell(cell);
@@ -281,15 +283,18 @@ public class PdfFactory {
                     nestedTable.setHeaderRows(0);
                     nestedTable.setTotalWidth(LISTS_TABLE_WIDTH);
                     nestedTable.setLockedWidth(true);
-                    nestedTable.setWidths(new float[] { 2f, 2f, 10f });
+                    nestedTable.setWidths(new float[] { 4f, 4f, 10f });
 
                     int round = 1;
                     for (Game game : games) {
                         Player player;
+                        String side;
                         if (game.getOpponent().equals(playerResult)) {
                             player = game.getPlayerResult().getPlayer();
+                            side = "S";
                         } else {
                             player = game.getOpponent().getPlayer();
+                            side = "F";
                         }
 
                         while (round != game.getRound()) {
@@ -299,17 +304,22 @@ public class PdfFactory {
 
                             for (int j = 0; j < spaceCount; j++) {
                                 nestedTable.addCell(createEmptyCell());
+                                nestedTable.addCell(createEmptyCell());
+                                nestedTable.addCell(createEmptyCell());
                             }
                             round++;
                         }
 
                         nestedTable.addCell(createCell(game.getRound() + ")"));
-                        nestedTable.addCell(createCell(game.getHockey().toString()));
-                        nestedTable.addCell(createCell(player.getSurname() + " " + player.getName().charAt(0)));
+                        nestedTable.addCell(createCell(game.getHockey().toString() + side));
+                        nestedTable
+                                .addCell(createLeftAlignCell(player.getSurname() + " " + player.getName().charAt(0)));
 
                         round++;
 
                         for (int j = 0; j < spaceCount; j++) {
+                            nestedTable.addCell(createEmptyCell());
+                            nestedTable.addCell(createEmptyCell());
                             nestedTable.addCell(createEmptyCell());
                         }
                     }

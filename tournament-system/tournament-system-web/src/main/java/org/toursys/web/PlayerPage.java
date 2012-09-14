@@ -1,13 +1,15 @@
 package org.toursys.web;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -17,6 +19,7 @@ import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -32,26 +35,47 @@ public class PlayerPage extends BasePage {
     }
 
     private void createPage() {
-        /*
-         * IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
-         * 
-         * private static final long serialVersionUID = 1L;
-         * 
-         * @Override public Iterator<Player> iterator(int first, int count) { return
-         * tournamentService.getAllPlayer().subList(first, first + count).iterator(); }
-         * 
-         * @Override public int size() { return tournamentService.getAllPlayer().size(); }
-         * 
-         * @Override public IModel<Player> model(final Player object) { return new LoadableDetachableModel<Player>() {
-         * 
-         * private static final long serialVersionUID = 1L;
-         * 
-         * @Override protected Player load() { return object; } }; }
-         * 
-         * @Override public void detach() { } };
-         */
-        SortablePlayerDataProvider dp = new SortablePlayerDataProvider();
-        final DataView<Player> dataView = new DataView<Player>("rows", dp, 10) {
+
+        IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<Player> iterator(int first, int count) {
+                List<Player> allPlayer = tournamentService.getAllPlayer();
+                Collections.sort(allPlayer, new Comparator<Player>() {
+                    @Override
+                    public int compare(Player p1, Player p2) {
+                        return p1.getSurname().compareTo(p2.getSurname());
+                    }
+                });
+                return allPlayer.subList(first, first + count).iterator();
+            }
+
+            @Override
+            public int size() {
+                return tournamentService.getAllPlayer().size();
+            }
+
+            @Override
+            public IModel<Player> model(final Player object) {
+                return new LoadableDetachableModel<Player>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected Player load() {
+                        return object;
+                    }
+                };
+            }
+
+            @Override
+            public void detach() {
+            }
+        };
+
+        final DataView<Player> dataView = new DataView<Player>("rows", playerDataProvider, 10) {
 
             private static final long serialVersionUID = 1L;
 
@@ -100,24 +124,6 @@ public class PlayerPage extends BasePage {
         };
 
         add(dataView);
-
-        add(new OrderByBorder("orderByName", "name", dp) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSortChanged() {
-                dataView.setCurrentPage(0);
-            }
-        });
-
-        add(new OrderByBorder("orderBySurname", "surname", dp) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSortChanged() {
-                dataView.setCurrentPage(0);
-            }
-        });
 
         add(new PagingNavigator("navigator", dataView));
         add(new PlayerForm());
@@ -184,6 +190,8 @@ public class PlayerPage extends BasePage {
 
         public SortablePlayerDataProvider() {
             setSort("surname", SortOrder.ASCENDING);
+            System.out.println("?????????????");
+            System.out.println(getSort() + "!!!!!!!!!!");
         }
 
         @Override

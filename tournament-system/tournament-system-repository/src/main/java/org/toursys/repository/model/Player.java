@@ -2,11 +2,10 @@ package org.toursys.repository.model;
 
 import java.io.Serializable;
 
-import org.apache.wicket.IClusterable;
 import org.sqlproc.engine.annotation.Pojo;
 
 @Pojo
-public class Player implements Serializable, Cloneable, IClusterable {
+public class Player implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +53,16 @@ public class Player implements Serializable, Cloneable, IClusterable {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((club == null) ? 0 : club.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (int) (playerId ^ (playerId >>> 32));
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -62,6 +71,16 @@ public class Player implements Serializable, Cloneable, IClusterable {
         if (getClass() != obj.getClass())
             return false;
         Player other = (Player) obj;
+        if (club == null) {
+            if (other.club != null)
+                return false;
+        } else if (!club.equals(other.club))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         if (playerId != other.playerId)
             return false;
         return true;

@@ -147,7 +147,7 @@ public class PlayOffPage extends BasePage {
                             gameItem.add(new TextField<String>("leftSide", new PropertyModel<String>(game,
                                     "result.leftSide")));
                             gameItem.add(new TextField<String>("rightSide", new PropertyModel<String>(game,
-                                    "result.rightSide")));
+                                    "result.rightSideOvertime")));
                         }
                     };
 

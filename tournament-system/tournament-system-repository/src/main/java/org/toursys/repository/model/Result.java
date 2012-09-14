@@ -15,6 +15,8 @@ public class Result implements Serializable {
 
     private Integer rightSide;
 
+    private String rightSideOvertime;
+
     private Boolean overtime;
 
     public Result() {
@@ -42,6 +44,7 @@ public class Result implements Serializable {
 
     public void setRightSide(Integer rightSide) {
         this.rightSide = rightSide;
+        this.rightSideOvertime = String.valueOf(rightSide);
     }
 
     public Boolean getOvertime() {
@@ -50,11 +53,35 @@ public class Result implements Serializable {
 
     public void setOvertime(Boolean overtime) {
         this.overtime = overtime;
+        if (overtime != null && overtime)
+            this.rightSideOvertime += "P";
+    }
+
+    public String getRightSideOvertime() {
+        return rightSideOvertime;
+    }
+
+    public void setRightSideOvertime(String rightSideOvertime) {
+        this.rightSideOvertime = rightSideOvertime;
+        try {
+            this.rightSide = Integer.parseInt(rightSideOvertime);
+            this.overtime = false;
+        } catch (NumberFormatException e) {
+            if (rightSideOvertime.toUpperCase().indexOf("P") != -1) {
+                this.overtime = true;
+                try {
+                    this.rightSide = Integer
+                            .parseInt(rightSideOvertime.substring(0, rightSideOvertime.indexOf("P") + 1));
+                } catch (NumberFormatException e1) {
+
+                }
+            }
+        }
     }
 
     @Override
     public String toString() {
-        return "Result [leftSide=" + leftSide + ", rightSide=" + rightSide + "]";
+        return "Result [leftSide=" + leftSide + ", rightSide=" + rightSide + "]" + rightSideOvertime;
     }
 
 }

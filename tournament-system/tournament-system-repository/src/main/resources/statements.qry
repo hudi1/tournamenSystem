@@ -89,7 +89,7 @@ GET_PLAYER_RESULT(QRY)=
 							left join RESULT re on g.result_id = re.id	
 							left join PLAYER_RESULT pr2 on g.opponent_id = pr2.id
 							left join PLAYER p2 on pr2.player_id = p2.id
-	{= where {? :table     |{& r.tournament_table_id = :tournamentTable.tableId}}
+	{= where {? :table | {& r.tournament_table_id = :tournamentTable.tableId}}
 		     {& t.tournament_id = :tournament.tournamentId}		
 		     {& t.table_type = :tournamentTable.tableType}		
 		     {& p.id = :player.playerId}		
