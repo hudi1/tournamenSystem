@@ -3,76 +3,78 @@ package org.toursys.repository.service;
 import java.util.List;
 
 import org.toursys.repository.form.GameForm;
+import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.form.PlayerResultForm;
-import org.toursys.repository.form.TableForm;
-import org.toursys.repository.form.TournamentForm;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Season;
-import org.toursys.repository.model.Table;
 import org.toursys.repository.model.Tournament;
 
 public interface TournamentAggregationDao {
 
-    public void createGame(Game game);
+    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer);
 
-    public void updateGame(Game game);
+    public Game updateGame(Game game);
 
-    public void deleteGame(Game game);
+    public boolean deleteGame(Game game);
+
+    public Game getGame(Game game);
 
     public List<Game> findGame(GameForm gameForm);
 
-    public void createPlayer(Player player);
+    public Tournament createGroup(Tournament tournament, Groups... groups);
 
-    public void updatePlayer(Player player);
+    public Groups updateGroup(Groups group);
 
-    public void deletePlayer(Player player);
+    public boolean deleteGroup(Groups group);
 
-    public List<Player> getAllPlayer();
+    public Groups getGroup(Groups group);
 
-    public List<Player> getNotRegistrationPlayer(PlayerForm playerForm);
+    public List<Groups> findGroups(GroupForm groupForm);
 
-    public void createPlayerResult(PlayerResult playerResult);
+    public Player createPlayer(Player player);
 
-    public void updatePlayerResult(PlayerResult playerResult);
+    public Player updatePlayer(Player player);
 
-    public void deletePlayerResult(PlayerResult playerResult);
+    public boolean deletePlayer(Player player);
+
+    public Player getPlayer(Player player);
+
+    public List<Player> getAllPlayers();
+
+    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm);
+
+    public PlayerResult createPlayerResult(Player player, Groups group);
+
+    public PlayerResult updatePlayerResult(PlayerResult playerResult);
+
+    public boolean deletePlayerResult(PlayerResult playerResult);
+
+    public PlayerResult getPlayerResult(PlayerResult playerResult);
 
     public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm);
 
-    public Result createResult(Result result);
+    public Season createSeason(Season season);
 
-    public void updateResult(Result result);
+    public Season updateSeason(Season season);
 
-    public void deleteResult(Result result);
+    public boolean deleteSeason(Season season);
 
-    public List<Result> getAllResult();
+    public Season getSeason(Season season);
 
-    public void createSeason(Season season);
+    public List<Season> getAllSeasons();
 
-    public void updateSeason(Season season);
+    public Season createTournament(Season season, Tournament... tournaments);
 
-    public void deleteSeason(Season season);
+    public Tournament updateTournament(Tournament tournament);
 
-    public List<Season> getAllSeason();
+    public boolean deleteTournament(Tournament tournament);
 
-    public void createTable(Table table);
+    public Tournament getTournament(Tournament tournament);
 
-    public void updateTable(Table table);
-
-    public void deleteTable(Table table);
-
-    public List<Table> findTable(TableForm tableForm);
-
-    public void createTournament(Tournament tournament);
-
-    public void updateTournament(Tournament tournament);
-
-    public void deleteTournament(Tournament tournament);
-
-    public List<Tournament> findTournament(TournamentForm tournamentForm);
+    public List<Tournament> findTournaments(Tournament tournament);
 
 }

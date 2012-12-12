@@ -3,15 +3,19 @@ package org.toursys.repository.dao;
 import java.util.List;
 
 import org.toursys.repository.form.PlayerResultForm;
+import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 
 public interface PlayerResultDao {
 
-    public void createPlayerResult(PlayerResult playerResult);
+    public PlayerResult createPlayerResult(Player player, Groups group);
 
-    public void updatePlayerResult(PlayerResult playerResult);
+    public PlayerResult updatePlayerResult(PlayerResult playerResult);
 
-    public void deletePlayerResult(PlayerResult playerResult);
+    public boolean deletePlayerResult(PlayerResult playerResult);
+
+    public PlayerResult getPlayerResult(PlayerResult playerResult);
 
     public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm);
 

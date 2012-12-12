@@ -4,14 +4,17 @@ import java.util.List;
 
 import org.toursys.repository.form.GameForm;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.PlayerResult;
 
 public interface GameDao {
 
-    public void createGame(Game game);
+    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer);
 
-    public void updateGame(Game game);
+    public Game updateGame(Game game);
 
-    public void deleteGame(Game game);
+    public boolean deleteGame(Game game);
+
+    public Game getGame(Game game);
 
     public List<Game> findGame(GameForm gameForm);
 }

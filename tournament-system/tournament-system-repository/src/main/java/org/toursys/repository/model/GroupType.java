@@ -1,6 +1,6 @@
 package org.toursys.repository.model;
 
-public enum TableType {
+public enum GroupType {
 
     B, // table in basic group
     F, // table in final group
@@ -10,7 +10,7 @@ public enum TableType {
         return name();
     }
 
-    public static TableType fromValue(String v) {
+    public static GroupType fromValue(String v) {
         return valueOf(v);
     }
 }

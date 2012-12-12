@@ -4,31 +4,54 @@ import java.util.List;
 
 import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.dao.TournamentDao;
-import org.toursys.repository.form.TournamentForm;
+import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 
 public class TournamentDaoImpl extends BaseDaoImpl implements TournamentDao {
 
     @Override
-    public void createTournament(Tournament tournament) {
-        SqlSession session = getSqlSession();
-        getCrudEngine("INSERT_TOURNAMENT").insert(session, tournament);
+    public Season createTournament(Season season, Tournament... tournaments) {
+        if (tournaments != null) {
+            SqlSession session = getSqlSession();
+            for (Tournament tournament : tournaments) {
+                tournament.setSeason(season);
+                int count = getCrudEngine("INSERT_TOURNAMENT").insert(session, tournament);
+                logger.info("insert tournament: " + count + ": " + tournament);
+                if (count > 0)
+                    season.getTournaments().add(tournament);
+            }
+        }
+        return season;
     }
 
     @Override
-    public void updateTournament(Tournament tournament) {
+    public Tournament updateTournament(Tournament tournament) {
         SqlSession session = getSqlSession();
-        getCrudEngine("UPDATE_TOURNAMENT").update(session, tournament);
+        int count = getCrudEngine("UPDATE_TOURNAMENT").update(session, tournament);
+        logger.info("update tournament: " + count + ": " + tournament);
+        return (count > 0) ? tournament : null;
     }
 
     @Override
-    public void deleteTournament(Tournament tournament) {
+    public boolean deleteTournament(Tournament tournament) {
         SqlSession session = getSqlSession();
-        getCrudEngine("DELETE_TOURNAMENT").delete(session, tournament);
+        int count = getCrudEngine("DELETE_TOURNAMENT").delete(session, tournament);
+        logger.info("delete tournament: " + count + ": " + tournament);
+        return (count > 0);
     }
 
-    public List<Tournament> findTournament(TournamentForm tournamentForm) {
+    @Override
+    public Tournament getTournament(Tournament tournament) {
         SqlSession session = getSqlSession();
-        return getQueryEngine("GET_TOURNAMENT").query(session, Tournament.class, tournamentForm);
+        Tournament t = getCrudEngine("GET_TOURNAMENT").get(session, Tournament.class, tournament);
+        logger.info("get playerResult: " + t);
+        return t;
+    }
+
+    @Override
+    public List<Tournament> findTournaments(Tournament tournament) {
+        SqlSession session = getSqlSession();
+        logger.info("get tournament: " + tournament);
+        return getQueryEngine("GET_TOURNAMENTS_BY_SEASON").query(session, Tournament.class, tournament);
     }
 }

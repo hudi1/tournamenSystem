@@ -6,31 +6,48 @@ import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.dao.GameDao;
 import org.toursys.repository.form.GameForm;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.PlayerResult;
 
 public class GameDaoImpl extends BaseDaoImpl implements GameDao {
 
     @Override
-    public void createGame(Game game) {
+    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
         SqlSession session = getSqlSession();
-        getCrudEngine("INSERT_GAME").insert(session, game);
+        Game game = new Game(homePlayer, awayPlayer, false);
+        int count = getCrudEngine("INSERT_GAME").insert(session, game);
+        logger.info("insert game: " + count + ": " + game);
+        return (count > 0 ? game : null);
     }
 
     @Override
-    public void updateGame(Game game) {
+    public Game updateGame(Game game) {
         SqlSession session = getSqlSession();
-        getCrudEngine("UPDATE_GAME").update(session, game);
+        int count = getCrudEngine("UPDATE_GAME").update(session, game);
+        logger.info("update game: " + count + ": " + game);
+        return (count > 0 ? game : null);
     }
 
     @Override
-    public void deleteGame(Game game) {
+    public boolean deleteGame(Game game) {
         SqlSession session = getSqlSession();
-        getCrudEngine("DELETE_GAME").delete(session, game);
+        int count = getCrudEngine("DELETE_GAME").delete(session, game);
+        logger.info("delete game: " + count + ": " + game);
+        return (count > 0);
+    }
+
+    @Override
+    public Game getGame(Game game) {
+        SqlSession session = getSqlSession();
+        Game g = getCrudEngine("GET_GAME").get(session, Game.class, game);
+        logger.info("get game: " + g);
+        return g;
     }
 
     @Override
     public List<Game> findGame(GameForm gameForm) {
         SqlSession session = getSqlSession();
-        return getQueryEngine("GET_GAME").query(session, Game.class, gameForm);
+        logger.info("find games");
+        return getQueryEngine("FIND_GAMES").query(session, Game.class, gameForm);
     }
 
 }

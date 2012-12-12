@@ -1,0 +1,63 @@
+package org.toursys.repository.model {  
+
+  pojo Game serializable 1  {
+    id _int primaryKey
+    homePlayerResult :: PlayerResult required
+    awayPlayerResult :: PlayerResult required
+    homeScore : java.lang.Integer
+    awayScore : java.lang.Integer
+    overtime _boolean required
+    toString ::: id homeScore awayPlayerResult homePlayerResult overtime awayScore
+  }
+
+  pojo Groups serializable 1  {
+    id _int primaryKey
+    name : java.lang.String required
+    numberOfHockey _int required
+    groupType : java.lang.String required
+    indexOfFirstHockey _int required
+    tournament :: Tournament required
+    playerResults : java.util.List <:PlayerResult>
+    toString ::: groupType id tournament indexOfFirstHockey name numberOfHockey
+  }
+
+  pojo Player serializable 1  {
+    id _int primaryKey
+    name : java.lang.String required
+    surname : java.lang.String required
+    club : java.lang.String
+    toString ::: id club name surname
+  }
+
+  pojo PlayerResult serializable 1  {
+    id _int primaryKey
+    points _int required
+    rank : java.lang.Integer
+    group :: Groups required
+    player :: Player required
+    score : org.toursys.repository.model.Score required
+    games : java.util.List <:Game>
+    toString ::: id rank player score points group
+  }
+
+  pojo Season serializable 1  {
+    id _int primaryKey
+    name : java.lang.String required
+    tournaments : java.util.List <:Tournament>
+    toString ::: id name
+  }
+
+  pojo Tournament serializable 1  {
+    id _int primaryKey
+    name : java.lang.String required
+    season :: Season required
+    finalPromoting _int required
+    lowerPromoting _int required
+    winPoints _int required
+    playOffA _int required
+    playOffLower _int required
+    groups : java.util.List <:Groups>
+    toString ::: id playOffLower season playOffA winPoints finalPromoting name lowerPromoting
+  }
+}
+

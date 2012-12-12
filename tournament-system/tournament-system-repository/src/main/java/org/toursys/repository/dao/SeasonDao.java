@@ -6,12 +6,14 @@ import org.toursys.repository.model.Season;
 
 public interface SeasonDao {
 
-    public void createSeason(Season season);
+    public Season createSeason(Season season);
 
-    public void updateSeason(Season season);
+    public Season updateSeason(Season season);
 
-    public void deleteSeason(Season season);
+    public boolean deleteSeason(Season season);
 
-    public List<Season> getAllSeason();
+    public Season getSeason(Season season);
+
+    public List<Season> getAllSeasons();
 
 }

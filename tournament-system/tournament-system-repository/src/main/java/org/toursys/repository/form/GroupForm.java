@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sqlproc.engine.annotation.Pojo;
-import org.toursys.repository.model.TableType;
+import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Tournament;
 
 @Pojo
-public class TableForm {
+public class GroupForm {
 
     private Tournament tournament;
     private String name;
-    private List<TableType> tableType;
+    private List<GroupType> tableType;
 
     public Tournament getTournament() {
         return tournament;
@@ -22,36 +22,36 @@ public class TableForm {
         this.tournament = tournament;
     }
 
-    public TableForm(Tournament tournament, List<TableType> tableType) {
+    public GroupForm(Tournament tournament, List<GroupType> tableType) {
         this.tournament = tournament;
         this.tableType = tableType;
     }
 
-    public TableForm(Tournament tournament, TableType tableType) {
-        this.tableType = new ArrayList<TableType>();
+    public GroupForm(Tournament tournament, GroupType tableType) {
+        this.tableType = new ArrayList<GroupType>();
         this.tableType.add(tableType);
         this.tournament = tournament;
     }
 
-    public TableForm(String name, Tournament tournament, List<TableType> tableType) {
+    public GroupForm(String name, Tournament tournament, List<GroupType> tableType) {
         this.name = name;
         this.tournament = tournament;
         this.tableType = tableType;
     }
 
-    public TableForm(String name, Tournament tournament, TableType tableType) {
+    public GroupForm(String name, Tournament tournament, GroupType tableType) {
         this.name = name;
         this.tournament = tournament;
-        this.tableType = new ArrayList<TableType>();
+        this.tableType = new ArrayList<GroupType>();
         this.tableType.add(tableType);
     }
 
-    public TableForm(String name, Tournament tournament) {
+    public GroupForm(String name, Tournament tournament) {
         this.tournament = tournament;
         this.name = name;
     }
 
-    public TableForm(Tournament tournament) {
+    public GroupForm(Tournament tournament) {
         this.tournament = tournament;
     }
 
@@ -63,11 +63,11 @@ public class TableForm {
         this.name = name;
     }
 
-    public List<TableType> getTableType() {
+    public List<GroupType> getTableType() {
         return tableType;
     }
 
-    public void setTableType(List<TableType> tableType) {
+    public void setTableType(List<GroupType> tableType) {
         this.tableType = tableType;
     }
 

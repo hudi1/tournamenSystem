@@ -3,23 +3,20 @@ package org.toursys.repository.service.impl;
 import java.util.List;
 
 import org.toursys.repository.dao.GameDao;
+import org.toursys.repository.dao.GroupDao;
 import org.toursys.repository.dao.PlayerDao;
 import org.toursys.repository.dao.PlayerResultDao;
-import org.toursys.repository.dao.ResultDao;
 import org.toursys.repository.dao.SeasonDao;
-import org.toursys.repository.dao.TableDao;
 import org.toursys.repository.dao.TournamentDao;
 import org.toursys.repository.form.GameForm;
+import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.form.PlayerResultForm;
-import org.toursys.repository.form.TableForm;
-import org.toursys.repository.form.TournamentForm;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Season;
-import org.toursys.repository.model.Table;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.service.TournamentAggregationDao;
 
@@ -28,24 +25,28 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     private GameDao gameDao;
     private PlayerDao playerDao;
     private PlayerResultDao playerResultDao;
-    private ResultDao resultDao;
     private SeasonDao seasonDao;
-    private TableDao tableDao;
+    private GroupDao groupDao;
     private TournamentDao tournamentDao;
 
     @Override
-    public void createGame(Game game) {
-        gameDao.createGame(game);
+    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
+        return gameDao.createGame(homePlayer, awayPlayer);
     }
 
     @Override
-    public void updateGame(Game game) {
-        gameDao.updateGame(game);
+    public Game updateGame(Game game) {
+        return gameDao.updateGame(game);
     }
 
     @Override
-    public void deleteGame(Game game) {
-        gameDao.deleteGame(game);
+    public boolean deleteGame(Game game) {
+        return gameDao.deleteGame(game);
+    }
+
+    @Override
+    public Game getGame(Game game) {
+        return gameDao.getGame(game);
     }
 
     @Override
@@ -54,43 +55,78 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public void createPlayer(Player player) {
-        playerDao.createPlayer(player);
+    public Tournament createGroup(Tournament tournament, Groups... groups) {
+        return groupDao.createGroup(tournament, groups);
     }
 
     @Override
-    public void updatePlayer(Player player) {
-        playerDao.updatePlayer(player);
+    public Groups updateGroup(Groups group) {
+        return groupDao.updateGroup(group);
     }
 
     @Override
-    public void deletePlayer(Player player) {
-        playerDao.deletePlayer(player);
+    public boolean deleteGroup(Groups group) {
+        return groupDao.deleteGroup(group);
     }
 
     @Override
-    public List<Player> getAllPlayer() {
-        return playerDao.getAllPlayer();
+    public Groups getGroup(Groups group) {
+        return groupDao.getGroup(group);
     }
 
     @Override
-    public List<Player> getNotRegistrationPlayer(PlayerForm playerForm) {
-        return playerDao.getNotRegistrationPlayer(playerForm);
+    public List<Groups> findGroups(GroupForm groupForm) {
+        return groupDao.findGroups(groupForm);
     }
 
     @Override
-    public void createPlayerResult(PlayerResult playerResult) {
-        playerResultDao.createPlayerResult(playerResult);
+    public Player createPlayer(Player player) {
+        return playerDao.createPlayer(player);
     }
 
     @Override
-    public void updatePlayerResult(PlayerResult playerResult) {
-        playerResultDao.updatePlayerResult(playerResult);
+    public Player updatePlayer(Player player) {
+        return playerDao.updatePlayer(player);
     }
 
     @Override
-    public void deletePlayerResult(PlayerResult playerResult) {
-        playerResultDao.deletePlayerResult(playerResult);
+    public boolean deletePlayer(Player player) {
+        return playerDao.deletePlayer(player);
+    }
+
+    @Override
+    public Player getPlayer(Player player) {
+        return playerDao.getPlayer(player);
+    }
+
+    @Override
+    public List<Player> getAllPlayers() {
+        return playerDao.getAllPlayers();
+    }
+
+    @Override
+    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm) {
+        return playerDao.getNotRegistrationPlayers(playerForm);
+    }
+
+    @Override
+    public PlayerResult createPlayerResult(Player player, Groups group) {
+        return playerResultDao.createPlayerResult(player, group);
+    }
+
+    @Override
+    public PlayerResult updatePlayerResult(PlayerResult playerResult) {
+        return playerResultDao.updatePlayerResult(playerResult);
+    }
+
+    @Override
+    public boolean deletePlayerResult(PlayerResult playerResult) {
+        return playerResultDao.deletePlayerResult(playerResult);
+    }
+
+    @Override
+    public PlayerResult getPlayerResult(PlayerResult playerResult) {
+        return playerResultDao.getPlayerResult(playerResult);
     }
 
     @Override
@@ -99,84 +135,53 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public Result createResult(Result result) {
-        return resultDao.createResult(result);
+    public Season createSeason(Season season) {
+        return seasonDao.createSeason(season);
     }
 
     @Override
-    public void updateResult(Result result) {
-        resultDao.updateResult(result);
+    public Season updateSeason(Season season) {
+        return seasonDao.updateSeason(season);
     }
 
     @Override
-    public void deleteResult(Result result) {
-        resultDao.deleteResult(result);
+    public boolean deleteSeason(Season season) {
+        return seasonDao.deleteSeason(season);
     }
 
     @Override
-    public List<Result> getAllResult() {
-        return resultDao.getAllResult();
+    public Season getSeason(Season season) {
+        return seasonDao.getSeason(season);
     }
 
     @Override
-    public void createSeason(Season season) {
-        seasonDao.createSeason(season);
+    public List<Season> getAllSeasons() {
+        return seasonDao.getAllSeasons();
     }
 
     @Override
-    public void updateSeason(Season season) {
-        seasonDao.updateSeason(season);
-
+    public Season createTournament(Season season, Tournament... tournaments) {
+        return tournamentDao.createTournament(season, tournaments);
     }
 
     @Override
-    public void deleteSeason(Season season) {
-        seasonDao.deleteSeason(season);
+    public Tournament updateTournament(Tournament tournament) {
+        return tournamentDao.updateTournament(tournament);
     }
 
     @Override
-    public List<Season> getAllSeason() {
-        return seasonDao.getAllSeason();
+    public boolean deleteTournament(Tournament tournament) {
+        return tournamentDao.deleteTournament(tournament);
     }
 
     @Override
-    public void createTable(Table table) {
-        tableDao.createTable(table);
+    public Tournament getTournament(Tournament tournament) {
+        return tournamentDao.getTournament(tournament);
     }
 
     @Override
-    public void updateTable(Table table) {
-        tableDao.updateTable(table);
-    }
-
-    @Override
-    public void deleteTable(Table table) {
-        tableDao.deleteTable(table);
-    }
-
-    @Override
-    public List<Table> findTable(TableForm tableForm) {
-        return tableDao.findTable(tableForm);
-    }
-
-    @Override
-    public void createTournament(Tournament tournament) {
-        tournamentDao.createTournament(tournament);
-    }
-
-    @Override
-    public void updateTournament(Tournament tournament) {
-        tournamentDao.updateTournament(tournament);
-    }
-
-    @Override
-    public void deleteTournament(Tournament tournament) {
-        tournamentDao.deleteTournament(tournament);
-    }
-
-    @Override
-    public List<Tournament> findTournament(TournamentForm tournamentForm) {
-        return tournamentDao.findTournament(tournamentForm);
+    public List<Tournament> findTournaments(Tournament tournament) {
+        return tournamentDao.findTournaments(tournament);
     }
 
     public void setGameDao(GameDao gameDao) {
@@ -191,20 +196,16 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
         this.playerResultDao = playerResultDao;
     }
 
-    public void setResultDao(ResultDao resultDao) {
-        this.resultDao = resultDao;
-    }
-
     public void setSeasonDao(SeasonDao seasonDao) {
         this.seasonDao = seasonDao;
     }
 
-    public void setTableDao(TableDao tableDao) {
-        this.tableDao = tableDao;
-    }
-
     public void setTournamentDao(TournamentDao tournamentDao) {
         this.tournamentDao = tournamentDao;
+    }
+
+    public void setGroupDao(GroupDao groupDao) {
+        this.groupDao = groupDao;
     }
 
 }

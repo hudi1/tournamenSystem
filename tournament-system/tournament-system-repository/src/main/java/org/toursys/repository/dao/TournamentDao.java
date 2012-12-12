@@ -2,17 +2,19 @@ package org.toursys.repository.dao;
 
 import java.util.List;
 
-import org.toursys.repository.form.TournamentForm;
+import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 
 public interface TournamentDao {
 
-    public void createTournament(Tournament tournament);
+    public Season createTournament(Season season, Tournament... tournaments);
 
-    public void updateTournament(Tournament tournament);
+    public Tournament updateTournament(Tournament tournament);
 
-    public void deleteTournament(Tournament tournament);
+    public boolean deleteTournament(Tournament tournament);
 
-    public List<Tournament> findTournament(TournamentForm tournamentForm);
+    public Tournament getTournament(Tournament tournament);
+
+    public List<Tournament> findTournaments(Tournament tournament);
 
 }

@@ -7,14 +7,16 @@ import org.toursys.repository.model.Player;
 
 public interface PlayerDao {
 
-    public void createPlayer(Player player);
+    public Player createPlayer(Player player);
 
-    public void updatePlayer(Player player);
+    public Player updatePlayer(Player player);
 
-    public void deletePlayer(Player player);
+    public boolean deletePlayer(Player player);
 
-    public List<Player> getAllPlayer();
+    public Player getPlayer(Player player);
 
-    public List<Player> getNotRegistrationPlayer(PlayerForm playerForm);
+    public List<Player> getAllPlayers();
+
+    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm);
 
 }
