@@ -64,7 +64,7 @@ public class WicketApplication extends WebApplication {
 
     @Override
     public Session newSession(Request request, Response response) {
-        Session session = super.newSession(request, response);
+        Session session = new TournamentSession(request);
         session.setLocale(Locale.US);
         return session;
     }

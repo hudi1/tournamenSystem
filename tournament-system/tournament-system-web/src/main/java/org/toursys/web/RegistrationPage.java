@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
@@ -17,7 +18,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -25,14 +25,11 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.toursys.repository.form.PlayerForm;
-import org.toursys.repository.form.PlayerResultForm;
-import org.toursys.repository.form.TableForm;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Table;
-import org.toursys.repository.model.TableType;
 import org.toursys.repository.model.Tournament;
 import org.wicketstuff.minis.behavior.spinner.Spinner;
 
@@ -41,32 +38,115 @@ public class RegistrationPage extends BasePage {
     private static final long serialVersionUID = 1L;
     private Tournament tournament;
     private Player selectedPlayer;
-    private BasePage basePage;
-    private List<Player> notRegistratedPlayer;
-    private List<PlayerResult> allPlayers;
 
-    public RegistrationPage(Tournament tournament, BasePage basePage) {
-        this(tournament, basePage, new Table());
+    public RegistrationPage() {
+        throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public RegistrationPage(Tournament tournament, BasePage basePage, Table table) {
-        this.basePage = basePage;
+    public RegistrationPage(Tournament tournament) {
+        this(tournament, new Groups());
+    }
+
+    public RegistrationPage(Tournament tournament, Groups group) {
         this.tournament = tournament;
-        this.notRegistratedPlayer = tournamentService.getNotRegistrationPlayer(new PlayerForm(tournament));
-
-        Table basicTable = new Table();
-        basicTable.setTableType(TableType.B);
-
-        this.allPlayers = tournamentService.findPlayerResult(new PlayerResultForm(tournament, basicTable));
-        createPage(table);
+        createPage(group);
     }
 
-    private class RegistrationForm extends Form<Table> {
+    private void createPage(Groups group) {
+        IDataProvider<PlayerResult> registeredPlayerDataProvider = createRegisteredPlayerDataProvider();
+        DataView<PlayerResult> dataView = createDataview(registeredPlayerDataProvider);
+        add(dataView);
+
+        add(new RegistrationForm(group));
+        add(new CreateTournamentForm());
+    }
+
+    private DataView<PlayerResult> createDataview(IDataProvider<PlayerResult> registeredPlayerDataProvider) {
+
+        DataView<PlayerResult> registeredDataView = new DataView<PlayerResult>("registeredRows",
+                registeredPlayerDataProvider) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void populateItem(final Item<PlayerResult> listItem) {
+                final PlayerResult playerResult = listItem.getModelObject();
+                listItem.setModel(new CompoundPropertyModel<PlayerResult>(playerResult));
+                listItem.add(new Label("name", playerResult.getPlayer().getName()));
+                listItem.add(new Label("surname", playerResult.getPlayer().getSurname()));
+                listItem.add(new Label("tableName", playerResult.getGroup().getName()));
+                listItem.add(new AjaxLink<Void>("deletePlayer") {
+
+                    private static final long serialVersionUID = 1L;
+
+                    public void onClick(AjaxRequestTarget target) {
+                        tournamentService.deletePlayerResult(playerResult, tournament);
+                        setResponsePage(new RegistrationPage(tournament));
+                    }
+
+                    @Override
+                    protected IAjaxCallDecorator getAjaxCallDecorator() {
+                        return new AjaxCallDecorator() {
+
+                            private static final long serialVersionUID = 1L;
+
+                            @Override
+                            public CharSequence decorateScript(Component c, CharSequence script) {
+                                return "if(confirm(" + getString("del.player") + ")){" + script
+                                        + "}else{return false;}";
+                            }
+                        };
+                    }
+                });
+            }
+        };
+
+        return registeredDataView;
+    }
+
+    private IDataProvider<PlayerResult> createRegisteredPlayerDataProvider() {
+        IDataProvider<PlayerResult> registeredPlayerDataProvider = new IDataProvider<PlayerResult>() {
+
+            private static final long serialVersionUID = 1L;
+            private List<PlayerResult> allTournamenPlayers = tournamentService.getRegistratedPlayerResult(tournament);
+
+            @Override
+            public Iterator<PlayerResult> iterator(int first, int count) {
+                return allTournamenPlayers.subList(first, first + count).iterator();
+            }
+
+            @Override
+            public int size() {
+                return allTournamenPlayers.size();
+            }
+
+            @Override
+            public IModel<PlayerResult> model(final PlayerResult object) {
+                return new LoadableDetachableModel<PlayerResult>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected PlayerResult load() {
+                        return object;
+                    }
+                };
+            }
+
+            @Override
+            public void detach() {
+            }
+        };
+
+        return registeredPlayerDataProvider;
+    }
+
+    private class RegistrationForm extends Form<Groups> {
 
         private static final long serialVersionUID = 1L;
 
-        public RegistrationForm(final Table table) {
-            super("registrationForm", new CompoundPropertyModel<Table>(table));
+        public RegistrationForm(final Groups group) {
+            super("registrationForm", new CompoundPropertyModel<Groups>(group));
             setOutputMarkupId(true);
             final TextField<String> text = new TextField<String>("name");
             Spinner spinnerBehavior = new Spinner() {
@@ -85,6 +165,7 @@ public class RegistrationPage extends BasePage {
             IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
 
                 private static final long serialVersionUID = 1L;
+                private List<Player> notRegistratedPlayer = tournamentService.getNotRegistratedPlayers(tournament);
 
                 @Override
                 public Iterator<Player> iterator(int first, int count) {
@@ -184,9 +265,7 @@ public class RegistrationPage extends BasePage {
                 }
 
             };
-
             add(dataView);
-
             add(new Button("submit", new StringResourceModel("registrate", null)) {
 
                 private static final long serialVersionUID = 1L;
@@ -195,9 +274,9 @@ public class RegistrationPage extends BasePage {
                 public void onSubmit() {
 
                     if (selectedPlayer != null) {
-                        tournamentService.createPlayerResult(tournament, selectedPlayer, table, TableType.B);
+                        tournamentService.createBasicPlayerResult(tournament, selectedPlayer, group);
                     }
-                    setResponsePage(new RegistrationPage(tournament, basePage, table));
+                    setResponsePage(new RegistrationPage(tournament, group));
                 }
             });
         }
@@ -211,121 +290,32 @@ public class RegistrationPage extends BasePage {
             super("createTournamentForm");
             setOutputMarkupId(true);
 
-            add(new Button("submit", new StringResourceModel("createTournament", null)) {
+            add(new Button("submit", new ResourceModel("createTournament")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    Table table = new Table();
-                    List<Table> tables = tournamentService.findTable(new TableForm(null, tournament));
-                    if (!tables.isEmpty()) {
-                        table = tables.get(0);
-                        List<PlayerResult> player = tournamentService.findPlayerResult(new PlayerResultForm(tournament,
-                                table));
-                        tournamentService.createGames(player);
-                    }
-                    setResponsePage(new GroupPage(tournament, table, basePage));
+                    /*
+                     * Groups group = new Groups(); List<Groups> tables = tournamentService.findTable(new
+                     * GroupForm(null, tournament)); if (!tables.isEmpty()) { group = tables.get(0); List<PlayerResult>
+                     * player = tournamentService.findPlayerResult(new PlayerResultForm(tournament, group));
+                     * tournamentService.createGames(player); }
+                     */
+                    setResponsePage(new GroupPage(tournament));
                 }
             });
 
-            add(new Button("back", new StringResourceModel("back", null)) {
+            add(new AjaxLink<Void>("back") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(basePage);
+                public void onClick(AjaxRequestTarget target) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
                 }
             });
         }
-    }
-
-    private void createPage(Table table) {
-
-        IDataProvider<PlayerResult> registeredPlayerDataProvider = new IDataProvider<PlayerResult>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Iterator<PlayerResult> iterator(int first, int count) {
-                return allPlayers.subList(first, first + count).iterator();
-            }
-
-            @Override
-            public int size() {
-                return allPlayers.size();
-            }
-
-            @Override
-            public IModel<PlayerResult> model(final PlayerResult object) {
-                return new LoadableDetachableModel<PlayerResult>() {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected PlayerResult load() {
-                        return object;
-                    }
-                };
-            }
-
-            @Override
-            public void detach() {
-            }
-        };
-
-        DataView<PlayerResult> registeredDataView = new DataView<PlayerResult>("registeredRows",
-                registeredPlayerDataProvider) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(final Item<PlayerResult> listItem) {
-                final PlayerResult playerResult = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<PlayerResult>(playerResult));
-                listItem.add(new Label("name", playerResult.getPlayer().getName()));
-                listItem.add(new Label("surname", playerResult.getPlayer().getSurname()));
-                listItem.add(new Label("tableName", playerResult.getTournamentTable().getName()));
-                listItem.add(new AjaxLink<Void>("deletePlayer") {
-
-                    private static final long serialVersionUID = 1L;
-
-                    public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deletePlayerResultAndTable(playerResult, tournament);
-
-                        setResponsePage(new RegistrationPage(tournament, basePage) {
-                            private static final long serialVersionUID = 1L;
-                        });
-
-                    }
-
-                    @Override
-                    protected IAjaxCallDecorator getAjaxCallDecorator() {
-                        return new AjaxCallDecorator() {
-
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public CharSequence decorateScript(Component c, CharSequence script) {
-                                return "if(confirm('Opravdu odstranit tohto hrace ?')){" + script
-                                        + "}else{return false;}";
-                            }
-
-                        };
-                    }
-
-                });
-            }
-
-        };
-
-        add(registeredDataView);
-
-        add(new FeedbackPanel("feedbackPanel"));
-        add(new RegistrationForm(table));
-        add(new CreateTournamentForm());
-
     }
 
     private static class HighlitableDataItem<T> extends Item<T> {
@@ -341,13 +331,6 @@ public class RegistrationPage extends BasePage {
             highlite = false;
         }
 
-        /**
-         * Constructor
-         * 
-         * @param id
-         * @param index
-         * @param model
-         */
         public HighlitableDataItem(String id, int index, IModel<T> model) {
             super(id, index, model);
             add(new AttributeModifier("style", "background-color:#80b6ed;") {
@@ -363,7 +346,7 @@ public class RegistrationPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return new StringResourceModel("registration", null);
+        return new ResourceModel("registration");
     }
 
 }

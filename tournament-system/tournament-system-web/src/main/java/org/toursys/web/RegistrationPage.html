@@ -6,7 +6,6 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<div wicket:id="feedbackPanel"></div>
 	<div class="leftColumn">
 		<form wicket:id="registrationForm">
 
@@ -36,7 +35,7 @@
         </wicket:message> </label> <input type="text" wicket:id="name" style="width: 30px;" />
 			</div>
 			<div>
-				<input class="seasoneButton" type="submit" wicket:id="submit"
+				<input class="tournamentButton" type="submit" wicket:id="submit"
 					value="Registration" />
 			</div>
 		</form>
@@ -76,10 +75,12 @@
 
 	<form wicket:id="createTournamentForm">
 		<div>
-			<span><input class="seasoneButton" type="submit"
-				wicket:id="submit" value="Create tournament" /> </span> <span><input
-				class="seasoneButton" type="submit" wicket:id="back" value="Back" />
-			</span>
+			<span><input class="tournamentButton" type="submit"
+				wicket:id="submit" value="Create tournament" /> </span> <span><a
+				wicket:id="back" title="back" class="tournamentLink"><wicket:message
+						key="back">
+            back
+        </wicket:message></a> </span>
 		</div>
 	</form>
 

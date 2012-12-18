@@ -22,16 +22,15 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
-import org.toursys.repository.form.PlayerResultForm;
-import org.toursys.repository.form.TableForm;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.GroupType;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Table;
-import org.toursys.repository.model.TableType;
 import org.toursys.repository.model.Tournament;
 
 public class GroupPage extends BasePage {
@@ -39,16 +38,21 @@ public class GroupPage extends BasePage {
     private static final long serialVersionUID = 1L;
 
     private Tournament tournament;
-    private Table table;
+    private Groups group;
     private List<PlayerResult> playerResults;
-    private BasePage basePage;
 
-    public GroupPage(Tournament tournament, Table group, BasePage basePage) {
-        this.basePage = basePage;
-        this.table = group;
+    public GroupPage(Tournament tournament) {
         this.tournament = tournament;
-        this.playerResults = tournamentService.findPlayerResult(new PlayerResultForm(tournament, group));
-        calculatePlayerResults();
+        // this.playerResults = null; // = tournamentService.findPlayerResult(new PlayerResultForm(tournament, group));
+        // calculatePlayerResults();
+        createPage();
+    }
+
+    public GroupPage(Tournament tournament, Groups group) {
+        this.group = group;
+        this.tournament = tournament;
+        // this.playerResults = null; // = tournamentService.findPlayerResult(new PlayerResultForm(tournament, group));
+        // calculatePlayerResults();
         createPage();
     }
 
@@ -56,7 +60,7 @@ public class GroupPage extends BasePage {
         tournamentService.calculatePlayerResults(playerResults, tournament);
     }
 
-    private void createPage() {
+    protected void createPage() {
         add(new GroupForm());
         createGroups();
     }
@@ -105,8 +109,8 @@ public class GroupPage extends BasePage {
                 listItem.setModel(new CompoundPropertyModel<PlayerResult>(playerResult));
                 listItem.add(new Label("name", playerResult.getPlayer().getSurname() + " "
                         + playerResult.getPlayer().getName().charAt(0) + "."));
-                listItem.add(new Label("score", playerResult.getScore()));
-                listItem.add(new Label("points", playerResult.getPoints().toString()));
+                listItem.add(new Label("score", playerResult.getScore().toString()));
+                listItem.add(new Label("points", ((Integer) playerResult.getPoints()).toString()));
                 listItem.add(new Label("rank", playerResult.getRank().toString()));
 
                 ListView<PlayerResult> scoreList = new ListView<PlayerResult>("gameList", playerResults) {
@@ -122,16 +126,13 @@ public class GroupPage extends BasePage {
                         } else {
                             Game game = null;
                             for (Game pomGame : playerResult.getGames()) {
-                                if (pomGame.getOpponent().equals(playerResult1)) {
+                                if (pomGame.getAwayPlayerResult().equals(playerResult1)) {
                                     game = pomGame;
                                     break;
                                 }
                             }
-                            String result = (game.getResult().getLeftSide() == null) ? ""
-                                    : game.getResult().getLeftSide()
-                                            + ":"
-                                            + ((game.getResult().getRightSide() == null) ? "" : game.getResult()
-                                                    .getRightSide());
+                            String result = (game.getHomeScore() == null) ? "" : game.getHomeScore() + ":"
+                                    + ((game.getAwayScore() == null) ? "" : game.getAwayScore());
                             gameItem.add(new Label("game", result));
                         }
                     }
@@ -161,7 +162,7 @@ public class GroupPage extends BasePage {
         Label points = new Label("points", new StringResourceModel("points", null));
         Label score = new Label("score", new StringResourceModel("score", null));
 
-        if (table.getTableId() == 0) {
+        if (group.getId() == 0) {
             dataView.setVisible(false);
             nameList.setVisible(false);
             name.setVisible(false);
@@ -184,36 +185,36 @@ public class GroupPage extends BasePage {
         public GroupForm() {
             super("groupForm");
 
-            IDataProvider<Table> dataProvider = new IDataProvider<Table>() {
+            IDataProvider<Groups> dataProvider = new IDataProvider<Groups>() {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Iterator<Table> iterator(int first, int count) {
-                    List<TableType> tablesType = new ArrayList<TableType>();
-                    tablesType.add(TableType.B);
-                    tablesType.add(TableType.F);
-                    return tournamentService.findTable(new TableForm(tournament, tablesType))
-                            .subList(first, first + count).iterator();
+                public Iterator<Groups> iterator(int first, int count) {
+                    List<GroupType> tablesType = new ArrayList<GroupType>();
+                    tablesType.add(GroupType.B);
+                    tablesType.add(GroupType.F);
+                    return null;// tournamentService.findTable(new GroupForm(tournament, tablesType))
+                    // .subList(first, first + count).iterator();
 
                 }
 
                 @Override
                 public int size() {
-                    List<TableType> tablesType = new ArrayList<TableType>();
-                    tablesType.add(TableType.B);
-                    tablesType.add(TableType.F);
-                    return tournamentService.findTable(new TableForm(tournament, tablesType)).size();
+                    List<GroupType> tablesType = new ArrayList<GroupType>();
+                    tablesType.add(GroupType.B);
+                    tablesType.add(GroupType.F);
+                    return 0;// tournamentService.findTable(new GroupForm(tournament, tablesType)).size();
                 }
 
                 @Override
-                public IModel<Table> model(final Table object) {
-                    return new LoadableDetachableModel<Table>() {
+                public IModel<Groups> model(final Groups object) {
+                    return new LoadableDetachableModel<Groups>() {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected Table load() {
+                        protected Groups load() {
                             return object;
                         }
                     };
@@ -224,36 +225,36 @@ public class GroupPage extends BasePage {
                 }
             };
 
-            GridView<Table> gridView = new GridView<Table>("rows", dataProvider) {
+            GridView<Groups> gridView = new GridView<Groups>("rows", dataProvider) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(final Item<Table> listItem) {
-                    final Table table = listItem.getModelObject();
+                protected void populateItem(final Item<Groups> listItem) {
+                    final Groups group = listItem.getModelObject();
 
-                    Button button = new Button("group", Model.of(table.getName())) {
+                    Button button = new Button("group", Model.of(group.getName())) {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
                         public void onSubmit() {
-                            tournamentService.createGames(tournamentService.findPlayerResult(new PlayerResultForm(
-                                    tournament, table)));
-                            setResponsePage(new GroupPage(tournament, table, basePage));
+                            // tournamentService.createGames(tournamentService.findPlayerResult(new PlayerResultForm(
+                            // tournament, table)));
+                            setResponsePage(new GroupPage(tournament, group));
                         }
                     };
 
-                    if (GroupPage.this.table.getName().equals(table.getName())) {
+                    if (GroupPage.this.group.getName().equals(group.getName())) {
                         System.out.println("?????????");
-                        button.add(new AttributeModifier("class", "activeSeasoneButton"));
+                        button.add(new AttributeModifier("class", "activeTournamentButton"));
                     }
 
                     listItem.add(button);
                 }
 
                 @Override
-                protected void populateEmptyItem(Item<Table> listItem) {
+                protected void populateEmptyItem(Item<Groups> listItem) {
                 }
             };
             gridView.setRows(1);
@@ -266,7 +267,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new SchedulePage(tournament, table, basePage));
+                    setResponsePage(new SchedulePage(tournament, group));
                 }
             };
 
@@ -278,10 +279,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, false, false) {
-
-                        private static final long serialVersionUID = 1L;
-                    });
+                    setResponsePage(new TournamentOptionsPage(tournament, group, false, false));
                 }
             };
 
@@ -295,7 +293,7 @@ public class GroupPage extends BasePage {
                     File tempFile;
                     try {
                         tempFile = PdfFactory.createSheets(WicketApplication.getFilesPath(),
-                                tournamentService.getSchedule(table, tournament), table);
+                                tournamentService.getSchedule(group, tournament), group);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -315,7 +313,7 @@ public class GroupPage extends BasePage {
                     File tempFile;
                     try {
                         tempFile = PdfFactory.createSchedule(WicketApplication.getFilesPath(),
-                                tournamentService.getSchedule(table, tournament));
+                                tournamentService.getSchedule(group, tournament));
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -333,7 +331,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new PlayOffPage(tournament, basePage));
+                    setResponsePage(new PlayOffPage(tournament));
 
                 }
             });
@@ -344,7 +342,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new RegistrationPage(tournament, basePage));
+                    setResponsePage(new RegistrationPage(tournament));
 
                 }
             });
@@ -356,7 +354,7 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.createFinalGroup(tournament);
-                    setResponsePage(new GroupPage(tournament, table, basePage) {
+                    setResponsePage(new GroupPage(tournament, group) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -370,7 +368,7 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.copyResult(tournament);
-                    setResponsePage(new GroupPage(tournament, table, basePage) {
+                    setResponsePage(new GroupPage(tournament, group) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -384,7 +382,7 @@ public class GroupPage extends BasePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createTable(WicketApplication.getFilesPath(), playerResults, table);
+                        tempFile = PdfFactory.createTable(WicketApplication.getFilesPath(), playerResults, group);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -396,7 +394,7 @@ public class GroupPage extends BasePage {
 
             add(printTable);
 
-            if (table.getTableId() == 0) {
+            if (group.getId() == 0) {
                 options.setVisible(false);
                 schedule.setVisible(false);
                 sheets.setVisible(false);
@@ -407,7 +405,7 @@ public class GroupPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return new StringResourceModel("group", null);
+        return new ResourceModel("group");
     }
 
 }

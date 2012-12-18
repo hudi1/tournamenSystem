@@ -1,9 +1,13 @@
 package org.toursys.repository.model;
 
+import java.io.Serializable;
+
 import org.sqlproc.engine.annotation.Pojo;
 
 @Pojo
-public class Score {
+public class Score implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int leftSide;
     private int rightSide;

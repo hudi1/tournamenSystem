@@ -243,6 +243,30 @@ GET_ALL_SEASONS(QRY,identx=Season,colx=Season,dbcol=season)=
   from %%SEASON  
 ;
 
+GET_ALL_PLAYERS(QRY,identx=Player,colx=Player,dbcol=player)=
+  select %ID @id, %NAME @name, %SURNAME @surname, %CLUB @club
+  from %%PLAYER  
+;
+
+GET_PLAYER_NOT_IN_TOURNAMENT(QRY,identx=Tournament,colx=Player,dbcol=player)=
+	select distinct %p.ID @id, %NAME @name, %SURNAME @surname, %CLUB @club
+	from %%PLAYER p LEFT JOIN %%PLAYER_RESULT r on %p.ID = %r.PLAYER_ID 
+	{= where p.id not in 
+		(select %a_r.PLAYER_ID from %%PLAYER_RESULT a_r left join %%GROUPS g on %a_r.GROUP_ID = %g.ID
+			where %g.TOURNAMENT_ID = :id
+		)	
+	}
+;
+
+GET_PLAYER_RESULT_IN_TOURNAMENT(QRY,identx=Tournament,colx=PlayerResult,dbcol=playerResult)=
+    select distinct %r.ID @id, %r.POINTS @points, %r.RANK @rank, %r.GROUP_ID @group.id, %r.PLAYER_ID @player.id, %r.SCORE @score^score, 
+    	   %p.NAME @player.name, %p.SURNAME @player.surname, %p.CLUB @player.club,
+    	   %g.NAME @group.name
+	from %%PLAYER_RESULT r LEFT JOIN %%PLAYER p on %p.ID = %r.PLAYER_ID 
+	                       LEFT JOIN %%GROUPS g on %g.ID = %r.GROUP_ID
+	where %g.TOURNAMENT_ID = :id
+;
+
 
 GET_TOURNAMENTS_BY_SEASON(QRY,identx=Tournament,colx=Tournament,dbcol=tournament)=
   select %ID @id, %NAME @name, %SEASON_ID @season.id, %FINAL_PROMOTING @finalPromoting, %LOWER_PROMOTING @lowerPromoting, %WIN_POINTS @winPoints, %PLAY_OFF_A @playOffA, %PLAY_OFF_LOWER @playOffLower
@@ -251,3 +275,23 @@ GET_TOURNAMENTS_BY_SEASON(QRY,identx=Tournament,colx=Tournament,dbcol=tournament
     {& %SEASON_ID = :season.id }   
   }
 ;
+
+/*GET_PLAYER_RESULT(QRY)=
+	select r.id @playerResultId^long^id, r.points @points, r.rank @rank, r.score @score,
+	p.name @player.name, p.surname @player.surname, p.club @player.club, p.id @player.playerId^long^id,
+    re.id @games.result.resultId^long^id, re.left_side @games.result.leftSide, re.right_side @games.result.rightSide, re.overtime @games.result.overtime,
+    g.opponent_id @games.opponent.playerResultId^long^id, g.player_result_id @games.playerResult.playerResultId^long^id, g.id @games.gameId^long^id,
+    p2.id @games.opponent.player.playerId, p.id @games.playerResult.player.playerId,    
+	t.id @tournamentTable.tableId^long^id, t.name @tournamentTable.name, t.index_of_first_hockey @tournamentTable.indexOfFirstHockey, t.number_of_hockey @tournamentTable.numberOfHockey, t.table_type @tournamentTable.tableType, t.tournament_id @tournamentTable.tournamentId
+	from PLAYER_RESULT r 	left join PLAYER p on r.player_id = p.id
+							left join TOURNAMENT_TABLE t on r.tournament_table_id = t.id
+							left join GAME g on g.player_result_id = r.id
+							left join RESULT re on g.result_id = re.id	
+							left join PLAYER_RESULT pr2 on g.opponent_id = pr2.id
+							left join PLAYER p2 on pr2.player_id = p2.id
+	{= where {? :table | {& r.tournament_table_id = :tournamentTable.tableId}}
+		     {& t.tournament_id = :tournament.tournamentId}		
+		     {& t.table_type = :tournamentTable.tableType}		
+		     {& p.id = :player.playerId}		
+	} order by r.id
+;*/

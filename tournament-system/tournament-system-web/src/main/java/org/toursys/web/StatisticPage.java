@@ -13,6 +13,10 @@ public class StatisticPage extends BasePage {
         add(new Image("work", new PackageResourceReference(StatisticPage.class, "work.png")));
     }
 
+    protected void createPage() {
+
+    }
+
     @Override
     protected IModel<String> newHeadingModel() {
         return Model.of("Statistic page");

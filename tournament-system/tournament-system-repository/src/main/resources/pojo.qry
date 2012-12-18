@@ -1,5 +1,6 @@
 package org.toursys.repository.model {  
 
+
   pojo Game serializable 1  {
     id _int primaryKey
     homePlayerResult :: PlayerResult required
@@ -7,6 +8,7 @@ package org.toursys.repository.model {
     homeScore : java.lang.Integer
     awayScore : java.lang.Integer
     overtime _boolean required
+    equals ::: id
     toString ::: id homeScore awayPlayerResult homePlayerResult overtime awayScore
   }
 
@@ -18,6 +20,7 @@ package org.toursys.repository.model {
     indexOfFirstHockey _int required
     tournament :: Tournament required
     playerResults : java.util.List <:PlayerResult>
+    equals ::: id
     toString ::: groupType id tournament indexOfFirstHockey name numberOfHockey
   }
 
@@ -26,6 +29,7 @@ package org.toursys.repository.model {
     name : java.lang.String required
     surname : java.lang.String required
     club : java.lang.String
+    equals ::: id
     toString ::: id club name surname
   }
 
@@ -37,6 +41,7 @@ package org.toursys.repository.model {
     player :: Player required
     score : org.toursys.repository.model.Score required
     games : java.util.List <:Game>
+    equals ::: id
     toString ::: id rank player score points group
   }
 
@@ -44,6 +49,7 @@ package org.toursys.repository.model {
     id _int primaryKey
     name : java.lang.String required
     tournaments : java.util.List <:Tournament>
+    equals ::: id
     toString ::: id name
   }
 
@@ -57,7 +63,9 @@ package org.toursys.repository.model {
     playOffA _int required
     playOffLower _int required
     groups : java.util.List <:Groups>
+    equals ::: id
     toString ::: id playOffLower season playOffA winPoints finalPromoting name lowerPromoting
   }
+
 }
 

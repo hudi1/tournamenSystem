@@ -403,7 +403,7 @@ table.seasoneTable td {
 	border: 1px solid #a6c9e2;
 }
 
-.seasoneButton {
+input.tournamentButton, input.tournamentButton:focus {
 	padding: 5px 10px;
 	border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -420,7 +420,7 @@ table.seasoneTable td {
 	cursor: pointer;
 }
 
-.seasoneButton:active {
+input.tournamentButton:active {
 	padding: 5px 10px;
 	border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -437,7 +437,41 @@ table.seasoneTable td {
 	cursor: pointer;
 }
 
-.activeSeasoneButton {
+a.tournamentLink, a.tournamentLink:focus {
+	padding: 7px 10px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	border: solid #a6c9e2 1px;
+	text-decoration: none;
+	display: block;
+	width: auto;
+	float: left;
+	margin-right: 5px;
+	color: #ffffff;
+	line-height: 15px;
+	background-color: #0078ae;
+	font-size: 100%;
+	cursor: pointer;
+}
+
+a.tournamentLink:active {
+	padding: 7px 10px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	border: solid #a6c9e2 1px;
+	text-decoration: none;
+	display: block;
+	width: auto;
+	float: left;
+	margin-right: 5px;
+	color: #ffffff;
+	line-height: 15px;
+	background-color: #0008ae;
+	font-size: 100%;
+	cursor: pointer;
+}
+
+input.groupButton {
 	padding: 5px 10px;
 	border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -454,41 +488,7 @@ table.seasoneTable td {
 	cursor: pointer;
 }
 
-.activeSeasoneButton:active {
-	padding: 5px 10px;
-	border-radius: 3px;
-	-moz-border-radius: 3px;
-	border: solid #a6c9e2 1px;
-	text-decoration: none;
-	display: block;
-	width: auto;
-	float: left;
-	margin-right: 5px;
-	color: #ffffff;
-	line-height: 15px;
-	background-color: #0008ae;
-	font-size: 100%;
-	cursor: pointer;
-}
-
-.activeSeasoneButton:focus {
-	padding: 5px 10px;
-	border-radius: 3px;
-	-moz-border-radius: 3px;
-	border: solid #a6c9e2 1px;
-	text-decoration: none;
-	display: block;
-	width: auto;
-	float: left;
-	margin-right: 5px;
-	color: #ffffff;
-	line-height: 15px;
-	background-color: #0008ae;
-	font-size: 100%;
-	cursor: pointer;
-}
-
-.seasoneButton:focus {
+input.groupButton:active {
 	padding: 5px 10px;
 	border-radius: 3px;
 	-moz-border-radius: 3px;

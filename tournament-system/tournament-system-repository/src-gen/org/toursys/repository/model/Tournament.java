@@ -158,6 +158,20 @@ public class Tournament implements Serializable {
   }
   
   @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Tournament other = (Tournament) obj;
+    if (id != other.id)
+      return false;
+    return true;
+  }  
+  
+  @Override
   public String toString() {
     return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + "]";
   }

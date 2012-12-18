@@ -6,7 +6,6 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<div wicket:id="feedbackPanel"></div>
 	<div class="naginator" wicket:id="navigator">[dataview navigator]</div>
 	<table class="seasoneTable">
 		<tr>
@@ -25,16 +24,15 @@
 			</a></td>
 
 			<td>
-
 				<form wicket:id="editSeasonForm">
 					<div>
-						<input class="seasoneButton" type="submit" wicket:id="editSeason"
-							value="edit season" />
+						<input wicket:id="editSeason" class="tournamentButton"
+							type="submit" value="edit season" />
 					</div>
 				</form>
 			</td>
-			<td><a wicket:id="deleteSeason" title="delete season"
-				class="seasoneButton"><wicket:message key="deleteSeason">
+			<td><a wicket:id="deleteSeason" class="tournamentLink"
+				title="delete season"><wicket:message key="deleteSeason">
             delete season
         </wicket:message></a></td>
 		</tr>
@@ -42,7 +40,7 @@
 
 	<form wicket:id="seasonForm">
 		<div>
-			<input class="seasoneButton" type="submit" wicket:id="newSeason"
+			<input wicket:id="newSeason" class="tournamentButton" type="submit"
 				value="new season" />
 		</div>
 	</form>

@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.dao.PlayerResultDao;
-import org.toursys.repository.form.PlayerResultForm;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Score;
+import org.toursys.repository.model.Tournament;
 
 public class PlayerResultDaoImpl extends BaseDaoImpl implements PlayerResultDao {
 
@@ -49,9 +49,10 @@ public class PlayerResultDaoImpl extends BaseDaoImpl implements PlayerResultDao 
     }
 
     @Override
-    public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm) {
+    public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament) {
         SqlSession session = getSqlSession();
-        logger.info("find player result: " + playerResultForm);
-        return getQueryEngine("FIND_PLAYER_RESULT").query(session, PlayerResult.class, playerResultForm);
+        logger.info("find player result: " + tournament);
+        return getQueryEngine("GET_PLAYER_RESULT_IN_TOURNAMENT").query(session, PlayerResult.class, tournament);
     }
+
 }

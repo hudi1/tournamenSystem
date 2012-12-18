@@ -10,8 +10,6 @@ import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.dao.TournamentDao;
 import org.toursys.repository.form.GameForm;
 import org.toursys.repository.form.GroupForm;
-import org.toursys.repository.form.PlayerForm;
-import org.toursys.repository.form.PlayerResultForm;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
@@ -55,8 +53,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public Tournament createGroup(Tournament tournament, Groups... groups) {
-        return groupDao.createGroup(tournament, groups);
+    public Groups createGroup(Groups group) {
+        return groupDao.createGroup(group);
     }
 
     @Override
@@ -105,11 +103,6 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm) {
-        return playerDao.getNotRegistrationPlayers(playerForm);
-    }
-
-    @Override
     public PlayerResult createPlayerResult(Player player, Groups group) {
         return playerResultDao.createPlayerResult(player, group);
     }
@@ -130,8 +123,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm) {
-        return playerResultDao.findPlayerResult(playerResultForm);
+    public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament) {
+        return playerResultDao.getRegistratedPlayerResult(tournament);
     }
 
     @Override
@@ -180,8 +173,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Tournament> findTournaments(Tournament tournament) {
-        return tournamentDao.findTournaments(tournament);
+    public List<Tournament> findTournamentsBySeason(Tournament tournament) {
+        return tournamentDao.findTournamentsBySeason(tournament);
     }
 
     public void setGameDao(GameDao gameDao) {
@@ -206,6 +199,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
 
     public void setGroupDao(GroupDao groupDao) {
         this.groupDao = groupDao;
+    }
+
+    @Override
+    public List<Player> getNotRegistratedPlayers(Tournament tournament) {
+        return playerDao.getNotRegistratedPlayers(tournament);
     }
 
 }

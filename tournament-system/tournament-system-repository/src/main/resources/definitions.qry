@@ -33,7 +33,7 @@ pojogen-ignore-one-to-many GROUP ID->PLAYER_RESULT->ID;
 //pojogen-ignore-many-to-one GROUP TOURNAMENT_ID->TOURNAMENT->TOURNAMENT_ID;
 
 pojogen-implements-interfaces java.io.Serializable;
-pojogen-generate-methods toString;
+pojogen-generate-methods equals toString;
 
 pojogen-types-for-columns PLAYER_RESULT SCORE->:org.toursys.repository.model.Score;
 
@@ -45,3 +45,12 @@ table player PLAYER;
 table playerResult PLAYER_RESULT;
 table season SEASON;
 table tournament TOURNAMENT;
+
+dbcol GET_PLAYER_NOT_IN_TOURNAMENT player prefix p;
+dbcol GET_PLAYER_NOT_IN_TOURNAMENT playerResult prefix r;
+dbcol GET_PLAYER_NOT_IN_TOURNAMENT playerResult prefix a_r;
+dbcol GET_PLAYER_NOT_IN_TOURNAMENT groups prefix g;
+
+dbcol GET_PLAYER_RESULT_IN_TOURNAMENT player prefix p;
+dbcol GET_PLAYER_RESULT_IN_TOURNAMENT playerResult prefix r;
+dbcol GET_PLAYER_RESULT_IN_TOURNAMENT groups prefix g;

@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.Tournament;
 
 public interface GroupDao {
 
-    public Tournament createGroup(Tournament tournament, Groups... groups);
+    public Groups createGroup(Groups group);
 
     public Groups updateGroup(Groups group);
 

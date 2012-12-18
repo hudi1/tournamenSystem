@@ -1,19 +1,41 @@
 package org.toursys.web;
 
+import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.sqlproc.engine.SqlProcessorException;
+import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 
-public abstract class TournamentEditPage extends BasePage {
+public class TournamentEditPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
-    private BasePage pageFrom;
+    private Season season;
+
+    public TournamentEditPage() {
+        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+    }
+
+    public TournamentEditPage(Season season) {
+        this.season = season;
+        createPage(new Tournament());
+    }
+
+    public TournamentEditPage(Tournament tournament) {
+        createPage(tournament);
+    }
+
+    protected void createPage(Tournament tournament) {
+        add(new TournamentForm(tournament));
+    }
 
     private class TournamentForm extends Form<Tournament> {
 
@@ -22,7 +44,7 @@ public abstract class TournamentEditPage extends BasePage {
         public TournamentForm(final Tournament tournament) {
             super("tournamentEditForm", new CompoundPropertyModel<Tournament>(tournament));
             setOutputMarkupId(true);
-            add(new TextField<String>("name"));
+            add(new RequiredTextField<String>("name"));
 
             add(new Button("submit", new StringResourceModel("save", null)) {
 
@@ -30,43 +52,35 @@ public abstract class TournamentEditPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    if (tournament.getTournamentId() != 0) {
-                        tournamentService.updateTournament(tournament);
-                    } else {
-                        tournamentService.createTournament(tournament);
+                    try {
+                        if (tournament.getId() != 0) {
+                            tournamentService.updateTournament(tournament);
+                        } else {
+                            tournamentService.createTournament(season, tournament);
+                        }
+                    } catch (SqlProcessorException e) {
+                        logger.error("Error edit tournament: ", e);
+                        error(getString("sql.db.exception"));
                     }
-                    setResponsePage(pageFrom);
+                    setResponsePage(new TournamentPage(season));
                 }
 
             });
 
-            add(new Button("back", new StringResourceModel("back", null)) {
+            add(new AjaxLink<Void>("back") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(pageFrom);
-                }
-
-                @Override
-                public void onError() {
-                    getSession().cleanupFeedbackMessages();
-                    setResponsePage(pageFrom);
+                public void onClick(AjaxRequestTarget target) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
                 }
             });
         }
-
-    }
-
-    public TournamentEditPage(BasePage pageFrom, Tournament tournament) {
-        this.pageFrom = pageFrom;
-        add(new TournamentForm(tournament));
     }
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of("Edit tournament");
+        return new ResourceModel("editTournament");
     }
-
 }

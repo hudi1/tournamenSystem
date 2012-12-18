@@ -6,23 +6,15 @@ import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.dao.GroupDao;
 import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.Tournament;
 
 public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
     @Override
-    public Tournament createGroup(Tournament tournament, Groups... groups) {
-        if (groups != null) {
-            SqlSession session = getSqlSession();
-            for (Groups group : groups) {
-                group.setTournament(tournament);
-                int count = getCrudEngine("INSERT_GROUPS").insert(session, group);
-                logger.info("insert tournament: " + count + ": " + group);
-                if (count > 0)
-                    tournament.getGroups().add(group);
-            }
-        }
-        return tournament;
+    public Groups createGroup(Groups group) {
+        SqlSession session = getSqlSession();
+        int count = getCrudEngine("INSERT_GROUPS").insert(session, group);
+        logger.info("insert tournament: " + count + ": " + group);
+        return (count > 0 ? group : null);
     }
 
     @Override

@@ -2,8 +2,8 @@ package org.toursys.repository.dao;
 
 import java.util.List;
 
-import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Tournament;
 
 public interface PlayerDao {
 
@@ -17,6 +17,6 @@ public interface PlayerDao {
 
     public List<Player> getAllPlayers();
 
-    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm);
+    public List<Player> getNotRegistratedPlayers(Tournament tournament);
 
 }

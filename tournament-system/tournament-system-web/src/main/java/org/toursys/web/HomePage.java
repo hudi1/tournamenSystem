@@ -15,6 +15,10 @@ public class HomePage extends BasePage {
         super();
     }
 
+    protected void createPage() {
+
+    }
+
     @Override
     protected IModel<String> newHeadingModel() {
         return new StringResourceModel("welcome", null);

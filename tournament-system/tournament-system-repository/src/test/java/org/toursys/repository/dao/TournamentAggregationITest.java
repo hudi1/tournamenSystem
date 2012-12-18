@@ -1,6 +1,9 @@
 package org.toursys.repository.dao;
 
+import java.util.List;
+
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +50,7 @@ public class TournamentAggregationITest {
         Assert.assertNotNull(tournament);
 
         Groups group = TournamentFactory.createGroup();
-        tournamentAggregationDao.createGroup(tournament, group);
+        tournamentAggregationDao.createGroup(group);
         Assert.assertNotNull(group);
 
         PlayerResult playerResult = tournamentAggregationDao.createPlayerResult(player, group);
@@ -145,6 +148,39 @@ public class TournamentAggregationITest {
         Assert.assertNotNull(gm);
         Assert.assertEquals((Integer) 6, gm.getHomeScore());
         Assert.assertEquals((Integer) 5, gm.getAwayScore());
+
+        // test of my own sql
+
+        List<Player> notRegistratedPlayer = tournamentAggregationDao.getNotRegistratedPlayers(tournament);
+        Assert.assertNotNull(notRegistratedPlayer);
+
+        List<PlayerResult> registratedPlayerResult = tournamentAggregationDao.getRegistratedPlayerResult(tournament);
+        Assert.assertNotNull(registratedPlayerResult);
+
+    }
+
+    @Ignore
+    @Test
+    public void tournamentPlayerTest() {
+        // insert
+        Player player = TournamentFactory.createPlayer();
+        tournamentAggregationDao.createPlayer(player);
+        Assert.assertNotNull(player);
+
+        Season season = TournamentFactory.createSeason();
+        tournamentAggregationDao.createSeason(season);
+        Assert.assertNotNull(season);
+
+        Tournament tournament = TournamentFactory.createTournament();
+        tournamentAggregationDao.createTournament(season, tournament);
+        Assert.assertNotNull(tournament);
+
+        Groups group = TournamentFactory.createGroup();
+        tournamentAggregationDao.createGroup(group);
+        Assert.assertNotNull(group);
+
+        // PlayerResult playerResult = tournamentAggregationDao.createPlayerResult(player, group);
+        // Assert.assertNotNull(playerResult);
 
     }
 }

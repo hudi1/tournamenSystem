@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.toursys.repository.form.GameForm;
 import org.toursys.repository.form.GroupForm;
-import org.toursys.repository.form.PlayerForm;
-import org.toursys.repository.form.PlayerResultForm;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
@@ -25,7 +23,7 @@ public interface TournamentAggregationDao {
 
     public List<Game> findGame(GameForm gameForm);
 
-    public Tournament createGroup(Tournament tournament, Groups... groups);
+    public Groups createGroup(Groups group);
 
     public Groups updateGroup(Groups group);
 
@@ -45,8 +43,6 @@ public interface TournamentAggregationDao {
 
     public List<Player> getAllPlayers();
 
-    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm);
-
     public PlayerResult createPlayerResult(Player player, Groups group);
 
     public PlayerResult updatePlayerResult(PlayerResult playerResult);
@@ -55,7 +51,7 @@ public interface TournamentAggregationDao {
 
     public PlayerResult getPlayerResult(PlayerResult playerResult);
 
-    public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm);
+    public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament);
 
     public Season createSeason(Season season);
 
@@ -75,6 +71,8 @@ public interface TournamentAggregationDao {
 
     public Tournament getTournament(Tournament tournament);
 
-    public List<Tournament> findTournaments(Tournament tournament);
+    public List<Tournament> findTournamentsBySeason(Tournament tournament);
+
+    public List<Player> getNotRegistratedPlayers(Tournament tournament);
 
 }

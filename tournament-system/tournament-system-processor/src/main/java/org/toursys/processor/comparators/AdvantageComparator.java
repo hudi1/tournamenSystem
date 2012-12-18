@@ -18,18 +18,18 @@ public class AdvantageComparator implements Comparator<PlayerResult> {
         if (o1.getPoints() < o2.getPoints()) {
             return 1;
         } else {
-            if ((o1.getResultScore().getLeftSide() - o1.getResultScore().getRightSide()) > (o2.getResultScore()
-                    .getLeftSide() - o2.getResultScore().getRightSide())) {
+            if ((o1.getScore().getLeftSide() - o1.getScore().getRightSide()) > (o2.getScore().getLeftSide() - o2
+                    .getScore().getRightSide())) {
                 return -1;
             }
-            if ((o1.getResultScore().getLeftSide() - o1.getResultScore().getRightSide()) < (o2.getResultScore()
-                    .getLeftSide() - o2.getResultScore().getRightSide())) {
+            if ((o1.getScore().getLeftSide() - o1.getScore().getRightSide()) < (o2.getScore().getLeftSide() - o2
+                    .getScore().getRightSide())) {
                 return 1;
             } else {
-                if (o1.getResultScore().getLeftSide() > o2.getResultScore().getLeftSide()) {
+                if (o1.getScore().getLeftSide() > o2.getScore().getLeftSide()) {
                     return -1;
                 }
-                if (o1.getResultScore().getLeftSide() < o2.getResultScore().getLeftSide()) {
+                if (o1.getScore().getLeftSide() < o2.getScore().getLeftSide()) {
                     return 1;
                 } else {
                     return 0;

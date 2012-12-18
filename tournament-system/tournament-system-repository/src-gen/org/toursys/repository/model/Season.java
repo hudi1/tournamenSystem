@@ -62,6 +62,20 @@ public class Season implements Serializable {
   }
   
   @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Season other = (Season) obj;
+    if (id != other.id)
+      return false;
+    return true;
+  }  
+  
+  @Override
   public String toString() {
     return "Season [id=" + id + ", name=" + name + "]";
   }

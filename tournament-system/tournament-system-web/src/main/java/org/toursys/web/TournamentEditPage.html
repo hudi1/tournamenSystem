@@ -7,8 +7,6 @@
 </wicket:head>
 <wicket:extend>
 
-	<!--  div wicket:id="feedbackPanel"></div-->
-
 	<form wicket:id="tournamentEditForm">
 		<fieldset>
 			<legend>
@@ -24,9 +22,11 @@
 		</fieldset>
 
 		<div>
-			<input class="seasoneButton" type="submit" wicket:id="submit"
-				value="Save" /> <input class="seasoneButton" type="submit"
-				wicket:id="back" value="Back" />
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <a wicket:id="back" title="back"
+				class="tournamentLink"><wicket:message key="back">
+            back
+        </wicket:message></a>
 		</div>
 
 	</form>

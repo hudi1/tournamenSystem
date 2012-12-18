@@ -18,27 +18,25 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Table;
 import org.toursys.repository.model.Tournament;
 
 public class SchedulePage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-    private Table table;
+    private Groups group;
     private Tournament tournament;
-    private BasePage basePage;
     private List<Game> schedule;
 
-    public SchedulePage(Tournament tournament, Table table, BasePage basePage) {
-        this.table = table;
+    public SchedulePage(Tournament tournament, Groups group) {
+        this.group = group;
         this.tournament = tournament;
-        this.basePage = basePage;
-        this.schedule = tournamentService.getSchedule(table, tournament);
+        this.schedule = tournamentService.getSchedule(group, tournament);
         createPage();
     }
 
-    private void createPage() {
+    protected void createPage() {
         add(new ScheduleForm());
     }
 
@@ -88,8 +86,8 @@ public class SchedulePage extends BasePage {
                 protected void populateItem(final Item<Game> listItem) {
                     final Game game = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Game>(game));
-                    PlayerResult playerResult = game.getPlayerResult();
-                    PlayerResult opponent = game.getOpponent();
+                    PlayerResult playerResult = game.getHomePlayerResult();
+                    PlayerResult opponent = game.getAwayPlayerResult();
                     listItem.add(new Label("players", (playerResult.getPlayer() == null) ? "-" : playerResult
                             .getPlayer().getName()
                             + " "
@@ -100,8 +98,8 @@ public class SchedulePage extends BasePage {
 
                     listItem.add(new TextField<String>("leftSide", new PropertyModel<String>(game, "result.leftSide")));
                     listItem.add(new TextField<String>("rightSide", new PropertyModel<String>(game, "result.rightSide")));
-                    listItem.add(new Label("round", game.getRound().toString()));
-                    listItem.add(new Label("hockey", game.getHockey().toString()));
+                    // listItem.add(new Label("round", game.getRound().toString()));
+                    // listItem.add(new Label("hockey", game.getHockey().toString()));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
@@ -120,7 +118,7 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, table, basePage));
+                    setResponsePage(new GroupPage(tournament, group));
                 }
             });
 
@@ -135,7 +133,7 @@ public class SchedulePage extends BasePage {
                         Game game = a.next().getModelObject();
                         tournamentService.updateGame(game);
                     }
-                    setResponsePage(new SchedulePage(tournament, table, basePage));
+                    setResponsePage(new SchedulePage(tournament, group));
                 }
             });
         }

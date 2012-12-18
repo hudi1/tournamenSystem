@@ -27,7 +27,6 @@ import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.form.GameForm;
-import org.toursys.repository.form.TableForm;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Tournament;
@@ -39,14 +38,13 @@ public class PlayOffPage extends BasePage {
     private BasePage basePage;
     private List<Game> games;
 
-    public PlayOffPage(Tournament tournament, BasePage basePage) {
+    public PlayOffPage(Tournament tournament) {
         this.tournament = tournament;
-        this.basePage = basePage;
         this.games = tournamentService.createPlayOffGames(tournament);
         createPage();
     }
 
-    private void createPage() {
+    protected void createPage() {
         add(new PlayOffForm());
     }
 
@@ -98,8 +96,8 @@ public class PlayOffPage extends BasePage {
                 protected void populateItem(final Item<Game> listItem) {
                     final Game game = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Game>(game));
-                    PlayerResult playerResult = game.getPlayerResult();
-                    PlayerResult opponent = game.getOpponent();
+                    PlayerResult playerResult = game.getHomePlayerResult();
+                    PlayerResult opponent = game.getAwayPlayerResult();
 
                     if (listItem.getIndex() == 0) {
                         nextTableByte[0] = (byte) 65;
@@ -115,7 +113,7 @@ public class PlayOffPage extends BasePage {
                                 + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
                                         + opponent.getPlayer().getSurname())));
                         actualGames = tournamentService.findGame(new GameForm(playerResult, opponent));
-                    } else if (game.getGameId() == 0) {
+                    } else if (game.getId() == 0) {
 
                         ValueMap map = new ValueMap();
                         map.put("roundCount", round);
@@ -171,8 +169,8 @@ public class PlayOffPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, tournamentService.findTable(new TableForm(tournament))
-                            .get(0), basePage));
+                    // setResponsePage(new GroupPage(tournament, tournamentService.findTable(new GroupForm(tournament))
+                    // .get(0), basePage));
                 }
             });
 
@@ -192,7 +190,7 @@ public class PlayOffPage extends BasePage {
                         }
                     }
 
-                    setResponsePage(new PlayOffPage(tournament, basePage));
+                    setResponsePage(new PlayOffPage(tournament));
                 }
             });
 

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.dao.PlayerDao;
-import org.toursys.repository.form.PlayerForm;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Tournament;
 
 public class PlayerDaoImpl extends BaseDaoImpl implements PlayerDao {
 
@@ -45,13 +45,13 @@ public class PlayerDaoImpl extends BaseDaoImpl implements PlayerDao {
     public List<Player> getAllPlayers() {
         SqlSession session = getSqlSession();
         logger.info("get all players");
-        return getQueryEngine("GET_ALL_PLAYER").query(session, Player.class);
+        return getQueryEngine("GET_ALL_PLAYERS").query(session, Player.class);
     }
 
     @Override
-    public List<Player> getNotRegistrationPlayers(PlayerForm playerForm) {
+    public List<Player> getNotRegistratedPlayers(Tournament tournament) {
         SqlSession session = getSqlSession();
         logger.info("get player not in tournament");
-        return getQueryEngine("GET_PLAYER_NOT_IN_TOURNAMENT").query(session, Player.class, playerForm);
+        return getQueryEngine("GET_PLAYER_NOT_IN_TOURNAMENT").query(session, Player.class, tournament);
     }
 }

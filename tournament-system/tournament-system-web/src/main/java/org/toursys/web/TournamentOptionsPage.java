@@ -10,31 +10,34 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.ValueMap;
-import org.toursys.repository.model.Table;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Tournament;
 
-public abstract class TournamentOptionsPage extends BasePage {
+public class TournamentOptionsPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
     private Tournament tournament;
-    private Table table;
-    private BasePage basePage;
+    private Groups group;
     boolean isTournamentOptionsOn;
     boolean isTableOptionsOn;
 
-    private class TableOptionsForm extends Form<Table> {
+    protected void createPage() {
+
+    }
+
+    private class TableOptionsForm extends Form<Groups> {
 
         private static final long serialVersionUID = 1L;
 
-        public TableOptionsForm(final Table table) {
-            super("tableOptionsForm", new CompoundPropertyModel<Table>(table));
+        public TableOptionsForm(final Groups group) {
+            super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
             setOutputMarkupId(true);
-            add(new TextField<Integer>("hockey", new PropertyModel<Integer>(table, "numberOfHockey")));
-            add(new TextField<Integer>("hockeyIndex", new PropertyModel<Integer>(table, "indexOfFirstHockey")));
+            add(new TextField<Integer>("hockey", new PropertyModel<Integer>(group, "numberOfHockey")));
+            add(new TextField<Integer>("hockeyIndex", new PropertyModel<Integer>(group, "indexOfFirstHockey")));
 
             ValueMap map = new ValueMap();
-            map.put("tableLegend", table.getName());
+            map.put("tableLegend", group.getName());
 
             add(new Label("tableLegend", new StringResourceModel("tableLegend", new Model<ValueMap>(map))));
 
@@ -44,12 +47,9 @@ public abstract class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.updateTable(table);
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, isTableOptionsOn,
-                            isTournamentOptionsOn) {
-
-                        private static final long serialVersionUID = 1L;
-                    });
+                    tournamentService.updateGroups(group);
+                    setResponsePage(new TournamentOptionsPage(tournament, group, isTableOptionsOn,
+                            isTournamentOptionsOn));
                 }
 
             });
@@ -60,7 +60,7 @@ public abstract class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, table, basePage));
+                    setResponsePage(new GroupPage(tournament, group));
                 }
 
             });
@@ -92,11 +92,8 @@ public abstract class TournamentOptionsPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.updateTournament(tournament);
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, isTableOptionsOn,
-                            isTournamentOptionsOn) {
-
-                        private static final long serialVersionUID = 1L;
-                    });
+                    setResponsePage(new TournamentOptionsPage(tournament, group, isTableOptionsOn,
+                            isTournamentOptionsOn));
                 }
 
             });
@@ -107,7 +104,7 @@ public abstract class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, table, basePage));
+                    setResponsePage(new GroupPage(tournament, group));
                 }
 
             });
@@ -122,13 +119,13 @@ public abstract class TournamentOptionsPage extends BasePage {
             super("selectOptionsForm");
             setOutputMarkupId(true);
 
-            add(new Button("table", new StringResourceModel("table", null)) {
+            add(new Button("group", new StringResourceModel("group", null)) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, true, false) {
+                    setResponsePage(new TournamentOptionsPage(tournament, group, true, false) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -142,7 +139,7 @@ public abstract class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, table, basePage, false, true) {
+                    setResponsePage(new TournamentOptionsPage(tournament, group, false, true) {
 
                         private static final long serialVersionUID = 1L;
                     });
@@ -153,14 +150,13 @@ public abstract class TournamentOptionsPage extends BasePage {
         }
     }
 
-    public TournamentOptionsPage(Tournament tournament, Table table, BasePage basePage, boolean isTableOptionsOn,
+    public TournamentOptionsPage(Tournament tournament, Groups group, boolean isTableOptionsOn,
             boolean isTournamentOptionsOn) {
-        this.basePage = basePage;
         this.tournament = tournament;
-        this.table = table;
+        this.group = group;
         this.isTableOptionsOn = isTableOptionsOn;
         this.isTournamentOptionsOn = isTournamentOptionsOn;
-        TableOptionsForm tableForm = new TableOptionsForm(table);
+        TableOptionsForm tableForm = new TableOptionsForm(group);
         add(tableForm);
         tableForm.setVisible(isTableOptionsOn);
 

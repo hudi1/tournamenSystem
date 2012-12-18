@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Result;
 
 public class BasicComparator implements Comparator<PlayerResult> {
 
@@ -17,35 +16,36 @@ public class BasicComparator implements Comparator<PlayerResult> {
             return 1;
         } else {
 
-            Result result = null;// = tournamentAggregationDao.findGame(new GameForm(o1, o2)).get(0).getResult();
+            Game playerGame = null;
 
             for (Game game : o1.getGames()) {
-                if (game.getOpponent().equals(o2)) {
-                    result = game.getResult();
+                if (game.getAwayPlayerResult().equals(o2)) {
+                    playerGame = game;
+                    break;
                 }
             }
-            if (result == null) {
+            if (playerGame == null) {
                 return 0;
             }
-            if (result.getLeftSide() != null || result.getRightSide() != null) {
-                if (result.getLeftSide() > result.getRightSide()) {
+            if (playerGame.getHomeScore() != null || playerGame.getAwayScore() != null) {
+                if (playerGame.getHomeScore() > playerGame.getAwayScore()) {
                     return -1;
                 }
-                if (result.getLeftSide() < result.getRightSide()) {
+                if (playerGame.getHomeScore() < playerGame.getAwayScore()) {
                     return 1;
                 } else {
-                    if ((o1.getResultScore().getLeftSide() - o1.getResultScore().getRightSide()) > (o2.getResultScore()
-                            .getLeftSide() - o2.getResultScore().getRightSide())) {
+                    if ((o1.getScore().getLeftSide() - o1.getScore().getRightSide()) > (o2.getScore().getLeftSide() - o2
+                            .getScore().getRightSide())) {
                         return -1;
                     }
-                    if ((o1.getResultScore().getLeftSide() - o1.getResultScore().getRightSide()) < (o2.getResultScore()
-                            .getLeftSide() - o2.getResultScore().getRightSide())) {
+                    if ((o1.getScore().getLeftSide() - o1.getScore().getRightSide()) < (o2.getScore().getLeftSide() - o2
+                            .getScore().getRightSide())) {
                         return 1;
                     } else {
-                        if (o1.getResultScore().getLeftSide() > o2.getResultScore().getLeftSide()) {
+                        if (o1.getScore().getLeftSide() > o2.getScore().getLeftSide()) {
                             return -1;
                         }
-                        if (o1.getResultScore().getLeftSide() < o2.getResultScore().getLeftSide()) {
+                        if (o1.getScore().getLeftSide() < o2.getScore().getLeftSide()) {
                             return 1;
                         } else {
                             return 0;
@@ -53,10 +53,10 @@ public class BasicComparator implements Comparator<PlayerResult> {
                     }
                 }
             } else {
-                if (o1.getResultScore().getLeftSide() > o2.getResultScore().getLeftSide()) {
+                if (o1.getScore().getLeftSide() > o2.getScore().getLeftSide()) {
                     return -1;
                 }
-                if (o1.getResultScore().getLeftSide() < o2.getResultScore().getLeftSide()) {
+                if (o1.getScore().getLeftSide() < o2.getScore().getLeftSide()) {
                     return 1;
                 } else {
                     return 0;

@@ -2,10 +2,10 @@ package org.toursys.repository.dao;
 
 import java.util.List;
 
-import org.toursys.repository.form.PlayerResultForm;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Tournament;
 
 public interface PlayerResultDao {
 
@@ -17,6 +17,6 @@ public interface PlayerResultDao {
 
     public PlayerResult getPlayerResult(PlayerResult playerResult);
 
-    public List<PlayerResult> findPlayerResult(PlayerResultForm playerResultForm);
+    public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament);
 
 }

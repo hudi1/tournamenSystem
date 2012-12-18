@@ -1,19 +1,33 @@
 package org.toursys.web;
 
+import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.ResourceModel;
+import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Player;
 
-public abstract class PlayerEditPage extends BasePage {
+public class PlayerEditPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
-    private BasePage pageFrom;
+    public PlayerEditPage() {
+        throw new RestartResponseAtInterceptPageException(new PlayerPage());
+    }
+
+    public PlayerEditPage(Player player) {
+        createPage(player);
+    }
+
+    protected void createPage(Player player) {
+        add(new PlayerForm(player));
+    }
 
     private class PlayerForm extends Form<Player> {
 
@@ -22,54 +36,45 @@ public abstract class PlayerEditPage extends BasePage {
         public PlayerForm(final Player player) {
             super("playerEditForm", new CompoundPropertyModel<Player>(player));
             setOutputMarkupId(true);
-            add(new TextField<String>("name").setRequired(true));
-            add(new TextField<String>("surname").setRequired(true));
+            add(new RequiredTextField<String>("name"));
+            add(new RequiredTextField<String>("surname"));
             add(new TextField<String>("club"));
 
-            add(new Button("submit", new StringResourceModel("submit", null)) {
+            add(new Button("submit", new ResourceModel("submit")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    if (player.getPlayerId() != 0) {
-                        tournamentService.updatePlayer(player);
-                    } else {
-                        tournamentService.createPlayer(player);
+                    try {
+                        if (player.getId() != 0) {
+                            tournamentService.updatePlayer(player);
+                        } else {
+                            tournamentService.createPlayer(player);
+                        }
+                    } catch (SqlProcessorException e) {
+                        logger.error("Error edit player: ", e);
+                        error(getString("sql.db.exception"));
                     }
-                    setResponsePage(pageFrom);
+                    setResponsePage(new PlayerPage());
                 }
-
             });
 
-            add(new Button("back", new StringResourceModel("back", null)) {
+            add(new AjaxLink<Void>("back") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(pageFrom);
-                }
-
-                @Override
-                public void onError() {
-                    getSession().cleanupFeedbackMessages();
-                    setResponsePage(pageFrom);
+                public void onClick(AjaxRequestTarget target) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
                 }
             });
         }
-
-    }
-
-    public PlayerEditPage(BasePage pageFrom, Player player) {
-        this.pageFrom = pageFrom;
-        add(new PlayerForm(player));
-        add(new FeedbackPanel("feedbackPanel"));
     }
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return new StringResourceModel("editPlayer", null);
+        return new ResourceModel("editPlayer");
     }
 
 }
