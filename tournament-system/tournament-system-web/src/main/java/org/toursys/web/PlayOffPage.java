@@ -1,11 +1,13 @@
 package org.toursys.web;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -20,27 +22,28 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.value.ValueMap;
 import org.toursys.processor.pdf.PdfFactory;
-import org.toursys.repository.form.GameForm;
-import org.toursys.repository.model.Game;
-import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.PlayOffGame;
+import org.toursys.repository.model.PlayOffResult;
+import org.toursys.repository.model.Player;
+import org.toursys.repository.model.TournamentImpl;
 
 public class PlayOffPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-    private Tournament tournament;
-    private BasePage basePage;
-    private List<Game> games;
+    private TournamentImpl tournament;
+    private Map<Groups, List<PlayOffGame>> plaOffGamesByGroup = new LinkedHashMap<Groups, List<PlayOffGame>>();
 
-    public PlayOffPage(Tournament tournament) {
+    public PlayOffPage() {
+        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+    }
+
+    public PlayOffPage(TournamentImpl tournament) {
         this.tournament = tournament;
-        this.games = tournamentService.createPlayOffGames(tournament);
         createPage();
     }
 
@@ -51,31 +54,34 @@ public class PlayOffPage extends BasePage {
     private class PlayOffForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
+        private List<Groups> finalGroups;
 
         public PlayOffForm() {
             super("playOffForm");
-            final IDataProvider<Game> dataProvider = new IDataProvider<Game>() {
+            finalGroups = tournamentService.getFinalGroups(new Groups()._setTournament(tournament));
+
+            final IDataProvider<Groups> groupsProvider = new IDataProvider<Groups>() {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Iterator<Game> iterator(int first, int count) {
-                    return games.subList(first, first + count).iterator();
+                public Iterator<Groups> iterator(int first, int count) {
+                    return finalGroups.subList(first, first + count).iterator();
                 }
 
                 @Override
                 public int size() {
-                    return games.size();
+                    return finalGroups.size();
                 }
 
                 @Override
-                public IModel<Game> model(final Game object) {
-                    return new LoadableDetachableModel<Game>() {
+                public IModel<Groups> model(final Groups object) {
+                    return new LoadableDetachableModel<Groups>() {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected Game load() {
+                        protected Groups load() {
                             return object;
                         }
                     };
@@ -86,110 +92,150 @@ public class PlayOffPage extends BasePage {
                 }
             };
 
-            final DataView<Game> dataView = new DataView<Game>("rows", dataProvider) {
+            final DataView<Groups> groupsDataView = new DataView<Groups>("group", groupsProvider) {
 
                 private static final long serialVersionUID = 1L;
-                private Integer round = 1;
-                private byte[] nextTableByte = new byte[1];
+                private List<PlayOffGame> playOffGames;
 
                 @Override
-                protected void populateItem(final Item<Game> listItem) {
-                    final Game game = listItem.getModelObject();
-                    listItem.setModel(new CompoundPropertyModel<Game>(game));
-                    PlayerResult playerResult = game.getHomePlayerResult();
-                    PlayerResult opponent = game.getAwayPlayerResult();
+                protected void populateItem(final Item<Groups> listItem) {
+                    final Groups group = listItem.getModelObject();
+                    playOffGames = tournamentService.getPlayOffGames(tournament, group);
+                    plaOffGamesByGroup.put(group, playOffGames);
 
-                    if (listItem.getIndex() == 0) {
-                        nextTableByte[0] = (byte) 65;
-                    }
-
-                    List<Game> actualGames;
-                    if (playerResult != null && opponent != null) {
-                        listItem.add(new Label("players", (playerResult.getPlayer() == null) ? "-" : playerResult
-                                .getPlayer().getName()
-                                + " "
-                                + playerResult.getPlayer().getSurname()
-                                + " : "
-                                + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
-                                        + opponent.getPlayer().getSurname())));
-                        actualGames = tournamentService.findGame(new GameForm(playerResult, opponent));
-                    } else if (game.getId() == 0) {
-
-                        ValueMap map = new ValueMap();
-                        map.put("roundCount", round);
-                        if (getItemCount() != listItem.getIndex() + 1) {
-                            listItem.add(new Label("players",
-                                    new StringResourceModel("round", new Model<ValueMap>(map))));
-                            round++;
-                        } else {
-                            listItem.add(new Label("players", ""));
-                        }
-                        actualGames = new ArrayList<Game>();
-                    } else {
-                        ValueMap map = new ValueMap();
-                        map.put("groupName", new String(nextTableByte));
-                        listItem.add(new Label("players", new StringResourceModel("group", new Model<ValueMap>(map))));
-                        actualGames = new ArrayList<Game>();
-                        round = 1;
-                        nextTableByte[0]++;
-                    }
-
-                    ListView<Game> gameList = new ListView<Game>("gameList", actualGames) {
+                    final ListView<PlayOffGame> dataView = new ListView<PlayOffGame>("rows", playOffGames) {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected void populateItem(ListItem<Game> gameItem) {
-                            final Game game = gameItem.getModelObject();
+                        protected void populateItem(final ListItem<PlayOffGame> listItem) {
+                            final PlayOffGame playOffGame = listItem.getModelObject();
+                            listItem.setModel(new CompoundPropertyModel<PlayOffGame>(playOffGame));
+                            Player player = playOffGame.getHomePlayer();
+                            Player opponent = playOffGame.getAwayPlayer();
 
-                            gameItem.add(new TextField<String>("leftSide", new PropertyModel<String>(game,
-                                    "result.leftSide")));
-                            gameItem.add(new TextField<String>("rightSide", new PropertyModel<String>(game,
-                                    "result.rightSideOvertime")));
+                            listItem.add(new Label("players", ((player != null) ? (player.getName() + " " + player
+                                    .getSurname()) : " ")
+                                    + "           :           "
+                                    + ((opponent != null) ? (opponent.getName() + " " + opponent.getSurname()) : " ")));
+
+                            int playerCount = getViewSize() + 1;
+                            if (group.getPlayThirdPlace() && getViewSize() > 1) {
+                                playerCount--;
+                            }
+
+                            listItem.add(new Label("round", tournamentService.getRound(playerCount,
+                                    listItem.getIndex() + 1) + "."));
+
+                            ListView<PlayOffResult> gameList = new ListView<PlayOffResult>("gameList",
+                                    playOffGame.getPlayOffResults()) {
+
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                protected void populateItem(ListItem<PlayOffResult> gameItem) {
+                                    final PlayOffResult playOffResult = gameItem.getModelObject();
+                                    gameItem.setModel(new CompoundPropertyModel<PlayOffResult>(playOffResult));
+
+                                    gameItem.add(new TextField<Integer>("homeScore", new PropertyModel<Integer>(
+                                            playOffResult, "homeScore")));
+                                    gameItem.add(new TextField<String>("awayScore", new PropertyModel<String>(
+                                            playOffResult, "awayScore") {
+
+                                        private static final long serialVersionUID = 1L;
+
+                                        @Override
+                                        public String getObject() {
+                                            Object value = super.getObject();
+                                            if (value == null) {
+                                                return null;
+                                            }
+                                            if (playOffResult.getOvertime()) {
+                                                return value + "P";
+                                            }
+                                            return value.toString();
+                                        }
+                                    }) {
+
+                                        private static final long serialVersionUID = 1L;
+
+                                        @Override
+                                        protected void convertInput() {
+                                            if (getInput().isEmpty()) {
+                                                super.convertInput();
+                                            } else {
+                                                try {
+                                                    setConvertedInput(Integer.parseInt(getInput()) + "");
+                                                } catch (NumberFormatException e) {
+                                                    try {
+                                                        int result = Integer.parseInt(getInput().substring(0,
+                                                                getInput().length() - 1));
+                                                        playOffResult.setOvertime(true);
+                                                        setConvertedInput(result + "");
+                                                    } catch (NumberFormatException e1) {
+                                                        super.convertInput();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            };
+
+                            listItem.add(gameList);
+
+                            listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public String getObject() {
+                                    return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
+                                }
+                            }));
+
                         }
                     };
 
-                    listItem.add(gameList);
-
-                    listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public String getObject() {
-                            return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
-                        }
-                    }));
+                    listItem.add(new Label("name", group.getName()));
+                    listItem.add(dataView);
 
                 }
             };
-            add(dataView);
-            add(new Button("back", new StringResourceModel("back", null)) {
+
+            add(groupsDataView);
+
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    // setResponsePage(new GroupPage(tournament, tournamentService.findTable(new GroupForm(tournament))
-                    // .get(0), basePage));
+                    setResponsePage(new GroupPage(tournament, null));
                 }
             });
 
-            add(new Button("submit", new StringResourceModel("save", null)) {
+            add(new Button("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
+                @SuppressWarnings("unchecked")
                 public void onSubmit() {
 
-                    for (int i = 0; i < dataProvider.size(); i++) {
-                        Item<Game> a = (Item<Game>) dataView.get(i);
-                        ListView<Game> b = (ListView<Game>) a.get(1);
-                        List<? extends Game> c = b.getList();
-                        for (Game game : c) {
-                            tournamentService.updateGame(game);
+                    // TODO velmi hnusna konstrukce jak pristupit k jednotlivym vysledkom na nic lepsie som zatim ale
+                    // neprisiel
+                    for (int i = 0; i < groupsProvider.size(); i++) {
+                        ListItem<PlayOffGame> itemView = (ListItem<PlayOffGame>) groupsDataView.get(i);
+                        ListView<PlayOffGame> dataView = (ListView<PlayOffGame>) itemView.get(1);
+                        for (int j = 0; j < dataView.size(); j++) {
+                            ListItem<PlayOffGame> a = (ListItem<PlayOffGame>) dataView.get(j);
+                            ListView<PlayOffResult> b = (ListView<PlayOffResult>) a.get(2);
+                            List<? extends PlayOffResult> c = b.getList();
+                            for (PlayOffResult result : c) {
+                                tournamentService.updatePlayOffResult(result);
+                            }
                         }
                     }
-
                     setResponsePage(new PlayOffPage(tournament));
                 }
             });
@@ -201,23 +247,33 @@ public class PlayOffPage extends BasePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), games);
+                        tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), plaOffGamesByGroup);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
                     }
                     return tempFile;
                 }
-            }/* , new ResourceModel("sheets") /* TODO this doesnt work ?? */);
+            });
             pdfPlayOff.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
 
             add(pdfPlayOff);
+
+            add(new Button("finalStandings", new ResourceModel("finalStandings")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(new FinalStandingsPage(tournament, plaOffGamesByGroup));
+                }
+            });
         }
     }
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return new StringResourceModel("playOff", null);
+        return new ResourceModel("playOff");
     }
 
 }

@@ -7,29 +7,49 @@
 </wicket:head>
 <wicket:extend>
 	<form wicket:id="playOffForm">
+
 		<table class="dataview">
-			<tr>
-				<th><wicket:message key="player">
+
+			<tr wicket:id="group">
+				<td>
+					<table class="dataview">
+						<tr>
+							<th><span wicket:id="name">name</span></th>
+						</tr>
+						<tr>
+							<th><wicket:message key="round">
+            Round
+        </wicket:message></th>
+							<th><wicket:message key="player">
             Player
         </wicket:message></th>
-				<th><wicket:message key="result">
+							<th><wicket:message key="result">
             Result
         </wicket:message></th>
-			</tr>
-			<tr wicket:id="rows">
-				<td><span wicket:id="players"></span></td>
-				<td wicket:id="gameList"><input wicket:id="leftSide"
-					style="width: 25px;"></input><label>:</label> <input
-					wicket:id="rightSide" style="width: 25px;"></input>,</td>
-			</tr>
+						</tr>
+						<tr wicket:id="rows">
+							<td><span wicket:id="round"></span></td>
+							<td><span wicket:id="players"></span></td>
+							<td wicket:id="gameList"><input wicket:id=homeScore
+								style="width: 30px;"></input><label>:</label> <input
+								wicket:id="awayScore" style="width: 30px;"></input> ,</td>
+						</tr>
 
+					</table>
+
+				</td>
+			</tr>
 		</table>
 		<div>
-			<input class="seasoneButton" type="submit" wicket:id="back"
-				value="Back" /> <input class="seasoneButton" type="submit"
+			<input wicket:id="back" type="submit" class="tournamentButton"
+				value="Back"></input> <input class="tournamentButton" type="submit"
 				wicket:id="submit" value="Save" /> <span> <a
-				class="seasoneButton" type="submit" wicket:id="pdfPlayOff">print
-					play off </a>
+				class="tournamentLink" type="submit" wicket:id="pdfPlayOff"><wicket:message
+						key="printPlayOff">
+            print play off
+        </wicket:message> </a>
+			</span> <span> <input class="tournamentButton" type="submit"
+				wicket:id="finalStandings" value="finalStandings" />
 			</span>
 		</div>
 	</form>

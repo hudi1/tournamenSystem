@@ -2,10 +2,10 @@ package org.toursys.repository.service;
 
 import java.util.List;
 
-import org.toursys.repository.form.GameForm;
-import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.PlayOffGame;
+import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Season;
@@ -21,7 +21,7 @@ public interface TournamentAggregationDao {
 
     public Game getGame(Game game);
 
-    public List<Game> findGame(GameForm gameForm);
+    public List<Game> findGame(Game game);
 
     public Groups createGroup(Groups group);
 
@@ -31,7 +31,7 @@ public interface TournamentAggregationDao {
 
     public Groups getGroup(Groups group);
 
-    public List<Groups> findGroups(GroupForm groupForm);
+    public List<Groups> getListGroups(Groups group);
 
     public Player createPlayer(Player player);
 
@@ -52,6 +52,8 @@ public interface TournamentAggregationDao {
     public PlayerResult getPlayerResult(PlayerResult playerResult);
 
     public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament);
+
+    public List<PlayerResult> getListPlayerResult(PlayerResult form);
 
     public Season createSeason(Season season);
 
@@ -74,5 +76,25 @@ public interface TournamentAggregationDao {
     public List<Tournament> findTournamentsBySeason(Tournament tournament);
 
     public List<Player> getNotRegistratedPlayers(Tournament tournament);
+
+    public PlayOffGame createPlayOffGame(Player homePlayer, Player awayPlayer, Groups group, int position);
+
+    public PlayOffGame updatePlayOffGame(PlayOffGame playOffGame);
+
+    public boolean deletePlayOffGame(PlayOffGame playOffGame);
+
+    public PlayOffGame getPlayOffGame(PlayOffGame playOffGame);
+
+    public List<PlayOffGame> findPlayOffGame(PlayOffGame playOffGame);
+
+    public PlayOffResult createPlayOffResult(PlayOffGame playOffGame);
+
+    public PlayOffResult updatePlayOffResult(PlayOffResult playOffResult);
+
+    public boolean deletePlayOffResult(PlayOffResult playOffResult);
+
+    public PlayOffResult getPlayOffResult(PlayOffResult playOffResult);
+
+    public List<PlayOffResult> findPlayOffResult(PlayOffResult playOffResult);
 
 }

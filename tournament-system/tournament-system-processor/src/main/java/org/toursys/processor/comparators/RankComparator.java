@@ -8,6 +8,9 @@ public class RankComparator implements Comparator<PlayerResult> {
 
     public int compare(PlayerResult o1, PlayerResult o2) {
 
+        if (o1.getRank() == null || o2.getRank() == null) {
+            return 0;
+        }
         if (o1.getRank() < o2.getRank()) {
             return -1;
         }

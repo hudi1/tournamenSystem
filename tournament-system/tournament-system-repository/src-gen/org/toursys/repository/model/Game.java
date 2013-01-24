@@ -1,31 +1,37 @@
 package org.toursys.repository.model;
 
 import java.io.Serializable;
+import java.util.Set;
+import java.util.HashSet;
+import java.lang.reflect.InvocationTargetException;
+import org.apache.commons.beanutils.MethodUtils;
 
 public class Game implements Serializable {
   
   private static final long serialVersionUID = 1L;
+  public static final int ORDER_BY_ID = 1;
+  public static final int ORDER_BY_HOME_PLAYER_RESULT = 2;
+  public static final int ORDER_BY_AWAY_PLAYER_RESULT = 3;
 	
   public Game() {
   }
   
-  public Game(PlayerResult homePlayerResult, PlayerResult awayPlayerResult, boolean overtime) {
+  public Game(PlayerResult homePlayerResult, PlayerResult awayPlayerResult) {
     this.homePlayerResult = homePlayerResult;
     this.awayPlayerResult = awayPlayerResult;
-    this.overtime = overtime;
   }
   
-  private int id;
+  private Integer id;
     
-  public int getId() {
+  public Integer getId() {
     return id;
   }
     
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
     
-  public Game _setId(int id) {
+  public Game _setId(Integer id) {
     this.id = id;
     return this;
   }
@@ -90,21 +96,6 @@ public class Game implements Serializable {
     return this;
   }
   
-  private boolean overtime;
-    
-  public boolean getOvertime() {
-    return overtime;
-  }
-    
-  public void setOvertime(boolean overtime) {
-    this.overtime = overtime;
-  }
-    
-  public Game _setOvertime(boolean overtime) {
-    this.overtime = overtime;
-    return this;
-  }
-  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -114,17 +105,47 @@ public class Game implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     Game other = (Game) obj;
-    if (id != other.id)
+    if (!id.equals(other.id))
       return false;
     return true;
   }  
   
+  public enum Association {
+    awayPlayerResult, homePlayerResult
+  }
+  
+  private Set<String> initAssociations = new HashSet<String>();
+  
+  public void setInit(String... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (String association : associations)
+      initAssociations.add(association);
+  }
+  
+  public void clearInit(String... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (String association : associations)
+      initAssociations.remove(association);
+  }
+  
+  public Boolean toInit(String association) {
+    if (association == null)
+      throw new IllegalArgumentException();
+    return initAssociations.contains(association);
+  }
+  
+  public void clearAllInit() {
+    initAssociations = new HashSet<String>();
+  }
+  
   @Override
   public String toString() {
-    return "Game [id=" + id + ", homeScore=" + homeScore + ", overtime=" + overtime + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", homeScore=" + homeScore + ", awayScore=" + awayScore + "]";
   }
   
   public String toStringFull() {
-    return "Game [id=" + id + ", homeScore=" + homeScore + ", awayPlayerResult=" + awayPlayerResult + ", homePlayerResult=" + homePlayerResult + ", overtime=" + overtime + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", homeScore=" + homeScore + ", awayPlayerResult=" + awayPlayerResult + ", homePlayerResult=" + homePlayerResult + ", awayScore=" + awayScore + "]";
   }
 }

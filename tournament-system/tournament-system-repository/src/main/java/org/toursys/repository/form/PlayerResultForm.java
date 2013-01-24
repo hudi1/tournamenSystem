@@ -12,6 +12,11 @@ public class PlayerResultForm {
     private Tournament tournament;
     private Player player;
 
+    public PlayerResultForm(Tournament tournament, Groups group) {
+        this.tournament = tournament;
+        this.group = group;
+    }
+
     public Groups getGroup() {
         return group;
     }

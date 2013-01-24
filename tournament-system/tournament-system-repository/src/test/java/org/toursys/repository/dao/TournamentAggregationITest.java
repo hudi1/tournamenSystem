@@ -50,6 +50,7 @@ public class TournamentAggregationITest {
         Assert.assertNotNull(tournament);
 
         Groups group = TournamentFactory.createGroup();
+        group.setTournament(tournament);
         tournamentAggregationDao.createGroup(group);
         Assert.assertNotNull(group);
 
@@ -139,7 +140,7 @@ public class TournamentAggregationITest {
         pr.setPoints(10);
         pr = tournamentAggregationDao.getPlayerResult(pr);
         Assert.assertNotNull(pr);
-        Assert.assertEquals(10, pr.getPoints());
+        Assert.assertEquals((Integer) 10, pr.getPoints());
         Assert.assertEquals(new Score(1, 1), pr.getScore());
 
         Game gm = new Game();

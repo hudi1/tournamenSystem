@@ -23,8 +23,14 @@ metagen-table-sequence PLAYER SEQ_PLAYER;
 metagen-table-sequence PLAYER_RESULT SEQ_PLAYER_RESULT;
 metagen-table-sequence SEASON SEQ_SEASON;
 metagen-table-sequence TOURNAMENT SEQ_TOURNAMENT;
+metagen-table-sequence PLAY_OFF_GAME SEQ_PLAY_OFF_GAME;
+metagen-table-sequence PLAY_OFF_RESULT SEQ_PLAY_OFF_RESULT;
+
+pojogen-generate-wrappers;
 
 pojogen-ignore-one-to-many PLAYER ID->PLAYER_RESULT->ID;
+pojogen-ignore-one-to-many PLAYER_RESULT ID->GAME->AWAY_PLAYER_RESULT_ID;
+pojogen-create-one-to-many PLAYER_RESULT ID->GAME->HOME_PLAYER_RESULT_ID;
 //pojogen-ignore-one-to-many SEASON ID->TOURNAMENT->ID;
 
 //pojogen-ignore-one-to-many TOURNAMENT ID->GROUP->ID;
@@ -33,14 +39,18 @@ pojogen-ignore-one-to-many GROUP ID->PLAYER_RESULT->ID;
 //pojogen-ignore-many-to-one GROUP TOURNAMENT_ID->TOURNAMENT->TOURNAMENT_ID;
 
 pojogen-implements-interfaces java.io.Serializable;
-pojogen-generate-methods equals toString;
+pojogen-generate-methods equals toString toInit;
 
 pojogen-types-for-columns PLAYER_RESULT SCORE->:org.toursys.repository.model.Score;
+
+pojogen-make-it-final;
 
 metagen-column-meta-type PLAYER_RESULT SCORE->score;
 
 table game GAME;
 table groups GROUPS;
+table playOffGame PLAY_OFF_GAME;
+table playOffResult PLAY_OFF_RESULT;
 table player PLAYER;
 table playerResult PLAYER_RESULT;
 table season SEASON;

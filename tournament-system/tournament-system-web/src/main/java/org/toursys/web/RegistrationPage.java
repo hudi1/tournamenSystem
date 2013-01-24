@@ -31,6 +31,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.TournamentImpl;
 import org.wicketstuff.minis.behavior.spinner.Spinner;
 
 public class RegistrationPage extends BasePage {
@@ -44,7 +45,7 @@ public class RegistrationPage extends BasePage {
     }
 
     public RegistrationPage(Tournament tournament) {
-        this(tournament, new Groups());
+        this(tournament, new Groups()._setIndexOfFirstHockey(1)._setNumberOfHockey(1));
     }
 
     public RegistrationPage(Tournament tournament, Groups group) {
@@ -296,13 +297,14 @@ public class RegistrationPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    /*
-                     * Groups group = new Groups(); List<Groups> tables = tournamentService.findTable(new
-                     * GroupForm(null, tournament)); if (!tables.isEmpty()) { group = tables.get(0); List<PlayerResult>
-                     * player = tournamentService.findPlayerResult(new PlayerResultForm(tournament, group));
-                     * tournamentService.createGames(player); }
-                     */
-                    setResponsePage(new GroupPage(tournament));
+
+                    Groups group = null;
+                    List<Groups> groups = tournamentService.getBasicGroups(new Groups()._setTournament(tournament));
+                    if (!groups.isEmpty()) {
+                        group = groups.get(0);
+                    }
+
+                    setResponsePage(new GroupPage(new TournamentImpl(tournament), group));
                 }
             });
 

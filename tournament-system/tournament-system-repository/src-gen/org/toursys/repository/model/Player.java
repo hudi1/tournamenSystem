@@ -1,10 +1,18 @@
 package org.toursys.repository.model;
+  
+import java.util.List;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.lang.reflect.InvocationTargetException;
+import org.apache.commons.beanutils.MethodUtils;
 
 public class Player implements Serializable {
   
   private static final long serialVersionUID = 1L;
+  public static final int ORDER_BY_ID = 1;
 	
   public Player() {
   }
@@ -14,17 +22,17 @@ public class Player implements Serializable {
     this.surname = surname;
   }
   
-  private int id;
+  private Integer id;
     
-  public int getId() {
+  public Integer getId() {
     return id;
   }
     
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
     
-  public Player _setId(int id) {
+  public Player _setId(Integer id) {
     this.id = id;
     return this;
   }
@@ -74,6 +82,21 @@ public class Player implements Serializable {
     return this;
   }
   
+  private List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
+    
+  public List<PlayOffGame> getPlayOffGames() {
+    return playOffGames;
+  }
+    
+  public void setPlayOffGames(List<PlayOffGame> playOffGames) {
+    this.playOffGames = playOffGames;
+  }
+    
+  public Player _setPlayOffGames(List<PlayOffGame> playOffGames) {
+    this.playOffGames = playOffGames;
+    return this;
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -83,10 +106,40 @@ public class Player implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     Player other = (Player) obj;
-    if (id != other.id)
+    if (!id.equals(other.id))
       return false;
     return true;
   }  
+  
+  public enum Association {
+    playOffGames
+  }
+  
+  private Set<String> initAssociations = new HashSet<String>();
+  
+  public void setInit(String... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (String association : associations)
+      initAssociations.add(association);
+  }
+  
+  public void clearInit(String... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (String association : associations)
+      initAssociations.remove(association);
+  }
+  
+  public Boolean toInit(String association) {
+    if (association == null)
+      throw new IllegalArgumentException();
+    return initAssociations.contains(association);
+  }
+  
+  public void clearAllInit() {
+    initAssociations = new HashSet<String>();
+  }
   
   @Override
   public String toString() {

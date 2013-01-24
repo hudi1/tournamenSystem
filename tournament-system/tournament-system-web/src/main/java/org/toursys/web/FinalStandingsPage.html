@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+	<div>
+		<form wicket:id="finalStandingsForm">
+
+			<table class="player">
+				<tbody class="scrolableBody">
+					<tr wicket:id="rows">
+						<td><span wicket:id="rank">"rank"</span></td>
+						<td><span wicket:id="surname">surname</span></td>
+						<td><span wicket:id="name">name</span></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div>
+				<input class="tournamentButton" type="submit" wicket:id="back"
+					value="Back" /> <a class="tournamentLink"
+					wicket:id="finalStandings"> <wicket:message
+						key="printFinalStandings">Print final standings</wicket:message>
+				</a>
+			</div>
+		</form>
+	</div>
+</wicket:extend>
+</html>
+

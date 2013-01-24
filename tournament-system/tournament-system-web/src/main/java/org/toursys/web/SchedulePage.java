@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -16,28 +17,38 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.TournamentImpl;
 
 public class SchedulePage extends BasePage {
 
     private static final long serialVersionUID = 1L;
     private Groups group;
-    private Tournament tournament;
-    private List<Game> schedule;
+    private TournamentImpl tournament;
+    private List<GameImpl> schedule;
 
-    public SchedulePage(Tournament tournament, Groups group) {
+    public SchedulePage() {
+        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+    }
+
+    public SchedulePage(TournamentImpl tournament, Groups group) {
         this.group = group;
         this.tournament = tournament;
-        this.schedule = tournamentService.getSchedule(group, tournament);
+        this.schedule = getSchedule();
         createPage();
     }
 
-    protected void createPage() {
+    private void createPage() {
         add(new ScheduleForm());
+    }
+
+    private List<GameImpl> getSchedule() {
+        return tournamentService.getSchedule(group, tournament,
+                tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group)));
     }
 
     private class ScheduleForm extends Form<Void> {
@@ -46,12 +57,12 @@ public class SchedulePage extends BasePage {
 
         public ScheduleForm() {
             super("scheduleForm");
-            IDataProvider<Game> dataProvider = new IDataProvider<Game>() {
+            IDataProvider<GameImpl> dataProvider = new IDataProvider<GameImpl>() {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Iterator<Game> iterator(int first, int count) {
+                public Iterator<GameImpl> iterator(int first, int count) {
                     return schedule.subList(first, first + count).iterator();
                 }
 
@@ -61,13 +72,13 @@ public class SchedulePage extends BasePage {
                 }
 
                 @Override
-                public IModel<Game> model(final Game object) {
-                    return new LoadableDetachableModel<Game>() {
+                public IModel<GameImpl> model(final GameImpl object) {
+                    return new LoadableDetachableModel<GameImpl>() {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected Game load() {
+                        protected GameImpl load() {
                             return object;
                         }
                     };
@@ -78,14 +89,14 @@ public class SchedulePage extends BasePage {
                 }
             };
 
-            final DataView<Game> dataView = new DataView<Game>("rows", dataProvider) {
+            final DataView<GameImpl> dataView = new DataView<GameImpl>("rows", dataProvider) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(final Item<Game> listItem) {
-                    final Game game = listItem.getModelObject();
-                    listItem.setModel(new CompoundPropertyModel<Game>(game));
+                protected void populateItem(final Item<GameImpl> listItem) {
+                    final GameImpl game = listItem.getModelObject();
+                    listItem.setModel(new CompoundPropertyModel<GameImpl>(game));
                     PlayerResult playerResult = game.getHomePlayerResult();
                     PlayerResult opponent = game.getAwayPlayerResult();
                     listItem.add(new Label("players", (playerResult.getPlayer() == null) ? "-" : playerResult
@@ -96,10 +107,10 @@ public class SchedulePage extends BasePage {
                             + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
                                     + opponent.getPlayer().getSurname())));
 
-                    listItem.add(new TextField<String>("leftSide", new PropertyModel<String>(game, "result.leftSide")));
-                    listItem.add(new TextField<String>("rightSide", new PropertyModel<String>(game, "result.rightSide")));
-                    // listItem.add(new Label("round", game.getRound().toString()));
-                    // listItem.add(new Label("hockey", game.getHockey().toString()));
+                    listItem.add(new TextField<String>("homeScore", new PropertyModel<String>(game, "homeScore")));
+                    listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore")));
+                    listItem.add(new Label("round", game.getRound().toString()));
+                    listItem.add(new Label("hockey", game.getHockey().toString()));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
@@ -112,28 +123,27 @@ public class SchedulePage extends BasePage {
                 }
             };
             add(dataView);
-            add(new Button("back", new StringResourceModel("back", null)) {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group));
+                    setResponsePage(new GroupPage(tournament, group, true));
                 }
             });
 
-            add(new Button("submit", new StringResourceModel("save", null)) {
+            add(new Button("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    Iterator<Item<Game>> a = dataView.getItems();
-                    while (a.hasNext()) {
-                        Game game = a.next().getModelObject();
+                    Iterator<Item<GameImpl>> games = dataView.getItems();
+                    while (games.hasNext()) {
+                        Game game = games.next().getModelObject();
                         tournamentService.updateGame(game);
                     }
-                    setResponsePage(new SchedulePage(tournament, group));
                 }
             });
         }
@@ -141,7 +151,7 @@ public class SchedulePage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return new StringResourceModel("schedule", null);
+        return new ResourceModel("schedule");
     }
 
 }

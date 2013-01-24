@@ -2,7 +2,6 @@ package org.toursys.repository.dao;
 
 import java.util.List;
 
-import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.model.Groups;
 
 public interface GroupDao {
@@ -15,5 +14,5 @@ public interface GroupDao {
 
     public Groups getGroup(Groups group);
 
-    public List<Groups> findGroups(GroupForm groupForm);
+    public List<Groups> getListGroups(Groups group);
 }

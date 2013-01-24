@@ -33,6 +33,8 @@
     </bean>
 
     <bean id="gameDao" class="org.toursys.repository.dao.impl.GameDaoImpl" parent="baseDao" />
+    <bean id="playOffGameDao" class="org.toursys.repository.dao.impl.PlayOffGameDaoImpl" parent="baseDao" />
+    <bean id="playOffResultDao" class="org.toursys.repository.dao.impl.PlayOffResultDaoImpl" parent="baseDao" />
     <bean id="playerDao" class="org.toursys.repository.dao.impl.PlayerDaoImpl" parent="baseDao" />
     <bean id="playerResultDao" class="org.toursys.repository.dao.impl.PlayerResultDaoImpl" parent="baseDao" />
     <bean id="seasonDao" class="org.toursys.repository.dao.impl.SeasonDaoImpl" parent="baseDao" />
@@ -41,6 +43,8 @@
 
     <bean id="tournamentAggregationDao" class="org.toursys.repository.service.impl.TournamentAggregationDaoImpl">
         <property name="gameDao" ref="gameDao" />
+        <property name="playOffGameDao" ref="playOffGameDao" />
+        <property name="playOffResultDao" ref="playOffResultDao" />
         <property name="playerDao" ref="playerDao" />
         <property name="playerResultDao" ref="playerResultDao" />
         <property name="groupDao" ref="groupDao" />

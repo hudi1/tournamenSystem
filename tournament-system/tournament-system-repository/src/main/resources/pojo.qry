@@ -1,71 +1,101 @@
 package org.toursys.repository.model {  
 
-
-  pojo Game serializable 1  {
-    id _int primaryKey
-    homePlayerResult :: PlayerResult required
-    awayPlayerResult :: PlayerResult required
+  final pojo Game serializable 1  {
+    id : java.lang.Integer primaryKey index 1
+    homePlayerResult :: PlayerResult required index 2
+    awayPlayerResult :: PlayerResult required index 3
     homeScore : java.lang.Integer
     awayScore : java.lang.Integer
-    overtime _boolean required
     equals ::: id
-    toString ::: id homeScore awayPlayerResult homePlayerResult overtime awayScore
+    toInit ::: awayPlayerResult homePlayerResult
+    toString ::: id homeScore awayPlayerResult homePlayerResult awayScore
   }
 
-  pojo Groups serializable 1  {
-    id _int primaryKey
+  final pojo Groups serializable 1  {
+    id : java.lang.Integer primaryKey index 1
     name : java.lang.String required
-    numberOfHockey _int required
+    numberOfHockey : java.lang.Integer required
     groupType : java.lang.String required
-    indexOfFirstHockey _int required
-    tournament :: Tournament required
+    indexOfFirstHockey : java.lang.Integer required
+    tournament :: Tournament required index 3
+    copyResult : java.lang.Boolean required
+    playThirdPlace : java.lang.Boolean required
+    playOffGames : java.util.List <:PlayOffGame>
     playerResults : java.util.List <:PlayerResult>
     equals ::: id
-    toString ::: groupType id tournament indexOfFirstHockey name numberOfHockey
+    toInit ::: playOffGames tournament playerResults
+    toString ::: groupType id playThirdPlace tournament indexOfFirstHockey copyResult name numberOfHockey
   }
 
-  pojo Player serializable 1  {
-    id _int primaryKey
+  final pojo Player serializable 1  {
+    id : java.lang.Integer primaryKey index 1
     name : java.lang.String required
     surname : java.lang.String required
     club : java.lang.String
+    playOffGames : java.util.List <:PlayOffGame>
     equals ::: id
+    toInit ::: playOffGames
     toString ::: id club name surname
   }
 
-  pojo PlayerResult serializable 1  {
-    id _int primaryKey
-    points _int required
+  final pojo PlayerResult serializable 1  {
+    id : java.lang.Integer primaryKey index 1
+    points : java.lang.Integer required
     rank : java.lang.Integer
-    group :: Groups required
-    player :: Player required
+    group :: Groups required index 3
+    player :: Player required index 2
     score : org.toursys.repository.model.Score required
     games : java.util.List <:Game>
     equals ::: id
+    toInit ::: games player group
     toString ::: id rank player score points group
   }
 
-  pojo Season serializable 1  {
-    id _int primaryKey
+  final pojo PlayOffGame serializable 1  {
+    id : java.lang.Integer primaryKey index 1
+    homePlayer :: Player index 2
+    awayPlayer :: Player index 3
+    group :: Groups required index 5
+    position : java.lang.Integer required index 4
+    playOffResults : java.util.List <:PlayOffResult>
+    equals ::: id
+    toInit ::: awayPlayer playOffResults group homePlayer
+    toString ::: position id awayPlayer group homePlayer
+  }
+
+  final pojo PlayOffResult serializable 1  {
+    id : java.lang.Integer primaryKey index 1
+    homeScore : java.lang.Integer
+    awayScore : java.lang.Integer
+    overtime : java.lang.Boolean required
+    playOffGame :: PlayOffGame required index 2
+    equals ::: id
+    toInit ::: playOffGame
+    toString ::: id homeScore playOffGame overtime awayScore
+  }
+
+  final pojo Season serializable 1  {
+    id : java.lang.Integer primaryKey index 1
     name : java.lang.String required
     tournaments : java.util.List <:Tournament>
     equals ::: id
+    toInit ::: tournaments
     toString ::: id name
   }
 
-  pojo Tournament serializable 1  {
-    id _int primaryKey
+  final pojo Tournament serializable 1  {
+    id : java.lang.Integer primaryKey index 1
     name : java.lang.String required
-    season :: Season required
-    finalPromoting _int required
-    lowerPromoting _int required
-    winPoints _int required
-    playOffA _int required
-    playOffLower _int required
+    season :: Season required index 2
+    finalPromoting : java.lang.Integer required
+    lowerPromoting : java.lang.Integer required
+    winPoints : java.lang.Integer required
+    playOffA : java.lang.Integer required
+    playOffLower : java.lang.Integer required
     groups : java.util.List <:Groups>
     equals ::: id
+    toInit ::: season groups
     toString ::: id playOffLower season playOffA winPoints finalPromoting name lowerPromoting
   }
-
+  
 }
-

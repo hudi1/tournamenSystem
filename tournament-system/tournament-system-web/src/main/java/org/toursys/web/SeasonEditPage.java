@@ -44,7 +44,7 @@ public class SeasonEditPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     try {
-                        if (season.getId() != 0) {
+                        if (season.getId() != null) {
                             tournamentService.updateSeason(season);
                         } else {
                             tournamentService.createSeason(season);

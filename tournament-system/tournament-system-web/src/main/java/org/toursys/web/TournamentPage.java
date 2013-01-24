@@ -168,7 +168,7 @@ public class TournamentPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentEditPage(tournament));
+                    setResponsePage(new TournamentEditPage(season, tournament));
                 }
             });
         }

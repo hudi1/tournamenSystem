@@ -4,15 +4,21 @@ import java.util.List;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.lang.reflect.InvocationTargetException;
+import org.apache.commons.beanutils.MethodUtils;
 
 public class Tournament implements Serializable {
   
   private static final long serialVersionUID = 1L;
+  public static final int ORDER_BY_ID = 1;
+  public static final int ORDER_BY_SEASON = 2;
 	
   public Tournament() {
   }
   
-  public Tournament(String name, Season season, int finalPromoting, int lowerPromoting, int winPoints, int playOffA, int playOffLower) {
+  public Tournament(String name, Season season, Integer finalPromoting, Integer lowerPromoting, Integer winPoints, Integer playOffA, Integer playOffLower) {
     this.name = name;
     this.season = season;
     this.finalPromoting = finalPromoting;
@@ -22,17 +28,17 @@ public class Tournament implements Serializable {
     this.playOffLower = playOffLower;
   }
   
-  private int id;
+  private Integer id;
     
-  public int getId() {
+  public Integer getId() {
     return id;
   }
     
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
     
-  public Tournament _setId(int id) {
+  public Tournament _setId(Integer id) {
     this.id = id;
     return this;
   }
@@ -67,77 +73,77 @@ public class Tournament implements Serializable {
     return this;
   }
   
-  private int finalPromoting;
+  private Integer finalPromoting;
     
-  public int getFinalPromoting() {
+  public Integer getFinalPromoting() {
     return finalPromoting;
   }
     
-  public void setFinalPromoting(int finalPromoting) {
+  public void setFinalPromoting(Integer finalPromoting) {
     this.finalPromoting = finalPromoting;
   }
     
-  public Tournament _setFinalPromoting(int finalPromoting) {
+  public Tournament _setFinalPromoting(Integer finalPromoting) {
     this.finalPromoting = finalPromoting;
     return this;
   }
   
-  private int lowerPromoting;
+  private Integer lowerPromoting;
     
-  public int getLowerPromoting() {
+  public Integer getLowerPromoting() {
     return lowerPromoting;
   }
     
-  public void setLowerPromoting(int lowerPromoting) {
+  public void setLowerPromoting(Integer lowerPromoting) {
     this.lowerPromoting = lowerPromoting;
   }
     
-  public Tournament _setLowerPromoting(int lowerPromoting) {
+  public Tournament _setLowerPromoting(Integer lowerPromoting) {
     this.lowerPromoting = lowerPromoting;
     return this;
   }
   
-  private int winPoints;
+  private Integer winPoints;
     
-  public int getWinPoints() {
+  public Integer getWinPoints() {
     return winPoints;
   }
     
-  public void setWinPoints(int winPoints) {
+  public void setWinPoints(Integer winPoints) {
     this.winPoints = winPoints;
   }
     
-  public Tournament _setWinPoints(int winPoints) {
+  public Tournament _setWinPoints(Integer winPoints) {
     this.winPoints = winPoints;
     return this;
   }
   
-  private int playOffA;
+  private Integer playOffA;
     
-  public int getPlayOffA() {
+  public Integer getPlayOffA() {
     return playOffA;
   }
     
-  public void setPlayOffA(int playOffA) {
+  public void setPlayOffA(Integer playOffA) {
     this.playOffA = playOffA;
   }
     
-  public Tournament _setPlayOffA(int playOffA) {
+  public Tournament _setPlayOffA(Integer playOffA) {
     this.playOffA = playOffA;
     return this;
   }
   
-  private int playOffLower;
+  private Integer playOffLower;
     
-  public int getPlayOffLower() {
+  public Integer getPlayOffLower() {
     return playOffLower;
   }
     
-  public void setPlayOffLower(int playOffLower) {
+  public void setPlayOffLower(Integer playOffLower) {
     this.playOffLower = playOffLower;
   }
     
-  public Tournament _setPlayOffLower(int playOffLower) {
+  public Tournament _setPlayOffLower(Integer playOffLower) {
     this.playOffLower = playOffLower;
     return this;
   }
@@ -166,10 +172,40 @@ public class Tournament implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     Tournament other = (Tournament) obj;
-    if (id != other.id)
+    if (!id.equals(other.id))
       return false;
     return true;
   }  
+  
+  public enum Association {
+    season, groups
+  }
+  
+  private Set<String> initAssociations = new HashSet<String>();
+  
+  public void setInit(String... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (String association : associations)
+      initAssociations.add(association);
+  }
+  
+  public void clearInit(String... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (String association : associations)
+      initAssociations.remove(association);
+  }
+  
+  public Boolean toInit(String association) {
+    if (association == null)
+      throw new IllegalArgumentException();
+    return initAssociations.contains(association);
+  }
+  
+  public void clearAllInit() {
+    initAssociations = new HashSet<String>();
+  }
   
   @Override
   public String toString() {

@@ -47,7 +47,7 @@ public class PlayerEditPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     try {
-                        if (player.getId() != 0) {
+                        if (player.getId() != null) {
                             tournamentService.updatePlayer(player);
                         } else {
                             tournamentService.createPlayer(player);

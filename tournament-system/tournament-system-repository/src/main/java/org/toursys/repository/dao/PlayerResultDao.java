@@ -19,4 +19,6 @@ public interface PlayerResultDao {
 
     public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament);
 
+    public List<PlayerResult> getListPlayerResult(PlayerResult form);
+
 }

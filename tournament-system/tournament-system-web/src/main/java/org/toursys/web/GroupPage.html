@@ -27,33 +27,34 @@
 			<tr wicket:id="rows">
 				<td wicket:id="cols">
 					<div>
-						<input class="seasoneButton" type="submit" wicket:id="group" />
+						<input class="tournamentButton" type="submit" wicket:id="group" />
 					</div>
 
 				</td>
 			</tr>
 		</table>
 		<div>
-			<span> <input class="seasoneButton" type="submit"
+			<span> <input class="tournamentButton" type="submit"
 				wicket:id="schedule" value="Schedule" />
-			</span> <span> <input class="seasoneButton" type="submit"
+			</span> <span> <input class="tournamentButton" type="submit"
 				wicket:id="options" value="Options" />
-			</span> <span> <a class="seasoneButton" wicket:id="sheets">print
-					sheets</a></span> <span> <a class="seasoneButton" type="submit"
-				wicket:id="pdfSchedule">print schedule </a>
-			</span> <span> <a class="seasoneButton" type="submit"
-				wicket:id="pdfTable">print table</a>
-			</span> <span> <input class="seasoneButton" type="submit"
+			</span> <span> <a class="tournamentLink" wicket:id="sheets"> <wicket:message
+						key="sheets">print sheets</wicket:message>
+			</a></span> <span> <a class="tournamentLink" type="submit"
+				wicket:id="pdfSchedule"><wicket:message key="printSchedule">print schedule</wicket:message></a>
+			</span> <span> <a class="tournamentLink" type="submit"
+				wicket:id="pdfTable"><wicket:message key="group">print group</wicket:message></a>
+			</span> <span> <input class="tournamentButton" type="submit"
 				wicket:id="finalGroup" value="final group" />
-			</span><span> <input class="seasoneButton" type="submit"
+			</span><span> <input class="tournamentButton" type="submit"
 				wicket:id="copyResult" value="copy result" />
-			</span> <span> <input class="seasoneButton" type="submit"
+			</span> <span> <input class="tournamentButton" type="submit"
 				wicket:id="playOff" value="play off" />
 			</span>
 		</div>
 
 		<div>
-			<span> <input class="seasoneButton" type="submit"
+			<span> <input class="tournamentButton" type="submit"
 				wicket:id="back" value="Back" />
 			</span>
 		</div>

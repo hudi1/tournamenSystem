@@ -55,4 +55,11 @@ public class PlayerResultDaoImpl extends BaseDaoImpl implements PlayerResultDao 
         return getQueryEngine("GET_PLAYER_RESULT_IN_TOURNAMENT").query(session, PlayerResult.class, tournament);
     }
 
+    @Override
+    public List<PlayerResult> getListPlayerResult(PlayerResult playerResult) {
+        SqlSession session = getSqlSession();
+        logger.info("find player result: " + playerResult);
+        return getQueryEngine("SELECT_PLAYER_RESULT").query(session, PlayerResult.class, playerResult);
+    }
+
 }

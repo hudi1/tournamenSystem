@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.dao.GroupDao;
-import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.model.Groups;
 
 public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
@@ -13,7 +12,7 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
     public Groups createGroup(Groups group) {
         SqlSession session = getSqlSession();
         int count = getCrudEngine("INSERT_GROUPS").insert(session, group);
-        logger.info("insert tournament: " + count + ": " + group);
+        logger.info("insert group: " + count + ": " + group);
         return (count > 0 ? group : null);
     }
 
@@ -42,10 +41,10 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
     }
 
     @Override
-    public List<Groups> findGroups(GroupForm groupForm) {
+    public List<Groups> getListGroups(Groups group) {
         SqlSession session = getSqlSession();
         logger.info("find groups");
-        return getQueryEngine("FIND_GROUPS").query(session, Groups.class, groupForm);
+        return getQueryEngine("SELECT_GROUPS").query(session, Groups.class, group);
     }
 
 }

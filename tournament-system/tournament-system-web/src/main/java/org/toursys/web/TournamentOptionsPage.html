@@ -19,11 +19,22 @@
            Start hockey: 
         </wicket:message></label><input type="text" wicket:id="hockeyIndex" />
 			</div>
+			<div>
+				<input type="checkbox" wicket:id="copyResult"> <wicket:message
+						key="copyResult">
+					</wicket:message></input>
+			</div>
+			<div>
+				<input type="checkbox" wicket:id="playThirdPlace"> <wicket:message
+						key="playThirdPlace">
+					</wicket:message></input>
+			</div>
+
 		</fieldset>
 
 		<div>
-			<input class="seasoneButton" type="submit" wicket:id="submit"
-				value="Save" /> <input class="seasoneButton" type="submit"
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="tournamentButton" type="submit"
 				wicket:id="back" value="Back" />
 		</div>
 
@@ -56,11 +67,12 @@
 				<label><wicket:message key="playOffLower">
 					</wicket:message> </label><input type="text" wicket:id="playOffLower" />
 			</div>
+
 		</fieldset>
 
 		<div>
-			<input class="seasoneButton" type="submit" wicket:id="submit"
-				value="Save" /> <input class="seasoneButton" type="submit"
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="tournamentButton" type="submit"
 				wicket:id="back" value="Back" />
 		</div>
 
@@ -68,8 +80,8 @@
 
 	<form wicket:id="selectOptionsForm">
 		<div>
-			<input class="seasoneButton" type="submit" wicket:id="table"
-				value="Table" /> <input class="seasoneButton" type="submit"
+			<input class="tournamentButton" type="submit" wicket:id="group"
+				value="Group" /> <input class="tournamentButton" type="submit"
 				wicket:id="tournament" value="Tournament" />
 		</div>
 	</form>

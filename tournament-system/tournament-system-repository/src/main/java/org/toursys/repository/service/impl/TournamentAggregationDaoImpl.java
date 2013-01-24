@@ -4,14 +4,16 @@ import java.util.List;
 
 import org.toursys.repository.dao.GameDao;
 import org.toursys.repository.dao.GroupDao;
+import org.toursys.repository.dao.PlayOffGameDao;
+import org.toursys.repository.dao.PlayOffResultDao;
 import org.toursys.repository.dao.PlayerDao;
 import org.toursys.repository.dao.PlayerResultDao;
 import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.dao.TournamentDao;
-import org.toursys.repository.form.GameForm;
-import org.toursys.repository.form.GroupForm;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.PlayOffGame;
+import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Season;
@@ -21,6 +23,8 @@ import org.toursys.repository.service.TournamentAggregationDao;
 public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
 
     private GameDao gameDao;
+    private PlayOffGameDao playOffGameDao;
+    private PlayOffResultDao playOffResultDao;
     private PlayerDao playerDao;
     private PlayerResultDao playerResultDao;
     private SeasonDao seasonDao;
@@ -48,8 +52,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Game> findGame(GameForm gameForm) {
-        return gameDao.findGame(gameForm);
+    public List<Game> findGame(Game game) {
+        return gameDao.findGame(game);
     }
 
     @Override
@@ -73,8 +77,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Groups> findGroups(GroupForm groupForm) {
-        return groupDao.findGroups(groupForm);
+    public List<Groups> getListGroups(Groups group) {
+        return groupDao.getListGroups(group);
     }
 
     @Override
@@ -128,6 +132,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
+    public List<PlayerResult> getListPlayerResult(PlayerResult playerResult) {
+        return playerResultDao.getListPlayerResult(playerResult);
+    }
+
+    @Override
     public Season createSeason(Season season) {
         return seasonDao.createSeason(season);
     }
@@ -177,6 +186,61 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
         return tournamentDao.findTournamentsBySeason(tournament);
     }
 
+    @Override
+    public List<Player> getNotRegistratedPlayers(Tournament tournament) {
+        return playerDao.getNotRegistratedPlayers(tournament);
+    }
+
+    @Override
+    public PlayOffGame createPlayOffGame(Player homePlayer, Player awayPlayer, Groups group, int position) {
+        return playOffGameDao.createPlayOffGame(homePlayer, awayPlayer, group, position);
+    }
+
+    @Override
+    public PlayOffGame updatePlayOffGame(PlayOffGame playOffGame) {
+        return playOffGameDao.updatePlayOffGame(playOffGame);
+    }
+
+    @Override
+    public boolean deletePlayOffGame(PlayOffGame playOffGame) {
+        return playOffGameDao.deletePlayOffGame(playOffGame);
+    }
+
+    @Override
+    public PlayOffGame getPlayOffGame(PlayOffGame playOffGame) {
+        return playOffGameDao.getPlayOffGame(playOffGame);
+    }
+
+    @Override
+    public List<PlayOffGame> findPlayOffGame(PlayOffGame playOffGame) {
+        return playOffGameDao.findPlayOffGame(playOffGame);
+    }
+
+    @Override
+    public PlayOffResult createPlayOffResult(PlayOffGame playOffGame) {
+        return playOffResultDao.createPlayOffResult(playOffGame);
+    }
+
+    @Override
+    public PlayOffResult updatePlayOffResult(PlayOffResult playOffResult) {
+        return playOffResultDao.updatePlayOffResult(playOffResult);
+    }
+
+    @Override
+    public boolean deletePlayOffResult(PlayOffResult playOffResult) {
+        return playOffResultDao.deletePlayOffResult(playOffResult);
+    }
+
+    @Override
+    public PlayOffResult getPlayOffResult(PlayOffResult playOffResult) {
+        return playOffResultDao.getPlayOffResult(playOffResult);
+    }
+
+    @Override
+    public List<PlayOffResult> findPlayOffResult(PlayOffResult playOffResult) {
+        return playOffResultDao.findPlayOffResult(playOffResult);
+    }
+
     public void setGameDao(GameDao gameDao) {
         this.gameDao = gameDao;
     }
@@ -201,9 +265,12 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
         this.groupDao = groupDao;
     }
 
-    @Override
-    public List<Player> getNotRegistratedPlayers(Tournament tournament) {
-        return playerDao.getNotRegistratedPlayers(tournament);
+    public void setPlayOffGameDao(PlayOffGameDao playOffGameDao) {
+        this.playOffGameDao = playOffGameDao;
+    }
+
+    public void setPlayOffResultDao(PlayOffResultDao playOffResultDao) {
+        this.playOffResultDao = playOffResultDao;
     }
 
 }
