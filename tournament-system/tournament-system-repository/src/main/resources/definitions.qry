@@ -1,9 +1,9 @@
 resolve-pojo-on;
 database-is-online;
-database-jdbc-driver com.mysql.jdbc.Driver;
-database-has-url jdbc:mysql:\//localhost/tournament_system;
-database-login-username root;
-database-login-password root;
+database-jdbc-driver   com.mysql.jdbc.Driver;
+database-has-url   jdbc:mysql:\//localhost/tournament_system;
+database-login-username   root;
+database-login-password   root;
 
 pojo gameForm org.toursys.repository.form.GameForm;
 pojo playerForm org.toursys.repository.form.PlayerForm;
@@ -55,7 +55,9 @@ table player PLAYER;
 table playerResult PLAYER_RESULT;
 table season SEASON;
 table tournament TOURNAMENT;
+table user USER;
 
+/* 
 dbcol GET_PLAYER_NOT_IN_TOURNAMENT player prefix p;
 dbcol GET_PLAYER_NOT_IN_TOURNAMENT playerResult prefix r;
 dbcol GET_PLAYER_NOT_IN_TOURNAMENT playerResult prefix a_r;
@@ -64,3 +66,4 @@ dbcol GET_PLAYER_NOT_IN_TOURNAMENT groups prefix g;
 dbcol GET_PLAYER_RESULT_IN_TOURNAMENT player prefix p;
 dbcol GET_PLAYER_RESULT_IN_TOURNAMENT playerResult prefix r;
 dbcol GET_PLAYER_RESULT_IN_TOURNAMENT groups prefix g;
+* */

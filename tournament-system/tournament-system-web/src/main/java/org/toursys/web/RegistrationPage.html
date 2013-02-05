@@ -10,29 +10,29 @@
 		<form wicket:id="registrationForm">
 
 			<table class="player">
-				<thead>
-					<tr class="scrolableRow">
-						<th style="width: 100px;"><wicket:message key="name">
+				<tbody class="scrolableBody">
+					<tr>
+						<th><wicket:message key="name">
             Name
         </wicket:message></th>
-						<th style="width: 100px;"><wicket:message key="surname">
+						<th><wicket:message key="surname">
             Surname
         </wicket:message></th>
 					</tr>
-				</thead>
-				<tbody class="scrolableBody">
 					<tr wicket:id="rows">
-						<td style="width: 100px;"><span wicket:id="name">name</span></td>
-						<td style="width: 100px;"><span wicket:id="surname">surname</span></td>
+						<td><span wicket:id="name">name</span></td>
+						<td><span wicket:id="surname">surname</span></td>
 					</tr>
 				</tbody>
 			</table>
 
 
 			<div>
-				<label><wicket:message key="group">
+				<label class="spinnerLabel"><wicket:message key="group">
             Group:
-        </wicket:message> </label> <input type="text" wicket:id="name" style="width: 30px;" />
+        </wicket:message> </label> <input type="submit" wicket:id="minus" /><input type="text"
+					wicket:id="name" class="spinner" /> <input type="submit"
+					wicket:id="plus" />
 			</div>
 			<div>
 				<input class="tournamentButton" type="submit" wicket:id="submit"
@@ -41,34 +41,30 @@
 		</form>
 	</div>
 	<table class="registratedPlayerTable">
-		<thead>
-			<tr class="scrolableRow">
-				<th style="width: 100px;"><wicket:message key="name">
+		<tbody class="scrolableBody">
+			<tr>
+				<th />
+				<th><wicket:message key="name">
             Name
         </wicket:message></th>
-				<th style="width: 100px;"><wicket:message key="surname">
+				<th><wicket:message key="surname">
             Surname
         </wicket:message></th>
-				<th style="width: 100px;"><wicket:message key="tableName">
+				<th><wicket:message key="tableName">
             Table name
         </wicket:message></th>
-				<th style="width: 140px;"><wicket:message key="delete">
+				<th><wicket:message key="delete">
             Delete
         </wicket:message></th>
 			</tr>
-		</thead>
-		<tbody class="scrolableBody">
 			<tr wicket:id="registeredRows">
-				<td style="width: 108px;"><span wicket:id="name">name</span></td>
-				<td style="width: 108px;"><span wicket:id="surname">surname</span></td>
-				<td style="width: 108px;"><span wicket:id="tableName">table
-						name</span></td>
+				<td><span wicket:id="number">1.</span></td>
+				<td><span wicket:id="name">name</span></td>
+				<td><span wicket:id="surname">surname</span></td>
+				<td><span wicket:id="tableName">table name</span></td>
 
-				<td style="width: 130px;"><a wicket:id="deletePlayer"
-					title="delete player" class="seasoneButton"><wicket:message
-							key="deletePlayer">
-            delete player
-        </wicket:message></a></td>
+				<td><a wicket:id="deletePlayer" title="delete player"
+					class="seasoneButton"><img src="img/delete.png" /></a></td>
 			</tr>
 		</tbody>
 	</table>
@@ -76,11 +72,9 @@
 	<form wicket:id="createTournamentForm">
 		<div>
 			<span><input class="tournamentButton" type="submit"
-				wicket:id="submit" value="Create tournament" /> </span> <span><a
-				wicket:id="back" title="back" class="tournamentLink"><wicket:message
-						key="back">
-            back
-        </wicket:message></a> </span>
+				wicket:id="submit" value="Create tournament" /> </span><input
+				class="tournamentButton" type="submit" wicket:id="back" title="back"
+				value="Back" />
 		</div>
 	</form>
 

@@ -10,6 +10,7 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.User;
 
 public interface TournamentAggregationDao {
 
@@ -65,6 +66,8 @@ public interface TournamentAggregationDao {
 
     public List<Season> getAllSeasons();
 
+    public List<Season> getListSeason(Season season);
+
     public Season createTournament(Season season, Tournament... tournaments);
 
     public Tournament updateTournament(Tournament tournament);
@@ -96,5 +99,15 @@ public interface TournamentAggregationDao {
     public PlayOffResult getPlayOffResult(PlayOffResult playOffResult);
 
     public List<PlayOffResult> findPlayOffResult(PlayOffResult playOffResult);
+
+    public User createUser(User user);
+
+    public User updateUser(User user);
+
+    public boolean deleteUser(User user);
+
+    public User getUser(User user);
+
+    public List<User> getAllUsers();
 
 }

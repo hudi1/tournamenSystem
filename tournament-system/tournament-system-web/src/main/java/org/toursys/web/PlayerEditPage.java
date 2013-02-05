@@ -2,7 +2,7 @@ package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -60,15 +60,15 @@ public class PlayerEditPage extends BasePage {
                 }
             });
 
-            add(new AjaxLink<Void>("back") {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     target.appendJavaScript(PREVISOUS_PAGE);
-                }
-            });
+                };
+            }.setDefaultFormProcessing(false));
         }
     }
 

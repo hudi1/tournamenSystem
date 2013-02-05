@@ -8,6 +8,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -21,13 +23,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Season;
+import org.toursys.repository.model.User;
 
+@AuthorizeInstantiation(Roles.USER)
 public class SeasonPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
     private static final int ITEMS_PER_PAGE = 10;
+    private User user;
 
     public SeasonPage() {
+        this.user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
         createPage();
     }
 
@@ -85,7 +91,7 @@ public class SeasonPage extends BasePage {
         IDataProvider<Season> seasonDataProvider = new IDataProvider<Season>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Season> seasons = tournamentService.getAllSeasons();
+            private List<Season> seasons = tournamentService.getListSeasons(new Season()._setUser(user));
 
             @Override
             public Iterator<Season> iterator(int first, int count) {
@@ -130,7 +136,7 @@ public class SeasonPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new SeasonEditPage(new Season()));
+                    setResponsePage(new SeasonEditPage(new Season()._setUser(user)));
                 }
             });
         }
@@ -172,6 +178,13 @@ public class SeasonPage extends BasePage {
 
         link.add(new Label("name", season.getName()));
         return link;
+    }
+
+    @Override
+    protected void setVisibility() {
+        if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
+            setVisible(false);
+        }
     }
 
     @Override

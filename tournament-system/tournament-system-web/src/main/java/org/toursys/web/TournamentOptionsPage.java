@@ -1,11 +1,13 @@
 package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -58,8 +60,8 @@ public class TournamentOptionsPage extends BasePage {
         public GroupOptionsForm(final Groups group) {
             super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
             setOutputMarkupId(true);
-            add(new TextField<Integer>("hockey", new PropertyModel<Integer>(group, "numberOfHockey")));
-            add(new TextField<Integer>("hockeyIndex", new PropertyModel<Integer>(group, "indexOfFirstHockey")));
+            add(new RequiredTextField<Integer>("hockey", new PropertyModel<Integer>(group, "numberOfHockey")));
+            add(new RequiredTextField<Integer>("hockeyIndex", new PropertyModel<Integer>(group, "indexOfFirstHockey")));
             CheckBox checkBox1 = new CheckBox("copyResult", new PropertyModel<Boolean>(group, "copyResult"));
             CheckBox checkBox2 = new CheckBox("playThirdPlace", new PropertyModel<Boolean>(group, "playThirdPlace"));
 
@@ -88,15 +90,15 @@ public class TournamentOptionsPage extends BasePage {
                 }
             });
 
-            add(new Button("back", new ResourceModel("back")) {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group));
-                }
-            });
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
+                };
+            }.setDefaultFormProcessing(false));
         }
     }
 
@@ -107,11 +109,14 @@ public class TournamentOptionsPage extends BasePage {
         public TournamentOptionsForm(final TournamentImpl tournament) {
             super("tournamentOptionsForm", new CompoundPropertyModel<TournamentImpl>(tournament));
             setOutputMarkupId(true);
-            add(new TextField<Integer>("promotingA", new PropertyModel<Integer>(tournament, "finalPromoting")));
-            add(new TextField<Integer>("promotingLower", new PropertyModel<Integer>(tournament, "lowerPromoting")));
-            add(new TextField<Integer>("points", new PropertyModel<Integer>(tournament, "winPoints")));
-            add(new TextField<Integer>("playOffA", new PropertyModel<Integer>(tournament, "playOffA")));
-            add(new TextField<Integer>("playOffLower", new PropertyModel<Integer>(tournament, "playOffLower")));
+            add(new RequiredTextField<Integer>("promotingA", new PropertyModel<Integer>(tournament, "finalPromoting")));
+            add(new RequiredTextField<Integer>("promotingLower", new PropertyModel<Integer>(tournament,
+                    "lowerPromoting")));
+            add(new RequiredTextField<Integer>("points", new PropertyModel<Integer>(tournament, "winPoints")));
+            add(new RequiredTextField<Integer>("playOffA", new PropertyModel<Integer>(tournament, "playOffA")));
+            add(new RequiredTextField<Integer>("playOffLower", new PropertyModel<Integer>(tournament, "playOffLower")));
+            add(new RequiredTextField<Integer>("minPlayersInGroup", new PropertyModel<Integer>(tournament,
+                    "minPlayersInGroup")));
 
             ValueMap map = new ValueMap();
             map.put("tournamentLegend", tournament.getName());
@@ -130,15 +135,15 @@ public class TournamentOptionsPage extends BasePage {
                 }
             });
 
-            add(new Button("back", new ResourceModel("back")) {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group));
-                }
-            });
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
+                };
+            }.setDefaultFormProcessing(false));
         }
     }
 

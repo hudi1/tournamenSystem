@@ -10,6 +10,7 @@ import org.toursys.repository.dao.PlayerDao;
 import org.toursys.repository.dao.PlayerResultDao;
 import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.dao.TournamentDao;
+import org.toursys.repository.dao.UserDao;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayOffGame;
@@ -18,6 +19,7 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.User;
 import org.toursys.repository.service.TournamentAggregationDao;
 
 public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
@@ -30,6 +32,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     private SeasonDao seasonDao;
     private GroupDao groupDao;
     private TournamentDao tournamentDao;
+    private UserDao userDao;
 
     @Override
     public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
@@ -162,6 +165,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
+    public List<Season> getListSeason(Season season) {
+        return seasonDao.getListSeason(season);
+    }
+
+    @Override
     public Season createTournament(Season season, Tournament... tournaments) {
         return tournamentDao.createTournament(season, tournaments);
     }
@@ -239,6 +247,35 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     @Override
     public List<PlayOffResult> findPlayOffResult(PlayOffResult playOffResult) {
         return playOffResultDao.findPlayOffResult(playOffResult);
+    }
+
+    @Override
+    public User createUser(User user) {
+        return userDao.createUser(user);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return userDao.updateUser(user);
+    }
+
+    @Override
+    public boolean deleteUser(User user) {
+        return userDao.deleteUser(user);
+    }
+
+    @Override
+    public User getUser(User user) {
+        return userDao.getUser(user);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void setGameDao(GameDao gameDao) {

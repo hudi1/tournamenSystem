@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -138,7 +141,16 @@ public class PlayOffPage extends BasePage {
                                     gameItem.setModel(new CompoundPropertyModel<PlayOffResult>(playOffResult));
 
                                     gameItem.add(new TextField<Integer>("homeScore", new PropertyModel<Integer>(
-                                            playOffResult, "homeScore")));
+                                            playOffResult, "homeScore")).add(new AjaxFormComponentUpdatingBehavior(
+                                            "onchange") {
+
+                                        private static final long serialVersionUID = 1L;
+
+                                        @Override
+                                        protected void onUpdate(AjaxRequestTarget target) {
+                                            tournamentService.updatePlayOffResult(playOffResult);
+                                        }
+                                    }));
                                     gameItem.add(new TextField<String>("awayScore", new PropertyModel<String>(
                                             playOffResult, "awayScore") {
 
@@ -178,7 +190,15 @@ public class PlayOffPage extends BasePage {
                                                 }
                                             }
                                         }
-                                    });
+                                    }.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+                                        private static final long serialVersionUID = 1L;
+
+                                        @Override
+                                        protected void onUpdate(AjaxRequestTarget target) {
+                                            tournamentService.updatePlayOffResult(playOffResult);
+                                        }
+                                    }));
                                 }
                             };
 
@@ -204,41 +224,15 @@ public class PlayOffPage extends BasePage {
 
             add(groupsDataView);
 
-            add(new Button("back", new ResourceModel("back")) {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, null));
-                }
-            });
-
-            add(new Button("submit", new ResourceModel("save")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                @SuppressWarnings("unchecked")
-                public void onSubmit() {
-
-                    // TODO velmi hnusna konstrukce jak pristupit k jednotlivym vysledkom na nic lepsie som zatim ale
-                    // neprisiel
-                    for (int i = 0; i < groupsProvider.size(); i++) {
-                        ListItem<PlayOffGame> itemView = (ListItem<PlayOffGame>) groupsDataView.get(i);
-                        ListView<PlayOffGame> dataView = (ListView<PlayOffGame>) itemView.get(1);
-                        for (int j = 0; j < dataView.size(); j++) {
-                            ListItem<PlayOffGame> a = (ListItem<PlayOffGame>) dataView.get(j);
-                            ListView<PlayOffResult> b = (ListView<PlayOffResult>) a.get(2);
-                            List<? extends PlayOffResult> c = b.getList();
-                            for (PlayOffResult result : c) {
-                                tournamentService.updatePlayOffResult(result);
-                            }
-                        }
-                    }
-                    setResponsePage(new PlayOffPage(tournament));
-                }
-            });
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
+                };
+            }.setDefaultFormProcessing(false));
 
             DownloadLink pdfPlayOff = new DownloadLink("pdfPlayOff", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;

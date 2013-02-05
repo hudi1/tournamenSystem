@@ -21,7 +21,7 @@ public class TournamentImpl extends Tournament {
         this.setWinPoints(tournament.getWinPoints());
         this.setSeason(tournament.getSeason());
         this.getGroups().addAll(tournament.getGroups());
-
+        this.setMinPlayersInGroup(tournament.getMinPlayersInGroup());
     }
 
     public Map<String, Groups> getAllGroups() {

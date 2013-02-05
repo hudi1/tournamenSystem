@@ -2,7 +2,7 @@ package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -25,7 +25,7 @@ public class TournamentEditPage extends BasePage {
 
     public TournamentEditPage(Season season) {
         this(season, new Tournament()._setFinalPromoting(6)._setLowerPromoting(5)._setWinPoints(2)._setPlayOffA(16)
-                ._setPlayOffLower(8));
+                ._setPlayOffLower(8)._setMinPlayersInGroup(5));
     }
 
     public TournamentEditPage(Season season, Tournament tournament) {
@@ -67,15 +67,15 @@ public class TournamentEditPage extends BasePage {
 
             });
 
-            add(new AjaxLink<Void>("back") {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     target.appendJavaScript(PREVISOUS_PAGE);
-                }
-            });
+                };
+            }.setDefaultFormProcessing(false));
         }
     }
 

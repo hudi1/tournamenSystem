@@ -29,7 +29,7 @@
 						</tr>
 						<tr wicket:id="rows">
 							<td><span wicket:id="round"></span></td>
-							<td><span wicket:id="players"></span></td>
+							<td><span class="" wicket:id="players"></span></td>
 							<td wicket:id="gameList"><input wicket:id=homeScore
 								style="width: 30px;"></input><label>:</label> <input
 								wicket:id="awayScore" style="width: 30px;"></input> ,</td>
@@ -41,9 +41,8 @@
 			</tr>
 		</table>
 		<div>
-			<input wicket:id="back" type="submit" class="tournamentButton"
-				value="Back"></input> <input class="tournamentButton" type="submit"
-				wicket:id="submit" value="Save" /> <span> <a
+			<input class="tournamentButton" type="submit" wicket:id="back"
+				title="back" value="Back" /> <span> <a
 				class="tournamentLink" type="submit" wicket:id="pdfPlayOff"><wicket:message
 						key="printPlayOff">
             print play off

@@ -9,19 +9,18 @@ SEQ_PLAY_OFF_RESULT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WH
 
 // generated sql
 
-
-INSERT_GAME(CRUD,identx=Game,colx=Game,dbcol=game)=
+INSERT_GAME(CRUD,inx=Game,outx=Game,tab=game)=
   insert into %%GAME (%ID, %HOME_PLAYER_RESULT_ID, %AWAY_PLAYER_RESULT_ID, %HOME_SCORE, %AWAY_SCORE)
-  {= values (:id^^seq=SEQ_GAME, :homePlayerResult.id, :awayPlayerResult.id, :homeScore, :awayScore) }
+  {= values (:id(seq=SEQ_GAME), :homePlayerResult.id, :awayPlayerResult.id, :homeScore, :awayScore) }
 ;
 
-GET_GAME(CRUD,identx=Game,colx=Game,dbcol=game=g,dbcol=playerResult=p,dbcol=playerResult=p1)=
-  select %g.ID @id^^id, %g.HOME_PLAYER_RESULT_ID @homePlayerResult.id^^id, %g.AWAY_PLAYER_RESULT_ID @awayPlayerResult.id^^id, %g.HOME_SCORE @homeScore, %g.AWAY_SCORE @awayScore
-         {? :homePlayerResult^^call=toInit | , %p.POINTS @homePlayerResult.points, %p.RANK @homePlayerResult.rank, %p.GROUP_ID @homePlayerResult.group.id, %p.PLAYER_ID @homePlayerResult.player.id, %p.SCORE @homePlayerResult.score^score }
-         {? :awayPlayerResult^^call=toInit | , %p1.POINTS @awayPlayerResult.points, %p1.RANK @awayPlayerResult.rank, %p1.GROUP_ID @awayPlayerResult.group.id, %p1.PLAYER_ID @awayPlayerResult.player.id, %p1.SCORE @awayPlayerResult.score^score }
+GET_GAME(CRUD,inx=Game,outx=Game,tab=game=g,tab=playerResult=p,tab=playerResult=p1)=
+  select %g.ID @id(id), %g.HOME_PLAYER_RESULT_ID @homePlayerResult.id(id), %g.AWAY_PLAYER_RESULT_ID @awayPlayerResult.id(id), %g.HOME_SCORE @homeScore, %g.AWAY_SCORE @awayScore
+         {? :homePlayerResult(call=toInit) | , %p.POINTS @homePlayerResult.points, %p.RANK @homePlayerResult.rank, %p.GROUP_ID @homePlayerResult.group.id, %p.PLAYER_ID @homePlayerResult.player.id, %p.SCORE @homePlayerResult.score(type=score) }
+         {? :awayPlayerResult(call=toInit) | , %p1.POINTS @awayPlayerResult.points, %p1.RANK @awayPlayerResult.rank, %p1.GROUP_ID @awayPlayerResult.group.id, %p1.PLAYER_ID @awayPlayerResult.player.id, %p1.SCORE @awayPlayerResult.score(type=score) }
   from %%GAME g
-  {? :homePlayerResult^^call=toInit | left join %%PLAYER_RESULT p on %g.HOME_PLAYER_RESULT_ID = %p.ID }
-  {? :awayPlayerResult^^call=toInit | left join %%PLAYER_RESULT p1 on %g.AWAY_PLAYER_RESULT_ID = %p1.ID }
+  {? :homePlayerResult(call=toInit) | left join %%PLAYER_RESULT p on %g.HOME_PLAYER_RESULT_ID = %p.ID }
+  {? :awayPlayerResult(call=toInit) | left join %%PLAYER_RESULT p1 on %g.AWAY_PLAYER_RESULT_ID = %p1.ID }
   {= where
     {& %g.ID = :id }
     {& %g.HOME_PLAYER_RESULT_ID = :homePlayerResult.id }
@@ -31,33 +30,33 @@ GET_GAME(CRUD,identx=Game,colx=Game,dbcol=game=g,dbcol=playerResult=p,dbcol=play
   }
 ;
 
-UPDATE_GAME(CRUD,identx=Game,colx=Game,dbcol=game)=
+UPDATE_GAME(CRUD,inx=Game,outx=Game,tab=game)=
   update %%GAME
   {= set
-    { ,%HOME_PLAYER_RESULT_ID = :homePlayerResult.id^^call=isDef }
-    { ,%AWAY_PLAYER_RESULT_ID = :awayPlayerResult.id^^call=isDef }
-    { ,%HOME_SCORE = :homeScore^^call=isDef }
-    { ,%AWAY_SCORE = :awayScore^^call=isDef }
+    { ,%HOME_PLAYER_RESULT_ID = :homePlayerResult.id(call=isDef) }
+    { ,%AWAY_PLAYER_RESULT_ID = :awayPlayerResult.id(call=isDef) }
+    { ,%HOME_SCORE = :homeScore(call=isDef) }
+    { ,%AWAY_SCORE = :awayScore(call=isDef) }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_GAME(CRUD,identx=Game,colx=Game,dbcol=game)=
+DELETE_GAME(CRUD,inx=Game,outx=Game,tab=game)=
   delete from %%GAME
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_GAME(QRY,identx=Game,colx=Game,dbcol=game=g,dbcol=playerResult=p,dbcol=playerResult=p1)=
-  select %g.ID @id^^id, %g.HOME_PLAYER_RESULT_ID @homePlayerResult.id^^id, %g.AWAY_PLAYER_RESULT_ID @awayPlayerResult.id^^id, %g.HOME_SCORE @homeScore, %g.AWAY_SCORE @awayScore
-         {? :homePlayerResult^^call=toInit | , %p.POINTS @homePlayerResult.points, %p.RANK @homePlayerResult.rank, %p.GROUP_ID @homePlayerResult.group.id, %p.PLAYER_ID @homePlayerResult.player.id, %p.SCORE @homePlayerResult.score^score }
-         {? :awayPlayerResult^^call=toInit | , %p1.POINTS @awayPlayerResult.points, %p1.RANK @awayPlayerResult.rank, %p1.GROUP_ID @awayPlayerResult.group.id, %p1.PLAYER_ID @awayPlayerResult.player.id, %p1.SCORE @awayPlayerResult.score^score }
+SELECT_GAME(QRY,inx=Game,outx=Game,tab=game=g,tab=playerResult=p,tab=playerResult=p1)=
+  select %g.ID @id(id), %g.HOME_PLAYER_RESULT_ID @homePlayerResult.id(id), %g.AWAY_PLAYER_RESULT_ID @awayPlayerResult.id(id), %g.HOME_SCORE @homeScore, %g.AWAY_SCORE @awayScore
+         {? :homePlayerResult(call=toInit) | , %p.POINTS @homePlayerResult.points, %p.RANK @homePlayerResult.rank, %p.GROUP_ID @homePlayerResult.group.id, %p.PLAYER_ID @homePlayerResult.player.id, %p.SCORE @homePlayerResult.score(type=score) }
+         {? :awayPlayerResult(call=toInit) | , %p1.POINTS @awayPlayerResult.points, %p1.RANK @awayPlayerResult.rank, %p1.GROUP_ID @awayPlayerResult.group.id, %p1.PLAYER_ID @awayPlayerResult.player.id, %p1.SCORE @awayPlayerResult.score(type=score) }
   from %%GAME g
-  {? :homePlayerResult^^call=toInit | left join %%PLAYER_RESULT p on %g.HOME_PLAYER_RESULT_ID = %p.ID }
-  {? :awayPlayerResult^^call=toInit | left join %%PLAYER_RESULT p1 on %g.AWAY_PLAYER_RESULT_ID = %p1.ID }
+  {? :homePlayerResult(call=toInit) | left join %%PLAYER_RESULT p on %g.HOME_PLAYER_RESULT_ID = %p.ID }
+  {? :awayPlayerResult(call=toInit) | left join %%PLAYER_RESULT p1 on %g.AWAY_PLAYER_RESULT_ID = %p1.ID }
   {= where
     {& %g.ID = :id }
     {& %g.HOME_PLAYER_RESULT_ID = :homePlayerResult.id }
@@ -70,20 +69,20 @@ SELECT_GAME(QRY,identx=Game,colx=Game,dbcol=game=g,dbcol=playerResult=p,dbcol=pl
   {#3 order by %g.AWAY_PLAYER_RESULT_ID }
 ;
 
-INSERT_GROUPS(CRUD,identx=Groups,colx=Groups,dbcol=groups)=
+INSERT_GROUPS(CRUD,inx=Groups,outx=Groups,tab=groups)=
   insert into %%GROUPS (%ID, %NAME, %NUMBER_OF_HOCKEY, %GROUP_TYPE, %INDEX_OF_FIRST_HOCKEY, %TOURNAMENT_ID, %COPY_RESULT, %PLAY_THIRD_PLACE)
-  {= values (:id^^seq=SEQ_GROUP, :name, :numberOfHockey, :groupType, :indexOfFirstHockey, :tournament.id, :copyResult, :playThirdPlace) }
+  {= values (:id(seq=SEQ_GROUP), :name, :numberOfHockey, :groupType, :indexOfFirstHockey, :tournament.id, :copyResult, :playThirdPlace) }
 ;
 
-GET_GROUPS(CRUD,identx=Groups,colx=Groups,dbcol=groups=g,dbcol=tournament=t,dbcol=playerResult=p1,dbcol=playOffGame=p)=
-  select %g.ID @id^^id, %g.NAME @name, %g.NUMBER_OF_HOCKEY @numberOfHockey, %g.GROUP_TYPE @groupType, %g.INDEX_OF_FIRST_HOCKEY @indexOfFirstHockey, %g.TOURNAMENT_ID @tournament.id^^id, %g.COPY_RESULT @copyResult, %g.PLAY_THIRD_PLACE @playThirdPlace
-         {? :tournament^^call=toInit | , %t.NAME @tournament.name, %t.SEASON_ID @tournament.season.id, %t.FINAL_PROMOTING @tournament.finalPromoting, %t.LOWER_PROMOTING @tournament.lowerPromoting, %t.WIN_POINTS @tournament.winPoints, %t.PLAY_OFF_A @tournament.playOffA, %t.PLAY_OFF_LOWER @tournament.playOffLower }
-         {? :playerResults^^call=toInit | , %p1.ID @playerResults.id^^id, %p1.POINTS @playerResults.points, %p1.RANK @playerResults.rank, %p1.GROUP_ID @playerResults.group.id, %p1.PLAYER_ID @playerResults.player.id, %p1.SCORE @playerResults.score^score }
-         {? :playOffGames^^call=toInit | , %p.ID @playOffGames.id^^id, %p.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p.GROUP_ID @playOffGames.group.id, %p.POSITION @playOffGames.position }
+GET_GROUPS(CRUD,inx=Groups,outx=Groups,tab=groups=g,tab=tournament=t,tab=playerResult=p1,tab=playOffGame=p)=
+  select %g.ID @id(id), %g.NAME @name, %g.NUMBER_OF_HOCKEY @numberOfHockey, %g.GROUP_TYPE @groupType, %g.INDEX_OF_FIRST_HOCKEY @indexOfFirstHockey, %g.TOURNAMENT_ID @tournament.id(id), %g.COPY_RESULT @copyResult, %g.PLAY_THIRD_PLACE @playThirdPlace
+         {? :tournament(call=toInit) | , %t.NAME @tournament.name, %t.SEASON_ID @tournament.season.id, %t.FINAL_PROMOTING @tournament.finalPromoting, %t.LOWER_PROMOTING @tournament.lowerPromoting, %t.WIN_POINTS @tournament.winPoints, %t.PLAY_OFF_A @tournament.playOffA, %t.PLAY_OFF_LOWER @tournament.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournament.minPlayersInGroup }
+         {? :playerResults(call=toInit) | , %p1.ID @playerResults.id(id), %p1.POINTS @playerResults.points, %p1.RANK @playerResults.rank, %p1.GROUP_ID @playerResults.group.id, %p1.PLAYER_ID @playerResults.player.id, %p1.SCORE @playerResults.score(type=score) }
+         {? :playOffGames(call=toInit) | , %p.ID @playOffGames.id(id), %p.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p.GROUP_ID @playOffGames.group.id, %p.POSITION @playOffGames.position }
   from %%GROUPS g
-  {? :tournament^^call=toInit | left join %%TOURNAMENT t on %g.TOURNAMENT_ID = %t.ID }
-  {? :playerResults^^call=toInit | left join %%PLAYER_RESULT p1 on %g.ID = %p1.GROUP_ID }
-  {? :playOffGames^^call=toInit | left join %%PLAY_OFF_GAME p on %g.ID = %p.GROUP_ID }
+  {? :tournament(call=toInit) | left join %%TOURNAMENT t on %g.TOURNAMENT_ID = %t.ID }
+  {? :playerResults(call=toInit) | left join %%PLAYER_RESULT p1 on %g.ID = %p1.GROUP_ID }
+  {? :playOffGames(call=toInit) | left join %%PLAY_OFF_GAME p on %g.ID = %p.GROUP_ID }
   {= where
     {& %g.ID = :id }
     {& %g.NAME = :name }
@@ -96,7 +95,7 @@ GET_GROUPS(CRUD,identx=Groups,colx=Groups,dbcol=groups=g,dbcol=tournament=t,dbco
   }
 ;
 
-UPDATE_GROUPS(CRUD,identx=Groups,colx=Groups,dbcol=groups)=
+UPDATE_GROUPS(CRUD,inx=Groups,outx=Groups,tab=groups)=
   update %%GROUPS
   {= set
     { ,%NAME = :name }
@@ -108,26 +107,26 @@ UPDATE_GROUPS(CRUD,identx=Groups,colx=Groups,dbcol=groups)=
     { ,%PLAY_THIRD_PLACE = :playThirdPlace }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_GROUPS(CRUD,identx=Groups,colx=Groups,dbcol=groups)=
+DELETE_GROUPS(CRUD,inx=Groups,outx=Groups,tab=groups)=
   delete from %%GROUPS
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_GROUPS(QRY,identx=Groups,colx=Groups,dbcol=groups=g,dbcol=tournament=t,dbcol=playerResult=p1,dbcol=playOffGame=p)=
-  select %g.ID @id^^id, %g.NAME @name, %g.NUMBER_OF_HOCKEY @numberOfHockey, %g.GROUP_TYPE @groupType, %g.INDEX_OF_FIRST_HOCKEY @indexOfFirstHockey, %g.TOURNAMENT_ID @tournament.id^^id, %g.COPY_RESULT @copyResult, %g.PLAY_THIRD_PLACE @playThirdPlace
-         {? :tournament^^call=toInit | , %t.NAME @tournament.name, %t.SEASON_ID @tournament.season.id, %t.FINAL_PROMOTING @tournament.finalPromoting, %t.LOWER_PROMOTING @tournament.lowerPromoting, %t.WIN_POINTS @tournament.winPoints, %t.PLAY_OFF_A @tournament.playOffA, %t.PLAY_OFF_LOWER @tournament.playOffLower }
-         {? :playerResults^^call=toInit | , %p1.ID @playerResults.id^^id, %p1.POINTS @playerResults.points, %p1.RANK @playerResults.rank, %p1.GROUP_ID @playerResults.group.id, %p1.PLAYER_ID @playerResults.player.id, %p1.SCORE @playerResults.score^score }
-         {? :playOffGames^^call=toInit | , %p.ID @playOffGames.id^^id, %p.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p.GROUP_ID @playOffGames.group.id, %p.POSITION @playOffGames.position }
+SELECT_GROUPS(QRY,inx=Groups,outx=Groups,tab=groups=g,tab=tournament=t,tab=playerResult=p1,tab=playOffGame=p)=
+  select %g.ID @id(id), %g.NAME @name, %g.NUMBER_OF_HOCKEY @numberOfHockey, %g.GROUP_TYPE @groupType, %g.INDEX_OF_FIRST_HOCKEY @indexOfFirstHockey, %g.TOURNAMENT_ID @tournament.id(id), %g.COPY_RESULT @copyResult, %g.PLAY_THIRD_PLACE @playThirdPlace
+         {? :tournament(call=toInit) | , %t.NAME @tournament.name, %t.SEASON_ID @tournament.season.id, %t.FINAL_PROMOTING @tournament.finalPromoting, %t.LOWER_PROMOTING @tournament.lowerPromoting, %t.WIN_POINTS @tournament.winPoints, %t.PLAY_OFF_A @tournament.playOffA, %t.PLAY_OFF_LOWER @tournament.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournament.minPlayersInGroup }
+         {? :playerResults(call=toInit) | , %p1.ID @playerResults.id(id), %p1.POINTS @playerResults.points, %p1.RANK @playerResults.rank, %p1.GROUP_ID @playerResults.group.id, %p1.PLAYER_ID @playerResults.player.id, %p1.SCORE @playerResults.score(type=score) }
+         {? :playOffGames(call=toInit) | , %p.ID @playOffGames.id(id), %p.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p.GROUP_ID @playOffGames.group.id, %p.POSITION @playOffGames.position }
   from %%GROUPS g
-  {? :tournament^^call=toInit | left join %%TOURNAMENT t on %g.TOURNAMENT_ID = %t.ID }
-  {? :playerResults^^call=toInit | left join %%PLAYER_RESULT p1 on %g.ID = %p1.GROUP_ID }
-  {? :playOffGames^^call=toInit | left join %%PLAY_OFF_GAME p on %g.ID = %p.GROUP_ID }
+  {? :tournament(call=toInit) | left join %%TOURNAMENT t on %g.TOURNAMENT_ID = %t.ID }
+  {? :playerResults(call=toInit) | left join %%PLAYER_RESULT p1 on %g.ID = %p1.GROUP_ID }
+  {? :playOffGames(call=toInit) | left join %%PLAY_OFF_GAME p on %g.ID = %p.GROUP_ID }
   {= where
     {& %g.ID = :id }
     {& UPPER(%g.NAME) like :+name }
@@ -142,16 +141,16 @@ SELECT_GROUPS(QRY,identx=Groups,colx=Groups,dbcol=groups=g,dbcol=tournament=t,db
   {#3 order by %g.TOURNAMENT_ID }
 ;
 
-INSERT_PLAYER(CRUD,identx=Player,colx=Player,dbcol=player)=
+INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
   insert into %%PLAYER (%ID, %NAME, %SURNAME, %CLUB)
-  {= values (:id^^seq=SEQ_PLAYER, :name, :surname, :club) }
+  {= values (:id(seq=SEQ_PLAYER), :name, :surname, :club) }
 ;
 
-GET_PLAYER(CRUD,identx=Player,colx=Player,dbcol=player=p,dbcol=playOffGame=p1)=
-  select %p.ID @id^^id, %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club
-         {? :playOffGames^^call=toInit | , %p1.ID @playOffGames.id^^id, %p1.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p1.GROUP_ID @playOffGames.group.id, %p1.POSITION @playOffGames.position }
+GET_PLAYER(CRUD,inx=Player,outx=Player,tab=player=p,tab=playOffGame=p1)=
+  select %p.ID @id(id), %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club
+         {? :playOffGames(call=toInit) | , %p1.ID @playOffGames.id(id), %p1.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p1.GROUP_ID @playOffGames.group.id, %p1.POSITION @playOffGames.position }
   from %%PLAYER p
-  {? :playOffGames^^call=toInit | left join %%PLAY_OFF_GAME p1 on %p.ID = %p1.AWAY_PLAYER_ID }
+  {? :playOffGames(call=toInit) | left join %%PLAY_OFF_GAME p1 on %p.ID = %p1.AWAY_PLAYER_ID }
   {= where
     {& %p.ID = :id }
     {& %p.NAME = :name }
@@ -160,30 +159,30 @@ GET_PLAYER(CRUD,identx=Player,colx=Player,dbcol=player=p,dbcol=playOffGame=p1)=
   }
 ;
 
-UPDATE_PLAYER(CRUD,identx=Player,colx=Player,dbcol=player)=
+UPDATE_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
   update %%PLAYER
   {= set
-    { ,%NAME = :name^^call=isDef }
-    { ,%SURNAME = :surname^^call=isDef }
-    { ,%CLUB = :club^^call=isDef }
+    { ,%NAME = :name(call=isDef) }
+    { ,%SURNAME = :surname(call=isDef) }
+    { ,%CLUB = :club(call=isDef) }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_PLAYER(CRUD,identx=Player,colx=Player,dbcol=player)=
+DELETE_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
   delete from %%PLAYER
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_PLAYER(QRY,identx=Player,colx=Player,dbcol=player=p,dbcol=playOffGame=p1)=
-  select %p.ID @id^^id, %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club
-         {? :playOffGames^^call=toInit | , %p1.ID @playOffGames.id^^id, %p1.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p1.GROUP_ID @playOffGames.group.id, %p1.POSITION @playOffGames.position }
+SELECT_PLAYER(QRY,inx=Player,outx=Player,tab=player=p,tab=playOffGame=p1)=
+  select %p.ID @id(id), %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club
+         {? :playOffGames(call=toInit) | , %p1.ID @playOffGames.id(id), %p1.HOME_PLAYER_ID @playOffGames.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGames.awayPlayer.id, %p1.GROUP_ID @playOffGames.group.id, %p1.POSITION @playOffGames.position }
   from %%PLAYER p
-  {? :playOffGames^^call=toInit | left join %%PLAY_OFF_GAME p1 on %p.ID = %p1.AWAY_PLAYER_ID }
+  {? :playOffGames(call=toInit) | left join %%PLAY_OFF_GAME p1 on %p.ID = %p1.AWAY_PLAYER_ID }
   {= where
     {& %p.ID = :id }
     {& UPPER(%p.NAME) like :+name }
@@ -193,89 +192,89 @@ SELECT_PLAYER(QRY,identx=Player,colx=Player,dbcol=player=p,dbcol=playOffGame=p1)
   {#1 order by %p.ID }
 ;
 
-INSERT_PLAYER_RESULT(CRUD,identx=PlayerResult,colx=PlayerResult,dbcol=playerResult)=
+INSERT_PLAYER_RESULT(CRUD,inx=PlayerResult,outx=PlayerResult,tab=playerResult)=
   insert into %%PLAYER_RESULT (%ID, %POINTS, %RANK, %GROUP_ID, %PLAYER_ID, %SCORE)
-  {= values (:id^^seq=SEQ_PLAYER_RESULT, :points, :rank, :group.id, :player.id, :score^score) }
+  {= values (:id(seq=SEQ_PLAYER_RESULT), :points, :rank, :group.id, :player.id, :score(type=score)) }
 ;
 
-GET_PLAYER_RESULT(CRUD,identx=PlayerResult,colx=PlayerResult,dbcol=playerResult=p,dbcol=groups=g,dbcol=player=p1,dbcol=game=g1)=
-  select %p.ID @id^^id, %p.POINTS @points, %p.RANK @rank, %p.GROUP_ID @group.id^^id, %p.PLAYER_ID @player.id^^id, %p.SCORE @score^score
-         {? :group^^call=toInit | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
-         {? :player^^call=toInit | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club }
-         {? :games^^call=toInit | , %g1.ID @games.id^^id, %g1.HOME_PLAYER_RESULT_ID @games.homePlayerResult.id, %g1.AWAY_PLAYER_RESULT_ID @games.awayPlayerResult.id, %g1.HOME_SCORE @games.homeScore, %g1.AWAY_SCORE @games.awayScore }
+GET_PLAYER_RESULT(CRUD,inx=PlayerResult,outx=PlayerResult,tab=playerResult=p,tab=groups=g,tab=player=p1,tab=game=g1)=
+  select %p.ID @id(id), %p.POINTS @points, %p.RANK @rank, %p.GROUP_ID @group.id(id), %p.PLAYER_ID @player.id(id), %p.SCORE @score(type=score)
+         {? :group(call=toInit) | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
+         {? :player(call=toInit) | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club }
+         {? :games(call=toInit) | , %g1.ID @games.id(id), %g1.HOME_PLAYER_RESULT_ID @games.homePlayerResult.id, %g1.AWAY_PLAYER_RESULT_ID @games.awayPlayerResult.id, %g1.HOME_SCORE @games.homeScore, %g1.AWAY_SCORE @games.awayScore }
   from %%PLAYER_RESULT p
-  {? :group^^call=toInit | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
-  {? :player^^call=toInit | left join %%PLAYER p1 on %p.PLAYER_ID = %p1.ID }
-  {? :games^^call=toInit | left join %%GAME g1 on %p.ID = %g1.HOME_PLAYER_RESULT_ID }
+  {? :group(call=toInit) | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
+  {? :player(call=toInit) | left join %%PLAYER p1 on %p.PLAYER_ID = %p1.ID }
+  {? :games(call=toInit) | left join %%GAME g1 on %p.ID = %g1.HOME_PLAYER_RESULT_ID }
   {= where
     {& %p.ID = :id }
     {& %p.POINTS = :points }
     {& %p.RANK = :rank }
     {& %p.GROUP_ID = :group.id }
     {& %p.PLAYER_ID = :player.id }
-    {& %p.SCORE = :score^score }
+    {& %p.SCORE = :score(type=score) }
   }
 ;
 
-UPDATE_PLAYER_RESULT(CRUD,identx=PlayerResult,colx=PlayerResult,dbcol=playerResult)=
+UPDATE_PLAYER_RESULT(CRUD,inx=PlayerResult,outx=PlayerResult,tab=playerResult)=
   update %%PLAYER_RESULT
   {= set
-    { ,%POINTS = :points^^call=isDef }
-    { ,%RANK = :rank^^call=isDef }
-    { ,%GROUP_ID = :group.id^^call=isDef }
-    { ,%PLAYER_ID = :player.id^^call=isDef }
-    { ,%SCORE = :score^score^call=isDef }
+    { ,%POINTS = :points(call=isDef) }
+    { ,%RANK = :rank(call=isDef) }
+    { ,%GROUP_ID = :group.id(call=isDef) }
+    { ,%PLAYER_ID = :player.id(call=isDef) }
+    { ,%SCORE = :score(type=score,call=isDef) }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_PLAYER_RESULT(CRUD,identx=PlayerResult,colx=PlayerResult,dbcol=playerResult)=
+DELETE_PLAYER_RESULT(CRUD,inx=PlayerResult,outx=PlayerResult,tab=playerResult)=
   delete from %%PLAYER_RESULT
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_PLAYER_RESULT(QRY,identx=PlayerResult,colx=PlayerResult,dbcol=playerResult=p,dbcol=groups=g,dbcol=player=p1,dbcol=game=g1)=
-  select %p.ID @id^^id, %p.POINTS @points, %p.RANK @rank, %p.GROUP_ID @group.id^^id, %p.PLAYER_ID @player.id^^id, %p.SCORE @score^score
-         {? :group^^call=toInit | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
-         {? :player^^call=toInit | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club }
-         {? :games^^call=toInit | , %g1.ID @games.id^^id, %g1.HOME_PLAYER_RESULT_ID @games.homePlayerResult.id, %g1.AWAY_PLAYER_RESULT_ID @games.awayPlayerResult.id, %g1.HOME_SCORE @games.homeScore, %g1.AWAY_SCORE @games.awayScore }
+SELECT_PLAYER_RESULT(QRY,inx=PlayerResult,outx=PlayerResult,tab=playerResult=p,tab=groups=g,tab=player=p1,tab=game=g1)=
+  select %p.ID @id(id), %p.POINTS @points, %p.RANK @rank, %p.GROUP_ID @group.id(id), %p.PLAYER_ID @player.id(id), %p.SCORE @score(type=score)
+         {? :group(call=toInit) | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
+         {? :player(call=toInit) | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club }
+         {? :games(call=toInit) | , %g1.ID @games.id(id), %g1.HOME_PLAYER_RESULT_ID @games.homePlayerResult.id, %g1.AWAY_PLAYER_RESULT_ID @games.awayPlayerResult.id, %g1.HOME_SCORE @games.homeScore, %g1.AWAY_SCORE @games.awayScore }
   from %%PLAYER_RESULT p
-  {? :group^^call=toInit | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
-  {? :player^^call=toInit | left join %%PLAYER p1 on %p.PLAYER_ID = %p1.ID }
-  {? :games^^call=toInit | left join %%GAME g1 on %p.ID = %g1.HOME_PLAYER_RESULT_ID }
+  {? :group(call=toInit) | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
+  {? :player(call=toInit) | left join %%PLAYER p1 on %p.PLAYER_ID = %p1.ID }
+  {? :games(call=toInit) | left join %%GAME g1 on %p.ID = %g1.HOME_PLAYER_RESULT_ID }
   {= where
     {& %p.ID = :id }
     {& %p.POINTS = :points }
     {& %p.RANK = :rank }
     {& %p.GROUP_ID = :group.id }
     {& %p.PLAYER_ID = :player.id }
-    {& %p.SCORE = :score^score }
+    {& %p.SCORE = :score(type=score) }
   }
   {#1 order by %p.ID }
   {#3 order by %p.GROUP_ID }
   {#2 order by %p.PLAYER_ID }
 ;
 
-INSERT_PLAY_OFF_GAME(CRUD,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame)=
+INSERT_PLAY_OFF_GAME(CRUD,inx=PlayOffGame,outx=PlayOffGame,tab=playOffGame)=
   insert into %%PLAY_OFF_GAME (%ID, %HOME_PLAYER_ID, %AWAY_PLAYER_ID, %GROUP_ID, %POSITION)
-  {= values (:id^^seq=SEQ_PLAY_OFF_GAME, :homePlayer.id, :awayPlayer.id, :group.id, :position) }
+  {= values (:id(seq=SEQ_PLAY_OFF_GAME), :homePlayer.id, :awayPlayer.id, :group.id, :position) }
 ;
 
-GET_PLAY_OFF_GAME(CRUD,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame=p,dbcol=groups=g,dbcol=player=p1,dbcol=playOffResult=p3,dbcol=player=p2)=
-  select %p.ID @id^^id, %p.HOME_PLAYER_ID @homePlayer.id^^id, %p.AWAY_PLAYER_ID @awayPlayer.id^^id, %p.GROUP_ID @group.id^^id, %p.POSITION @position
-         {? :group^^call=toInit | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
-         {? :homePlayer^^call=toInit | , %p1.NAME @homePlayer.name, %p1.SURNAME @homePlayer.surname, %p1.CLUB @homePlayer.club }
-         {? :playOffResults^^call=toInit | , %p3.ID @playOffResults.id^^id, %p3.HOME_SCORE @playOffResults.homeScore, %p3.AWAY_SCORE @playOffResults.awayScore, %p3.OVERTIME @playOffResults.overtime, %p3.PLAY_OFF_GAME_ID @playOffResults.playOffGame.id }
-         {? :awayPlayer^^call=toInit | , %p2.NAME @awayPlayer.name, %p2.SURNAME @awayPlayer.surname, %p2.CLUB @awayPlayer.club }
+GET_PLAY_OFF_GAME(CRUD,inx=PlayOffGame,outx=PlayOffGame,tab=playOffGame=p,tab=groups=g,tab=player=p1,tab=playOffResult=p3,tab=player=p2)=
+  select %p.ID @id(id), %p.HOME_PLAYER_ID @homePlayer.id(id), %p.AWAY_PLAYER_ID @awayPlayer.id(id), %p.GROUP_ID @group.id(id), %p.POSITION @position
+         {? :group(call=toInit) | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
+         {? :homePlayer(call=toInit) | , %p1.NAME @homePlayer.name, %p1.SURNAME @homePlayer.surname, %p1.CLUB @homePlayer.club }
+         {? :playOffResults(call=toInit) | , %p3.ID @playOffResults.id(id), %p3.HOME_SCORE @playOffResults.homeScore, %p3.AWAY_SCORE @playOffResults.awayScore, %p3.OVERTIME @playOffResults.overtime, %p3.PLAY_OFF_GAME_ID @playOffResults.playOffGame.id }
+         {? :awayPlayer(call=toInit) | , %p2.NAME @awayPlayer.name, %p2.SURNAME @awayPlayer.surname, %p2.CLUB @awayPlayer.club }
   from %%PLAY_OFF_GAME p
-  {? :group^^call=toInit | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
-  {? :homePlayer^^call=toInit | left join %%PLAYER p1 on %p.HOME_PLAYER_ID = %p1.ID }
-  {? :playOffResults^^call=toInit | left join %%PLAY_OFF_RESULT p3 on %p.ID = %p3.PLAY_OFF_GAME_ID }
-  {? :awayPlayer^^call=toInit | left join %%PLAYER p2 on %p.AWAY_PLAYER_ID = %p2.ID }
+  {? :group(call=toInit) | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
+  {? :homePlayer(call=toInit) | left join %%PLAYER p1 on %p.HOME_PLAYER_ID = %p1.ID }
+  {? :playOffResults(call=toInit) | left join %%PLAY_OFF_RESULT p3 on %p.ID = %p3.PLAY_OFF_GAME_ID }
+  {? :awayPlayer(call=toInit) | left join %%PLAYER p2 on %p.AWAY_PLAYER_ID = %p2.ID }
   {= where
     {& %p.ID = :id }
     {& %p.HOME_PLAYER_ID = :homePlayer.id }
@@ -285,37 +284,37 @@ GET_PLAY_OFF_GAME(CRUD,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame=p,d
   }
 ;
 
-UPDATE_PLAY_OFF_GAME(CRUD,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame)=
+UPDATE_PLAY_OFF_GAME(CRUD,inx=PlayOffGame,outx=PlayOffGame,tab=playOffGame)=
   update %%PLAY_OFF_GAME
   {= set
-    { ,%HOME_PLAYER_ID = :homePlayer.id^^call=isDef }
-    { ,%AWAY_PLAYER_ID = :awayPlayer.id^^call=isDef }
-    { ,%GROUP_ID = :group.id^^call=isDef }
-    { ,%POSITION = :position^^call=isDef }
+    { ,%HOME_PLAYER_ID = :homePlayer.id(call=isDef) }
+    { ,%AWAY_PLAYER_ID = :awayPlayer.id(call=isDef) }
+    { ,%GROUP_ID = :group.id(call=isDef) }
+    { ,%POSITION = :position(call=isDef) }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_PLAY_OFF_GAME(CRUD,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame)=
+DELETE_PLAY_OFF_GAME(CRUD,inx=PlayOffGame,outx=PlayOffGame,tab=playOffGame)=
   delete from %%PLAY_OFF_GAME
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_PLAY_OFF_GAME(QRY,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame=p,dbcol=groups=g,dbcol=player=p1,dbcol=playOffResult=p3,dbcol=player=p2)=
-  select %p.ID @id^^id, %p.HOME_PLAYER_ID @homePlayer.id^^id, %p.AWAY_PLAYER_ID @awayPlayer.id^^id, %p.GROUP_ID @group.id^^id, %p.POSITION @position
-         {? :group^^call=toInit | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
-         {? :homePlayer^^call=toInit | , %p1.NAME @homePlayer.name, %p1.SURNAME @homePlayer.surname, %p1.CLUB @homePlayer.club }
-         {? :playOffResults^^call=toInit | , %p3.ID @playOffResults.id^^id, %p3.HOME_SCORE @playOffResults.homeScore, %p3.AWAY_SCORE @playOffResults.awayScore, %p3.OVERTIME @playOffResults.overtime, %p3.PLAY_OFF_GAME_ID @playOffResults.playOffGame.id }
-         {? :awayPlayer^^call=toInit | , %p2.NAME @awayPlayer.name, %p2.SURNAME @awayPlayer.surname, %p2.CLUB @awayPlayer.club }
+SELECT_PLAY_OFF_GAME(QRY,inx=PlayOffGame,outx=PlayOffGame,tab=playOffGame=p,tab=groups=g,tab=player=p1,tab=playOffResult=p3,tab=player=p2)=
+  select %p.ID @id(id), %p.HOME_PLAYER_ID @homePlayer.id(id), %p.AWAY_PLAYER_ID @awayPlayer.id(id), %p.GROUP_ID @group.id(id), %p.POSITION @position
+         {? :group(call=toInit) | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.GROUP_TYPE @group.groupType, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
+         {? :homePlayer(call=toInit) | , %p1.NAME @homePlayer.name, %p1.SURNAME @homePlayer.surname, %p1.CLUB @homePlayer.club }
+         {? :playOffResults(call=toInit) | , %p3.ID @playOffResults.id(id), %p3.HOME_SCORE @playOffResults.homeScore, %p3.AWAY_SCORE @playOffResults.awayScore, %p3.OVERTIME @playOffResults.overtime, %p3.PLAY_OFF_GAME_ID @playOffResults.playOffGame.id }
+         {? :awayPlayer(call=toInit) | , %p2.NAME @awayPlayer.name, %p2.SURNAME @awayPlayer.surname, %p2.CLUB @awayPlayer.club }
   from %%PLAY_OFF_GAME p
-  {? :group^^call=toInit | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
-  {? :homePlayer^^call=toInit | left join %%PLAYER p1 on %p.HOME_PLAYER_ID = %p1.ID }
-  {? :playOffResults^^call=toInit | left join %%PLAY_OFF_RESULT p3 on %p.ID = %p3.PLAY_OFF_GAME_ID }
-  {? :awayPlayer^^call=toInit | left join %%PLAYER p2 on %p.AWAY_PLAYER_ID = %p2.ID }
+  {? :group(call=toInit) | left join %%GROUPS g on %p.GROUP_ID = %g.ID }
+  {? :homePlayer(call=toInit) | left join %%PLAYER p1 on %p.HOME_PLAYER_ID = %p1.ID }
+  {? :playOffResults(call=toInit) | left join %%PLAY_OFF_RESULT p3 on %p.ID = %p3.PLAY_OFF_GAME_ID }
+  {? :awayPlayer(call=toInit) | left join %%PLAYER p2 on %p.AWAY_PLAYER_ID = %p2.ID }
   {= where
     {& %p.ID = :id }
     {& %p.HOME_PLAYER_ID = :homePlayer.id }
@@ -330,16 +329,16 @@ SELECT_PLAY_OFF_GAME(QRY,identx=PlayOffGame,colx=PlayOffGame,dbcol=playOffGame=p
   {#4 order by %p.POSITION }
 ;
 
-INSERT_PLAY_OFF_RESULT(CRUD,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOffResult)=
+INSERT_PLAY_OFF_RESULT(CRUD,inx=PlayOffResult,outx=PlayOffResult,tab=playOffResult)=
   insert into %%PLAY_OFF_RESULT (%ID, %HOME_SCORE, %AWAY_SCORE, %OVERTIME, %PLAY_OFF_GAME_ID)
-  {= values (:id^^seq=SEQ_PLAY_OFF_RESULT, :homeScore, :awayScore, :overtime, :playOffGame.id) }
+  {= values (:id(seq=SEQ_PLAY_OFF_RESULT), :homeScore, :awayScore, :overtime, :playOffGame.id) }
 ;
 
-GET_PLAY_OFF_RESULT(CRUD,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOffResult=p,dbcol=playOffGame=p1)=
-  select %p.ID @id^^id, %p.HOME_SCORE @homeScore, %p.AWAY_SCORE @awayScore, %p.OVERTIME @overtime, %p.PLAY_OFF_GAME_ID @playOffGame.id^^id
-         {? :playOffGame^^call=toInit | , %p1.HOME_PLAYER_ID @playOffGame.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGame.awayPlayer.id, %p1.GROUP_ID @playOffGame.group.id, %p1.POSITION @playOffGame.position }
+GET_PLAY_OFF_RESULT(CRUD,inx=PlayOffResult,outx=PlayOffResult,tab=playOffResult=p,tab=playOffGame=p1)=
+  select %p.ID @id(id), %p.HOME_SCORE @homeScore, %p.AWAY_SCORE @awayScore, %p.OVERTIME @overtime, %p.PLAY_OFF_GAME_ID @playOffGame.id(id)
+         {? :playOffGame(call=toInit) | , %p1.HOME_PLAYER_ID @playOffGame.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGame.awayPlayer.id, %p1.GROUP_ID @playOffGame.group.id, %p1.POSITION @playOffGame.position }
   from %%PLAY_OFF_RESULT p
-  {? :playOffGame^^call=toInit | left join %%PLAY_OFF_GAME p1 on %p.PLAY_OFF_GAME_ID = %p1.ID }
+  {? :playOffGame(call=toInit) | left join %%PLAY_OFF_GAME p1 on %p.PLAY_OFF_GAME_ID = %p1.ID }
   {= where
     {& %p.ID = :id }
     {& %p.HOME_SCORE = :homeScore }
@@ -349,31 +348,31 @@ GET_PLAY_OFF_RESULT(CRUD,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOffRe
   }
 ;
 
-UPDATE_PLAY_OFF_RESULT(CRUD,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOffResult)=
+UPDATE_PLAY_OFF_RESULT(CRUD,inx=PlayOffResult,outx=PlayOffResult,tab=playOffResult)=
   update %%PLAY_OFF_RESULT
   {= set
-    { ,%HOME_SCORE = :homeScore^^call=isDef }
-    { ,%AWAY_SCORE = :awayScore^^call=isDef }
-    { ,%OVERTIME = :overtime^^call=isDef }
-    { ,%PLAY_OFF_GAME_ID = :playOffGame.id^^call=isDef }
+    { ,%HOME_SCORE = :homeScore(call=isDef) }
+    { ,%AWAY_SCORE = :awayScore(call=isDef) }
+    { ,%OVERTIME = :overtime(call=isDef) }
+    { ,%PLAY_OFF_GAME_ID = :playOffGame.id(call=isDef) }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_PLAY_OFF_RESULT(CRUD,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOffResult)=
+DELETE_PLAY_OFF_RESULT(CRUD,inx=PlayOffResult,outx=PlayOffResult,tab=playOffResult)=
   delete from %%PLAY_OFF_RESULT
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_PLAY_OFF_RESULT(QRY,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOffResult=p,dbcol=playOffGame=p1)=
-  select %p.ID @id^^id, %p.HOME_SCORE @homeScore, %p.AWAY_SCORE @awayScore, %p.OVERTIME @overtime, %p.PLAY_OFF_GAME_ID @playOffGame.id^^id
-         {? :playOffGame^^call=toInit | , %p1.HOME_PLAYER_ID @playOffGame.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGame.awayPlayer.id, %p1.GROUP_ID @playOffGame.group.id, %p1.POSITION @playOffGame.position }
+SELECT_PLAY_OFF_RESULT(QRY,inx=PlayOffResult,outx=PlayOffResult,tab=playOffResult=p,tab=playOffGame=p1)=
+  select %p.ID @id(id), %p.HOME_SCORE @homeScore, %p.AWAY_SCORE @awayScore, %p.OVERTIME @overtime, %p.PLAY_OFF_GAME_ID @playOffGame.id(id)
+         {? :playOffGame(call=toInit) | , %p1.HOME_PLAYER_ID @playOffGame.homePlayer.id, %p1.AWAY_PLAYER_ID @playOffGame.awayPlayer.id, %p1.GROUP_ID @playOffGame.group.id, %p1.POSITION @playOffGame.position }
   from %%PLAY_OFF_RESULT p
-  {? :playOffGame^^call=toInit | left join %%PLAY_OFF_GAME p1 on %p.PLAY_OFF_GAME_ID = %p1.ID }
+  {? :playOffGame(call=toInit) | left join %%PLAY_OFF_GAME p1 on %p.PLAY_OFF_GAME_ID = %p1.ID }
   {= where
     {& %p.ID = :id }
     {& %p.HOME_SCORE = :homeScore }
@@ -385,63 +384,71 @@ SELECT_PLAY_OFF_RESULT(QRY,identx=PlayOffResult,colx=PlayOffResult,dbcol=playOff
   {#2 order by %p.PLAY_OFF_GAME_ID }
 ;
 
-INSERT_SEASON(CRUD,identx=Season,colx=Season,dbcol=season)=
-  insert into %%SEASON (%ID, %NAME)
-  {= values (:id^^seq=SEQ_SEASON, :name) }
+INSERT_SEASON(CRUD,inx=Season,outx=Season,tab=season)=
+  insert into %%SEASON (%ID, %NAME, %USER_ID)
+  {= values (:id(seq=SEQ_SEASON), :name, :user.id) }
 ;
 
-GET_SEASON(CRUD,identx=Season,colx=Season,dbcol=season=s,dbcol=tournament=t)=
-  select %s.ID @id^^id, %s.NAME @name
-         {? :tournaments^^call=toInit | , %t.ID @tournaments.id^^id, %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_A @tournaments.playOffA, %t.PLAY_OFF_LOWER @tournaments.playOffLower }
+GET_SEASON(CRUD,inx=Season,outx=Season,tab=season=s,tab=tournament=t,tab=user=u)=
+  select %s.ID @id(id), %s.NAME @name, %s.USER_ID @user.id(id)
+         {? :tournaments(call=toInit) | , %t.ID @tournaments.id(id), %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_A @tournaments.playOffA, %t.PLAY_OFF_LOWER @tournaments.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournaments.minPlayersInGroup }
+         {? :user(call=toInit) | , %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.PLATNOST @user.platnost }
   from %%SEASON s
-  {? :tournaments^^call=toInit | left join %%TOURNAMENT t on %s.ID = %t.SEASON_ID }
+  {? :tournaments(call=toInit) | left join %%TOURNAMENT t on %s.ID = %t.SEASON_ID }
+  {? :user(call=toInit) | left join %%USER u on %s.USER_ID = %u.ID }
   {= where
     {& %s.ID = :id }
     {& %s.NAME = :name }
+    {& %s.USER_ID = :user.id }
   }
 ;
 
-UPDATE_SEASON(CRUD,identx=Season,colx=Season,dbcol=season)=
+UPDATE_SEASON(CRUD,inx=Season,outx=Season,tab=season)=
   update %%SEASON
   {= set
     { ,%NAME = :name }
+    { ,%USER_ID = :user.id }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_SEASON(CRUD,identx=Season,colx=Season,dbcol=season)=
+DELETE_SEASON(CRUD,inx=Season,outx=Season,tab=season)=
   delete from %%SEASON
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_SEASON(QRY,identx=Season,colx=Season,dbcol=season=s,dbcol=tournament=t)=
-  select %s.ID @id^^id, %s.NAME @name
-         {? :tournaments^^call=toInit | , %t.ID @tournaments.id^^id, %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_A @tournaments.playOffA, %t.PLAY_OFF_LOWER @tournaments.playOffLower }
+SELECT_SEASON(QRY,inx=Season,outx=Season,tab=season=s,tab=tournament=t,tab=user=u)=
+  select %s.ID @id(id), %s.NAME @name, %s.USER_ID @user.id(id)
+         {? :tournaments(call=toInit) | , %t.ID @tournaments.id(id), %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_A @tournaments.playOffA, %t.PLAY_OFF_LOWER @tournaments.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournaments.minPlayersInGroup }
+         {? :user(call=toInit) | , %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.PLATNOST @user.platnost }
   from %%SEASON s
-  {? :tournaments^^call=toInit | left join %%TOURNAMENT t on %s.ID = %t.SEASON_ID }
+  {? :tournaments(call=toInit) | left join %%TOURNAMENT t on %s.ID = %t.SEASON_ID }
+  {? :user(call=toInit) | left join %%USER u on %s.USER_ID = %u.ID }
   {= where
     {& %s.ID = :id }
     {& UPPER(%s.NAME) like :+name }
+    {& %s.USER_ID = :user.id }
   }
   {#1 order by %s.ID }
+  {#2 order by %s.USER_ID }
 ;
 
-INSERT_TOURNAMENT(CRUD,identx=Tournament,colx=Tournament,dbcol=tournament)=
-  insert into %%TOURNAMENT (%ID, %NAME, %SEASON_ID, %FINAL_PROMOTING, %LOWER_PROMOTING, %WIN_POINTS, %PLAY_OFF_A, %PLAY_OFF_LOWER)
-  {= values (:id^^seq=SEQ_TOURNAMENT, :name, :season.id, :finalPromoting, :lowerPromoting, :winPoints, :playOffA, :playOffLower) }
+INSERT_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
+  insert into %%TOURNAMENT (%ID, %NAME, %SEASON_ID, %FINAL_PROMOTING, %LOWER_PROMOTING, %WIN_POINTS, %PLAY_OFF_A, %PLAY_OFF_LOWER, %MIN_PLAYERS_IN_GROUP)
+  {= values (:id(seq=SEQ_TOURNAMENT), :name, :season.id, :finalPromoting, :lowerPromoting, :winPoints, :playOffA, :playOffLower, :minPlayersInGroup) }
 ;
 
-GET_TOURNAMENT(CRUD,identx=Tournament,colx=Tournament,dbcol=tournament=t,dbcol=groups=g,dbcol=season=s)=
-  select %t.ID @id^^id, %t.NAME @name, %t.SEASON_ID @season.id^^id, %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_A @playOffA, %t.PLAY_OFF_LOWER @playOffLower
-         {? :groups^^call=toInit | , %g.ID @groups.id^^id, %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.GROUP_TYPE @groups.groupType, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace }
-         {? :season^^call=toInit | , %s.NAME @season.name }
+GET_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g,tab=season=s)=
+  select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_A @playOffA, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup
+         {? :groups(call=toInit) | , %g.ID @groups.id(id), %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.GROUP_TYPE @groups.groupType, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace }
+         {? :season(call=toInit) | , %s.NAME @season.name, %s.USER_ID @season.user.id }
   from %%TOURNAMENT t
-  {? :groups^^call=toInit | left join %%GROUPS g on %t.ID = %g.TOURNAMENT_ID }
-  {? :season^^call=toInit | left join %%SEASON s on %t.SEASON_ID = %s.ID }
+  {? :groups(call=toInit) | left join %%GROUPS g on %t.ID = %g.TOURNAMENT_ID }
+  {? :season(call=toInit) | left join %%SEASON s on %t.SEASON_ID = %s.ID }
   {= where
     {& %t.ID = :id }
     {& %t.NAME = :name }
@@ -451,10 +458,11 @@ GET_TOURNAMENT(CRUD,identx=Tournament,colx=Tournament,dbcol=tournament=t,dbcol=g
     {& %t.WIN_POINTS = :winPoints }
     {& %t.PLAY_OFF_A = :playOffA }
     {& %t.PLAY_OFF_LOWER = :playOffLower }
+    {& %t.MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
   }
 ;
 
-UPDATE_TOURNAMENT(CRUD,identx=Tournament,colx=Tournament,dbcol=tournament)=
+UPDATE_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
   update %%TOURNAMENT
   {= set
     { ,%NAME = :name }
@@ -464,26 +472,27 @@ UPDATE_TOURNAMENT(CRUD,identx=Tournament,colx=Tournament,dbcol=tournament)=
     { ,%WIN_POINTS = :winPoints }
     { ,%PLAY_OFF_A = :playOffA }
     { ,%PLAY_OFF_LOWER = :playOffLower }
+    { ,%MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
   }
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-DELETE_TOURNAMENT(CRUD,identx=Tournament,colx=Tournament,dbcol=tournament)=
+DELETE_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
   delete from %%TOURNAMENT
   {= where
-    {& %ID = :id^^notnull }
+    {& %ID = :id(notnull) }
   }
 ;
 
-SELECT_TOURNAMENT(QRY,identx=Tournament,colx=Tournament,dbcol=tournament=t,dbcol=groups=g,dbcol=season=s)=
-  select %t.ID @id^^id, %t.NAME @name, %t.SEASON_ID @season.id^^id, %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_A @playOffA, %t.PLAY_OFF_LOWER @playOffLower
-         {? :groups^^call=toInit | , %g.ID @groups.id^^id, %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.GROUP_TYPE @groups.groupType, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace }
-         {? :season^^call=toInit | , %s.NAME @season.name }
+SELECT_TOURNAMENT(QRY,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g,tab=season=s)=
+  select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_A @playOffA, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup
+         {? :groups(call=toInit) | , %g.ID @groups.id(id), %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.GROUP_TYPE @groups.groupType, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace }
+         {? :season(call=toInit) | , %s.NAME @season.name, %s.USER_ID @season.user.id }
   from %%TOURNAMENT t
-  {? :groups^^call=toInit | left join %%GROUPS g on %t.ID = %g.TOURNAMENT_ID }
-  {? :season^^call=toInit | left join %%SEASON s on %t.SEASON_ID = %s.ID }
+  {? :groups(call=toInit) | left join %%GROUPS g on %t.ID = %g.TOURNAMENT_ID }
+  {? :season(call=toInit) | left join %%SEASON s on %t.SEASON_ID = %s.ID }
   {= where
     {& %t.ID = :id }
     {& UPPER(%t.NAME) like :+name }
@@ -493,27 +502,97 @@ SELECT_TOURNAMENT(QRY,identx=Tournament,colx=Tournament,dbcol=tournament=t,dbcol
     {& %t.WIN_POINTS = :winPoints }
     {& %t.PLAY_OFF_A = :playOffA }
     {& %t.PLAY_OFF_LOWER = :playOffLower }
+    {& %t.MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
   }
   {#1 order by %t.ID }
   {#2 order by %t.SEASON_ID }
 ;
 
+INSERT_USER(CRUD,inx=User,outx=User,tab=user)=
+  insert into %%USER (%ID, %NAME, %SURNAME, %EMAIL, %USER_NAME, %PASSWORD, %ROLE, %PLATNOST)
+  {= values (:id, :name, :surname, :email, :userName, :password, :role, :platnost) }
+;
+
+GET_USER(CRUD,inx=User,outx=User,tab=user=u,tab=season=s)=
+  select %u.ID @id(id), %u.NAME @name, %u.SURNAME @surname, %u.EMAIL @email, %u.USER_NAME @userName, %u.PASSWORD @password, %u.ROLE @role, %u.PLATNOST @platnost
+         {? :seasons(call=toInit) | , %s.ID @seasons.id(id), %s.NAME @seasons.name, %s.USER_ID @seasons.user.id }
+  from %%USER u
+  {? :seasons(call=toInit) | left join %%SEASON s on %u.ID = %s.USER_ID }
+  {= where
+    {& %u.ID = :id }
+    {& %u.NAME = :name }
+    {& %u.SURNAME = :surname }
+    {& %u.EMAIL = :email }
+    {& %u.USER_NAME = :userName }
+    {& %u.PASSWORD = :password }
+    {& %u.ROLE = :role }
+    {& %u.PLATNOST = :platnost }
+  }
+;
+
+UPDATE_USER(CRUD,inx=User,outx=User,tab=user)=
+  update %%USER
+  {= set
+    { ,%NAME = :name(call=isDef) }
+    { ,%SURNAME = :surname(call=isDef) }
+    { ,%EMAIL = :email(call=isDef) }
+    { ,%USER_NAME = :userName(call=isDef) }
+    { ,%PASSWORD = :password(call=isDef) }
+    { ,%ROLE = :role(call=isDef) }
+    { ,%PLATNOST = :platnost(call=isDef) }
+  }
+  {= where
+    {& %ID = :id(notnull) }
+  }
+;
+
+DELETE_USER(CRUD,inx=User,outx=User,tab=user)=
+  delete from %%USER
+  {= where
+    {& %ID = :id(notnull) }
+  }
+;
+
+SELECT_USER(QRY,inx=User,outx=User,tab=user=u,tab=season=s)=
+  select %u.ID @id(id), %u.NAME @name, %u.SURNAME @surname, %u.EMAIL @email, %u.USER_NAME @userName, %u.PASSWORD @password, %u.ROLE @role, %u.PLATNOST @platnost
+         {? :seasons(call=toInit) | , %s.ID @seasons.id(id), %s.NAME @seasons.name, %s.USER_ID @seasons.user.id }
+  from %%USER u
+  {? :seasons(call=toInit) | left join %%SEASON s on %u.ID = %s.USER_ID }
+  {= where
+    {& %u.ID = :id }
+    {& UPPER(%u.NAME) like :+name }
+    {& UPPER(%u.SURNAME) like :+surname }
+    {& UPPER(%u.EMAIL) like :+email }
+    {& UPPER(%u.USER_NAME) like :+userName }
+    {& UPPER(%u.PASSWORD) like :+password }
+    {& UPPER(%u.ROLE) like :+role }
+    {& %u.PLATNOST = :platnost }
+  }
+  {#1 order by %u.ID }
+  {#3 order by %u.EMAIL }
+  {#2 order by %u.USER_NAME }
+;
+
 
 //my own sql
 
+GET_ALL_USERS(QRY,inx=User,outx=User,tab=user)=
+    select %ID @id(id), %NAME @name, %SURNAME @surname, %EMAIL @email, %USER_NAME @userName, %PASSWORD @password, %ROLE @role, %PLATNOST @platnost        
+  from %%USER 
+;
 
-GET_ALL_SEASONS(QRY,identx=Season,colx=Season,dbcol=season)=
+GET_ALL_SEASONS(QRY,inx=Season,outx=Season,tab=season)=
   select %ID @id, %NAME @name
   from %%SEASON  
 ;
 
-GET_ALL_PLAYERS(QRY,identx=Player,colx=Player,dbcol=player)=
+GET_ALL_PLAYERS(QRY,inx=Player,outx=Player,tab=player)=
   select %ID @id, %NAME @name, %SURNAME @surname, %CLUB @club
   from %%PLAYER  
 ;
 
-GET_PLAYER_NOT_IN_TOURNAMENT(QRY,identx=Tournament,colx=Player,dbcol=player)=
-	select distinct %p.ID @id, %NAME @name, %SURNAME @surname, %CLUB @club
+GET_PLAYER_NOT_IN_TOURNAMENT(QRY,inx=Tournament,outx=Player,tab=player=p,tab=playerResult=r,tab=playerResult=a_r,tab=groups=g)=
+	select distinct %p.ID @id, %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club
 	from %%PLAYER p LEFT JOIN %%PLAYER_RESULT r on %p.ID = %r.PLAYER_ID 
 	{= where p.id not in 
 		(select %a_r.PLAYER_ID from %%PLAYER_RESULT a_r left join %%GROUPS g on %a_r.GROUP_ID = %g.ID
@@ -522,8 +601,8 @@ GET_PLAYER_NOT_IN_TOURNAMENT(QRY,identx=Tournament,colx=Player,dbcol=player)=
 	}
 ;
 
-GET_PLAYER_RESULT_IN_TOURNAMENT(QRY,identx=Tournament,colx=PlayerResult,dbcol=playerResult)=
-    select distinct %r.ID @id, %r.POINTS @points, %r.RANK @rank, %r.GROUP_ID @group.id, %r.PLAYER_ID @player.id, %r.SCORE @score^score, 
+GET_PLAYER_RESULT_IN_TOURNAMENT(QRY,inx=Tournament,outx=PlayerResult,tab=player=p,tab=groups=g,tab=playerResult=r)=
+    select distinct %r.ID @id, %r.POINTS @points, %r.RANK @rank, %r.GROUP_ID @group.id, %r.PLAYER_ID @player.id, %r.SCORE @score(type=score), 
     	   %p.NAME @player.name, %p.SURNAME @player.surname, %p.CLUB @player.club,
     	   %g.NAME @group.name
 	from %%PLAYER_RESULT r LEFT JOIN %%PLAYER p on %p.ID = %r.PLAYER_ID 
@@ -534,8 +613,8 @@ GET_PLAYER_RESULT_IN_TOURNAMENT(QRY,identx=Tournament,colx=PlayerResult,dbcol=pl
 	 }
 ;
 
-GET_TOURNAMENTS_BY_SEASON(QRY,identx=Tournament,colx=Tournament,dbcol=tournament)=
-  select %ID @id, %NAME @name, %SEASON_ID @season.id, %FINAL_PROMOTING @finalPromoting, %LOWER_PROMOTING @lowerPromoting, %WIN_POINTS @winPoints, %PLAY_OFF_A @playOffA, %PLAY_OFF_LOWER @playOffLower
+GET_TOURNAMENTS_BY_SEASON(QRY,inx=Tournament,outx=Tournament,dbcol=tournament,tab=tournament)=
+  select %ID @id, %NAME @name, %SEASON_ID @season.id, %FINAL_PROMOTING @finalPromoting, %LOWER_PROMOTING @lowerPromoting, %WIN_POINTS @winPoints, %PLAY_OFF_A @playOffA, %PLAY_OFF_LOWER @playOffLower, %MIN_PLAYERS_IN_GROUP @minPlayersInGroup
   from %%TOURNAMENT
   {= where   
     {& %SEASON_ID = :season.id }   

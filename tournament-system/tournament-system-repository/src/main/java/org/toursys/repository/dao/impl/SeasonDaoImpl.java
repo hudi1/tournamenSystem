@@ -41,6 +41,13 @@ public class SeasonDaoImpl extends BaseDaoImpl implements SeasonDao {
     }
 
     @Override
+    public List<Season> getListSeason(Season season) {
+        SqlSession session = getSqlSession();
+        logger.info("find season");
+        return getQueryEngine("SELECT_SEASON").query(session, Season.class, season);
+    }
+
+    @Override
     public List<Season> getAllSeasons() {
         SqlSession session = getSqlSession();
         logger.info("get all seasons");

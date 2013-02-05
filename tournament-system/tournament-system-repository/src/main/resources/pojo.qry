@@ -1,5 +1,6 @@
 package org.toursys.repository.model {  
 
+
   final pojo Game serializable 1  {
     id : java.lang.Integer primaryKey index 1
     homePlayerResult :: PlayerResult required index 2
@@ -77,10 +78,11 @@ package org.toursys.repository.model {
   final pojo Season serializable 1  {
     id : java.lang.Integer primaryKey index 1
     name : java.lang.String required
+    user :: User required index 2
     tournaments : java.util.List <:Tournament>
     equals ::: id
-    toInit ::: tournaments
-    toString ::: id name
+    toInit ::: tournaments user
+    toString ::: id name user
   }
 
   final pojo Tournament serializable 1  {
@@ -92,10 +94,26 @@ package org.toursys.repository.model {
     winPoints : java.lang.Integer required
     playOffA : java.lang.Integer required
     playOffLower : java.lang.Integer required
+    minPlayersInGroup : java.lang.Integer required
     groups : java.util.List <:Groups>
     equals ::: id
     toInit ::: season groups
-    toString ::: id playOffLower season playOffA winPoints finalPromoting name lowerPromoting
+    toString ::: id playOffLower season playOffA winPoints finalPromoting name lowerPromoting minPlayersInGroup
   }
-  
+
+  final pojo User serializable 1  {
+    id : java.lang.Integer primaryKey index 1
+    name : java.lang.String required
+    surname : java.lang.String required
+    email : java.lang.String required index 3
+    userName : java.lang.String required index 2
+    password : java.lang.String required
+    role : java.lang.String
+    platnost : java.lang.Integer required
+    seasons : java.util.List <:Season>
+    equals ::: id
+    toInit ::: seasons
+    toString ::: id email name platnost role userName surname password
+  }
+
 }

@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -14,6 +13,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -25,6 +25,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.toursys.repository.model.Groups;
@@ -32,7 +33,6 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.TournamentImpl;
-import org.wicketstuff.minis.behavior.spinner.Spinner;
 
 public class RegistrationPage extends BasePage {
 
@@ -45,7 +45,7 @@ public class RegistrationPage extends BasePage {
     }
 
     public RegistrationPage(Tournament tournament) {
-        this(tournament, new Groups()._setIndexOfFirstHockey(1)._setNumberOfHockey(1));
+        this(tournament, new Groups()._setName("1"));
     }
 
     public RegistrationPage(Tournament tournament, Groups group) {
@@ -76,6 +76,7 @@ public class RegistrationPage extends BasePage {
                 listItem.add(new Label("name", playerResult.getPlayer().getName()));
                 listItem.add(new Label("surname", playerResult.getPlayer().getSurname()));
                 listItem.add(new Label("tableName", playerResult.getGroup().getName()));
+                listItem.add(new Label("number", listItem.getIndex() + 1 + "."));
                 listItem.add(new AjaxLink<Void>("deletePlayer") {
 
                     private static final long serialVersionUID = 1L;
@@ -150,17 +151,35 @@ public class RegistrationPage extends BasePage {
             super("registrationForm", new CompoundPropertyModel<Groups>(group));
             setOutputMarkupId(true);
             final TextField<String> text = new TextField<String>("name");
-            Spinner spinnerBehavior = new Spinner() {
+            text.setOutputMarkupId(true);
+            add(new AjaxButton("plus", Model.of("+")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void configure(Properties p) {
-                    p.put("min", 1);
-                    super.configure(p);
+                public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    Integer groupName = Integer.parseInt(group.getName());
+                    groupName++;
+                    group.setName(groupName.toString());
+                    target.add(text);
                 }
-            };
-            text.add(spinnerBehavior);
+            });
+
+            add(new AjaxButton("minus", Model.of("-")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    Integer groupName = Integer.parseInt(group.getName());
+                    if (groupName > 1) {
+                        groupName--;
+                    }
+                    group.setName(groupName.toString());
+                    target.add(text);
+                }
+            });
+
             add(text);
 
             IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
@@ -243,9 +262,12 @@ public class RegistrationPage extends BasePage {
 
                         @Override
                         protected void onEvent(final AjaxRequestTarget target) {
-
                             // TODO vymysliet ako tu dostat hodnotu z textFieldu ktory ovlada spinner behavior ktory
                             // obsahuje meno tabulky
+                            if (player != null) {
+                                tournamentService.createBasicPlayerResult(tournament, player, group);
+                            }
+                            setResponsePage(new RegistrationPage(tournament, group));
                         }
 
                     });
@@ -308,15 +330,15 @@ public class RegistrationPage extends BasePage {
                 }
             });
 
-            add(new AjaxLink<Void>("back") {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     target.appendJavaScript(PREVISOUS_PAGE);
-                }
-            });
+                };
+            }.setDefaultFormProcessing(false));
         }
     }
 

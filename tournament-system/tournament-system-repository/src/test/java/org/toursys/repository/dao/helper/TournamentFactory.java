@@ -23,7 +23,7 @@ public class TournamentFactory {
     }
 
     public static Season createSeason() {
-        Season season = new Season(SEASONE_NAME);
+        Season season = new Season(SEASONE_NAME, null); // TODO
         return season;
     }
 

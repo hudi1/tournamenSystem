@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+	<div class="naginator" wicket:id="navigator">[dataview navigator]</div>
+	<table class="usereTable">
+		<tr>
+			<th><wicket:message key="name">
+            Name
+        </wicket:message></th>
+			<th><wicket:message key="edit">
+            Edit
+        </wicket:message></th>
+		</tr>
+		<tr wicket:id="rows">
+			<td><span wicket:id="userName">name</span></td>
+			<td>
+				<form wicket:id="editUserForm">
+					<div>
+						<input wicket:id="editUser" class="tournamentButton" type="submit"
+							value="edit user" />
+					</div>
+				</form>
+			</td>
+		</tr>
+	</table>
+
+	<form wicket:id="userForm">
+		<div>
+			<input wicket:id="newUser" class="tournamentButton" type="submit"
+				value="new user" />
+		</div>
+	</form>
+</wicket:extend>
+</html>
+

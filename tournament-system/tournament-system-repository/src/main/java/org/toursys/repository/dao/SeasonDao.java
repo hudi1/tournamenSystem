@@ -16,4 +16,6 @@ public interface SeasonDao {
 
     public List<Season> getAllSeasons();
 
+    public List<Season> getListSeason(Season season);
+
 }

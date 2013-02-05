@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -144,14 +146,6 @@ public class GroupPage extends BasePage {
                                     break;
                                 }
                             }
-
-                            /*
-                             * if (game == null) { for (Game pomGame : playerResult.getGames()) {
-                             * logger.error(pomGame.toStringFull() + " nnnnnnnnnnnnnn");
-                             * 
-                             * if (pomGame.getAwayPlayerResult().getId().equals(playerResult1.getId())) { game =
-                             * pomGame; break; } } }
-                             */
 
                             String result = (game.getHomeScore() == null) ? "" : game.getHomeScore() + ":"
                                     + ((game.getAwayScore() == null) ? "" : game.getAwayScore());
@@ -353,16 +347,15 @@ public class GroupPage extends BasePage {
             };
             add(playOff);
 
-            add(new Button("back", new ResourceModel("back")) {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(new RegistrationPage(tournament));
-
-                }
-            });
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
+                };
+            }.setDefaultFormProcessing(false));
 
             Button finalGroup = new Button("finalGroup", new ResourceModel("finalGroup")) {
 

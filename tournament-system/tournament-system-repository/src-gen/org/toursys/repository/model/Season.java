@@ -13,12 +13,14 @@ public class Season implements Serializable {
   
   private static final long serialVersionUID = 1L;
   public static final int ORDER_BY_ID = 1;
+  public static final int ORDER_BY_USER = 2;
 	
   public Season() {
   }
   
-  public Season(String name) {
+  public Season(String name, User user) {
     this.name = name;
+    this.user = user;
   }
   
   private Integer id;
@@ -48,6 +50,21 @@ public class Season implements Serializable {
     
   public Season _setName(String name) {
     this.name = name;
+    return this;
+  }
+  
+  private User user;
+    
+  public User getUser() {
+    return user;
+  }
+    
+  public void setUser(User user) {
+    this.user = user;
+  }
+    
+  public Season _setUser(User user) {
+    this.user = user;
     return this;
   }
   
@@ -81,7 +98,7 @@ public class Season implements Serializable {
   }  
   
   public enum Association {
-    tournaments
+    tournaments, user
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -116,6 +133,6 @@ public class Season implements Serializable {
   }
   
   public String toStringFull() {
-    return "Season [id=" + id + ", name=" + name + "]";
+    return "Season [id=" + id + ", name=" + name + ", user=" + user + "]";
   }
 }

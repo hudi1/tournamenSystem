@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+
+	<form wicket:id="userEditForm">
+		<fieldset>
+			<legend>
+				<wicket:message key="user">
+            User
+        </wicket:message>
+			</legend>
+			<div>
+				<label wicket:for="name"><wicket:message key="name">
+            Name:
+        </wicket:message></label><input type="text" wicket:id="name" />
+			</div>
+			<div>
+				<label wicket:for="surname"><wicket:message key="surname">
+            Surname:
+        </wicket:message></label><input type="text" wicket:id="surname" />
+			</div>
+			<div>
+				<label wicket:for="userName"><wicket:message key="userName">
+            Username:
+        </wicket:message></label><input type="text" wicket:id="userName" />
+			</div>
+			<div>
+				<label wicket:for="email"><wicket:message key="email">
+            Email:
+        </wicket:message></label><input type="email" wicket:id="email" />
+			</div>
+			<div>
+				<label wicket:for="password"><wicket:message key="password">
+            Password:
+        </wicket:message></label><input type="password" wicket:id="password" />
+			</div>
+			<div>
+				<label wicket:for="platnost"><wicket:message key="platnost">
+            Platnost:
+        </wicket:message></label><input type="text" wicket:id="platnost" />
+			</div>
+			<div>
+				<label wicket:for="role"><wicket:message key="role">
+            Role:
+        </wicket:message></label><input type="text" wicket:id="role" />
+			</div>
+		</fieldset>
+
+		<div>
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <a wicket:id="back" title="back"
+				class="tournamentLink"><wicket:message key="back">
+            back
+        </wicket:message></a>
+		</div>
+
+	</form>
+
+</wicket:extend>
+</html>

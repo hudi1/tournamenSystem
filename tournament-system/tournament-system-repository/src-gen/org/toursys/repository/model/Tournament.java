@@ -18,7 +18,7 @@ public class Tournament implements Serializable {
   public Tournament() {
   }
   
-  public Tournament(String name, Season season, Integer finalPromoting, Integer lowerPromoting, Integer winPoints, Integer playOffA, Integer playOffLower) {
+  public Tournament(String name, Season season, Integer finalPromoting, Integer lowerPromoting, Integer winPoints, Integer playOffA, Integer playOffLower, Integer minPlayersInGroup) {
     this.name = name;
     this.season = season;
     this.finalPromoting = finalPromoting;
@@ -26,6 +26,7 @@ public class Tournament implements Serializable {
     this.winPoints = winPoints;
     this.playOffA = playOffA;
     this.playOffLower = playOffLower;
+    this.minPlayersInGroup = minPlayersInGroup;
   }
   
   private Integer id;
@@ -148,6 +149,21 @@ public class Tournament implements Serializable {
     return this;
   }
   
+  private Integer minPlayersInGroup;
+    
+  public Integer getMinPlayersInGroup() {
+    return minPlayersInGroup;
+  }
+    
+  public void setMinPlayersInGroup(Integer minPlayersInGroup) {
+    this.minPlayersInGroup = minPlayersInGroup;
+  }
+    
+  public Tournament _setMinPlayersInGroup(Integer minPlayersInGroup) {
+    this.minPlayersInGroup = minPlayersInGroup;
+    return this;
+  }
+  
   private List<Groups> groups = new ArrayList<Groups>();
     
   public List<Groups> getGroups() {
@@ -209,10 +225,10 @@ public class Tournament implements Serializable {
   
   @Override
   public String toString() {
-    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + "]";
+    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
   }
   
   public String toStringFull() {
-    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", season=" + season + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + "]";
+    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", season=" + season + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
   }
 }

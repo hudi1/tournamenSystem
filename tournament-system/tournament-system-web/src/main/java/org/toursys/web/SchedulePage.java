@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
@@ -18,7 +20,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
@@ -107,8 +108,26 @@ public class SchedulePage extends BasePage {
                             + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
                                     + opponent.getPlayer().getSurname())));
 
-                    listItem.add(new TextField<String>("homeScore", new PropertyModel<String>(game, "homeScore")));
-                    listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore")));
+                    listItem.add(new TextField<String>("homeScore", new PropertyModel<String>(game, "homeScore"))
+                            .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                protected void onUpdate(AjaxRequestTarget target) {
+                                    tournamentService.updateGame(game);
+                                }
+                            }));
+                    listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore"))
+                            .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                protected void onUpdate(AjaxRequestTarget target) {
+                                    tournamentService.updateGame(game);
+                                }
+                            }));
                     listItem.add(new Label("round", game.getRound().toString()));
                     listItem.add(new Label("hockey", game.getHockey().toString()));
 
@@ -123,29 +142,15 @@ public class SchedulePage extends BasePage {
                 }
             };
             add(dataView);
-            add(new Button("back", new ResourceModel("back")) {
+            add(new AjaxButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group, true));
-                }
-            });
-
-            add(new Button("submit", new ResourceModel("save")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    Iterator<Item<GameImpl>> games = dataView.getItems();
-                    while (games.hasNext()) {
-                        Game game = games.next().getModelObject();
-                        tournamentService.updateGame(game);
-                    }
-                }
-            });
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    target.appendJavaScript(PREVISOUS_PAGE);
+                };
+            }.setDefaultFormProcessing(false));
         }
     }
 

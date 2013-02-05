@@ -1,20 +1,25 @@
 package org.toursys.web;
 
-import java.util.Locale;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
-import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
+import org.apache.wicket.authroles.authentication.pages.SignInPage;
 import org.apache.wicket.injection.Injector;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.Response;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class WicketApplication extends WebApplication {
+public class WicketApplication extends AuthenticatedWebApplication {
 
     boolean isInitialized = false;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static WicketApplication get() {
         Application application = Application.get();
@@ -41,6 +46,9 @@ public class WicketApplication extends WebApplication {
         mountPage("schedule", SchedulePage.class);
         mountPage("options", TournamentOptionsPage.class);
         mountPage("playOff", PlayOffPage.class);
+        mountPage("user", UserPage.class);
+        mountPage("login", LoginPage.class);
+        mountPage("logout", LogoutPage.class);
     }
 
     @Override
@@ -56,18 +64,27 @@ public class WicketApplication extends WebApplication {
             getMarkupSettings().setCompressWhitespace(true);
             getMarkupSettings().setDefaultAfterDisabledLink("");
             this.getResourceSettings().setResourcePollFrequency(null);
+            getDebugSettings().setDevelopmentUtilitiesEnabled(true);
+            // getApplicationSettings().setInternalErrorPage(HomePage.class);
+            // getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE);
+
+            this.getRequestCycleListeners().add(new AbstractRequestCycleListener() {
+                @Override
+                public IRequestHandler onException(RequestCycle cycle, Exception e) {
+                    return super.onException(cycle, e);
+                    // return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(e)));
+                }
+            });
         }
     }
 
     private void initConfiguration() {
     }
 
-    @Override
-    public Session newSession(Request request, Response response) {
-        Session session = new TournamentSession(request);
-        session.setLocale(Locale.US);
-        return session;
-    }
+    /*
+     * @Override public Session newSession(Request request, Response response) { Session session = new
+     * TournamentAuthenticatedWebSession(request); session.setLocale(Locale.US); return session; }
+     */
 
     private void addListeners() {
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
@@ -83,4 +100,13 @@ public class WicketApplication extends WebApplication {
         return path;
     }
 
+    @Override
+    protected Class<? extends AbstractAuthenticatedWebSession> getWebSessionClass() {
+        return TournamentAuthenticatedWebSession.class;
+    }
+
+    @Override
+    protected Class<? extends WebPage> getSignInPageClass() {
+        return SignInPage.class;
+    }
 }

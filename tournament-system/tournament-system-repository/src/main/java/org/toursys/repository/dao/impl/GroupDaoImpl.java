@@ -34,6 +34,7 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
     @Override
     public Groups getGroup(Groups group) {
+        logger.info("get group: " + group);
         SqlSession session = getSqlSession();
         Groups g = getCrudEngine("GET_GROUPS").get(session, Groups.class, group);
         logger.info("get group: " + g);

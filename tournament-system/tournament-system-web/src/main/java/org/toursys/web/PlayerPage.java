@@ -10,6 +10,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -24,6 +26,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Player;
 
+@AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
@@ -80,7 +83,6 @@ public class PlayerPage extends BasePage {
                                 return "if(confirm(" + getString("del.player") + ")){" + script
                                         + "}else{return false;}";
                             }
-
                         };
                     }
                 });
@@ -168,6 +170,13 @@ public class PlayerPage extends BasePage {
                     setResponsePage(new PlayerEditPage(player));
                 }
             });
+        }
+    }
+
+    @Override
+    protected void setVisibility() {
+        if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
+            setVisible(false);
         }
     }
 
