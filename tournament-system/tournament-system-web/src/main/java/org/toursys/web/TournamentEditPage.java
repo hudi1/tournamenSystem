@@ -1,8 +1,6 @@
 package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -67,13 +65,13 @@ public class TournamentEditPage extends BasePage {
 
             });
 
-            add(new AjaxButton("back", new ResourceModel("back")) {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.appendJavaScript(PREVISOUS_PAGE);
+                public void onSubmit() {
+                    setResponsePage(new TournamentPage(season));
                 };
             }.setDefaultFormProcessing(false));
         }

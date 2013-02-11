@@ -106,13 +106,18 @@ public class PdfFactory {
         document.add(new Paragraph(""));
         document.add(pdfTable);
 
+        closePdfFile(document, writer);
+
+        return file;
+    }
+
+    private static void closePdfFile(Document document, PdfWriter writer) {
         if (document.getPageNumber() == 0) {
             writer.setPageEmpty(false);
             document.newPage();
         }
 
         document.close();
-        return file;
     }
 
     public static File createSchedule(String path, List<GameImpl> schedule) throws Exception {
@@ -140,12 +145,8 @@ public class PdfFactory {
                 document.newPage();
             }
         }
-        if (document.getPageNumber() == 0) {
-            writer.setPageEmpty(false);
-            document.newPage();
-        }
+        closePdfFile(document, writer);
 
-        document.close();
         return file;
     }
 
@@ -231,9 +232,9 @@ public class PdfFactory {
             } else if (maxRound > 10) {
                 spaceCount = 1;
             } else if (maxRound > 5) {
-                spaceCount = 3;
+                spaceCount = 2;
             } else {
-                spaceCount = 6;
+                spaceCount = 4;
             }
 
             for (GameImpl game : schedule) {
@@ -344,12 +345,7 @@ public class PdfFactory {
             }
         }
 
-        if (document.getPageNumber() == 0) {
-            writer.setPageEmpty(false);
-            document.newPage();
-        }
-
-        document.close();
+        closePdfFile(document, writer);
 
         return file;
     }
@@ -488,12 +484,7 @@ public class PdfFactory {
         }
         document.add(pdfTable);
 
-        if (document.getPageNumber() == 0) {
-            writer.setPageEmpty(false);
-            document.newPage();
-        }
-
-        document.close();
+        closePdfFile(document, writer);
 
         return file;
     }
@@ -564,12 +555,7 @@ public class PdfFactory {
 
         document.add(pdfTable);
 
-        if (document.getPageNumber() == 0) {
-            writer.setPageEmpty(false);
-            document.newPage();
-        }
-
-        document.close();
+        closePdfFile(document, writer);
 
         return file;
     }

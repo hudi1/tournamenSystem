@@ -1,8 +1,7 @@
 package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.EmailTextField;
 import org.apache.wicket.markup.html.form.Form;
@@ -18,12 +17,24 @@ import org.toursys.repository.model.User;
 public class UserEditPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
+    private boolean showHideField;
+    private boolean showUsername;
 
     public UserEditPage() {
         throw new RestartResponseAtInterceptPageException(new UserPage());
     }
 
     public UserEditPage(User user) {
+        this(user, true, true);
+    }
+
+    public UserEditPage(User user, boolean showHideField) {
+        this(user, showHideField, false);
+    }
+
+    public UserEditPage(User user, boolean showHideField, boolean showUsername) {
+        this.showHideField = showHideField;
+        this.showUsername = showUsername;
         createPage(user);
     }
 
@@ -40,11 +51,37 @@ public class UserEditPage extends BasePage {
             setOutputMarkupId(true);
             add(new RequiredTextField<String>("name"));
             add(new TextField<String>("surname"));
-            add(new TextField<String>("userName"));
             add(new EmailTextField("email"));
-            add(new TextField<Integer>("platnost"));
-            add(new TextField<String>("role"));
             add(new PasswordTextField("password"));
+
+            TextField<String> userName = new TextField<String>("userName");
+            TextField<Integer> platnost = new TextField<Integer>("platnost");
+            TextField<String> role = new TextField<String>("role");
+
+            Label userNameLabel = new Label("userNameLabel", new ResourceModel("userName"));
+            Label platnostLabel = new Label("platnostLabel", new ResourceModel("platnost"));
+            Label roleLabel = new Label("roleLabel", new ResourceModel("role"));
+
+            add(userName);
+            add(platnost);
+            add(role);
+
+            add(userNameLabel);
+            add(platnostLabel);
+            add(roleLabel);
+
+            if (!showHideField) {
+                platnost.setVisible(false);
+                role.setVisible(false);
+
+                platnostLabel.setVisible(false);
+                roleLabel.setVisible(false);
+            }
+
+            if (!showUsername) {
+                userName.setVisible(false);
+                userNameLabel.setVisible(false);
+            }
 
             add(new Button("submit", new ResourceModel("save")) {
 
@@ -66,13 +103,13 @@ public class UserEditPage extends BasePage {
                 }
             });
 
-            add(new AjaxLink<Void>("back") {
+            add(new Button("back") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
-                    target.appendJavaScript(PREVISOUS_PAGE);
+                public void onSubmit() {
+                    setResponsePage(new UserPage());
                 }
             });
         }

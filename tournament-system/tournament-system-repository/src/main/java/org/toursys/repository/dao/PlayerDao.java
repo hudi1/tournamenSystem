@@ -15,7 +15,7 @@ public interface PlayerDao {
 
     public Player getPlayer(Player player);
 
-    public List<Player> getAllPlayers();
+    public List<Player> getListPlayers(Player player);
 
     public List<Player> getNotRegistratedPlayers(Tournament tournament);
 

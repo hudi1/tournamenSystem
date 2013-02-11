@@ -50,6 +50,7 @@ public class RegistrationPage extends BasePage {
 
     public RegistrationPage(Tournament tournament, Groups group) {
         this.tournament = tournament;
+        this.tournament.getSeason()._setUser(((TournamentAuthenticatedWebSession) getSession()).getUser());
         createPage(group);
     }
 
@@ -262,8 +263,6 @@ public class RegistrationPage extends BasePage {
 
                         @Override
                         protected void onEvent(final AjaxRequestTarget target) {
-                            // TODO vymysliet ako tu dostat hodnotu z textFieldu ktory ovlada spinner behavior ktory
-                            // obsahuje meno tabulky
                             if (player != null) {
                                 tournamentService.createBasicPlayerResult(tournament, player, group);
                             }
@@ -330,13 +329,13 @@ public class RegistrationPage extends BasePage {
                 }
             });
 
-            add(new AjaxButton("back", new ResourceModel("back")) {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.appendJavaScript(PREVISOUS_PAGE);
+                public void onSubmit() {
+                    setResponsePage(new TournamentPage(tournament.getSeason()));
                 };
             }.setDefaultFormProcessing(false));
         }

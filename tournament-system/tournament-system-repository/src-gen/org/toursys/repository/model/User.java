@@ -148,6 +148,21 @@ public class User implements Serializable {
     return this;
   }
   
+  private List<Player> players = new ArrayList<Player>();
+    
+  public List<Player> getPlayers() {
+    return players;
+  }
+    
+  public void setPlayers(List<Player> players) {
+    this.players = players;
+  }
+    
+  public User _setPlayers(List<Player> players) {
+    this.players = players;
+    return this;
+  }
+  
   private List<Season> seasons = new ArrayList<Season>();
     
   public List<Season> getSeasons() {
@@ -178,7 +193,7 @@ public class User implements Serializable {
   }  
   
   public enum Association {
-    seasons
+    seasons, players
   }
   
   private Set<String> initAssociations = new HashSet<String>();

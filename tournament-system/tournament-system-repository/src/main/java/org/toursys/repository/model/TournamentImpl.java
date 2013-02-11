@@ -3,6 +3,9 @@ package org.toursys.repository.model;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TournamentImpl extends Tournament {
 
     private static final long serialVersionUID = 1L;
@@ -10,8 +13,12 @@ public class TournamentImpl extends Tournament {
     private Map<String, Groups> basicGroups;
     private Map<String, Groups> finalGroups;
     private Map<String, Groups> groups;
+    private Groups lastKnowGroup;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public TournamentImpl(Tournament tournament) {
+
         this.setFinalPromoting(tournament.getFinalPromoting());
         this.setLowerPromoting(tournament.getLowerPromoting());
         this.setId(tournament.getId());
@@ -40,6 +47,14 @@ public class TournamentImpl extends Tournament {
         if (finalGroups == null)
             finalGroups = new ConcurrentHashMap<String, Groups>();
         return finalGroups;
+    }
+
+    public Groups getLastKnowGroup() {
+        return lastKnowGroup;
+    }
+
+    public void setLastKnowGroup(Groups lastKnowGroup) {
+        this.lastKnowGroup = lastKnowGroup;
     }
 
 }

@@ -25,14 +25,17 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.User;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
     private static final int ITEMS_PER_PAGE = 10;
+    private User user;
 
     public PlayerPage() {
+        this.user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
         createPage();
     }
 
@@ -97,7 +100,7 @@ public class PlayerPage extends BasePage {
         IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Player> players = tournamentService.getAllPlayers();
+            private List<Player> players = tournamentService.getListPlayer(new Player()._setUser(user));
 
             @Override
             public Iterator<Player> iterator(int first, int count) {
@@ -149,7 +152,7 @@ public class PlayerPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new PlayerEditPage(new Player()));
+                    setResponsePage(new PlayerEditPage(new Player()._setUser(user)));
                 }
             });
         }

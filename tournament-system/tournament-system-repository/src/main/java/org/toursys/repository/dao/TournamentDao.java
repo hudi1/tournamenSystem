@@ -15,6 +15,6 @@ public interface TournamentDao {
 
     public Tournament getTournament(Tournament tournament);
 
-    public List<Tournament> findTournamentsBySeason(Tournament tournament);
+    public List<Tournament> getListTournaments(Tournament tournament);
 
 }

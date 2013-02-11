@@ -2,7 +2,6 @@ package org.toursys.repository.dao.helper;
 
 import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 
@@ -32,12 +31,6 @@ public class TournamentFactory {
         group.setGroupType(GroupType.B.value());
         group.setName(GROUP_NAME);
         return group;
-    }
-
-    public static Player createPlayer() {
-        Player player = new Player(PLAYER_NAME, PLAYER_SURNAME);
-        player.setClub(PLAYER_CLUB);
-        return player;
     }
 
 }

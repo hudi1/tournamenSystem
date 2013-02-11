@@ -42,10 +42,10 @@ public class PlayerDaoImpl extends BaseDaoImpl implements PlayerDao {
     }
 
     @Override
-    public List<Player> getAllPlayers() {
+    public List<Player> getListPlayers(Player player) {
         SqlSession session = getSqlSession();
-        logger.info("get all players");
-        return getQueryEngine("GET_ALL_PLAYERS").query(session, Player.class);
+        logger.info("select players " + player);
+        return getQueryEngine("SELECT_PLAYER").query(session, Player.class, player);
     }
 
     @Override

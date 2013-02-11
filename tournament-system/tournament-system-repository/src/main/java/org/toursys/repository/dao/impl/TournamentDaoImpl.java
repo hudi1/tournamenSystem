@@ -49,9 +49,9 @@ public class TournamentDaoImpl extends BaseDaoImpl implements TournamentDao {
     }
 
     @Override
-    public List<Tournament> findTournamentsBySeason(Tournament tournament) {
+    public List<Tournament> getListTournaments(Tournament tournament) {
         SqlSession session = getSqlSession();
         logger.info("get tournament: " + tournament);
-        return getQueryEngine("GET_TOURNAMENTS_BY_SEASON").query(session, Tournament.class, tournament);
+        return getQueryEngine("SELECT_TOURNAMENT").query(session, Tournament.class, tournament);
     }
 }

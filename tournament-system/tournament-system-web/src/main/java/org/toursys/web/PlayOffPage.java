@@ -10,7 +10,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -224,13 +223,13 @@ public class PlayOffPage extends BasePage {
 
             add(groupsDataView);
 
-            add(new AjaxButton("back", new ResourceModel("back")) {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.appendJavaScript(PREVISOUS_PAGE);
+                public void onSubmit() {
+                    setResponsePage(new GroupPage(tournament, tournament.getLastKnowGroup()));
                 };
             }.setDefaultFormProcessing(false));
 

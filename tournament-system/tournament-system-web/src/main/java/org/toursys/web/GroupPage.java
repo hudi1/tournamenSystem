@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -154,6 +152,14 @@ public class GroupPage extends BasePage {
                     }
                 };
                 listItem.add(scoreList);
+                listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public String getObject() {
+                        return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
+                    }
+                }));
             }
         };
 
@@ -341,19 +347,20 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    tournament.setLastKnowGroup(group);
                     setResponsePage(new PlayOffPage(tournament));
 
                 }
             };
             add(playOff);
 
-            add(new AjaxButton("back", new ResourceModel("back")) {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.appendJavaScript(PREVISOUS_PAGE);
+                public void onSubmit() {
+                    setResponsePage(new RegistrationPage(tournament));
                 };
             }.setDefaultFormProcessing(false));
 

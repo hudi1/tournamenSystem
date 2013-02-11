@@ -13,13 +13,15 @@ public class Player implements Serializable {
   
   private static final long serialVersionUID = 1L;
   public static final int ORDER_BY_ID = 1;
+  public static final int ORDER_BY_USER = 2;
 	
   public Player() {
   }
   
-  public Player(String name, String surname) {
+  public Player(String name, String surname, User user) {
     this.name = name;
     this.surname = surname;
+    this.user = user;
   }
   
   private Integer id;
@@ -82,6 +84,21 @@ public class Player implements Serializable {
     return this;
   }
   
+  private User user;
+    
+  public User getUser() {
+    return user;
+  }
+    
+  public void setUser(User user) {
+    this.user = user;
+  }
+    
+  public Player _setUser(User user) {
+    this.user = user;
+    return this;
+  }
+  
   private List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
     
   public List<PlayOffGame> getPlayOffGames() {
@@ -112,7 +129,7 @@ public class Player implements Serializable {
   }  
   
   public enum Association {
-    playOffGames
+    playOffGames, user
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -147,6 +164,6 @@ public class Player implements Serializable {
   }
   
   public String toStringFull() {
-    return "Player [id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + "]";
+    return "Player [id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", user=" + user + "]";
   }
 }

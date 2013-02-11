@@ -21,6 +21,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.TournamentService;
+import org.toursys.repository.model.User;
 
 public abstract class BasePage extends WebPage {
 
@@ -104,6 +105,53 @@ public abstract class BasePage extends WebPage {
                 getSession().setLocale(Locale.US);
             }
         });
+
+        Link<User> userProfileLink = new Link<User>("userProfile", new AbstractReadOnlyModel<User>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public User getObject() {
+                if (getSession() == null)
+                    return null;
+                if (getSession() instanceof TournamentAuthenticatedWebSession) {
+                    return ((TournamentAuthenticatedWebSession) getSession()).getUser();
+                }
+                return null;
+            }
+
+        }) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick() {
+                User user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
+                setResponsePage(new UserEditPage(user, false));
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return getModelObject() != null;
+            }
+
+        };
+        userProfileLink.add(new Label("username", new AbstractReadOnlyModel<String>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getObject() {
+                if (getSession() instanceof TournamentAuthenticatedWebSession) {
+                    User user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
+                    return user == null ? getString("guest") : user.getUserName();
+                }
+                return null;
+            }
+
+        }));
+        add(userProfileLink);
+
         add(new FeedbackPanel("feedbackPanel"));
 
     }

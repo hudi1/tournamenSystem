@@ -9,7 +9,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -94,7 +93,7 @@ public class TournamentPage extends BasePage {
         IDataProvider<Tournament> tournamentDataProvider = new IDataProvider<Tournament>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Tournament> tournaments = tournamentService.findTournamentsBySeason(new Tournament()
+            private List<Tournament> tournaments = tournamentService.getListTournaments(new Tournament()
                     ._setSeason(season));
 
             @Override
@@ -145,13 +144,13 @@ public class TournamentPage extends BasePage {
                 }
             });
 
-            add(new AjaxButton("back", new ResourceModel("back")) {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.appendJavaScript(PREVISOUS_PAGE);
+                public void onSubmit() {
+                    setResponsePage(new SeasonPage());
                 };
             }.setDefaultFormProcessing(false));
         }

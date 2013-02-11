@@ -25,9 +25,8 @@
         </wicket:message></label><input type="text" wicket:id="surname" />
 			</div>
 			<div>
-				<label wicket:for="userName"><wicket:message key="userName">
-            Username:
-        </wicket:message></label><input type="text" wicket:id="userName" />
+				<label wicket:id="userNameLabel" /> <input type="text"
+					wicket:id="userName" />
 			</div>
 			<div>
 				<label wicket:for="email"><wicket:message key="email">
@@ -40,23 +39,18 @@
         </wicket:message></label><input type="password" wicket:id="password" />
 			</div>
 			<div>
-				<label wicket:for="platnost"><wicket:message key="platnost">
-            Platnost:
-        </wicket:message></label><input type="text" wicket:id="platnost" />
+				<label wicket:id="platnostLabel" /> <input type="text"
+					wicket:id="platnost" />
 			</div>
 			<div>
-				<label wicket:for="role"><wicket:message key="role">
-            Role:
-        </wicket:message></label><input type="text" wicket:id="role" />
+				<label wicket:id="roleLabel" /><input type="text" wicket:id="role" />
 			</div>
 		</fieldset>
 
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="submit"
-				value="Save" /> <a wicket:id="back" title="back"
-				class="tournamentLink"><wicket:message key="back">
-            back
-        </wicket:message></a>
+				value="Save" /> <input class="tournamentButton" type="submit"
+				wicket:id="back" title="back" value="Back" />
 		</div>
 
 	</form>

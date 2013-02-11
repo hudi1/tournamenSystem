@@ -3,15 +3,19 @@ package org.toursys.web;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.settings.ISecuritySettings;
+import org.toursys.repository.model.User;
 
 /**
  * Reusable user sign in panel with username and password as well as support for persistence of the both. When the
@@ -192,6 +196,17 @@ public class TournamentSignInPanel extends Panel {
 
             // Show remember me checkbox?
             rememberMeRow.setVisible(includeRememberMe);
+
+            add(new Button("register", new ResourceModel("register")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(new UserEditPage(new User()._setPlatnost(0)._setRole(Roles.USER), false, true));
+                }
+            }.setDefaultFormProcessing(false));
+
         }
 
         /**

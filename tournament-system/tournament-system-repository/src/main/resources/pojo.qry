@@ -33,10 +33,11 @@ package org.toursys.repository.model {
     name : java.lang.String required
     surname : java.lang.String required
     club : java.lang.String
+    user :: User required index 2
     playOffGames : java.util.List <:PlayOffGame>
     equals ::: id
-    toInit ::: playOffGames
-    toString ::: id club name surname
+    toInit ::: playOffGames user
+    toString ::: id club name surname user
   }
 
   final pojo PlayerResult serializable 1  {
@@ -110,9 +111,10 @@ package org.toursys.repository.model {
     password : java.lang.String required
     role : java.lang.String
     platnost : java.lang.Integer required
+    players : java.util.List <:Player>
     seasons : java.util.List <:Season>
     equals ::: id
-    toInit ::: seasons
+    toInit ::: seasons players
     toString ::: id email name platnost role userName surname password
   }
 

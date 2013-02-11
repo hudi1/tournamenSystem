@@ -13,11 +13,17 @@
 </head>
 <body>
 	<div id="mainwrapper">
-		<div id="main">
-			<div id="head">
-				<a wicket:id="logo" href="#" class="replace" id="logo"><span></span>Logo</a>
+		<div class="main">
+			<div class="head">
+				<a wicket:id="logo" href="#" class="logo"><span></span>Logo</a>
 			</div>
-			<div id="container">
+			<div class="container">
+				<div class="user">
+					<wicket:message key="user">
+            user
+        </wicket:message>
+					<a wicket:id="userProfile"><span wicket:id="username">[login]</span></a>
+				</div>
 				<div class="language">
 					<wicket:message key="language">
             language
@@ -25,8 +31,8 @@
 					<a href="#" wicket:id="goEn">EN</a>&#160; <a href="#"
 						wicket:id="goSk">SK</a>&#160;
 				</div>
-				<div id="mainmenu">
-					<ul id="menu">
+				<div class="mainmenu">
+					<ul class="menu">
 						<li><a wicket:id="homePageMain"><wicket:message
 									key="homePageMain">
             Main Page
@@ -57,7 +63,7 @@
         </wicket:message></a></li>
 					</ul>
 				</div>
-				<div id="page">
+				<div class="page">
 					<h2>
 						<span wicket:id="heading"> [heading text] </span>
 					</h2>
@@ -66,8 +72,8 @@
 				</div>
 			</div>
 		</div>
-		<div id="footerwrapper">
-			<div id="footer">
+		<div class="footerwrapper">
+			<div class="footer">
 				&copy; 2013 <a href="mailto:hudec.tomas1@gmail.com">hudi1</a><br />
 			</div>
 		</div>

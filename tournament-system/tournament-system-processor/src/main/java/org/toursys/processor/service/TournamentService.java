@@ -50,8 +50,9 @@ public class TournamentService {
         tournamentAggregationDao.deletePlayer(player);
     }
 
-    public List<Player> getAllPlayers() {
-        return tournamentAggregationDao.getAllPlayers();
+    public List<Player> getListPlayer(Player player) {
+        player.setInit(Player.Association.user.name());
+        return tournamentAggregationDao.getListPlayers(player);
     }
 
     public List<Player> getNotRegistratedPlayers(Tournament tournament) {
@@ -78,8 +79,8 @@ public class TournamentService {
         tournamentAggregationDao.deleteSeason(season);
     }
 
-    public List<Tournament> findTournamentsBySeason(Tournament tournament) {
-        return tournamentAggregationDao.findTournamentsBySeason(tournament);
+    public List<Tournament> getListTournaments(Tournament tournament) {
+        return tournamentAggregationDao.getListTournaments(tournament);
     }
 
     public void updateTournament(Tournament tournament) {
@@ -487,7 +488,9 @@ public class TournamentService {
             }
 
             for (int i = 0; i < promotingA; i++) {
-                tournamentAggregationDao.createPlayerResult(playerResults.get(i).getPlayer(), finalGroup);
+                PlayerResult playerResult = tournamentAggregationDao.createPlayerResult(playerResults.get(i)
+                        .getPlayer(), finalGroup);
+                finalGroup.getPlayerResults().add(playerResult);
             }
 
             int countLowerGroup = 1;
@@ -524,6 +527,8 @@ public class TournamentService {
             }
             createGroups = false;
         }
+
+        logger.error(finalGroup.toString() + "aaaaaaaaaaaaaaaaaaa");
 
         if (finalGroup.getPlayerResults().size() < tournament.getMinPlayersInGroup()) {
             nextGroupsByte[0]--;
@@ -728,7 +733,11 @@ public class TournamentService {
 
         int playerPlayOffCountAfterCheckThirdPlace = checkThirdPlace(group, playOffPlayerCount);
 
-        checkPlayOffCount(group, players.size(), playOffPlayerCount);
+        // checkPlayOffCount(group, players.size(), playOffPlayerCount);
+
+        while (players.size() < playOffPlayerCount) {
+            players.add(new PlayerResult());
+        }
 
         LinkedList<PlayerResult> playOffPlayer = new LinkedList<PlayerResult>(players.subList(0, playOffPlayerCount));
 
@@ -865,7 +874,8 @@ public class TournamentService {
             }
         }
         logger.error("playerCount: " + playerCount + " position: " + position);
-        throw new RuntimeException("Invalid position to get round");
+        // nemalo by nastat
+        return rounds;
     }
 
     private int binlog(int bits) {
@@ -895,9 +905,15 @@ public class TournamentService {
 
     private Map<Integer, List<Player>> getWinnersByRound(List<PlayOffGame> playOffGames, List<Player> players) {
         Map<Integer, List<Player>> winnersByRound = new TreeMap<Integer, List<Player>>(Collections.reverseOrder());
+        int playerCountInPlayOff = playOffGames.size();
+        boolean thirdGame = true;
+        if (playerCountInPlayOff % 2 == 1) {
+            playerCountInPlayOff++;
+            thirdGame = false;
+        }
 
         for (PlayOffGame playOffGame : playOffGames) {
-            int round = getRound(playOffGames.size(), playOffGame.getPosition());
+            int round = getRound(playerCountInPlayOff, playOffGame.getPosition());
             if (winnersByRound.get(round) == null) {
                 winnersByRound.put(round, new ArrayList<Player>());
             }
@@ -916,28 +932,28 @@ public class TournamentService {
             }
 
             if (homeWin > awayWin) {
-                if (round == getRound(playOffGames.size(), playOffGames.size())) {
+                if (round == getRound(playerCountInPlayOff, playOffGames.size())) {
 
                     players.add(playOffGame.getHomePlayer());
                     players.add(playOffGame.getAwayPlayer());
 
-                } else if (round < (getRound(playOffGames.size(), playOffGames.size()) - 1)) {
+                } else if (!thirdGame || (round < (getRound(playerCountInPlayOff, playOffGames.size()) - 1))) {
                     winnersByRound.get(round).add(playOffGame.getAwayPlayer());
                 }
             } else if (homeWin < awayWin) {
-                if (round == getRound(playOffGames.size(), playOffGames.size())) {
+                if (round == getRound(playerCountInPlayOff, playOffGames.size())) {
 
                     players.add(playOffGame.getAwayPlayer());
                     players.add(playOffGame.getHomePlayer());
 
-                } else if (round < (getRound(playOffGames.size(), playOffGames.size()) - 1)) {
+                } else if (!thirdGame || (round < (getRound(playerCountInPlayOff, playOffGames.size()) - 1))) {
                     winnersByRound.get(round).add(playOffGame.getHomePlayer());
                 }
             } else {
-                if (round == getRound(playOffGames.size(), playOffGames.size())) {
+                if (round == getRound(playerCountInPlayOff, playOffGames.size())) {
                     players.add(new Player());
                     players.add(new Player());
-                } else if (round < (getRound(playOffGames.size(), playOffGames.size()) - 1)) {
+                } else if (!thirdGame || (round < (getRound(playerCountInPlayOff, playOffGames.size()) - 1))) {
                     winnersByRound.get(round).add(new Player());
                 }
             }
@@ -973,13 +989,19 @@ public class TournamentService {
                     }
                 }
             }
-            for (PlayerResult playerResult : playerResults.subList(Math.max(playOffGames.size(), 2),
-                    playerResults.size())) {
-                if (!players.contains(playerResult.getPlayer()))
-                    players.add(playerResult.getPlayer());
+
+            if (playerResults.size() > playOffGames.size()) {
+                for (PlayerResult playerResult : playerResults.subList(Math.max(playOffGames.size(), 2),
+                        playerResults.size())) {
+                    if (!players.contains(playerResult.getPlayer()))
+                        players.add(playerResult.getPlayer());
+                }
             }
 
         }
+
+        // kvoli dorovnavaniu hracov aby sa hralo play of aj ked je malo hracov
+        players.removeAll(Collections.singleton(null));
         return players;
     }
 
