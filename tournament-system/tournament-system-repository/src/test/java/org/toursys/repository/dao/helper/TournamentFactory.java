@@ -2,8 +2,10 @@ package org.toursys.repository.dao.helper;
 
 import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.User;
 
 public class TournamentFactory {
 
@@ -15,22 +17,31 @@ public class TournamentFactory {
     public static final String PLAYER_CLUB = "THC Blue Dragon";
     public static final String PLAYER_SURNAME = "Hudec";
 
+    public static final String USER_NAME = "Tomáš";
+    public static final String USER_SURNAME = "Hudec";
+    public static final String USER_USERNAME = "hudi1test";
+    public static final String USER_PASSWORD = "travian";
+    public static final int USER_PLATNOST = 0;
+    public static final String USER_EMAIL = "hudi1star@gmail.com";
+
+    public static User createUser() {
+        return new User(USER_NAME, USER_SURNAME, USER_EMAIL, USER_USERNAME, USER_PASSWORD, USER_PLATNOST);
+    }
+
     public static Tournament createTournament() {
-        Tournament tournament = new Tournament();
-        tournament.setName(TOURNAMENT_NAME);
-        return tournament;
+        return new Tournament(TOURNAMENT_NAME, null, 6, 5, 2, 16, 8, 0);
     }
 
     public static Season createSeason() {
-        Season season = new Season(SEASONE_NAME, null); // TODO
-        return season;
+        return new Season(SEASONE_NAME, null);
+    }
+
+    public static Player createPlayer() {
+        return new Player(PLAYER_NAME, PLAYER_SURNAME, null);
     }
 
     public static Groups createGroup() {
-        Groups group = new Groups();
-        group.setGroupType(GroupType.B.value());
-        group.setName(GROUP_NAME);
-        return group;
+        return new Groups(GROUP_NAME, 5, GroupType.B.name(), 1, null, true, true);
     }
 
 }

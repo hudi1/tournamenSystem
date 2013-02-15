@@ -25,6 +25,7 @@ metagen-table-sequence SEASON SEQ_SEASON;
 metagen-table-sequence TOURNAMENT SEQ_TOURNAMENT;
 metagen-table-sequence PLAY_OFF_GAME SEQ_PLAY_OFF_GAME;
 metagen-table-sequence PLAY_OFF_RESULT SEQ_PLAY_OFF_RESULT;
+metagen-table-sequence USER SEQ_USER;
 
 pojogen-generate-wrappers;
 

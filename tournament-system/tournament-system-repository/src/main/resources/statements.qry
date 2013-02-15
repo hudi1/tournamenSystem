@@ -6,6 +6,7 @@ SEQ_SEASON(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE
 SEQ_GROUP(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'GROUPS';
 SEQ_PLAY_OFF_GAME(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'PLAY_OFF_GAME';
 SEQ_PLAY_OFF_RESULT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'PLAY_OFF_RESULT';
+SEQ_USER(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'USER';
 
 // generated sql
 
@@ -518,7 +519,7 @@ SELECT_TOURNAMENT(QRY,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups
 
 INSERT_USER(CRUD,inx=User,outx=User,tab=user)=
   insert into %%USER (%ID, %NAME, %SURNAME, %EMAIL, %USER_NAME, %PASSWORD, %ROLE, %PLATNOST)
-  {= values (:id, :name, :surname, :email, :userName, :password, :role, :platnost) }
+  {= values (:id(seq=SEQ_USER), :name, :surname, :email, :userName, :password, :role, :platnost) }
 ;
 
 GET_USER(CRUD,inx=User,outx=User,tab=user=u,tab=player=p,tab=season=s)=
@@ -584,7 +585,6 @@ SELECT_USER(QRY,inx=User,outx=User,tab=user=u,tab=player=p,tab=season=s)=
   {#3 order by %u.EMAIL }
   {#2 order by %u.USER_NAME }
 ;
-
 
 //my own sql
 
