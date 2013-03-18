@@ -28,8 +28,7 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
     public boolean authenticate(final String username, final String password) {
         this.user = tournamentService.getUser(new User()._setUserName(username));
         roles.clear();
-
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && user.getPassword().equals(tournamentService.encryptUserPassword(password))) {
             if (user.getRole() != null) {
                 roles.add(user.getRole());
             }

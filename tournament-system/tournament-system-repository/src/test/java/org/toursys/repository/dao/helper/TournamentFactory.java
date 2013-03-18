@@ -22,7 +22,7 @@ public class TournamentFactory {
     public static final String USER_USERNAME = "hudi1test";
     public static final String USER_PASSWORD = "travian";
     public static final int USER_PLATNOST = 0;
-    public static final String USER_EMAIL = "hudi1star@gmail.com";
+    public static final String USER_EMAIL = "1hudi1star@gmail.com";
 
     public static User createUser() {
         return new User(USER_NAME, USER_SURNAME, USER_EMAIL, USER_USERNAME, USER_PASSWORD, USER_PLATNOST);

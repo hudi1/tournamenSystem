@@ -50,6 +50,7 @@ public class SeasonEditPage extends BasePage {
                     } catch (SqlProcessorException e) {
                         logger.error("Error edit season: ", e);
                         error(getString("sql.db.exception"));
+                        return;
                     }
                     setResponsePage(new SeasonPage());
                 }

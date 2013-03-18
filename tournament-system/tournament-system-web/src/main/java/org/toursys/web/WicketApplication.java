@@ -5,7 +5,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
-import org.apache.wicket.authroles.authentication.pages.SignInPage;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -47,8 +46,11 @@ public class WicketApplication extends AuthenticatedWebApplication {
         mountPage("options", TournamentOptionsPage.class);
         mountPage("playOff", PlayOffPage.class);
         mountPage("user", UserPage.class);
+        mountPage("userEdit", UserEditPage.class);
         mountPage("login", LoginPage.class);
         mountPage("logout", LogoutPage.class);
+        mountPage("compare", ComparePage.class);
+        mountPage("finalStandings", FinalStandingsPage.class);
     }
 
     @Override
@@ -107,6 +109,6 @@ public class WicketApplication extends AuthenticatedWebApplication {
 
     @Override
     protected Class<? extends WebPage> getSignInPageClass() {
-        return SignInPage.class;
+        return LoginPage.class;
     }
 }

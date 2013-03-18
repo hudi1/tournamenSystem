@@ -7,6 +7,9 @@ public class GameImpl extends Game {
     private Integer hockey;
     private Integer round;
 
+    public GameImpl() {
+    }
+
     public GameImpl(Game game) {
         super.setAwayPlayerResult(game.getAwayPlayerResult());
         super.setAwayScore(game.getAwayScore());

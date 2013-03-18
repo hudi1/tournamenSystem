@@ -58,17 +58,23 @@ public class TournamentOptionsPage extends BasePage {
         public GroupOptionsForm(final Groups group) {
             super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
             setOutputMarkupId(true);
-            add(new RequiredTextField<Integer>("hockey", new PropertyModel<Integer>(group, "numberOfHockey")));
+            RequiredTextField<Integer> hockeyCount = new RequiredTextField<Integer>("hockey",
+                    new PropertyModel<Integer>(group, "numberOfHockey"));
             add(new RequiredTextField<Integer>("hockeyIndex", new PropertyModel<Integer>(group, "indexOfFirstHockey")));
             CheckBox checkBox1 = new CheckBox("copyResult", new PropertyModel<Boolean>(group, "copyResult"));
             CheckBox checkBox2 = new CheckBox("playThirdPlace", new PropertyModel<Boolean>(group, "playThirdPlace"));
 
             add(checkBox1);
             add(checkBox2);
+            add(hockeyCount);
 
             if (group.getGroupType().equals(GroupType.B.name())) {
                 checkBox2.setVisible(false);
                 checkBox1.setVisible(false);
+            }
+
+            if (group.getGroupType().equals(GroupType.F.name())) {
+                hockeyCount.setEnabled(false);
             }
 
             ValueMap map = new ValueMap();
@@ -82,7 +88,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.updateGroups(group);
+                    tournamentService.updateGroups(tournament, group);
                     setResponsePage(new TournamentOptionsPage(tournament, group, isTableOptionsOn,
                             isTournamentOptionsOn));
                 }

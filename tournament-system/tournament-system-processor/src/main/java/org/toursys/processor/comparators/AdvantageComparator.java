@@ -2,6 +2,7 @@ package org.toursys.processor.comparators;
 
 import java.util.Comparator;
 
+import org.toursys.processor.SamePlayerRankException;
 import org.toursys.repository.model.PlayerResult;
 
 /**
@@ -32,7 +33,11 @@ public class AdvantageComparator implements Comparator<PlayerResult> {
                 if (o1.getScore().getLeftSide() < o2.getScore().getLeftSide()) {
                     return 1;
                 } else {
-                    return 0;
+                    if (o1.getEqualRank() == null || o2.getEqualRank() == null) {
+                        throw new SamePlayerRankException(o1, o2);
+                    } else {
+                        return o1.getEqualRank().compareTo(o2.getEqualRank());
+                    }
                 }
             }
         }

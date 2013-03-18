@@ -7,7 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Page;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -25,6 +29,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.time.Duration;
+import org.toursys.processor.SamePlayerRankException;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
@@ -40,6 +45,7 @@ public class GroupPage extends BasePage {
     private TournamentImpl tournament;
     private Groups group;
     private List<PlayerResult> playerResults;
+    private ModalWindow modalWindow;
 
     public GroupPage() {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
@@ -59,16 +65,79 @@ public class GroupPage extends BasePage {
         if (group != null) {
             this.playerResults = tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group));
             tournamentService.createGames(playerResults);
-            if (calculateResult || group.getGroupType() != GroupType.B.name())
-                calculatePlayerResults();
+
+            if (calculateResult || group.getGroupType() != GroupType.B.name()) {
+                try {
+                    calculatePlayerResults();
+                } catch (SamePlayerRankException e) {
+                    createModalWindow(e);
+                }
+            }
         } else {
             playerResults = new ArrayList<PlayerResult>();
         }
-
         createPage();
     }
 
+    public void createEmptyModalWindow() {
+        modalWindow = createDefaultModalWindow();
+
+        modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+
+            private static final long serialVersionUID = 1L;
+
+            public Page createPage() {
+                return new ComparePage(group, modalWindow);
+            }
+        });
+    }
+
+    private void createModalWindow(final SamePlayerRankException e) {
+
+        modalWindow = createDefaultModalWindow();
+
+        modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+
+            private static final long serialVersionUID = 1L;
+
+            public Page createPage() {
+                return new ComparePage(group, modalWindow, e.getPlayer1(), e.getPlayer2());
+            }
+        });
+
+    }
+
+    private ModalWindow createDefaultModalWindow() {
+
+        modalWindow = new ModalWindow("modalWindow");
+        modalWindow.setResizable(false);
+        modalWindow.setCssClassName(ModalWindow.CSS_CLASS_BLUE);
+
+        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+
+            private static final long serialVersionUID = 1L;
+
+            public void onClose(AjaxRequestTarget target) {
+                setResponsePage(new GroupPage(tournament, group));
+            }
+        });
+
+        modalWindow.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+
+            private static final long serialVersionUID = 1L;
+
+            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                return true;
+            }
+        });
+        return modalWindow;
+    }
+
     protected void createPage() {
+        if (modalWindow == null) {
+            createEmptyModalWindow();
+        }
+        add(modalWindow);
         add(new GroupForm());
         createGroups();
     }
@@ -311,7 +380,7 @@ public class GroupPage extends BasePage {
                         tempFile = PdfFactory.createSheets(WicketApplication.getFilesPath(),
                                 tournamentService.getSchedule(group, tournament, playerResults), group);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error("!! GroupPage error: ", e);
                         throw new RuntimeException(e);
                     }
                     return tempFile;
@@ -407,6 +476,15 @@ public class GroupPage extends BasePage {
             printGroup.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
 
             add(printGroup);
+
+            add(new AjaxButton("editEqualRank", new ResourceModel("editEqualRank")) {
+
+                private static final long serialVersionUID = 1L;
+
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    modalWindow.show(target);
+                }
+            });
 
             if (group == null) {
                 options.setVisible(false);

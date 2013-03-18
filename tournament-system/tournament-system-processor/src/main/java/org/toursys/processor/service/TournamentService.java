@@ -1,5 +1,6 @@
 package org.toursys.processor.service;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,9 @@ import org.toursys.processor.TournamentException;
 import org.toursys.processor.comparators.AdvantageComparator;
 import org.toursys.processor.comparators.BasicComparator;
 import org.toursys.processor.comparators.RankComparator;
+import org.toursys.processor.schedule.AdvancedRoundRobinSchedule;
+import org.toursys.processor.schedule.BasicRoundRobinSchedule;
+import org.toursys.processor.schedule.RoundRobinSchedule;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.GroupType;
@@ -37,6 +41,7 @@ public class TournamentService {
     private TournamentAggregationDao tournamentAggregationDao;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final int maxBestOfGame = 9;
+    public static final String ALGORITHM_SHA = "SHA-512";
 
     public TournamentService() {
 
@@ -103,6 +108,10 @@ public class TournamentService {
         return tournamentAggregationDao.createPlayerResult(player, group);
     }
 
+    public PlayerResult updatePlayerResult(PlayerResult playerResult) {
+        return tournamentAggregationDao.updatePlayerResult(playerResult);
+    }
+
     public boolean deletePlayerResult(PlayerResult playerResult, Tournament tournament) {
         return tournamentAggregationDao.deletePlayerResult(playerResult);
 
@@ -122,7 +131,20 @@ public class TournamentService {
         return tournamentAggregationDao.getListPlayerResult(playerResult);
     }
 
-    public Groups updateGroups(Groups group) {
+    public Groups updateGroups(Tournament tournament, Groups group) {
+        if (group.getCopyResult()) {
+            List<PlayerResult> player = getPlayerResultInGroup(new PlayerResult()._setGroup(group));
+
+            // TODO co ked ich bude menej postupovat ako je zadane
+            if (tournament.getFinalPromoting() % 2 == 0) {
+                group.setNumberOfHockey(player.size() / 2);
+            } else {
+                List<Groups> groups = getBasicGroups(new Groups()._setTournament(tournament));
+                group.setNumberOfHockey(player.size() / groups.size());
+            }
+
+        }
+
         return tournamentAggregationDao.updateGroup(group);
     }
 
@@ -197,19 +219,21 @@ public class TournamentService {
         logger.debug("Celkova doba: " + time + " ms");
     }
 
+    @Transactional
     public List<GameImpl> getSchedule(Groups group, Tournament tournament, List<PlayerResult> playerResults) {
         long time = System.currentTimeMillis();
         logger.info("creating schedule: " + Arrays.toString(playerResults.toArray()));
+        RoundRobinSchedule roundRobinSchedule;
+
         if (group.getCopyResult()) {
-            time = System.currentTimeMillis() - time;
-            logger.debug("Celkova doba: " + time + " ms");
-            return createAdvancedSchedule(tournament, group);
+            roundRobinSchedule = new AdvancedRoundRobinSchedule(tournament, group, playerResults);
         } else {
-            time = System.currentTimeMillis() - time;
-            logger.debug("Celkova doba: " + time + " ms");
-            return createBasicSchedule(group, playerResults);
+            roundRobinSchedule = new BasicRoundRobinSchedule(group, playerResults);
         }
 
+        time = System.currentTimeMillis() - time;
+        logger.debug("Celkova doba: " + time + " ms");
+        return roundRobinSchedule.getSchedule();
     }
 
     /**
@@ -223,7 +247,6 @@ public class TournamentService {
 
         List<Groups> basicGroupss = getBasicGroups(new Groups()._setTournament(tournament));
         List<PlayerResult> finalPlayers = getPlayerResultInGroup(new PlayerResult()._setGroup(group));
-        boolean neparnyPocet = false;
 
         if (basicGroupss.size() > 1) {
             LinkedList<List<PlayerResult>> playerByGroup = new LinkedList<List<PlayerResult>>();
@@ -231,9 +254,6 @@ public class TournamentService {
                 playerByGroup.add(i, new ArrayList<PlayerResult>());
                 List<PlayerResult> players = tournamentAggregationDao.getListPlayerResult(new PlayerResult()
                         ._setGroup(basicGroupss.get(i)));
-                if (players.size() % 2 == 1) {
-                    neparnyPocet = true;
-                }
                 for (PlayerResult playerResult : players) {
                     for (PlayerResult finalPlayerResult : finalPlayers) {
                         if (playerResult.getPlayer().equals(finalPlayerResult.getPlayer())) {
@@ -249,11 +269,11 @@ public class TournamentService {
             int finalRoundCount = finalPlayerCount - 1;
 
             // TODO zaistit aby bolo v playerByGroup parny pocet hracov
-            // for (List<PlayerResult> list : playerByGroup) {
-            // if (list.size() % 2 == 1) {
-            // list.add(new PlayerResult());
-            // }
-            // }
+            for (List<PlayerResult> list : playerByGroup) {
+                if (list.size() % 2 == 1) {
+                    // list.add(new PlayerResult()._setId(-1));
+                }
+            }
 
             for (int i = 0; i < finalRoundCount; i++) {
                 schedule.add(i, new Round());
@@ -263,22 +283,27 @@ public class TournamentService {
 
             int count = 0;
             int startRound = 1;
-            List<Game> roundGames = new ArrayList<Game>();
+            int hockey;
+            List<GameImpl> roundGames = new ArrayList<GameImpl>();
             for (Round round : schedule) {
                 List<Game> temporaryGames = round.getGames();
                 for (Game game : temporaryGames) {
                     if (game != null) {
                         GameImpl gameImpl = new GameImpl(game);
-                        gameImpl.setHockey(count % group.getNumberOfHockey() + group.getIndexOfFirstHockey());
                         gameImpl.setRound(count / group.getNumberOfHockey() + 1);
-                        games.add(gameImpl);
                         count++;
                         if (startRound == gameImpl.getRound()) {
-                            roundGames.add(game);
+                            roundGames.add(gameImpl);
                         } else {
                             rotateGames(roundGames, startRound - 1);
+                            hockey = group.getIndexOfFirstHockey();
+                            for (GameImpl gameImplTemp : roundGames) {
+                                gameImplTemp.setHockey(hockey);
+                                hockey++;
+                            }
+                            games.addAll(roundGames);
                             roundGames.clear();
-                            roundGames.add(game);
+                            roundGames.add(gameImpl);
                             startRound++;
                         }
                     }
@@ -288,59 +313,7 @@ public class TournamentService {
         return games;
     }
 
-    @Transactional
-    private List<GameImpl> createBasicSchedule(Groups group, List<PlayerResult> playerResults) {
-
-        List<GameImpl> games = new ArrayList<GameImpl>();
-        List<Round> schedule = new ArrayList<Round>();
-        int currentPlayerCount = playerResults.size();
-
-        if (playerResults.size() % 2 == 1) {
-            playerResults.add(playerResults.size(), new PlayerResult());
-        }
-
-        int playerCount = playerResults.size();
-
-        int roundCount = playerCount - 1;
-
-        PlayerResult[] temporaryField = createTemporaryField(playerResults);
-        int countGames = playerCount / 2;
-        for (int i = 0; i < roundCount; i++) {
-            schedule.add(i, new Round());
-            createRound(schedule.get(i), temporaryField, countGames, i % 2 == 1);
-            temporaryField = rotateTemporaryField(temporaryField, playerCount);
-        }
-
-        int count = 0;
-        int startRound = 1;
-        List<Game> roundGames = new ArrayList<Game>();
-        for (Round round : schedule) {
-            List<Game> temporaryGames = round.getGames();
-            for (Game game : temporaryGames) {
-                GameImpl gameImpl = new GameImpl(game);
-                gameImpl.setHockey(count % group.getNumberOfHockey() + group.getIndexOfFirstHockey());
-                gameImpl.setRound(count / group.getNumberOfHockey() + 1);
-                games.add(gameImpl);
-                count++;
-                if (startRound == gameImpl.getRound()) {
-                    roundGames.add(game);
-                } else {
-                    rotateGames(roundGames, startRound - 1);
-                    roundGames.clear();
-                    roundGames.add(game);
-                    startRound++;
-                }
-            }
-        }
-
-        if (currentPlayerCount % 2 == 1) {
-            playerResults.remove(playerResults.size() - 1);
-        }
-
-        return games;
-    }
-
-    private void rotateGames(List<Game> games, int i) {
+    private void rotateGames(List<GameImpl> games, int i) {
         if (i > games.size()) {
             i++;
         }
@@ -353,106 +326,83 @@ public class TournamentService {
     }
 
     private void createRound(Round round, LinkedList<List<PlayerResult>> playerByGroup, boolean isBalanced) {
-        for (int j = 0; j < 2; j++) {
+        if (playerByGroup.size() % 2 == 0 || (playerByGroup.size() % 2 == 1 && playerByGroup.get(0).size() % 2 == 1)) {
             Map<Integer, Round> roundMap = new HashMap<Integer, Round>();
-            for (int i = 0; i < playerByGroup.size(); i++) {
-                System.out.println("Start: " + i);
+            int count = 1;
+            List<PlayerResult> twoPlayerResult = new ArrayList<PlayerResult>();
+            for (List<PlayerResult> playerResults : playerByGroup) {
 
-                if (roundMap.get(i) == null) {
-                    roundMap.put(i, new Round());
-                }
-                List<PlayerResult> twoPlayerResult = new ArrayList<PlayerResult>();
-
-                if (playerByGroup.size() % 2 == 0) {
-
-                } else {
-                    if (j % 2 == 0) {
-                        if (i % 2 == 0) {
-                            if (i == playerByGroup.size() - 1) {
-                                fillVerticalGroup(twoPlayerResult, i, playerByGroup);
-                            } else {
-                                fillUpHorizontalGroup(twoPlayerResult, i, playerByGroup);
-                            }
-                        } else {
-                            fillDownHorizontalGroup(twoPlayerResult, i, playerByGroup);
+                twoPlayerResult.addAll(playerResults);
+                if (count % 2 == 0) {
+                    PlayerResult[] fieldPlayerResul = twoPlayerResult.toArray(new PlayerResult[0]);
+                    for (int i = 0; i < twoPlayerResult.size() / 2; i++) {
+                        if (roundMap.get(i) == null) {
+                            roundMap.put(i, new Round());
                         }
-                    } else {
-                        if (i % 2 == 0) {
-                            if (i == 0) {
-                                fillVerticalGroup(twoPlayerResult, i, playerByGroup);
+                        createRound(roundMap.get(i), fieldPlayerResul, twoPlayerResult.size() / 2, isBalanced);
+                        fieldPlayerResul = rotatePlayerResult(fieldPlayerResul, i);
+                    }
+                    twoPlayerResult.clear();
+                }
+                count++;
+            }
+
+            for (Map.Entry<Integer, Round> entry : roundMap.entrySet()) {
+                round.getGames().addAll(entry.getValue().getGames());
+            }
+        } else {
+            for (int j = 0; j < 2; j++) {
+                Map<Integer, Round> roundMap = new HashMap<Integer, Round>();
+                for (int i = 0; i < playerByGroup.size(); i++) {
+
+                    List<PlayerResult> twoPlayerResult = new ArrayList<PlayerResult>();
+
+                    if (playerByGroup.size() % 2 == 1) {
+                        if (j % 2 == 0) {
+                            if (i % 2 == 0) {
+                                if (i == playerByGroup.size() - 1) {
+                                    fillVerticalGroup(twoPlayerResult, i, playerByGroup);
+                                } else {
+                                    fillUpHorizontalGroup(twoPlayerResult, i, playerByGroup);
+                                }
                             } else {
                                 fillDownHorizontalGroup(twoPlayerResult, i, playerByGroup);
                             }
                         } else {
-                            fillUpHorizontalGroup(twoPlayerResult, i, playerByGroup);
+                            if (i % 2 == 0) {
+                                if (i == 0) {
+                                    fillVerticalGroup(twoPlayerResult, i, playerByGroup);
+                                } else {
+                                    fillDownHorizontalGroup(twoPlayerResult, i, playerByGroup);
+                                }
+                            } else {
+                                fillUpHorizontalGroup(twoPlayerResult, i, playerByGroup);
+                            }
                         }
                     }
-                }
-                /*
-                 * List<PlayerResult> twoPlayerResult = new ArrayList<PlayerResult>(); if (i % 2 == 0) {
-                 * twoPlayerResult.addAll(playerByGroup.get(i).subList(0, playerByGroup.get(i).size() / 2)); int index =
-                 * i + 1; if (index == playerByGroup.size()) { index = 0; }
-                 * twoPlayerResult.addAll(playerByGroup.get(index).subList(0, playerByGroup.get(i).size() / 2));
-                 * 
-                 * } else { twoPlayerResult.addAll(playerByGroup.get(i).subList(playerByGroup.get(i).size() / 2,
-                 * playerByGroup.get(i).size())); int index = i + 1; if (index == playerByGroup.size()) { index = 0; }
-                 * twoPlayerResult.addAll(playerByGroup.get(index).subList(playerByGroup.get(i).size() / 2,
-                 * playerByGroup.get(i).size()));
-                 * 
-                 * }
-                 */
-                if (twoPlayerResult.size() % 2 == 1) {
-                    twoPlayerResult.add(twoPlayerResult.size() / 2, new PlayerResult());
-                }
-                PlayerResult[] fieldPlayerResul = twoPlayerResult.toArray(new PlayerResult[0]);
-                System.out.println(Arrays.toString(fieldPlayerResul));
 
-                for (int k = 0; k < twoPlayerResult.size() / 2; k++) {
-                    createAdvancedRound(roundMap.get(i), fieldPlayerResul, twoPlayerResult.size() / 2, isBalanced, k);
-                    fieldPlayerResul = rotatePlayerResult(fieldPlayerResul, k);
-                }
+                    PlayerResult[] fieldPlayerResul = twoPlayerResult.toArray(new PlayerResult[0]);
 
-                // for (Map.Entry<Integer, Round> entry : roundMap.entrySet()) {
-                // for (Map.Entry<Integer, Round> entry1 : roundMap.entrySet()) {
-                // round.getGames().addAll(entry.getValue().getGames());
-                //
-                // }
-                // }
+                    for (int k = 0; k < twoPlayerResult.size() / 2; k++) {
 
-                twoPlayerResult.clear();
-
-            }
-
-            int max = 0;
-            for (Map.Entry<Integer, Round> entry : roundMap.entrySet()) {
-                if (max < entry.getValue().getGames().size()) {
-                    max = entry.getValue().getGames().size();
-                }
-            }
-
-            for (int k = 0; k < max; k++) {
-                System.out.println("k " + k);
-                for (Map.Entry<Integer, Round> entry : roundMap.entrySet()) {
-                    System.out.println("round  " + entry.getKey());
-                    System.out.println(Arrays.toString(entry.getValue().getGames().toArray()) + " ? ? ?");
-
-                    if (entry.getValue().getGames().size() > k) {
-                        round.getGames().add(entry.getValue().getGames().get(k));
+                        if (roundMap.get(k) == null) {
+                            roundMap.put(k, new Round());
+                        }
+                        createAdvancedRound(roundMap.get(k), fieldPlayerResul, twoPlayerResult.size() / 2, isBalanced,
+                                k);
+                        fieldPlayerResul = rotatePlayerResult(fieldPlayerResul, k);
                     }
+
+                    twoPlayerResult.clear();
+
+                }
+
+                for (Map.Entry<Integer, Round> entry : roundMap.entrySet()) {
+                    round.getGames().addAll(entry.getValue().getGames());
                 }
             }
         }
-        /*
-         * int count = 1; List<PlayerResult> twoPlayerResult = new ArrayList<PlayerResult>(); Map<Integer, Round>
-         * roundMap = new HashMap<Integer, Round>(); for (List<PlayerResult> playerResults : playerByGroup) {
-         * twoPlayerResult.addAll(playerResults); if (count % 2 == 0) { PlayerResult[] fieldPlayerResul =
-         * twoPlayerResult.toArray(new PlayerResult[0]); for (int i = 0; i < twoPlayerResult.size() / 2; i++) {
-         * createAdvancedRound(roundMap, fieldPlayerResul, twoPlayerResult.size() / 2, isBalanced, i); fieldPlayerResul
-         * = rotatePlayerResult(fieldPlayerResul, i); } twoPlayerResult.clear(); } count++; }
-         * 
-         * for (Map.Entry<Integer, Round> entry : roundMap.entrySet()) {
-         * round.getGames().addAll(entry.getValue().getGames()); }
-         */
+
     }
 
     private void fillUpHorizontalGroup(List<PlayerResult> twoPlayerResult, int i,
@@ -493,36 +443,39 @@ public class TournamentService {
         PlayerResult pom1 = fieldPlayerResult[fieldPlayerResult.length - 1];
 
         // prva polovica sa toci doprava
-        for (int i = (fieldPlayerResult.length / 2) - 1; i > 0; i--) {
-            fieldPlayerResult[i] = fieldPlayerResult[i - 1];
-        }
-        fieldPlayerResult[0] = pom;
-
+        /*
+         * for (int i = (fieldPlayerResult.length / 2) - 1; i > 0; i--) { fieldPlayerResult[i] = fieldPlayerResult[i -
+         * 1]; } fieldPlayerResult[0] = pom;
+         */
         for (int i = fieldPlayerResult.length - 1; i > fieldPlayerResult.length / 2; i--) {
             fieldPlayerResult[i] = fieldPlayerResult[i - 1];
         }
         fieldPlayerResult[fieldPlayerResult.length / 2] = pom1;
 
-        if ((fieldPlayerResult.length % 4 == 0) && ((round + 2) == (fieldPlayerResult.length / 4) + 1)) {
-            pom1 = fieldPlayerResult[fieldPlayerResult.length - 1];
-
-            for (int i = fieldPlayerResult.length - 1; i > fieldPlayerResult.length / 2; i--) {
-                fieldPlayerResult[i] = fieldPlayerResult[i - 1];
-            }
-            fieldPlayerResult[fieldPlayerResult.length / 2] = pom1;
-        }
+        /*
+         * if ((fieldPlayerResult.length % 4 == 0) && ((round + 2) == (fieldPlayerResult.length / 4) + 1)) { pom1 =
+         * fieldPlayerResult[fieldPlayerResult.length - 1];
+         * 
+         * for (int i = fieldPlayerResult.length - 1; i > fieldPlayerResult.length / 2; i--) { fieldPlayerResult[i] =
+         * fieldPlayerResult[i - 1]; } fieldPlayerResult[fieldPlayerResult.length / 2] = pom1; }
+         */
 
         return fieldPlayerResult;
     }
 
     private void addNewGame(Round round, PlayerResult homePlayer, PlayerResult awayPlayer) {
+        boolean found = false;
         if (homePlayer.getId() != null && awayPlayer.getId() != null) {
             for (Game game : homePlayer.getGames()) {
                 if (game.getAwayPlayerResult().getId().equals(awayPlayer.getId())) {
                     game._setHomePlayerResult(homePlayer)._setAwayPlayerResult(awayPlayer);
                     round.getGames().add(game);
+                    found = true;
                     break;
                 }
+            }
+            if (/* !found && */(homePlayer.getId().equals(-1) || awayPlayer.getId().equals(-1))) {
+                round.getGames().add(new Game());
             }
         }
     }
@@ -636,7 +589,13 @@ public class TournamentService {
             int promotingA = Math.min(playerResults.size(), tournament.getFinalPromoting());
             String groupName = "A";
             if (createGroups) {
-                finalGroup = new Groups(groupName, 1, GroupType.F.name(), 1, tournament, true, false);
+                int hockeyCount;
+                if (promotingA % 2 == 0) {
+                    hockeyCount = (promotingA * basicGroupss.size()) / 2;
+                } else {
+                    hockeyCount = promotingA;
+                }
+                finalGroup = new Groups(groupName, hockeyCount, GroupType.F.name(), 1, tournament, true, false);
                 finalGroup = tournamentAggregationDao.createGroup(finalGroup);
                 groupByName.put(groupName, finalGroup);
             } else {
@@ -752,7 +711,7 @@ public class TournamentService {
         PlayerResult pom = new PlayerResult();
         pom._setGroup(playerResult.getGroup())._setId(playerResult.getId())._setPlayer(playerResult.getPlayer())
                 ._setPoints(playerResult.getPoints())._setRank(playerResult.getRank())
-                ._setScore(playerResult.getScore());
+                ._setScore(playerResult.getScore())._setEqualRank(playerResult.getEqualRank());
         pom.getGames().addAll(playerResult.getGames());
         return pom;
     }
@@ -875,6 +834,7 @@ public class TournamentService {
         return playerPlayOffCountAfterCheckThirdPlace;
     }
 
+    @Transactional
     public List<PlayOffGame> getPlayOffGames(Tournament tournament, Groups group) {
 
         if (group == null) {
@@ -1155,12 +1115,21 @@ public class TournamentService {
 
         }
 
-        // kvoli dorovnavaniu hracov aby sa hralo play of aj ked je malo hracov
+        // kvoli dorovnavaniu hracov aby sa hralo play off aj ked je malo hracov
         players.removeAll(Collections.singleton(null));
         return players;
     }
 
+    public void resetEqualRank(Groups group) {
+        List<PlayerResult> players = tournamentAggregationDao.getListPlayerResult(new PlayerResult()._setGroup(group));
+        for (PlayerResult playerResult : players) {
+            playerResult.setEqualRank(null);
+            tournamentAggregationDao.updatePlayerResult(playerResult);
+        }
+    }
+
     public User createUser(User user) {
+        user.setPassword(encryptUserPassword(user.getPassword()));
         return tournamentAggregationDao.createUser(user);
     }
 
@@ -1169,8 +1138,8 @@ public class TournamentService {
     }
 
     public boolean deleteUser(User user) {
+        user.setPassword(encryptUserPassword(user.getPassword()));
         return tournamentAggregationDao.deleteUser(user);
-
     }
 
     public User getUser(User user) {
@@ -1181,4 +1150,27 @@ public class TournamentService {
         return tournamentAggregationDao.getAllUsers();
     }
 
+    public String encryptUserPassword(String password) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance(ALGORITHM_SHA);
+            md.update(password.getBytes("UTF-8"));
+            byte[] securePassword = md.digest();
+            return bytes2hex(securePassword);
+        } catch (Exception e) {
+            logger.error("!! ERROR encrypt password", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private final String bytes2hex(byte[] value) {
+        if (value == null)
+            return null;
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < value.length; i++) {
+            if ((value[i] <= 0x0F) && (value[i] >= 0))
+                result.append('0');
+            result.append(Integer.toHexString(value[i] & 0xFF));
+        }
+        return result.toString();
+    }
 }

@@ -177,6 +177,7 @@ public abstract class BasePage extends WebPage {
 
     }
 
+    // automaticke prihlasovanie pri zapametani
     @Override
     protected void onBeforeRender() {
         if (((TournamentAuthenticatedWebSession) getSession()).isSignedIn() == false) {

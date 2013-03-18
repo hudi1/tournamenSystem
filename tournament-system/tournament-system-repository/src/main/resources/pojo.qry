@@ -1,6 +1,7 @@
 package org.toursys.repository.model {  
 
 
+
   final pojo Game serializable 1  {
     id : java.lang.Integer primaryKey index 1
     homePlayerResult :: PlayerResult required index 2
@@ -47,10 +48,11 @@ package org.toursys.repository.model {
     group :: Groups required index 3
     player :: Player required index 2
     score : org.toursys.repository.model.Score required
+    equalRank : java.lang.Integer
     games : java.util.List <:Game>
     equals ::: id
     toInit ::: games player group
-    toString ::: id rank player score points group
+    toString ::: id rank player score equalRank points group
   }
 
   final pojo PlayOffGame serializable 1  {

@@ -117,6 +117,21 @@ public class PlayerResult implements Serializable {
     return this;
   }
   
+  private Integer equalRank;
+    
+  public Integer getEqualRank() {
+    return equalRank;
+  }
+    
+  public void setEqualRank(Integer equalRank) {
+    this.equalRank = equalRank;
+  }
+    
+  public PlayerResult _setEqualRank(Integer equalRank) {
+    this.equalRank = equalRank;
+    return this;
+  }
+  
   private List<Game> games = new ArrayList<Game>();
     
   public List<Game> getGames() {
@@ -178,10 +193,10 @@ public class PlayerResult implements Serializable {
   
   @Override
   public String toString() {
-    return "PlayerResult [id=" + id + ", rank=" + rank + ", score=" + score + ", points=" + points + "]";
+    return "PlayerResult [id=" + id + ", rank=" + rank + ", score=" + score + ", equalRank=" + equalRank + ", points=" + points + "]";
   }
   
   public String toStringFull() {
-    return "PlayerResult [id=" + id + ", rank=" + rank + ", player=" + player + ", score=" + score + ", points=" + points + ", group=" + group + "]";
+    return "PlayerResult [id=" + id + ", rank=" + rank + ", player=" + player + ", score=" + score + ", equalRank=" + equalRank + ", points=" + points + ", group=" + group + "]";
   }
 }

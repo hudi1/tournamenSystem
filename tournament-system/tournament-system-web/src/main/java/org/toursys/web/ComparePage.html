@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="java, html, css" lang="cs" />
+<meta name="language" http-equiv="content-language" content="cs" />
+<meta name="author" content="hudi1" lang="cs" />
+<meta name="copyright" content="&copy; hudi1" />
+<link rel="stylesheet" type="text/css" href="css/screen.css"
+	media="screen" />
+</head>
+<body>
+	<div>
+		<form class="compareForm" wicket:id="playerEditForm">
+			<fieldset>
+				<div>
+					<label wicket:id="name1" /> <br /> <label wicket:id="rank1" /> <input
+						type="text" wicket:id="equalRank1" />
+				</div>
+				<div>
+					<label wicket:id="name2" /> <br /> <label wicket:id="rank2" /> <input
+						type="text" wicket:id="equalRank2" />
+				</div>
+
+			</fieldset>
+			<p>
+				<input wicket:id="close" class="tournamentButton" type="submit"
+					value="Close" /> <input wicket:id="reset" class="tournamentButton"
+					type="submit" value="Reset" />
+			</p>
+		</form>
+	</div>
+</body>
+</html>

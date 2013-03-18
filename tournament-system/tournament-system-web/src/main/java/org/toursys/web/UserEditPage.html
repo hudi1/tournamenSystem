@@ -7,7 +7,7 @@
 </wicket:head>
 <wicket:extend>
 
-	<form wicket:id="userEditForm">
+	<form class="userform" wicket:id="userEditForm">
 		<fieldset>
 			<legend>
 				<wicket:message key="user">
@@ -37,6 +37,12 @@
 				<label wicket:for="password"><wicket:message key="password">
             Password:
         </wicket:message></label><input type="password" wicket:id="password" />
+			</div>
+			<div>
+				<label wicket:for="confirmPassword"><wicket:message
+						key="confirmPassword">
+            Confirm Password:
+        </wicket:message></label><input type="password" wicket:id="confirmPassword" />
 			</div>
 			<div>
 				<label wicket:id="platnostLabel" /> <input type="text"

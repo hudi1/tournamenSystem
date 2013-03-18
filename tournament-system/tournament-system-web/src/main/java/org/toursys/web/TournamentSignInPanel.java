@@ -66,8 +66,6 @@ public class TournamentSignInPanel extends Panel {
         super(id);
 
         this.includeRememberMe = includeRememberMe;
-        // Add sign-in form to page, passing feedback panel as
-        // validation error handler
         add(new SignInForm());
     }
 
@@ -146,18 +144,9 @@ public class TournamentSignInPanel extends Panel {
     }
 
     /**
-     * @return true, if signed in
-     */
-    private boolean isSignedIn() {
-        return AuthenticatedWebSession.get().isSignedIn();
-    }
-
-    /**
      * Called when sign in failed
      */
     protected void onSignInFailed() {
-        // Try the component based localizer first. If not found try the
-        // application localizer. Else use the default
         error(getString("signInFailed"));
     }
 
@@ -165,11 +154,7 @@ public class TournamentSignInPanel extends Panel {
      * Called when sign in was successful
      */
     protected void onSignInSucceeded() {
-        // If login has been called because the user was not yet logged in, than continue to the
-        // original destination, otherwise to the Home page
-        if (!continueToOriginalDestination()) {
-            setResponsePage(getApplication().getHomePage());
-        }
+        setResponsePage(getApplication().getHomePage());
     }
 
     /**
@@ -183,18 +168,14 @@ public class TournamentSignInPanel extends Panel {
 
             setModel(new CompoundPropertyModel<TournamentSignInPanel>(TournamentSignInPanel.this));
 
-            // Attach textfields for username and password
-            add(new TextField<String>("username"));
-            add(new PasswordTextField("password").setRequired(false));
+            add(new TextField<String>("username").setRequired(true));
+            add(new PasswordTextField("password"));
 
-            // MarkupContainer row for remember me checkbox
             WebMarkupContainer rememberMeRow = new WebMarkupContainer("rememberMeRow");
             add(rememberMeRow);
 
-            // Add rememberMe checkbox
             rememberMeRow.add(new CheckBox("rememberMe"));
 
-            // Show remember me checkbox?
             rememberMeRow.setVisible(includeRememberMe);
 
             add(new Button("register", new ResourceModel("register")) {
