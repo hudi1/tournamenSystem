@@ -1,6 +1,8 @@
 package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -12,11 +14,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.value.ValueMap;
-import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.TournamentImpl;
 
+@AuthorizeInstantiation(Roles.USER)
 public class TournamentOptionsPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
@@ -30,13 +34,28 @@ public class TournamentOptionsPage extends BasePage {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public TournamentOptionsPage(TournamentImpl tournament, Groups group, boolean isTableOptionsOn,
-            boolean isTournamentOptionsOn) {
-        this.tournament = tournament;
-        this.group = group;
-        this.isTableOptionsOn = isTableOptionsOn;
-        this.isTournamentOptionsOn = isTournamentOptionsOn;
+    public TournamentOptionsPage(PageParameters parameters) {
+        checkPageParameters(parameters);
+        tournament = getTournament(parameters);
+        group = getGroup(parameters);
+        setTournamentOption(parameters);
+        setTableOption(parameters);
         createPage();
+    }
+
+    private void checkPageParameters(PageParameters parameters) {
+        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
+                || parameters.get("groupid").isNull()) {
+            throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        }
+    }
+
+    private void setTableOption(PageParameters parameters) {
+        this.isTableOptionsOn = parameters.get("showTableOptions").toBoolean(true);
+    }
+
+    private void setTournamentOption(PageParameters parameters) {
+        this.isTournamentOptionsOn = parameters.get("showTournamentOptions").toBoolean(false);
     }
 
     protected void createPage() {
@@ -68,12 +87,12 @@ public class TournamentOptionsPage extends BasePage {
             add(checkBox2);
             add(hockeyCount);
 
-            if (group.getGroupType().equals(GroupType.B.name())) {
+            if (group.getType().equals(GroupsType.BASIC)) {
                 checkBox2.setVisible(false);
                 checkBox1.setVisible(false);
             }
 
-            if (group.getGroupType().equals(GroupType.F.name())) {
+            if (group.getType().equals(GroupsType.FINAL)) {
                 hockeyCount.setEnabled(false);
             }
 
@@ -89,8 +108,7 @@ public class TournamentOptionsPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.updateGroups(tournament, group);
-                    setResponsePage(new TournamentOptionsPage(tournament, group, isTableOptionsOn,
-                            isTournamentOptionsOn));
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
 
@@ -100,7 +118,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group));
+                    setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }
@@ -134,8 +152,7 @@ public class TournamentOptionsPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.updateTournament(tournament);
-                    setResponsePage(new TournamentOptionsPage(tournament, group, isTableOptionsOn,
-                            isTournamentOptionsOn));
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
 
@@ -145,7 +162,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group));
+                    setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }
@@ -165,7 +182,9 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, group, true, false));
+                    getPageParameters().set("showTableOptions", true);
+                    getPageParameters().set("showTournamentOptions", false);
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
 
@@ -175,7 +194,9 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, group, false, true));
+                    getPageParameters().set("showTableOptions", false);
+                    getPageParameters().set("showTournamentOptions", true);
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
         }

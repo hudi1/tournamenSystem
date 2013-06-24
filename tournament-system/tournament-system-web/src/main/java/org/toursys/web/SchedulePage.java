@@ -7,6 +7,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -20,11 +22,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.TournamentImpl;
 
+@AuthorizeInstantiation(Roles.USER)
 public class SchedulePage extends BasePage {
 
     private static final long serialVersionUID = 1L;
@@ -36,11 +40,19 @@ public class SchedulePage extends BasePage {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public SchedulePage(TournamentImpl tournament, Groups group) {
-        this.group = group;
-        this.tournament = tournament;
+    public SchedulePage(PageParameters parameters) {
+        checkPageParameters(parameters);
+        tournament = getTournament(parameters);
+        group = getGroup(parameters);
         this.schedule = getSchedule();
         createPage();
+    }
+
+    private void checkPageParameters(PageParameters parameters) {
+        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
+                || parameters.get("groupid").isNull()) {
+            throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        }
     }
 
     private void createPage() {
@@ -148,7 +160,7 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, group, true));
+                    setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }

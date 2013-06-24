@@ -12,8 +12,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.Game;
-import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
@@ -53,7 +53,7 @@ public class TournamentAggregationITest {
         Assert.assertNotNull(season);
 
         Tournament tournament = TournamentFactory.createTournament();
-        tournamentAggregationDao.createTournament(season, tournament);
+        tournamentAggregationDao.createTournament(tournament._setSeason(season));
         Assert.assertNotNull(tournament);
 
         Groups group = TournamentFactory.createGroup();
@@ -107,7 +107,7 @@ public class TournamentAggregationITest {
         Groups updatedGroup = TournamentFactory.createGroup();
         updatedGroup.setId(group.getId());
         updatedGroup.setTournament(updatedTournament);
-        updatedGroup.setGroupType(GroupType.F.value());
+        updatedGroup.setType(GroupsType.FINAL);
         updatedGroup.setName(TournamentFactory.GROUP_NAME + UPDATED);
         tournamentAggregationDao.updateGroup(updatedGroup);
         Assert.assertNotNull(updatedGroup);

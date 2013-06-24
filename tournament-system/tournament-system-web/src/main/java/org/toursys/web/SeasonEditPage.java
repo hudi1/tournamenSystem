@@ -1,6 +1,8 @@
 package org.toursys.web;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -10,6 +12,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Season;
 
+@AuthorizeInstantiation(Roles.USER)
 public class SeasonEditPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
@@ -52,7 +55,7 @@ public class SeasonEditPage extends BasePage {
                         error(getString("sql.db.exception"));
                         return;
                     }
-                    setResponsePage(new SeasonPage());
+                    setResponsePage(SeasonPage.class);
                 }
             });
 
@@ -62,7 +65,7 @@ public class SeasonEditPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new SeasonPage());
+                    setResponsePage(SeasonPage.class);
                 };
             }.setDefaultFormProcessing(false));
         }

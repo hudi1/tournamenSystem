@@ -5,18 +5,6 @@ database-has-url   jdbc:mysql:\//localhost/tournament_system;
 database-login-username   root;
 database-login-password   root;
 
-pojo gameForm org.toursys.repository.form.GameForm;
-pojo playerForm org.toursys.repository.form.PlayerForm;
-pojo playerResultForm org.toursys.repository.form.PlayerResultForm;
-pojo tournamentForm org.toursys.repository.form.TournamentForm;
-pojo groupForm org.toursys.repository.form.GroupForm;
-//pojo game org.toursys.repository.model.Game;
-//pojo player org.toursys.repository.model.Player;
-//pojo playerResult org.toursys.repository.model.PlayerResult;
-//pojo result org.toursys.repository.model.Result;
-//pojo season org.toursys.repository.model.Season;
-//pojo tournamentTable org.toursys.repository.model.Table;
-//pojo tournament org.toursys.repository.model.Tournament;
 metagen-table-sequence GAME SEQ_GAME;
 metagen-table-sequence GROUPS SEQ_GROUP;
 metagen-table-sequence PLAYER SEQ_PLAYER;
@@ -29,15 +17,13 @@ metagen-table-sequence USER SEQ_USER;
 
 pojogen-generate-wrappers;
 
-pojogen-ignore-one-to-many PLAYER ID->PLAYER_RESULT->ID;
+pojogen-ignore-one-to-many PLAYER ID->PLAYER_RESULT->PLAYER_ID;
+
 pojogen-ignore-one-to-many PLAYER_RESULT ID->GAME->AWAY_PLAYER_RESULT_ID;
-pojogen-create-one-to-many PLAYER_RESULT ID->GAME->HOME_PLAYER_RESULT_ID;
-//pojogen-ignore-one-to-many SEASON ID->TOURNAMENT->ID;
+//pojogen-create-one-to-many PLAYER_RESULT ID->GAME->HOME_PLAYER_RESULT_ID;
 
-//pojogen-ignore-one-to-many TOURNAMENT ID->GROUP->ID;
-
-pojogen-ignore-one-to-many GROUP ID->PLAYER_RESULT->ID;
-//pojogen-ignore-many-to-one GROUP TOURNAMENT_ID->TOURNAMENT->TOURNAMENT_ID;
+pojogen-ignore-one-to-many PLAYER ID->PLAY_OFF_GAME;
+pojogen-ignore-one-to-many PLAYER ID->FINAL_STANDING->PLAYER_ID;
 
 pojogen-implements-interfaces java.io.Serializable;
 pojogen-generate-methods equals toString toInit;
@@ -48,6 +34,10 @@ pojogen-make-it-final;
 
 metagen-column-meta-type PLAYER_RESULT SCORE->score;
 
+pojogen-rename-columns GROUPS_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
+//pojogen-rename-columns USER_ROLE A->ADMIN U->USER;
+
+table finalStanding FINAL_STANDING;
 table game GAME;
 table groups GROUPS;
 table playOffGame PLAY_OFF_GAME;
@@ -57,14 +47,3 @@ table playerResult PLAYER_RESULT;
 table season SEASON;
 table tournament TOURNAMENT;
 table user USER;
-
-/* 
-dbcol GET_PLAYER_NOT_IN_TOURNAMENT player prefix p;
-dbcol GET_PLAYER_NOT_IN_TOURNAMENT playerResult prefix r;
-dbcol GET_PLAYER_NOT_IN_TOURNAMENT playerResult prefix a_r;
-dbcol GET_PLAYER_NOT_IN_TOURNAMENT groups prefix g;
-
-dbcol GET_PLAYER_RESULT_IN_TOURNAMENT player prefix p;
-dbcol GET_PLAYER_RESULT_IN_TOURNAMENT playerResult prefix r;
-dbcol GET_PLAYER_RESULT_IN_TOURNAMENT groups prefix g;
-* */

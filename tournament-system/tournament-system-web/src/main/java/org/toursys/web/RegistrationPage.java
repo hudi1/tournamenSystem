@@ -14,6 +14,8 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -28,38 +30,49 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Tournament;
-import org.toursys.repository.model.TournamentImpl;
 
+@AuthorizeInstantiation(Roles.USER)
 public class RegistrationPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
     private Tournament tournament;
+    private Groups group;
     private Player selectedPlayer;
 
     public RegistrationPage() {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public RegistrationPage(Tournament tournament) {
-        this(tournament, new Groups()._setName("1"));
+    public RegistrationPage(PageParameters parameters) {
+        super(parameters);
+        checkPageParameters(parameters);
+        createGroup(parameters);
+        tournament = getTournament(parameters);
+        createPage();
     }
 
-    public RegistrationPage(Tournament tournament, Groups group) {
-        this.tournament = tournament;
-        this.tournament.getSeason()._setUser(((TournamentAuthenticatedWebSession) getSession()).getUser());
-        createPage(group);
+    private void checkPageParameters(PageParameters parameters) {
+        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()) {
+            throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        }
     }
 
-    private void createPage(Groups group) {
+    private void createGroup(PageParameters parameters) {
+        group = new Groups();
+        group.setName(parameters.get("groupid").isNull() ? "1" : parameters.get("groupid").toString());
+    }
+
+    private void createPage() {
         IDataProvider<PlayerResult> registeredPlayerDataProvider = createRegisteredPlayerDataProvider();
         DataView<PlayerResult> dataView = createDataview(registeredPlayerDataProvider);
         add(dataView);
 
-        add(new RegistrationForm(group));
+        add(new RegistrationForm());
         add(new CreateTournamentForm());
     }
 
@@ -84,7 +97,7 @@ public class RegistrationPage extends BasePage {
 
                     public void onClick(AjaxRequestTarget target) {
                         tournamentService.deletePlayerResult(playerResult, tournament);
-                        setResponsePage(new RegistrationPage(tournament));
+                        setResponsePage(RegistrationPage.class);
                     }
 
                     @Override
@@ -148,7 +161,7 @@ public class RegistrationPage extends BasePage {
 
         private static final long serialVersionUID = 1L;
 
-        public RegistrationForm(final Groups group) {
+        public RegistrationForm() {
             super("registrationForm", new CompoundPropertyModel<Groups>(group));
             setOutputMarkupId(true);
             final TextField<String> text = new TextField<String>("name");
@@ -162,6 +175,7 @@ public class RegistrationPage extends BasePage {
                     Integer groupName = Integer.parseInt(group.getName());
                     groupName++;
                     group.setName(groupName.toString());
+                    getPageParameters().set("groupid", groupName.toString());
                     target.add(text);
                 }
             });
@@ -177,6 +191,7 @@ public class RegistrationPage extends BasePage {
                         groupName--;
                     }
                     group.setName(groupName.toString());
+                    getPageParameters().set("groupid", groupName.toString());
                     target.add(text);
                 }
             });
@@ -266,7 +281,7 @@ public class RegistrationPage extends BasePage {
                             if (player != null) {
                                 tournamentService.createBasicPlayerResult(tournament, player, group);
                             }
-                            setResponsePage(new RegistrationPage(tournament, group));
+                            setResponsePage(RegistrationPage.class, getPageParameters());
                         }
 
                     });
@@ -298,7 +313,7 @@ public class RegistrationPage extends BasePage {
                     if (selectedPlayer != null) {
                         tournamentService.createBasicPlayerResult(tournament, selectedPlayer, group);
                     }
-                    setResponsePage(new RegistrationPage(tournament, group));
+                    setResponsePage(RegistrationPage.class, getPageParameters());
                 }
             });
         }
@@ -325,7 +340,8 @@ public class RegistrationPage extends BasePage {
                         group = groups.get(0);
                     }
 
-                    setResponsePage(new GroupPage(new TournamentImpl(tournament), group));
+                    getPageParameters().set("groupid", group.getId());
+                    setResponsePage(GroupPage.class, getPageParameters());
                 }
             });
 
@@ -335,7 +351,9 @@ public class RegistrationPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentPage(tournament.getSeason()));
+                    getPageParameters().remove("tournamentid");
+                    getPageParameters().remove("groupid");
+                    setResponsePage(TournamentPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }

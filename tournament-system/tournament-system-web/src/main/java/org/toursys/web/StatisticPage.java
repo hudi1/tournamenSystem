@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 @AuthorizeInstantiation(Roles.USER)
 public class StatisticPage extends BasePage {

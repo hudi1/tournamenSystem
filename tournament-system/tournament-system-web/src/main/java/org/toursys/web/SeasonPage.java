@@ -13,7 +13,7 @@ import org.apache.wicket.authroles.authorization.strategies.role.annotations.Aut
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -24,6 +24,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.User;
+import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 @AuthorizeInstantiation(Roles.USER)
 public class SeasonPage extends BasePage {
@@ -63,8 +64,7 @@ public class SeasonPage extends BasePage {
 
                     public void onClick(AjaxRequestTarget target) {
                         tournamentService.deleteSeason(((Season) listItem.getDefaultModelObject()));
-
-                        setResponsePage(new SeasonPage());
+                        setResponsePage(SeasonPage.class);
                     }
 
                     @Override
@@ -165,17 +165,11 @@ public class SeasonPage extends BasePage {
         }
     }
 
-    private static Link<Void> link(final String name, final Season season) {
-        Link<Void> link = new Link<Void>(name) {
+    private static BookmarkablePageLink<Void> link(final String name, final Season season) {
 
-            private static final long serialVersionUID = 1L;
+        final BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>(name, TournamentPage.class);
 
-            @Override
-            public void onClick() {
-                setResponsePage(new TournamentPage(season));
-            }
-        };
-
+        link.getPageParameters().set("seasonid", season.getId());
         link.add(new Label("name", season.getName()));
         return link;
     }

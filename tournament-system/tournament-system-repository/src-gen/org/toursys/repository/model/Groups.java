@@ -18,10 +18,10 @@ public class Groups implements Serializable {
   public Groups() {
   }
   
-  public Groups(String name, Integer numberOfHockey, String groupType, Integer indexOfFirstHockey, Tournament tournament, Boolean copyResult, Boolean playThirdPlace) {
+  public Groups(String name, Integer numberOfHockey, GroupsType type, Integer indexOfFirstHockey, Tournament tournament, Boolean copyResult, Boolean playThirdPlace) {
     this.name = name;
     this.numberOfHockey = numberOfHockey;
-    this.groupType = groupType;
+    this.type = type;
     this.indexOfFirstHockey = indexOfFirstHockey;
     this.tournament = tournament;
     this.copyResult = copyResult;
@@ -29,150 +29,150 @@ public class Groups implements Serializable {
   }
   
   private Integer id;
-    
+  
   public Integer getId() {
     return id;
   }
-    
+  
   public void setId(Integer id) {
     this.id = id;
   }
-    
+  
   public Groups _setId(Integer id) {
     this.id = id;
     return this;
   }
   
   private String name;
-    
+  
   public String getName() {
     return name;
   }
-    
+  
   public void setName(String name) {
     this.name = name;
   }
-    
+  
   public Groups _setName(String name) {
     this.name = name;
     return this;
   }
   
   private Integer numberOfHockey;
-    
+  
   public Integer getNumberOfHockey() {
     return numberOfHockey;
   }
-    
+  
   public void setNumberOfHockey(Integer numberOfHockey) {
     this.numberOfHockey = numberOfHockey;
   }
-    
+  
   public Groups _setNumberOfHockey(Integer numberOfHockey) {
     this.numberOfHockey = numberOfHockey;
     return this;
   }
   
-  private String groupType;
-    
-  public String getGroupType() {
-    return groupType;
+  private GroupsType type;
+  
+  public GroupsType getType() {
+    return type;
   }
-    
-  public void setGroupType(String groupType) {
-    this.groupType = groupType;
+  
+  public void setType(GroupsType type) {
+    this.type = type;
   }
-    
-  public Groups _setGroupType(String groupType) {
-    this.groupType = groupType;
+  
+  public Groups _setType(GroupsType type) {
+    this.type = type;
     return this;
   }
   
   private Integer indexOfFirstHockey;
-    
+  
   public Integer getIndexOfFirstHockey() {
     return indexOfFirstHockey;
   }
-    
+  
   public void setIndexOfFirstHockey(Integer indexOfFirstHockey) {
     this.indexOfFirstHockey = indexOfFirstHockey;
   }
-    
+  
   public Groups _setIndexOfFirstHockey(Integer indexOfFirstHockey) {
     this.indexOfFirstHockey = indexOfFirstHockey;
     return this;
   }
   
   private Tournament tournament;
-    
+  
   public Tournament getTournament() {
     return tournament;
   }
-    
+  
   public void setTournament(Tournament tournament) {
     this.tournament = tournament;
   }
-    
+  
   public Groups _setTournament(Tournament tournament) {
     this.tournament = tournament;
     return this;
   }
   
   private Boolean copyResult;
-    
+  
   public Boolean getCopyResult() {
     return copyResult;
   }
-    
+  
   public void setCopyResult(Boolean copyResult) {
     this.copyResult = copyResult;
   }
-    
+  
   public Groups _setCopyResult(Boolean copyResult) {
     this.copyResult = copyResult;
     return this;
   }
   
   private Boolean playThirdPlace;
-    
+  
   public Boolean getPlayThirdPlace() {
     return playThirdPlace;
   }
-    
+  
   public void setPlayThirdPlace(Boolean playThirdPlace) {
     this.playThirdPlace = playThirdPlace;
   }
-    
+  
   public Groups _setPlayThirdPlace(Boolean playThirdPlace) {
     this.playThirdPlace = playThirdPlace;
     return this;
   }
   
   private List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
-    
+  
   public List<PlayOffGame> getPlayOffGames() {
     return playOffGames;
   }
-    
+  
   public void setPlayOffGames(List<PlayOffGame> playOffGames) {
     this.playOffGames = playOffGames;
   }
-    
+  
   public Groups _setPlayOffGames(List<PlayOffGame> playOffGames) {
     this.playOffGames = playOffGames;
     return this;
   }
   
   private List<PlayerResult> playerResults = new ArrayList<PlayerResult>();
-    
+  
   public List<PlayerResult> getPlayerResults() {
     return playerResults;
   }
-    
+  
   public void setPlayerResults(List<PlayerResult> playerResults) {
     this.playerResults = playerResults;
   }
-    
+  
   public Groups _setPlayerResults(List<PlayerResult> playerResults) {
     this.playerResults = playerResults;
     return this;
@@ -187,7 +187,7 @@ public class Groups implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     Groups other = (Groups) obj;
-    if (!id.equals(other.id))
+    if (id == null || !id.equals(other.id))
       return false;
     return true;
   }  
@@ -197,6 +197,20 @@ public class Groups implements Serializable {
   }
   
   private Set<String> initAssociations = new HashSet<String>();
+  
+  public void setInit(Association... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (Association association : associations)
+      initAssociations.add(association.name());
+  }
+  
+  public void clearInit(Association... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (Association association : associations)
+      initAssociations.remove(association.name());
+  }
   
   public void setInit(String... associations) {
     if (associations == null)
@@ -224,10 +238,10 @@ public class Groups implements Serializable {
   
   @Override
   public String toString() {
-    return "Groups [groupType=" + groupType + ", id=" + id + ", playThirdPlace=" + playThirdPlace + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + "]";
+    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + "]";
   }
   
   public String toStringFull() {
-    return "Groups [groupType=" + groupType + ", id=" + id + ", playThirdPlace=" + playThirdPlace + ", tournament=" + tournament + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + "]";
+    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", tournament=" + tournament + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + "]";
   }
 }

@@ -17,11 +17,17 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.RequestUtils;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.TournamentService;
+import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Season;
+import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.TournamentImpl;
 import org.toursys.repository.model.User;
+import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 public abstract class BasePage extends WebPage {
 
@@ -35,10 +41,12 @@ public abstract class BasePage extends WebPage {
 
     abstract protected IModel<String> newHeadingModel();
 
-    // TODO treda domysliet historiu
-    protected final String PREVISOUS_PAGE = "history.go(-1)";
-
     public BasePage() {
+        this(null);
+    }
+
+    public BasePage(PageParameters parameters) {
+        super(parameters);
         addMyComponents();
         setVisibility();
     }
@@ -175,6 +183,19 @@ public abstract class BasePage extends WebPage {
             return active ? "active" : "";
         }
 
+    }
+
+    protected TournamentImpl getTournament(PageParameters parameters) {
+        return new TournamentImpl(tournamentService.getTournament(new Tournament()._setId(parameters
+                .get("tournamentid").toInteger())));
+    }
+
+    protected Groups getGroup(PageParameters parameters) {
+        return tournamentService.getGroup(new Groups()._setId(parameters.get("groupid").toInteger()));
+    }
+
+    protected Season getSeason(PageParameters parameters) {
+        return tournamentService.getSeason(new Season()._setId(parameters.get("seasonid").toInteger()));
     }
 
     // automaticke prihlasovanie pri zapametani

@@ -11,6 +11,8 @@ import org.apache.wicket.Page;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -28,16 +30,18 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.SamePlayerRankException;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
-import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.TournamentImpl;
 
+@AuthorizeInstantiation(Roles.USER)
 public class GroupPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
@@ -51,22 +55,21 @@ public class GroupPage extends BasePage {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public GroupPage(TournamentImpl tournament) {
-        this(tournament, null);
+    public GroupPage(PageParameters parameters) {
+        super(parameters);
+        checkPageParameters(parameters);
+        tournament = getTournament(parameters);
+        group = getGroup(parameters);
+        getPlayerResults();
+        createPage();
     }
 
-    public GroupPage(TournamentImpl tournament, Groups group) {
-        this(tournament, group, false);
-    }
-
-    public GroupPage(TournamentImpl tournament, Groups group, boolean calculateResult) {
-        this.group = group;
-        this.tournament = tournament;
+    private void getPlayerResults() {
         if (group != null) {
             this.playerResults = tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group));
             tournamentService.createGames(playerResults);
 
-            if (calculateResult || group.getGroupType() != GroupType.B.name()) {
+            if (/* calculateResult || */group.getType() != GroupsType.BASIC) {
                 try {
                     calculatePlayerResults();
                 } catch (SamePlayerRankException e) {
@@ -76,7 +79,13 @@ public class GroupPage extends BasePage {
         } else {
             playerResults = new ArrayList<PlayerResult>();
         }
-        createPage();
+    }
+
+    private void checkPageParameters(PageParameters parameters) {
+        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
+                || parameters.get("groupid").isNull()) {
+            throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        }
     }
 
     public void createEmptyModalWindow() {
@@ -118,7 +127,7 @@ public class GroupPage extends BasePage {
             private static final long serialVersionUID = 1L;
 
             public void onClose(AjaxRequestTarget target) {
-                setResponsePage(new GroupPage(tournament, group));
+                setResponsePage(GroupPage.class, getPageParameters());
             }
         });
 
@@ -327,7 +336,8 @@ public class GroupPage extends BasePage {
 
                         @Override
                         public void onSubmit() {
-                            setResponsePage(new GroupPage(tournament, group));
+                            getPageParameters().set("groupid", group.getId());
+                            setResponsePage(GroupPage.class, getPageParameters());
                         }
                     };
 
@@ -352,7 +362,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new SchedulePage(tournament, group));
+                    setResponsePage(SchedulePage.class, getPageParameters());
                 }
             };
 
@@ -364,7 +374,9 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentOptionsPage(tournament, group, true, false));
+                    getPageParameters().set("showTableOptions", true);
+                    getPageParameters().set("showTournamentOptions", false);
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             };
 
@@ -416,9 +428,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournament.setLastKnowGroup(group);
-                    setResponsePage(new PlayOffPage(tournament));
-
+                    setResponsePage(PlayOffPage.class, getPageParameters());
                 }
             };
             add(playOff);
@@ -429,7 +439,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new RegistrationPage(tournament));
+                    setResponsePage(RegistrationPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
 
@@ -440,7 +450,7 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.createFinalGroup(tournament);
-                    setResponsePage(new GroupPage(tournament, group));
+                    setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
 
@@ -453,7 +463,7 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.copyResult(tournament);
-                    setResponsePage(new GroupPage(tournament, group, true));
+                    setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
             add(copyResult);

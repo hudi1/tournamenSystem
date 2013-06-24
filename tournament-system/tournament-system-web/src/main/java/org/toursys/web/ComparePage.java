@@ -2,6 +2,8 @@ package org.toursys.web;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -10,17 +12,14 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.TournamentService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
 
+@AuthorizeInstantiation(Roles.USER)
 public class ComparePage extends WebPage {
 
     private static final long serialVersionUID = 1L;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @SpringBean(name = "tournamentService")
     protected TournamentService tournamentService;

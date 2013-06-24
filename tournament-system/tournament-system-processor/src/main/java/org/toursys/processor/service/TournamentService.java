@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,10 +22,11 @@ import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.schedule.AdvancedRoundRobinSchedule;
 import org.toursys.processor.schedule.BasicRoundRobinSchedule;
 import org.toursys.processor.schedule.RoundRobinSchedule;
+import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
-import org.toursys.repository.model.GroupType;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
@@ -51,11 +53,11 @@ public class TournamentService {
         return tournamentAggregationDao.createPlayer(player);
     }
 
-    public Player updatePlayer(Player player) {
+    public int updatePlayer(Player player) {
         return tournamentAggregationDao.updatePlayer(player);
     }
 
-    public boolean deletePlayer(Player player) {
+    public int deletePlayer(Player player) {
         return tournamentAggregationDao.deletePlayer(player);
     }
 
@@ -76,7 +78,7 @@ public class TournamentService {
         return tournamentAggregationDao.getListSeason(season);
     }
 
-    public Season updateSeason(Season season) {
+    public int updateSeason(Season season) {
         return tournamentAggregationDao.updateSeason(season);
     }
 
@@ -84,7 +86,11 @@ public class TournamentService {
         return tournamentAggregationDao.createSeason(season);
     }
 
-    public boolean deleteSeason(Season season) {
+    public Season getSeason(Season season) {
+        return tournamentAggregationDao.getSeason(season);
+    }
+
+    public int deleteSeason(Season season) {
         return tournamentAggregationDao.deleteSeason(season);
     }
 
@@ -92,15 +98,19 @@ public class TournamentService {
         return tournamentAggregationDao.getListTournaments(tournament);
     }
 
-    public Tournament updateTournament(Tournament tournament) {
+    public int updateTournament(Tournament tournament) {
         return tournamentAggregationDao.updateTournament(tournament);
     }
 
-    public Season createTournament(Season season, Tournament... tournaments) {
-        return tournamentAggregationDao.createTournament(season, tournaments);
+    public Tournament createTournament(Season season, Tournament tournament) {
+        return tournamentAggregationDao.createTournament(tournament._setSeason(season));
     }
 
-    public boolean deleteTournament(Tournament tournament) {
+    public Tournament getTournament(Tournament tournament) {
+        return tournamentAggregationDao.getTournament(tournament);
+    }
+
+    public int deleteTournament(Tournament tournament) {
         return tournamentAggregationDao.deleteTournament(tournament);
     }
 
@@ -108,11 +118,11 @@ public class TournamentService {
         return tournamentAggregationDao.createPlayerResult(player, group);
     }
 
-    public PlayerResult updatePlayerResult(PlayerResult playerResult) {
+    public int updatePlayerResult(PlayerResult playerResult) {
         return tournamentAggregationDao.updatePlayerResult(playerResult);
     }
 
-    public boolean deletePlayerResult(PlayerResult playerResult, Tournament tournament) {
+    public int deletePlayerResult(PlayerResult playerResult, Tournament tournament) {
         return tournamentAggregationDao.deletePlayerResult(playerResult);
 
         /*
@@ -131,7 +141,7 @@ public class TournamentService {
         return tournamentAggregationDao.getListPlayerResult(playerResult);
     }
 
-    public Groups updateGroups(Tournament tournament, Groups group) {
+    public int updateGroups(Tournament tournament, Groups group) {
         if (group.getCopyResult()) {
             List<PlayerResult> player = getPlayerResultInGroup(new PlayerResult()._setGroup(group));
 
@@ -148,14 +158,18 @@ public class TournamentService {
         return tournamentAggregationDao.updateGroup(group);
     }
 
+    public Groups getGroup(Groups group) {
+        return tournamentAggregationDao.getGroup(group);
+    }
+
     public List<Groups> getBasicGroups(Groups group) {
-        group.setGroupType(GroupType.B.name());
+        group.setType(GroupsType.BASIC);
         logger.info("get basic groups: " + group.toStringFull());
         return tournamentAggregationDao.getListGroups(group);
     }
 
     public List<Groups> getFinalGroups(Groups group) {
-        group.setGroupType(GroupType.F.name());
+        group.setType(GroupsType.FINAL);
         logger.info("get basic groups: " + group.toStringFull());
         return tournamentAggregationDao.getListGroups(group);
     }
@@ -163,8 +177,8 @@ public class TournamentService {
     public PlayerResult createBasicPlayerResult(Tournament tournament, Player player, Groups group) {
         logger.info("creating basic playerResult, player: " + player + " group: " + group);
         if (group.getName() != null) {
-            Groups savedGroup = tournamentAggregationDao.getGroup(group._setTournament(tournament)._setGroupType(
-                    GroupType.B.value()));
+            Groups savedGroup = tournamentAggregationDao.getGroup(group._setTournament(tournament)._setType(
+                    GroupsType.BASIC));
             if (savedGroup == null) {
                 savedGroup = tournamentAggregationDao.createGroup(group._setCopyResult(false)._setPlayThirdPlace(false)
                         ._setNumberOfHockey(1)._setIndexOfFirstHockey(1));
@@ -178,7 +192,8 @@ public class TournamentService {
         return tournamentAggregationDao.findGame(game);
     }
 
-    // TODO ked sa budes nudit toto treba nejak vyriesit. nie je to ciste riesenie ale zatim to funguje a nie je to
+    // TODO ked sa budes nudit toto treba nejak vyriesit. nie je to ciste
+    // riesenie ale zatim to funguje a nie je to
     // pomale
     public void updateGame(Game game) {
         logger.info("updating game: " + game);
@@ -198,7 +213,8 @@ public class TournamentService {
         long time = System.currentTimeMillis();
         if (!playerResults.isEmpty() && playerResults.get(0).getGames().size() < playerResults.size() - 1) {
 
-            // TODO zamysliet sa ci je v poriadku ked mazeme vysledky, pridat aspon nejake varovanie
+            // TODO zamysliet sa ci je v poriadku ked mazeme vysledky, pridat
+            // aspon nejake varovanie
             if (!playerResults.get(0).getGames().isEmpty()) {
                 for (PlayerResult playerResult : playerResults) {
                     for (Game game : playerResult.getGames()) {
@@ -226,7 +242,8 @@ public class TournamentService {
         RoundRobinSchedule roundRobinSchedule;
 
         if (group.getCopyResult()) {
-            roundRobinSchedule = new AdvancedRoundRobinSchedule(tournament, group, playerResults);
+            roundRobinSchedule = new AdvancedRoundRobinSchedule(tournament, group, playerResults, getPlayersByGroup(
+                    tournament, playerResults));
         } else {
             roundRobinSchedule = new BasicRoundRobinSchedule(group, playerResults);
         }
@@ -234,6 +251,29 @@ public class TournamentService {
         time = System.currentTimeMillis() - time;
         logger.debug("Celkova doba: " + time + " ms");
         return roundRobinSchedule.getSchedule();
+    }
+
+    private LinkedList<List<PlayerResult>> getPlayersByGroup(Tournament tournament, List<PlayerResult> finalPlayers) {
+        LinkedList<List<PlayerResult>> playerByGroup = new LinkedList<List<PlayerResult>>();
+
+        List<Groups> basicGroups = getBasicGroups(new Groups()._setTournament(tournament));
+        if (basicGroups.size() < 2) {
+            return playerByGroup;
+        }
+
+        for (int i = 0; i < basicGroups.size(); i++) {
+            playerByGroup.add(i, new ArrayList<PlayerResult>());
+            List<PlayerResult> players = getPlayerResultInGroup(new PlayerResult()._setGroup(basicGroups.get(i)));
+            for (PlayerResult playerResult : players) {
+                for (PlayerResult finalPlayerResult : finalPlayers) {
+                    if (playerResult.getPlayer().equals(finalPlayerResult.getPlayer())) {
+                        playerByGroup.get(i).add(finalPlayerResult);
+                        break;
+                    }
+                }
+            }
+        }
+        return playerByGroup;
     }
 
     /**
@@ -523,11 +563,6 @@ public class TournamentService {
         return playerResult.toArray(new PlayerResult[0]);
     }
 
-    @Required
-    public void setTournamentAggregationDao(TournamentAggregationDao tournamentAggregationDao) {
-        this.tournamentAggregationDao = tournamentAggregationDao;
-    }
-
     public void calculatePlayerResults(List<PlayerResult> playerResults, Tournament tournament) {
         for (PlayerResult playerResult : playerResults) {
             calculatePlayerResult(playerResult, tournament);
@@ -544,7 +579,8 @@ public class TournamentService {
         Integer homeScore = 0;
         Integer awayScore = 0;
         for (Game game : playerResult.getGames()) {
-            // TODO zistit preco ked playerResult nema ziadnu hru tak tam nacitava jednu z id 0 ???
+            // TODO zistit preco ked playerResult nema ziadnu hru tak tam
+            // nacitava jednu z id 0 ???
             if (game.getId() != 0) {
                 if (game.getHomeScore() != null && game.getAwayScore() != null) {
                     if (game.getHomeScore() > game.getAwayScore()) {
@@ -595,7 +631,7 @@ public class TournamentService {
                 } else {
                     hockeyCount = promotingA;
                 }
-                finalGroup = new Groups(groupName, hockeyCount, GroupType.F.name(), 1, tournament, true, false);
+                finalGroup = new Groups(groupName, hockeyCount, GroupsType.FINAL, 1, tournament, true, false);
                 finalGroup = tournamentAggregationDao.createGroup(finalGroup);
                 groupByName.put(groupName, finalGroup);
             } else {
@@ -621,7 +657,7 @@ public class TournamentService {
 
                     }
                     if (createGroups) {
-                        finalGroup = new Groups(nextGroups, 1, GroupType.F.name(), 1, tournament, false, false);
+                        finalGroup = new Groups(nextGroups, 1, GroupsType.FINAL, 1, tournament, false, false);
                         finalGroup = tournamentAggregationDao.createGroup(finalGroup);
                         groupByName.put(nextGroups, finalGroup);
                     } else {
@@ -1014,7 +1050,7 @@ public class TournamentService {
         return log + (bits >>> 1);
     }
 
-    public PlayOffResult updatePlayOffResult(PlayOffResult playOffResult) {
+    public int updatePlayOffResult(PlayOffResult playOffResult) {
         return tournamentAggregationDao.updatePlayOffResult(playOffResult);
     }
 
@@ -1120,6 +1156,136 @@ public class TournamentService {
         return players;
     }
 
+    public void createFinalStandings(Tournament tournament) {
+        List<Groups> groups = tournamentAggregationDao.getListGroups(new Groups()._setTournament(tournament));
+        Collections.sort(groups, new Comparator<Groups>() {
+
+            @Override
+            public int compare(Groups o1, Groups o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        for (Groups group : groups) {
+            List<PlayerResult> playerResults = getPlayerResultInGroup(new PlayerResult()._setGroup(group));
+            Collections.sort(playerResults, new RankComparator());
+
+            List<PlayOffGame> playOffGames = getPlayOffGames(new PlayOffGame()._setGroup(group));
+            Map<Integer, List<Player>> losersByRound = new TreeMap<Integer, List<Player>>(Collections.reverseOrder());
+            int playerCountInPlayOff = playOffGames.size();
+            boolean thirdGame = true;
+            if (playerCountInPlayOff % 2 == 1) {
+                playerCountInPlayOff++;
+                thirdGame = false;
+            }
+            int finalRank = 0;
+
+            for (PlayOffGame playOffGame : playOffGames) {
+                int round = getRound(playerCountInPlayOff, playOffGame.getPosition());
+                if (losersByRound.get(round) == null) {
+                    losersByRound.put(round, new ArrayList<Player>());
+                }
+
+                int homeWin = 0;
+                int awayWin = 0;
+                Player winner = null;
+                Player loser = null;
+
+                for (PlayOffResult playOffResult : playOffGame.getPlayOffResults()) {
+                    if (playOffResult.getHomeScore() != null && playOffResult.getAwayScore() != null) {
+                        if (playOffResult.getHomeScore() > playOffResult.getAwayScore()) {
+                            homeWin++;
+                        } else if (playOffResult.getHomeScore() < playOffResult.getAwayScore()) {
+                            awayWin++;
+                        }
+                    }
+                }
+
+                if (homeWin > awayWin) {
+                    if (round == getRound(playerCountInPlayOff, playOffGames.size())) {
+                        winner = playOffGame.getHomePlayer();
+                        loser = playOffGame.getAwayPlayer();
+                        finalRank++;
+
+                    } else if (!thirdGame || (round < (getRound(playerCountInPlayOff, playOffGames.size()) - 1))) {
+                        losersByRound.get(round).add(playOffGame.getAwayPlayer());
+                    }
+                } else if (homeWin < awayWin) {
+                    if (round == getRound(playerCountInPlayOff, playOffGames.size())) {
+
+                        winner = playOffGame.getAwayPlayer();
+                        loser = playOffGame.getHomePlayer();
+                        finalRank++;
+
+                    } else if (!thirdGame || (round < (getRound(playerCountInPlayOff, playOffGames.size()) - 1))) {
+                        losersByRound.get(round).add(playOffGame.getHomePlayer());
+                    }
+                } else {
+                    if (round == getRound(playerCountInPlayOff, playOffGames.size())) {
+                        finalRank++;
+
+                    } else if (!thirdGame || (round < (getRound(playerCountInPlayOff, playOffGames.size()) - 1))) {
+                        losersByRound.get(round).add(new Player());
+                    }
+                }
+
+                FinalStanding finalStandingWinner = new FinalStanding();
+                finalStandingWinner.setFinalRank(finalRank);
+                finalStandingWinner.setTournament(tournament);
+                finalStandingWinner.setPlayer(winner);
+                tournamentAggregationDao.createFinalStanding(finalStandingWinner);
+
+                FinalStanding finalStandingLoser = new FinalStanding();
+                finalStandingLoser.setFinalRank(finalRank + 1);
+                finalStandingLoser.setTournament(tournament);
+                finalStandingLoser.setPlayer(loser);
+                tournamentAggregationDao.createFinalStanding(finalStandingLoser);
+
+            }
+
+            for (Map.Entry<Integer, List<Player>> winners : losersByRound.entrySet()) {
+                List<Player> loserPlayers = winners.getValue();
+
+                for (PlayerResult playerResult : playerResults) {
+                    for (Player player : loserPlayers) {
+                        if (playerResult.getPlayer().getId().equals(player.getId())) {
+
+                            FinalStanding finalStandingWinner = new FinalStanding();
+                            finalStandingWinner.setFinalRank(finalRank);
+                            finalStandingWinner.setTournament(tournament);
+                            finalStandingWinner.setPlayer(player);
+                            tournamentAggregationDao.createFinalStanding(finalStandingWinner);
+                            break;
+                        }
+                    }
+                }
+                for (Player player : loserPlayers) {
+                    if (player.getId() == 0) {
+                        FinalStanding finalStandingWinner = new FinalStanding();
+                        finalStandingWinner.setFinalRank(finalRank);
+                        finalStandingWinner.setTournament(tournament);
+                        finalStandingWinner.setPlayer(null);
+                        tournamentAggregationDao.createFinalStanding(finalStandingWinner);
+                    }
+                }
+            }
+
+            if (playerResults.size() > playOffGames.size()) {
+                for (PlayerResult playerResult : playerResults.subList(Math.max(playOffGames.size(), 2),
+                        playerResults.size())) {
+                    FinalStanding finalStandingWinner = new FinalStanding();
+                    finalStandingWinner.setFinalRank(finalRank);
+                    finalStandingWinner.setTournament(tournament);
+                    finalStandingWinner.setPlayer(playerResult.getPlayer());
+                    tournamentAggregationDao.createFinalStanding(finalStandingWinner);
+                }
+            }
+        }
+    }
+
+    public List<FinalStanding> getFinalStandings(Tournament tournament) {
+        return tournamentAggregationDao.findFinalStanding(new FinalStanding()._setTournament(tournament));
+    }
+
     public void resetEqualRank(Groups group) {
         List<PlayerResult> players = tournamentAggregationDao.getListPlayerResult(new PlayerResult()._setGroup(group));
         for (PlayerResult playerResult : players) {
@@ -1133,11 +1299,11 @@ public class TournamentService {
         return tournamentAggregationDao.createUser(user);
     }
 
-    public User updateUser(User user) {
+    public int updateUser(User user) {
         return tournamentAggregationDao.updateUser(user);
     }
 
-    public boolean deleteUser(User user) {
+    public int deleteUser(User user) {
         user.setPassword(encryptUserPassword(user.getPassword()));
         return tournamentAggregationDao.deleteUser(user);
     }
@@ -1173,4 +1339,10 @@ public class TournamentService {
         }
         return result.toString();
     }
+
+    @Required
+    public void setTournamentAggregationDao(TournamentAggregationDao tournamentAggregationDao) {
+        this.tournamentAggregationDao = tournamentAggregationDao;
+    }
+
 }

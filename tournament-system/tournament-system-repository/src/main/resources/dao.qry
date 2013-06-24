@@ -1,7 +1,49 @@
 package org.toursys.repository.dao {
 	
-	extends org.toursys.repository.dao.impl.BaseDaoImpl
 	implementation-package impl	
+	 
 	
+
+  dao FinalStandingDao :: FinalStanding {
+    scaffold
+  }
+
+  dao GameDao :: Game {
+    scaffold
+  }
+
+  dao GroupsDao :: Groups {
+    scaffold
+  }
+
+  dao PlayerDao :: Player {
+    scaffold
+  }
+
+  dao PlayerResultDao :: PlayerResult {
+    scaffold
+  }
+
+  dao PlayOffGameDao :: PlayOffGame {
+    scaffold
+  }
+
+  dao PlayOffResultDao :: PlayOffResult {
+    scaffold
+  }
+
+  dao SeasonDao :: Season {
+    scaffold
+  }
+
+  dao TournamentDao :: Tournament {
+    scaffold
+  }
+
+  dao UserDao :: User {
+    scaffold
+  }
+
+
 
 }

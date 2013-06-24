@@ -3,10 +3,11 @@ package org.toursys.web;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -19,26 +20,26 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.pdf.PdfFactory;
-import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.Player;
+import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.TournamentImpl;
 
+@AuthorizeInstantiation(Roles.USER)
 public class FinalStandingsPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-    private List<Player> players;
+    private List<FinalStanding> finalStandings;
     private TournamentImpl tournament;
 
     public FinalStandingsPage() {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public FinalStandingsPage(TournamentImpl tournament, Map<Groups, List<PlayOffGame>> plaOffGamesByGroup) {
-        this.tournament = tournament;
-        players = tournamentService.createFinalStandings(plaOffGamesByGroup);
+    public FinalStandingsPage(PageParameters parameters) {
+        tournament = getTournament(parameters);
+        finalStandings = tournamentService.getFinalStandings(tournament);
         createPage();
     }
 
@@ -54,28 +55,28 @@ public class FinalStandingsPage extends BasePage {
             super("finalStandingsForm");
             setOutputMarkupId(true);
 
-            IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
+            IDataProvider<FinalStanding> playerDataProvider = new IDataProvider<FinalStanding>() {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Iterator<Player> iterator(int first, int count) {
-                    return players.subList(first, first + count).iterator();
+                public Iterator<FinalStanding> iterator(int first, int count) {
+                    return finalStandings.subList(first, first + count).iterator();
                 }
 
                 @Override
                 public int size() {
-                    return players.size();
+                    return finalStandings.size();
                 }
 
                 @Override
-                public IModel<Player> model(final Player object) {
-                    return new LoadableDetachableModel<Player>() {
+                public IModel<FinalStanding> model(final FinalStanding object) {
+                    return new LoadableDetachableModel<FinalStanding>() {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected Player load() {
+                        protected FinalStanding load() {
                             return object;
                         }
                     };
@@ -86,16 +87,16 @@ public class FinalStandingsPage extends BasePage {
                 }
             };
 
-            DataView<Player> dataView = new DataView<Player>("rows", playerDataProvider) {
+            DataView<FinalStanding> dataView = new DataView<FinalStanding>("rows", playerDataProvider) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(final Item<Player> listItem) {
-                    final Player player = listItem.getModelObject();
-                    listItem.setModel(new CompoundPropertyModel<Player>(player));
-                    listItem.add(new Label("name", player.getName()));
-                    listItem.add(new Label("surname", player.getSurname()));
+                protected void populateItem(final Item<FinalStanding> listItem) {
+                    final FinalStanding finalStanding = listItem.getModelObject();
+                    listItem.setModel(new CompoundPropertyModel<FinalStanding>(finalStanding));
+                    listItem.add(new Label("name", finalStanding.getPlayer().getName()));
+                    listItem.add(new Label("surname", finalStanding.getPlayer().getSurname()));
                     listItem.add(new Label("rank", listItem.getIndex() + 1 + "."));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
@@ -117,18 +118,18 @@ public class FinalStandingsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new PlayOffPage(tournament));
+                    setResponsePage(PlayOffPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
 
-            DownloadLink finalStandings = new DownloadLink("finalStandings", new AbstractReadOnlyModel<File>() {
+            DownloadLink finalStandingsLink = new DownloadLink("finalStandings", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createFinalStandings(WicketApplication.getFilesPath(), players);
+                        tempFile = PdfFactory.createFinalStandings(WicketApplication.getFilesPath(), finalStandings);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -136,9 +137,9 @@ public class FinalStandingsPage extends BasePage {
                     return tempFile;
                 }
             });
-            finalStandings.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+            finalStandingsLink.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
 
-            add(finalStandings);
+            add(finalStandingsLink);
         }
     }
 

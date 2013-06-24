@@ -22,13 +22,17 @@ public class TournamentEditPage extends BasePage {
     }
 
     public TournamentEditPage(Season season) {
-        this(season, new Tournament()._setFinalPromoting(6)._setLowerPromoting(5)._setWinPoints(2)._setPlayOffA(16)
-                ._setPlayOffLower(8)._setMinPlayersInGroup(5));
+        this(season, newTournament());
     }
 
     public TournamentEditPage(Season season, Tournament tournament) {
         this.season = season;
         createPage(tournament);
+    }
+
+    private static Tournament newTournament() {
+        return new Tournament()._setFinalPromoting(6)._setLowerPromoting(5)._setWinPoints(2)._setPlayOffA(16)
+                ._setPlayOffLower(8)._setMinPlayersInGroup(5);
     }
 
     protected void createPage(Tournament tournament) {
@@ -60,7 +64,8 @@ public class TournamentEditPage extends BasePage {
                         logger.error("Error edit tournament: ", e);
                         error(getString("sql.db.exception"));
                     }
-                    setResponsePage(new TournamentPage(season));
+                    getPageParameters().set("seasonid", season.getId());
+                    setResponsePage(TournamentPage.class, getPageParameters());
                 }
 
             });
@@ -71,7 +76,8 @@ public class TournamentEditPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new TournamentPage(season));
+                    getPageParameters().set("seasonid", season.getId());
+                    setResponsePage(TournamentPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }

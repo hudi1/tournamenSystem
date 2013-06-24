@@ -26,6 +26,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
+import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends BasePage {

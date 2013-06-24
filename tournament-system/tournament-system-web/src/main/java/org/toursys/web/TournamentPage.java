@@ -9,10 +9,12 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -21,9 +23,11 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 
+@AuthorizeInstantiation(Roles.USER)
 public class TournamentPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
@@ -35,9 +39,17 @@ public class TournamentPage extends BasePage {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public TournamentPage(Season season) {
-        this.season = season;
+    public TournamentPage(PageParameters parameters) {
+        super(parameters);
+        checkPageParameters(parameters);
+        season = getSeason(parameters);
         createPage();
+    }
+
+    private void checkPageParameters(PageParameters parameters) {
+        if (parameters.get("seasonid").isNull()) {
+            throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        }
     }
 
     protected void createPage() {
@@ -66,7 +78,7 @@ public class TournamentPage extends BasePage {
 
                     public void onClick(AjaxRequestTarget target) {
                         tournamentService.deleteTournament(((Tournament) listItem.getDefaultModelObject()));
-                        setResponsePage(new TournamentPage(tournament.getSeason()));
+                        setResponsePage(TournamentPage.class, getPageParameters());
                     }
 
                     @Override
@@ -150,7 +162,7 @@ public class TournamentPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new SeasonPage());
+                    setResponsePage(SeasonPage.class);
                 };
             }.setDefaultFormProcessing(false));
         }
@@ -174,17 +186,12 @@ public class TournamentPage extends BasePage {
         }
     }
 
-    private Link<Void> link(final String name, final Tournament tournament) {
-        Link<Void> link = new Link<Void>(name) {
+    private static BookmarkablePageLink<Void> link(final String name, final Tournament tournament) {
 
-            private static final long serialVersionUID = 1L;
+        final BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>(name, RegistrationPage.class);
 
-            @Override
-            public void onClick() {
-                setResponsePage(new RegistrationPage(tournament));
-            }
-        };
-
+        link.getPageParameters().set("tournamentid", tournament.getId());
+        link.getPageParameters().set("seasonid", tournament.getSeason().getId());
         link.add(new Label("name", tournament.getName()));
         return link;
     }

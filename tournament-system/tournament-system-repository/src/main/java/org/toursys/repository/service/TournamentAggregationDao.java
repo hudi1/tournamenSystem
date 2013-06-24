@@ -2,6 +2,7 @@ package org.toursys.repository.service;
 
 import java.util.List;
 
+import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayOffGame;
@@ -16,9 +17,9 @@ public interface TournamentAggregationDao {
 
     public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer);
 
-    public Game updateGame(Game game);
+    public int updateGame(Game game);
 
-    public boolean deleteGame(Game game);
+    public int deleteGame(Game game);
 
     public Game getGame(Game game);
 
@@ -26,9 +27,9 @@ public interface TournamentAggregationDao {
 
     public Groups createGroup(Groups group);
 
-    public Groups updateGroup(Groups group);
+    public int updateGroup(Groups group);
 
-    public boolean deleteGroup(Groups group);
+    public int deleteGroup(Groups group);
 
     public Groups getGroup(Groups group);
 
@@ -36,9 +37,9 @@ public interface TournamentAggregationDao {
 
     public Player createPlayer(Player player);
 
-    public Player updatePlayer(Player player);
+    public int updatePlayer(Player player);
 
-    public boolean deletePlayer(Player player);
+    public int deletePlayer(Player player);
 
     public Player getPlayer(Player player);
 
@@ -46,9 +47,9 @@ public interface TournamentAggregationDao {
 
     public PlayerResult createPlayerResult(Player player, Groups group);
 
-    public PlayerResult updatePlayerResult(PlayerResult playerResult);
+    public int updatePlayerResult(PlayerResult playerResult);
 
-    public boolean deletePlayerResult(PlayerResult playerResult);
+    public int deletePlayerResult(PlayerResult playerResult);
 
     public PlayerResult getPlayerResult(PlayerResult playerResult);
 
@@ -58,9 +59,9 @@ public interface TournamentAggregationDao {
 
     public Season createSeason(Season season);
 
-    public Season updateSeason(Season season);
+    public int updateSeason(Season season);
 
-    public boolean deleteSeason(Season season);
+    public int deleteSeason(Season season);
 
     public Season getSeason(Season season);
 
@@ -68,11 +69,11 @@ public interface TournamentAggregationDao {
 
     public List<Season> getListSeason(Season season);
 
-    public Season createTournament(Season season, Tournament... tournaments);
+    public Tournament createTournament(Tournament tournaments);
 
-    public Tournament updateTournament(Tournament tournament);
+    public int updateTournament(Tournament tournament);
 
-    public boolean deleteTournament(Tournament tournament);
+    public int deleteTournament(Tournament tournament);
 
     public Tournament getTournament(Tournament tournament);
 
@@ -82,9 +83,9 @@ public interface TournamentAggregationDao {
 
     public PlayOffGame createPlayOffGame(Player homePlayer, Player awayPlayer, Groups group, int position);
 
-    public PlayOffGame updatePlayOffGame(PlayOffGame playOffGame);
+    public int updatePlayOffGame(PlayOffGame playOffGame);
 
-    public boolean deletePlayOffGame(PlayOffGame playOffGame);
+    public int deletePlayOffGame(PlayOffGame playOffGame);
 
     public PlayOffGame getPlayOffGame(PlayOffGame playOffGame);
 
@@ -92,9 +93,9 @@ public interface TournamentAggregationDao {
 
     public PlayOffResult createPlayOffResult(PlayOffGame playOffGame);
 
-    public PlayOffResult updatePlayOffResult(PlayOffResult playOffResult);
+    public int updatePlayOffResult(PlayOffResult playOffResult);
 
-    public boolean deletePlayOffResult(PlayOffResult playOffResult);
+    public int deletePlayOffResult(PlayOffResult playOffResult);
 
     public PlayOffResult getPlayOffResult(PlayOffResult playOffResult);
 
@@ -102,12 +103,22 @@ public interface TournamentAggregationDao {
 
     public User createUser(User user);
 
-    public User updateUser(User user);
+    public int updateUser(User user);
 
-    public boolean deleteUser(User user);
+    public int deleteUser(User user);
 
     public User getUser(User user);
 
     public List<User> getAllUsers();
+
+    public FinalStanding createFinalStanding(FinalStanding finalStanding);
+
+    public int updateFinalStanding(FinalStanding finalStanding);
+
+    public int deleteFinalStanding(FinalStanding finalStanding);
+
+    public FinalStanding getFinalStanding(FinalStanding finalStanding);
+
+    public List<FinalStanding> findFinalStanding(FinalStanding finalStanding);
 
 }

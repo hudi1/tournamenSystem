@@ -2,14 +2,14 @@ package org.toursys.web;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -26,27 +26,35 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
-import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.TournamentImpl;
 
+@AuthorizeInstantiation(Roles.USER)
 public class PlayOffPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
     private TournamentImpl tournament;
-    private Map<Groups, List<PlayOffGame>> plaOffGamesByGroup = new LinkedHashMap<Groups, List<PlayOffGame>>();
 
     public PlayOffPage() {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
     }
 
-    public PlayOffPage(TournamentImpl tournament) {
-        this.tournament = tournament;
+    public PlayOffPage(PageParameters parameters) {
+        checkPageParameters(parameters);
+        tournament = getTournament(parameters);
         createPage();
+    }
+
+    private void checkPageParameters(PageParameters parameters) {
+        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
+                || parameters.get("groupid").isNull()) {
+            throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        }
     }
 
     protected void createPage() {
@@ -103,7 +111,6 @@ public class PlayOffPage extends BasePage {
                 protected void populateItem(final Item<Groups> listItem) {
                     final Groups group = listItem.getModelObject();
                     playOffGames = tournamentService.getPlayOffGames(tournament, group);
-                    plaOffGamesByGroup.put(group, playOffGames);
 
                     final ListView<PlayOffGame> dataView = new ListView<PlayOffGame>("rows", playOffGames) {
 
@@ -229,7 +236,7 @@ public class PlayOffPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new GroupPage(tournament, tournament.getLastKnowGroup()));
+                    setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
 
@@ -238,9 +245,9 @@ public class PlayOffPage extends BasePage {
 
                 @Override
                 public File getObject() {
-                    File tempFile;
+                    File tempFile = null;
                     try {
-                        tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), plaOffGamesByGroup);
+                        // tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), plaOffGamesByGroup);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -258,7 +265,8 @@ public class PlayOffPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new FinalStandingsPage(tournament, plaOffGamesByGroup));
+                    tournamentService.createFinalStandings(tournament);
+                    setResponsePage(FinalStandingsPage.class, getPageParameters());
                 }
             });
         }

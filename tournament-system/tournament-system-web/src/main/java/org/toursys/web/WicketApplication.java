@@ -14,6 +14,8 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.toursys.web.finder.CustomResourceStreamLocator;
+import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 public class WicketApplication extends AuthenticatedWebApplication {
 
@@ -77,16 +79,12 @@ public class WicketApplication extends AuthenticatedWebApplication {
                     // return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(e)));
                 }
             });
+            getResourceSettings().setResourceStreamLocator(new CustomResourceStreamLocator());
         }
     }
 
     private void initConfiguration() {
     }
-
-    /*
-     * @Override public Session newSession(Request request, Response response) { Session session = new
-     * TournamentAuthenticatedWebSession(request); session.setLocale(Locale.US); return session; }
-     */
 
     private void addListeners() {
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));

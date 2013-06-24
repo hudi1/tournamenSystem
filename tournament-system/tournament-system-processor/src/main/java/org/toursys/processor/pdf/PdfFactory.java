@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
@@ -528,7 +529,7 @@ public class PdfFactory {
         return log + (bits >>> 1);
     }
 
-    public static File createFinalStandings(String path, List<Player> players) throws Exception {
+    public static File createFinalStandings(String path, List<FinalStanding> finalStandings) throws Exception {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
         File file = new File(path + "playOff" + df.format(new Date()) + ".pdf");
@@ -544,13 +545,13 @@ public class PdfFactory {
 
         pdfTable.setTotalWidth(400);
         pdfTable.setWidths(new float[] { 2f, 5f, 5f });
-        int rank = 1;
 
-        for (Player player : players) {
-            pdfTable.addCell(createLeftAlignCell(rank + "."));
-            pdfTable.addCell(createLeftAlignCell((player.getSurname() != null) ? player.getSurname() : ""));
-            pdfTable.addCell(createLeftAlignCell((player.getName() != null) ? player.getName() : ""));
-            rank++;
+        for (FinalStanding finalStanding : finalStandings) {
+            pdfTable.addCell(createLeftAlignCell(finalStanding.getFinalRank() + "."));
+            pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getSurname() != null) ? finalStanding
+                    .getPlayer().getSurname() : ""));
+            pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getName() != null) ? finalStanding
+                    .getPlayer().getName() : ""));
         }
 
         document.add(pdfTable);

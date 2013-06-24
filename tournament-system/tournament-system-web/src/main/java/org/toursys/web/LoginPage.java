@@ -2,6 +2,7 @@ package org.toursys.web;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 public class LoginPage extends BasePage {
     private static final long serialVersionUID = 1L;

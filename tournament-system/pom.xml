@@ -16,7 +16,7 @@
         <version.commons-codec>1.4</version.commons-codec>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-http>3.1</version.commons-http>
-        <version.sql-processor>2.0.0-SNAPSHOT</version.sql-processor>
+        <version.sql-processor>2.2.2-SNAPSHOT</version.sql-processor>
         <version.slf4j>1.6.1</version.slf4j>
         <version.wicket>1.5.9</version.wicket>
         <version.wicket-minis>1.5.9</version.wicket-minis>

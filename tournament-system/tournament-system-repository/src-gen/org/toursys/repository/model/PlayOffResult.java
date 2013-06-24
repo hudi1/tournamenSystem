@@ -21,75 +21,75 @@ public class PlayOffResult implements Serializable {
   }
   
   private Integer id;
-    
+  
   public Integer getId() {
     return id;
   }
-    
+  
   public void setId(Integer id) {
     this.id = id;
   }
-    
+  
   public PlayOffResult _setId(Integer id) {
     this.id = id;
     return this;
   }
   
   private Integer homeScore;
-    
+  
   public Integer getHomeScore() {
     return homeScore;
   }
-    
+  
   public void setHomeScore(Integer homeScore) {
     this.homeScore = homeScore;
   }
-    
+  
   public PlayOffResult _setHomeScore(Integer homeScore) {
     this.homeScore = homeScore;
     return this;
   }
   
   private Integer awayScore;
-    
+  
   public Integer getAwayScore() {
     return awayScore;
   }
-    
+  
   public void setAwayScore(Integer awayScore) {
     this.awayScore = awayScore;
   }
-    
+  
   public PlayOffResult _setAwayScore(Integer awayScore) {
     this.awayScore = awayScore;
     return this;
   }
   
   private Boolean overtime;
-    
+  
   public Boolean getOvertime() {
     return overtime;
   }
-    
+  
   public void setOvertime(Boolean overtime) {
     this.overtime = overtime;
   }
-    
+  
   public PlayOffResult _setOvertime(Boolean overtime) {
     this.overtime = overtime;
     return this;
   }
   
   private PlayOffGame playOffGame;
-    
+  
   public PlayOffGame getPlayOffGame() {
     return playOffGame;
   }
-    
+  
   public void setPlayOffGame(PlayOffGame playOffGame) {
     this.playOffGame = playOffGame;
   }
-    
+  
   public PlayOffResult _setPlayOffGame(PlayOffGame playOffGame) {
     this.playOffGame = playOffGame;
     return this;
@@ -104,7 +104,7 @@ public class PlayOffResult implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     PlayOffResult other = (PlayOffResult) obj;
-    if (!id.equals(other.id))
+    if (id == null || !id.equals(other.id))
       return false;
     return true;
   }  
@@ -114,6 +114,20 @@ public class PlayOffResult implements Serializable {
   }
   
   private Set<String> initAssociations = new HashSet<String>();
+  
+  public void setInit(Association... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (Association association : associations)
+      initAssociations.add(association.name());
+  }
+  
+  public void clearInit(Association... associations) {
+    if (associations == null)
+      throw new IllegalArgumentException();
+    for (Association association : associations)
+      initAssociations.remove(association.name());
+  }
   
   public void setInit(String... associations) {
     if (associations == null)

@@ -9,6 +9,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -16,6 +17,8 @@ import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.toursys.processor.util.NameGenerator;
 import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.GameImpl;
@@ -29,6 +32,8 @@ import org.toursys.repository.model.User;
 
 @RunWith(value = Parameterized.class)
 @ContextConfiguration(locations = { "classpath:applicationContextTest-business.xml" })
+@Transactional
+@TransactionConfiguration(defaultRollback = true)
 public class TournamentServiceParametrizedTest {
 
     @Autowired
@@ -39,8 +44,8 @@ public class TournamentServiceParametrizedTest {
 
     private Tournament tournament;
     private User user;
-    private static final int MAX_PLAYER_COUNT = 26;
-    private static final int MAX_GROUP_COUNT = 4;
+    private static final int MAX_PLAYER_COUNT = 4;
+    private static final int MAX_GROUP_COUNT = 2;
 
     private int playerCount;
     private int hockeyCount;
@@ -59,9 +64,9 @@ public class TournamentServiceParametrizedTest {
     @Parameters
     public static List<Object[]> data() {
         final List<Object[]> parametry = new ArrayList<Object[]>();
-        for (int i = 4; i <= 4; i++) {
+        for (int i = 4; i <= MAX_PLAYER_COUNT; i++) {
             for (int j = 2; j <= i / 2; j++) {
-                for (int k = 1; k <= 1; k++) {
+                for (int k = 2; k <= MAX_GROUP_COUNT; k++) {
                     parametry.add(new Object[] { i, j, k });
                 }
             }
@@ -92,6 +97,7 @@ public class TournamentServiceParametrizedTest {
     }
 
     @Test
+    @Ignore
     public void createTournamentGamesTest() {
         System.out.println("Start Players: " + playerCount + " HockeyCount: " + hockeyCount + " Groups: " + groupCount);
 
@@ -150,7 +156,8 @@ public class TournamentServiceParametrizedTest {
                 previousPlayerResult = playerResult;
             }
         }
-        // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A skupine tak vyhodi vyjimku
+        // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A
+        // skupine tak vyhodi vyjimku
         tournamentService.createFinalGroup(tournament);
 
         List<Groups> finalGroups = tournamentService.getFinalGroups(new Groups()._setTournament(tournament));
@@ -174,7 +181,8 @@ public class TournamentServiceParametrizedTest {
 
                 List<GameImpl> finalSchedule = tournamentService.getSchedule(finalGroup, tournament, playerResult);
 
-                // TODO zatial mi finalove skupiny funguju len s parnym poctom ked sa prenasaju vysledky
+                // TODO zatial mi finalove skupiny funguju len s parnym poctom
+                // ked sa prenasaju vysledky
                 Set<PlayerResult> finalPlayers = new HashSet<PlayerResult>();
                 int finalRound = 1;
                 for (GameImpl gameImpl : finalSchedule) {
