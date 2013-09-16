@@ -204,9 +204,9 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public PlayOffGame createPlayOffGame(Player homePlayer, Player awayPlayer, Groups group, int position) {
-        return playOffGameDao.insert(new PlayOffGame(group, position)._setAwayPlayer(awayPlayer)._setHomePlayer(
-                homePlayer));
+    public PlayOffGame createPlayOffGame(PlayerResult homePlayer, PlayerResult awayPlayer, Groups group, int position) {
+        return playOffGameDao.insert(new PlayOffGame(group, position)._setAwayPlayerResult(awayPlayer)
+                ._setHomePlayerResult(homePlayer));
     }
 
     @Override

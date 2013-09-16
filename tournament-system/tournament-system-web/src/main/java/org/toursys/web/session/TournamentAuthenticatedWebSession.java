@@ -8,6 +8,7 @@ import org.apache.wicket.injection.Injector;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.service.TournamentService;
+import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.User;
 
 public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
@@ -28,7 +29,7 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
     public boolean authenticate(final String username, final String password) {
         User user = tournamentService.getUser(new User()._setUserName(username));
         roles.clear();
-        if (user != null && user.getPassword().equals(tournamentService.encryptUserPassword(password))) {
+        if (user != null && user.getPassword().equals(TournamentUtil.encryptUserPassword(password))) {
             this.user = user;
             if (user.getRole() != null) {
                 roles.add(user.getRole().getName());

@@ -76,6 +76,11 @@ public class GroupPage extends BasePage {
                     createModalWindow(e);
                 }
             }
+
+            if (group.getType().equals(GroupsType.FINAL)) {
+                tournamentService.updateNotPromotingFinalStandings(playerResults, group, tournament);
+            }
+
         } else {
             playerResults = new ArrayList<PlayerResult>();
         }
@@ -450,6 +455,8 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     tournamentService.createFinalGroup(tournament);
+                    tournamentService.createFinalStandings(tournament,
+                            tournamentService.getRegistratedPlayerResult(tournament).size());
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };

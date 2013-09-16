@@ -87,9 +87,10 @@ public class TournamentOptionsPage extends BasePage {
             add(checkBox2);
             add(hockeyCount);
 
-            if (group.getType().equals(GroupsType.BASIC)) {
-                checkBox2.setVisible(false);
+            if (!group.getType().equals(GroupsType.BASIC)) {
                 checkBox1.setVisible(false);
+            } else {
+                checkBox2.setVisible(false);
             }
 
             if (group.getType().equals(GroupsType.FINAL)) {

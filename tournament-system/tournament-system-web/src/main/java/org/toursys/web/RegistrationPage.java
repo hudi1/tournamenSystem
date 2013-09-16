@@ -43,6 +43,7 @@ public class RegistrationPage extends BasePage {
     private Tournament tournament;
     private Groups group;
     private Player selectedPlayer;
+    private HighlitableDataItem<Player> selectedItem;
 
     public RegistrationPage() {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
@@ -96,7 +97,7 @@ public class RegistrationPage extends BasePage {
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deletePlayerResult(playerResult, tournament);
+                        tournamentService.deletePlayerResult(playerResult);
                         setResponsePage(RegistrationPage.class);
                     }
 
@@ -253,22 +254,35 @@ public class RegistrationPage extends BasePage {
 
                         @Override
                         protected void onEvent(final AjaxRequestTarget target) {
-                            Iterator<Item<Player>> items = getItems();
 
-                            while (items.hasNext()) {
-                                HighlitableDataItem<Player> hitem = (HighlitableDataItem<Player>) items.next();
-                                if (hitem.equals(listItem)) {
-                                    hitem.toggleHighlite();
-                                } else {
-                                    hitem.toggleOff();
-                                }
-                                target.add(hitem);
+                            HighlitableDataItem<Player> hitem = (HighlitableDataItem<Player>) listItem;
+                            hitem.toggleHighlite();
+
+                            /*
+                             * Iterator<Item<Player>> items = getItems();
+                             * 
+                             * while (items.hasNext()) { HighlitableDataItem<Player> hitem =
+                             * (HighlitableDataItem<Player>) items.next(); if (hitem.equals(listItem)) {
+                             * hitem.toggleHighlite(); } else { hitem.toggleOff(); } target.add(hitem); }
+                             */
+
+                            if (selectedItem != null) {
+                                selectedItem.toggleOff();
+                                target.add(selectedItem);
                             }
+                            if (hitem.equals(selectedItem)) {
+                                selectedItem = null;
+                            } else {
+                                selectedItem = hitem;
+                            }
+
                             if (player.equals(selectedPlayer)) {
                                 selectedPlayer = null;
                             } else {
                                 selectedPlayer = player;
                             }
+
+                            target.add(hitem);
                         }
                     });
 

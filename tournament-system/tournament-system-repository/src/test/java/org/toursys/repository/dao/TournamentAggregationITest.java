@@ -67,7 +67,7 @@ public class TournamentAggregationITest {
         Game game = tournamentAggregationDao.createGame(playerResult, playerResult);
         Assert.assertNotNull(game);
 
-        PlayOffGame playOffGame = tournamentAggregationDao.createPlayOffGame(player, player, group, 1);
+        PlayOffGame playOffGame = tournamentAggregationDao.createPlayOffGame(playerResult, playerResult, group, 1);
         Assert.assertNotNull(playOffGame);
 
         // update
@@ -132,8 +132,8 @@ public class TournamentAggregationITest {
 
         PlayOffGame updatedPlayOffGame = new PlayOffGame();
         updatedPlayOffGame.setId(playOffGame.getId());
-        updatedPlayOffGame.setAwayPlayer(updatedPlayer);
-        updatedPlayOffGame.setHomePlayer(updatedPlayer);
+        updatedPlayOffGame.setAwayPlayerResult(updatedPlayerResult);
+        updatedPlayOffGame.setHomePlayerResult(updatedPlayerResult);
         updatedPlayOffGame.setPosition(2);
         updatedPlayOffGame.setGroup(updatedGroup);
         tournamentAggregationDao.updatePlayOffGame(updatedPlayOffGame);

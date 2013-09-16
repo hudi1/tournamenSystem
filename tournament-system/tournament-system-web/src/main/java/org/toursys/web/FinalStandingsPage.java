@@ -95,9 +95,11 @@ public class FinalStandingsPage extends BasePage {
                 protected void populateItem(final Item<FinalStanding> listItem) {
                     final FinalStanding finalStanding = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<FinalStanding>(finalStanding));
-                    listItem.add(new Label("name", finalStanding.getPlayer().getName()));
-                    listItem.add(new Label("surname", finalStanding.getPlayer().getSurname()));
-                    listItem.add(new Label("rank", listItem.getIndex() + 1 + "."));
+                    listItem.add(new Label("name", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
+                            .getName() : ""));
+                    listItem.add(new Label("surname", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
+                            .getSurname() : ""));
+                    listItem.add(new Label("rank", finalStanding.getFinalRank() + "."));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;

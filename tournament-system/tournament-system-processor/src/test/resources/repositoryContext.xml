@@ -45,6 +45,7 @@
     <bean id="groupDao" class="org.toursys.repository.dao.impl.GroupsDaoImpl" parent="dao" />
     <bean id="tournamentDao" class="org.toursys.repository.dao.impl.TournamentDaoImpl" parent="dao" />
     <bean id="userDao" class="org.toursys.repository.dao.impl.UserDaoImpl" parent="dao" />
+    <bean id="finalStandingDao" class="org.toursys.repository.dao.impl.FinalStandingDaoImpl" parent="dao" />
 
     <bean id="tournamentAggregationDao" class="org.toursys.repository.service.impl.TournamentAggregationDaoImpl">
         <property name="gameDao" ref="gameDao" />
@@ -56,6 +57,7 @@
         <property name="tournamentDao" ref="tournamentDao" />
         <property name="seasonDao" ref="seasonDao" />
         <property name="userDao" ref="userDao" />
+        <property name="finalStandingDao" ref="finalStandingDao" />
     </bean>
 
     <bean id="sqlFactory" class="org.sqlproc.engine.jdbc.JdbcEngineFactory" init-method="init">

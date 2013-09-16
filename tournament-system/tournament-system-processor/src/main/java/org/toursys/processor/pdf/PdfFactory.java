@@ -458,11 +458,11 @@ public class PdfFactory {
 
                 pdfTable.addCell(createLeftAlignCell(getRound(entry.getValue().size(), playOffGame.getPosition()) + ""));
 
-                if (playOffGame.getHomePlayer() != null && playOffGame.getAwayPlayer() != null) {
-                    String playersGame = playOffGame.getHomePlayer().getSurname() + " "
-                            + playOffGame.getHomePlayer().getName().charAt(0) + ". : "
-                            + playOffGame.getAwayPlayer().getSurname() + " "
-                            + playOffGame.getAwayPlayer().getName().charAt(0) + ". ";
+                if (playOffGame.getHomePlayerResult() != null && playOffGame.getAwayPlayerResult() != null) {
+                    String playersGame = playOffGame.getHomePlayerResult().getPlayer().getSurname() + " "
+                            + playOffGame.getHomePlayerResult().getPlayer().getName().charAt(0) + ". : "
+                            + playOffGame.getAwayPlayerResult().getPlayer().getSurname() + " "
+                            + playOffGame.getAwayPlayerResult().getPlayer().getName().charAt(0) + ". ";
 
                     pdfTable.addCell(createLeftAlignCell(playersGame));
 

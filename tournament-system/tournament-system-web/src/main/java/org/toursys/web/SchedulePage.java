@@ -120,8 +120,8 @@ public class SchedulePage extends BasePage {
                             + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
                                     + opponent.getPlayer().getSurname())));
 
-                    listItem.add(new TextField<String>("homeScore", new PropertyModel<String>(game, "homeScore"))
-                            .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    listItem.add(new TextField<String>("homeScore", new PropertyModel<String>(game, "homeScore")).add(
+                            new AjaxFormComponentUpdatingBehavior("onchange") {
 
                                 private static final long serialVersionUID = 1L;
 
@@ -129,9 +129,9 @@ public class SchedulePage extends BasePage {
                                 protected void onUpdate(AjaxRequestTarget target) {
                                     tournamentService.updateGame(game);
                                 }
-                            }));
-                    listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore"))
-                            .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                            }).setVisible(playerResult.getPlayer() != null));
+                    listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore")).add(
+                            new AjaxFormComponentUpdatingBehavior("onchange") {
 
                                 private static final long serialVersionUID = 1L;
 
@@ -139,7 +139,7 @@ public class SchedulePage extends BasePage {
                                 protected void onUpdate(AjaxRequestTarget target) {
                                     tournamentService.updateGame(game);
                                 }
-                            }));
+                            }).setVisible(playerResult.getPlayer() != null));
                     listItem.add(new Label("round", game.getRound().toString()));
                     listItem.add(new Label("hockey", game.getHockey().toString()));
 
@@ -160,6 +160,8 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    tournamentService.calculatePlayerResults(
+                            tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group)), tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));

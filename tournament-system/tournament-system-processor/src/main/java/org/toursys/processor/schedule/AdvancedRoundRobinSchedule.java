@@ -12,128 +12,199 @@ import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
-import org.toursys.repository.model.Tournament;
-
-import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 
 public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
 
-	@SpringBean(name = "tournamentService")
-	private TournamentService tournamentService;
+    @SpringBean(name = "tournamentService")
+    private TournamentService tournamentService;
 
-	private Groups group;
-	private Tournament tournament;
-	private List<PlayerResult> finalPlayers;
-	private LinkedList<List<PlayerResult>> playerByGroup;
-	private List<GameImpl> schedule;
-	private int playerCount;
+    private Groups finalGroup;
+    private LinkedList<List<PlayerResult>> playerPerBasicGroup;
+    private List<GameImpl> schedule;
+    private int playerCount;
 
-	public AdvancedRoundRobinSchedule(final Tournament tournament,
-			final Groups group, final List<PlayerResult> finalPlayers,
-			LinkedList<List<PlayerResult>> playerByGroup) {
-		this.tournament = tournament;
-		this.group = group;
-		this.finalPlayers = finalPlayers;
-		this.playerByGroup = playerByGroup;
-		System.out.println(playerByGroup.isEmpty());
-		for (List<PlayerResult> list : playerByGroup) {
-			for (PlayerResult playerResult : list) {
-				System.out.println(playerResult);
-			}
-		}
-		
-		
-	}
+    public AdvancedRoundRobinSchedule(final Groups finalGroup, LinkedList<List<PlayerResult>> playerPerBasicGroup) {
+        this.finalGroup = finalGroup;
+        this.playerPerBasicGroup = playerPerBasicGroup;
+    }
 
-	public void createSchedule() {
-		schedule = new ArrayList<GameImpl>();
-		if (playerByGroup.isEmpty()) {
-			return;
-		}
-		checkPlayerCount();
+    public void createSchedule() {
+        schedule = new ArrayList<GameImpl>();
+        System.out.println(playerPerBasicGroup.size() + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        if (playerPerBasicGroup.isEmpty()) {
+            return;
+        }
 
-		int groupCount = playerByGroup.size() - 1;
+        // TODO vyhodit a osetrit aby k tomu nemohlo nastat
+        checkPlayerCount();
 
-		for (int i = 0; i < groupCount; i++) {
-			addGroupRound();
-			rotatePlayerByGroup();
-		}
-	}
+        int groupCount = playerPerBasicGroup.size();
 
-	@Override
-	public List<GameImpl> getSchedule() {
-		if (schedule == null) {
-			createSchedule();
-		}
-		return schedule;
-	}
+        if (groupCount % 2 == 0) {
+            for (int i = 0; i < groupCount; i++) {
+                createEvenGroupRound();
+                rotatePlayerPerBasicGroup();
+            }
+        } else {
+            // TODO neparny pocet skupin
+            // createOddGroupRound();
+        }
+    }
 
-	private void checkPlayerCount() {
+    @Override
+    public List<GameImpl> getSchedule() {
+        if (schedule == null) {
+            createSchedule();
+        }
+        System.out.println("hhhhhhhhhhhhhhhhhh121 " + schedule.size());
 
-		for (int i = 0; i < playerByGroup.size() - 1; i++) {
-			if (playerByGroup.get(i).size() != playerByGroup.get(i + 1).size()) {
-				throw new TournamentException(
-						"Count of players in groups where is counted previous result is not same");
-			}
-		}
-		playerCount = playerByGroup.get(0).size();
-	}
+        return schedule;
+    }
 
-	private void addGroupRound() {
-		if (playerByGroup.size() % 2 == 0) {
-			List<Round> rounds = new ArrayList<Round>();
-			for (int i = 0; i < playerByGroup.size() / 2; i++) {
-				rounds.add(new Round(playerByGroup.get(i), playerByGroup
-						.get(playerByGroup.size() - i - 1)));
-			}
-			for (int i = 0; i < playerCount; i++) {
-				for (Round round : rounds) {
-					round.addNextGames();
-				}
-			}
-		} else {
-			throw new NotImplementedException("");
-		}
-	}
+    private void checkPlayerCount() {
+        for (int i = 0; i < playerPerBasicGroup.size() - 1; i++) {
+            if (playerPerBasicGroup.get(i).size() != playerPerBasicGroup.get(i + 1).size()) {
+                throw new TournamentException("Count of players in groups where is counted previous result is not same");
+            }
+        }
+        playerCount = playerPerBasicGroup.get(0).size();
+    }
 
-	private void rotatePlayerByGroup() {
-		List<PlayerResult> lastGroupPlayer = playerByGroup.removeLast();
-		playerByGroup.add(1, lastGroupPlayer);
-	}
+    private void createEvenGroupRound() {
+        System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbb");
 
-	public class Round {
+        List<Round> rounds = new ArrayList<Round>();
+        for (int i = 0; i < playerPerBasicGroup.size() / 2; i++) {
+            rounds.add(new Round(playerPerBasicGroup.get(i),
+                    playerPerBasicGroup.get(playerPerBasicGroup.size() - i - 1)));
+        }
+        System.out.println("ccccccccccccccccccccccc");
 
-		private List<PlayerResult> playerResut1;
-		private List<PlayerResult> playerResut2;
+        for (int i = 0; i < playerCount; i++) {
+            for (Round round : rounds) {
+                System.out.println("ddddddddddddddddddd");
 
-		public Round(List<PlayerResult> playerResut1,
-				List<PlayerResult> playerResult2) {
-			this.playerResut1 = playerResut1;
-			this.playerResut2 = playerResult2;
-		}
+                round.addNextGames();
+            }
+        }
+    }
 
-		public void addNextGames() {
-			for (int i = 0; i < playerResut2.size(); i++) {
-				addNewGame(playerResut1.get(i), playerResut2.get(i));
-			}
-			Collections.rotate(playerResut2, 1);
-		}
+    private void createOddGroupRound() {
+        List<Round> rounds = new ArrayList<Round>();
 
-		private void addNewGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
-			if (homePlayer.getId() != null && awayPlayer.getId() != null) {
-				for (Game game : homePlayer.getGames()) {
-					if (game.getAwayPlayerResult().equals(awayPlayer)) {
-						GameImpl gameImpl = new GameImpl(game);
-						gameImpl.setHockey(schedule.size()
-								% group.getNumberOfHockey()
-								+ group.getIndexOfFirstHockey());
-						gameImpl.setRound(schedule.size()
-								/ group.getNumberOfHockey() + 1);
-						schedule.add(gameImpl);
-						break;
-					}
-				}
-			}
-		}
-	}
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < playerPerBasicGroup.size(); i++) {
+
+                if (playerPerBasicGroup.size() % 2 == 1) {
+                    if (j % 2 == 0) {
+                        if (i % 2 == 0) {
+                            if (i == playerPerBasicGroup.size() - 1) {
+                                fillVerticalGroup(rounds, i, playerPerBasicGroup);
+                            } else {
+                                fillUpHorizontalGroup(rounds, i, playerPerBasicGroup);
+                            }
+                        } else {
+                            fillDownHorizontalGroup(rounds, i, playerPerBasicGroup);
+                        }
+                    } else {
+                        if (i % 2 == 0) {
+                            if (i == 0) {
+                                fillVerticalGroup(rounds, i, playerPerBasicGroup);
+                            } else {
+                                fillDownHorizontalGroup(rounds, i, playerPerBasicGroup);
+                            }
+                        } else {
+                            fillUpHorizontalGroup(rounds, i, playerPerBasicGroup);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < playerCount; i++) {
+            for (Round round : rounds) {
+                round.addNextGames();
+            }
+        }
+    }
+
+    private void rotatePlayerPerBasicGroup() {
+        List<PlayerResult> lastGroupPlayer = playerPerBasicGroup.removeLast();
+        playerPerBasicGroup.add(1, lastGroupPlayer);
+    }
+
+    private void fillUpHorizontalGroup(List<Round> rounds, int i, LinkedList<List<PlayerResult>> playerByGroup) {
+        List<PlayerResult> playerResults1 = playerByGroup.get(i).subList(0, playerByGroup.get(i).size() / 2);
+        int index = i + 1;
+        if (index == playerByGroup.size()) {
+            index = 0;
+        }
+        List<PlayerResult> playerResults2 = playerByGroup.get(index).subList(0, playerByGroup.get(i).size() / 2);
+        rounds.add(new Round(playerResults1, playerResults2));
+
+    }
+
+    private void fillDownHorizontalGroup(List<Round> rounds, int i, LinkedList<List<PlayerResult>> playerByGroup) {
+        List<PlayerResult> playerResults1 = playerByGroup.get(i).subList(playerByGroup.get(i).size() / 2,
+                playerByGroup.get(i).size());
+        int index = i + 1;
+        if (index == playerByGroup.size()) {
+            index = 0;
+        }
+        List<PlayerResult> playerResults2 = playerByGroup.get(index).subList(playerByGroup.get(i).size() / 2,
+                playerByGroup.get(i).size());
+        rounds.add(new Round(playerResults1, playerResults2));
+    }
+
+    private void fillVerticalGroup(List<Round> rounds, int i, LinkedList<List<PlayerResult>> playerByGroup) {
+        List<PlayerResult> playerResults1 = playerByGroup.get(i).subList(0, playerByGroup.get(i).size() / 2);
+        int index = i + 1;
+        if (index == playerByGroup.size()) {
+            index = 0;
+        }
+        List<PlayerResult> playerResults2 = playerByGroup.get(index).subList(playerByGroup.get(i).size() / 2,
+                playerByGroup.get(i).size());
+        rounds.add(new Round(playerResults1, playerResults2));
+    }
+
+    public class Round {
+
+        private List<PlayerResult> playerResults1;
+        private List<PlayerResult> playerResults2;
+
+        public Round(List<PlayerResult> playerResults1, List<PlayerResult> playerResults2) {
+            this.playerResults1 = playerResults1;
+            this.playerResults2 = playerResults2;
+        }
+
+        public void addNextGames() {
+            for (int i = 0; i < playerResults2.size(); i++) {
+                System.out.println("eeeeeeeeeeeeeeeeeee");
+
+                addNewGame(playerResults1.get(i), playerResults2.get(i));
+            }
+            Collections.rotate(playerResults2, 1);
+        }
+
+        private void addNewGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
+            if (homePlayer.getId() != null && awayPlayer.getId() != null) {
+                for (Game game : homePlayer.getGames()) {
+                    // ??
+                    System.out.println("fffffffffffffffffff1" + awayPlayer + " " + game.getAwayPlayerResult());
+
+                    if (game.getAwayPlayerResult().equals(awayPlayer)) {
+                        System.out.println("ggggggggggggggggggggg");
+
+                        game._setHomePlayerResult(homePlayer)._setAwayPlayerResult(awayPlayer);
+                        GameImpl gameImpl = new GameImpl(game);
+                        gameImpl.setHockey(schedule.size() % finalGroup.getNumberOfHockey()
+                                + finalGroup.getIndexOfFirstHockey());
+                        gameImpl.setRound(schedule.size() / finalGroup.getNumberOfHockey() + 1);
+                        schedule.add(gameImpl);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

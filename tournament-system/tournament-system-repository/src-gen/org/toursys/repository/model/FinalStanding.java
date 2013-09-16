@@ -16,8 +16,8 @@ public class FinalStanding implements Serializable {
   public FinalStanding() {
   }
   
-  public FinalStanding(Player player, Tournament tournament) {
-    this.player = player;
+  public FinalStanding(Integer finalRank, Tournament tournament) {
+    this.finalRank = finalRank;
     this.tournament = tournament;
   }
   

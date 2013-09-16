@@ -146,7 +146,7 @@ public class UserEditPage extends BasePage {
 
             });
 
-            add(new Button("back") {
+            add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 

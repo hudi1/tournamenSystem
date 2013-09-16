@@ -81,7 +81,7 @@ public interface TournamentAggregationDao {
 
     public List<Player> getNotRegistratedPlayers(Tournament tournament);
 
-    public PlayOffGame createPlayOffGame(Player homePlayer, Player awayPlayer, Groups group, int position);
+    public PlayOffGame createPlayOffGame(PlayerResult homePlayer, PlayerResult awayPlayer, Groups group, int position);
 
     public int updatePlayOffGame(PlayOffGame playOffGame);
 

@@ -37,6 +37,8 @@ metagen-column-meta-type PLAYER_RESULT SCORE->score;
 pojogen-rename-columns GROUPS_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
 //pojogen-rename-columns USER_ROLE A->ADMIN U->USER;
 
+pojogen-create-columns PLAYER_RESULT TEMP->_boolean;
+
 table finalStanding FINAL_STANDING;
 table game GAME;
 table groups GROUPS;

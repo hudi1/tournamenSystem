@@ -9,7 +9,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,8 +16,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 import org.toursys.processor.util.NameGenerator;
 import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.GameImpl;
@@ -32,8 +29,6 @@ import org.toursys.repository.model.User;
 
 @RunWith(value = Parameterized.class)
 @ContextConfiguration(locations = { "classpath:applicationContextTest-business.xml" })
-@Transactional
-@TransactionConfiguration(defaultRollback = true)
 public class TournamentServiceParametrizedTest {
 
     @Autowired
@@ -44,7 +39,7 @@ public class TournamentServiceParametrizedTest {
 
     private Tournament tournament;
     private User user;
-    private static final int MAX_PLAYER_COUNT = 4;
+    private static final int MAX_PLAYER_COUNT = 20;
     private static final int MAX_GROUP_COUNT = 2;
 
     private int playerCount;
@@ -64,8 +59,8 @@ public class TournamentServiceParametrizedTest {
     @Parameters
     public static List<Object[]> data() {
         final List<Object[]> parametry = new ArrayList<Object[]>();
-        for (int i = 4; i <= MAX_PLAYER_COUNT; i++) {
-            for (int j = 2; j <= i / 2; j++) {
+        for (int i = 12; i <= 12; i++) {
+            for (int j = 6; j <= 6; j++) {
                 for (int k = 2; k <= MAX_GROUP_COUNT; k++) {
                     parametry.add(new Object[] { i, j, k });
                 }
@@ -97,7 +92,6 @@ public class TournamentServiceParametrizedTest {
     }
 
     @Test
-    @Ignore
     public void createTournamentGamesTest() {
         System.out.println("Start Players: " + playerCount + " HockeyCount: " + hockeyCount + " Groups: " + groupCount);
 
@@ -120,11 +114,7 @@ public class TournamentServiceParametrizedTest {
             group.setNumberOfHockey(hockeyCount);
 
             List<GameImpl> schedule = tournamentService.getSchedule(group, tournament, playerResults);
-            int gamesCount = playerCount * 2;
-
-            for (GameImpl gameImpl : schedule) {
-                System.out.println(gameImpl.toStringFull());
-            }
+            int gamesCount = playerCount * (playerCount - 1) / 2;
             Assert.assertEquals(schedule.size(), gamesCount);
 
             Set<PlayerResult> players = new HashSet<PlayerResult>();
@@ -134,16 +124,13 @@ public class TournamentServiceParametrizedTest {
                     checkConstainsInRound(gameImpl.getAwayPlayerResult(), players);
                     checkConstainsInRound(gameImpl.getHomePlayerResult(), players);
                 } else {
-                    // Assert.assertEquals(players.size(), hockeyCount * 2);
+                    Assert.assertEquals(players.size(), hockeyCount * 2);
                     players.clear();
                     round++;
                     checkConstainsInRound(gameImpl.getAwayPlayerResult(), players);
                     checkConstainsInRound(gameImpl.getHomePlayerResult(), players);
                 }
             }
-
-            int roundCount = (playerCount % 2 == 0) ? playerCount : playerCount + 1;
-            Assert.assertEquals(round, roundCount);
 
             for (GameImpl game : schedule) {
                 game.setHomeScore(getRandomScore());
@@ -159,6 +146,7 @@ public class TournamentServiceParametrizedTest {
         // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A
         // skupine tak vyhodi vyjimku
         tournamentService.createFinalGroup(tournament);
+        tournamentService.createFinalStandings(tournament, playerCount * 2);
 
         List<Groups> finalGroups = tournamentService.getFinalGroups(new Groups()._setTournament(tournament));
 
@@ -219,6 +207,9 @@ public class TournamentServiceParametrizedTest {
                 }
                 Assert.assertEquals(gamesCount, playOffGames.size());
             }
+
+            tournamentService.getPlayOffGames(tournament, finalGroup);
+
         }
     }
 

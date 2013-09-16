@@ -28,10 +28,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
+import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
-import org.toursys.repository.model.Player;
+import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -120,20 +121,24 @@ public class PlayOffPage extends BasePage {
                         protected void populateItem(final ListItem<PlayOffGame> listItem) {
                             final PlayOffGame playOffGame = listItem.getModelObject();
                             listItem.setModel(new CompoundPropertyModel<PlayOffGame>(playOffGame));
-                            Player player = playOffGame.getHomePlayer();
-                            Player opponent = playOffGame.getAwayPlayer();
+                            PlayerResult playerResult = playOffGame.getHomePlayerResult();
+                            PlayerResult opponentResult = playOffGame.getAwayPlayerResult();
 
-                            listItem.add(new Label("players", ((player != null) ? (player.getName() + " " + player
-                                    .getSurname()) : " ")
-                                    + "           :           "
-                                    + ((opponent != null) ? (opponent.getName() + " " + opponent.getSurname()) : " ")));
+                            listItem.add(new Label(
+                                    "players",
+                                    ((playerResult != null && playerResult.getPlayer() != null) ? (playerResult
+                                            .getPlayer().getName() + " " + playerResult.getPlayer().getSurname()) : " ")
+                                            + "           :           "
+                                            + ((opponentResult != null && opponentResult.getPlayer() != null) ? (opponentResult
+                                                    .getPlayer().getName() + " " + opponentResult.getPlayer()
+                                                    .getSurname()) : " ")));
 
                             int playerCount = getViewSize() + 1;
                             if (group.getPlayThirdPlace() && getViewSize() > 1) {
                                 playerCount--;
                             }
 
-                            listItem.add(new Label("round", tournamentService.getRound(playerCount,
+                            listItem.add(new Label("round", TournamentUtil.getRound(playerCount,
                                     listItem.getIndex() + 1) + "."));
 
                             ListView<PlayOffResult> gameList = new ListView<PlayOffResult>("gameList",
@@ -265,7 +270,7 @@ public class PlayOffPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.createFinalStandings(tournament);
+                    // tournamentService.createFinalStandings(tournament);
                     setResponsePage(FinalStandingsPage.class, getPageParameters());
                 }
             });
