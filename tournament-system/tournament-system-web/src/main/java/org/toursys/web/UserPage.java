@@ -58,7 +58,7 @@ public class UserPage extends BasePage {
         IDataProvider<User> userDataProvider = new IDataProvider<User>() {
 
             private static final long serialVersionUID = 1L;
-            private List<User> users = tournamentService.getAllUsers();
+            private List<User> users = userService.getAllUsers();
 
             @Override
             public Iterator<User> iterator(int first, int count) {

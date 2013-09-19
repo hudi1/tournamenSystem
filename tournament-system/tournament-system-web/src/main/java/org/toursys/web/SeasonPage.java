@@ -63,7 +63,7 @@ public class SeasonPage extends BasePage {
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deleteSeason(((Season) listItem.getDefaultModelObject()));
+                        seasonService.deleteSeason(((Season) listItem.getDefaultModelObject()));
                         setResponsePage(SeasonPage.class);
                     }
 
@@ -91,7 +91,7 @@ public class SeasonPage extends BasePage {
         IDataProvider<Season> seasonDataProvider = new IDataProvider<Season>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Season> seasons = tournamentService.getListSeasons(new Season()._setUser(user));
+            private List<Season> seasons = seasonService.getSeasons(new Season()._setUser(user));
 
             @Override
             public Iterator<Season> iterator(int first, int count) {

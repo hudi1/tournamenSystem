@@ -7,14 +7,14 @@ import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.toursys.processor.service.UserService;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.User;
 
 public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
 
-    @SpringBean(name = "tournamentService")
-    protected TournamentService tournamentService;
+    @SpringBean(name = "userService")
+    protected UserService userService;
     private static final long serialVersionUID = 1L;
     private Roles roles = new Roles();
     private User user;
@@ -27,7 +27,7 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
 
     @Override
     public boolean authenticate(final String username, final String password) {
-        User user = tournamentService.getUser(new User()._setUserName(username));
+        User user = userService.getUser(new User()._setUserName(username));
         roles.clear();
         if (user != null && user.getPassword().equals(TournamentUtil.encryptUserPassword(password))) {
             this.user = user;

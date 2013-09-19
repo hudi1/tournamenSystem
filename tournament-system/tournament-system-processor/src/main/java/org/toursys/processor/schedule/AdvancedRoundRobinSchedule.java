@@ -30,7 +30,6 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
 
     public void createSchedule() {
         schedule = new ArrayList<GameImpl>();
-        System.out.println(playerPerBasicGroup.size() + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         if (playerPerBasicGroup.isEmpty()) {
             return;
         }
@@ -56,7 +55,6 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
         if (schedule == null) {
             createSchedule();
         }
-        System.out.println("hhhhhhhhhhhhhhhhhh121 " + schedule.size());
 
         return schedule;
     }
@@ -71,19 +69,14 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
     }
 
     private void createEvenGroupRound() {
-        System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-
         List<Round> rounds = new ArrayList<Round>();
         for (int i = 0; i < playerPerBasicGroup.size() / 2; i++) {
             rounds.add(new Round(playerPerBasicGroup.get(i),
                     playerPerBasicGroup.get(playerPerBasicGroup.size() - i - 1)));
         }
-        System.out.println("ccccccccccccccccccccccc");
 
         for (int i = 0; i < playerCount; i++) {
             for (Round round : rounds) {
-                System.out.println("ddddddddddddddddddd");
-
                 round.addNextGames();
             }
         }
@@ -179,8 +172,6 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
 
         public void addNextGames() {
             for (int i = 0; i < playerResults2.size(); i++) {
-                System.out.println("eeeeeeeeeeeeeeeeeee");
-
                 addNewGame(playerResults1.get(i), playerResults2.get(i));
             }
             Collections.rotate(playerResults2, 1);
@@ -189,12 +180,7 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
         private void addNewGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
             if (homePlayer.getId() != null && awayPlayer.getId() != null) {
                 for (Game game : homePlayer.getGames()) {
-                    // ??
-                    System.out.println("fffffffffffffffffff1" + awayPlayer + " " + game.getAwayPlayerResult());
-
                     if (game.getAwayPlayerResult().equals(awayPlayer)) {
-                        System.out.println("ggggggggggggggggggggg");
-
                         game._setHomePlayerResult(homePlayer)._setAwayPlayerResult(awayPlayer);
                         GameImpl gameImpl = new GameImpl(game);
                         gameImpl.setHockey(schedule.size() % finalGroup.getNumberOfHockey()

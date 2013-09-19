@@ -68,7 +68,7 @@ public class PlayerPage extends BasePage {
 
                     public void onClick(AjaxRequestTarget target) {
                         try {
-                            tournamentService.deletePlayer(player);
+                            playerService.deletePlayer(player);
                         } catch (SqlProcessorException e) {
                             logger.error("Error delete player: ", e);
                             error(getString("error.del.player"));
@@ -101,7 +101,7 @@ public class PlayerPage extends BasePage {
         IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Player> players = tournamentService.getListPlayer(new Player()._setUser(user));
+            private List<Player> players = playerService.getPlayers(new Player()._setUser(user));
 
             @Override
             public Iterator<Player> iterator(int first, int count) {

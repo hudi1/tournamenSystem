@@ -105,7 +105,7 @@ public class TournamentPage extends BasePage {
         IDataProvider<Tournament> tournamentDataProvider = new IDataProvider<Tournament>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Tournament> tournaments = tournamentService.getListTournaments(new Tournament()
+            private List<Tournament> tournaments = tournamentService.getTournaments(new Tournament()
                     ._setSeason(season));
 
             @Override

@@ -69,7 +69,7 @@ public class PlayOffPage extends BasePage {
 
         public PlayOffForm() {
             super("playOffForm");
-            finalGroups = tournamentService.getFinalGroups(new Groups()._setTournament(tournament));
+            finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
 
             final IDataProvider<Groups> groupsProvider = new IDataProvider<Groups>() {
 
@@ -111,7 +111,7 @@ public class PlayOffPage extends BasePage {
                 @Override
                 protected void populateItem(final Item<Groups> listItem) {
                     final Groups group = listItem.getModelObject();
-                    playOffGames = tournamentService.getPlayOffGames(tournament, group);
+                    playOffGames = playOffGameService.getPlayOffGames(tournament, group);
 
                     final ListView<PlayOffGame> dataView = new ListView<PlayOffGame>("rows", playOffGames) {
 
@@ -159,7 +159,7 @@ public class PlayOffPage extends BasePage {
 
                                         @Override
                                         protected void onUpdate(AjaxRequestTarget target) {
-                                            tournamentService.updatePlayOffResult(playOffResult);
+                                            playOffResultService.updatePlayOffResult(playOffResult);
                                         }
                                     }));
                                     gameItem.add(new TextField<String>("awayScore", new PropertyModel<String>(
@@ -207,7 +207,7 @@ public class PlayOffPage extends BasePage {
 
                                         @Override
                                         protected void onUpdate(AjaxRequestTarget target) {
-                                            tournamentService.updatePlayOffResult(playOffResult);
+                                            playOffResultService.updatePlayOffResult(playOffResult);
                                         }
                                     }));
                                 }

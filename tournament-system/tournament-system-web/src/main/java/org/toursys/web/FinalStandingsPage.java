@@ -39,7 +39,7 @@ public class FinalStandingsPage extends BasePage {
 
     public FinalStandingsPage(PageParameters parameters) {
         tournament = getTournament(parameters);
-        finalStandings = tournamentService.getFinalStandings(tournament);
+        finalStandings = finalStandingService.getFinalStandings(tournament);
         createPage();
     }
 

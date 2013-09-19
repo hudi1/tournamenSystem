@@ -2,6 +2,7 @@ package org.toursys.repository.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.toursys.repository.dao.FinalStandingDao;
 import org.toursys.repository.dao.GameDao;
 import org.toursys.repository.dao.GroupsDao;
@@ -59,7 +60,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Game> findGame(Game game) {
+    public List<Game> getListGames(Game game) {
         return gameDao.list(game);
     }
 
@@ -144,7 +145,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<PlayerResult> getListPlayerResult(PlayerResult playerResult) {
+    public List<PlayerResult> getListPlayerResults(PlayerResult playerResult) {
         return playerResultDao.list(playerResult);
     }
 
@@ -169,13 +170,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Season> getListSeason(Season season) {
+    public List<Season> getListSeasons(Season season) {
         return seasonDao.list(season);
-    }
-
-    @Override
-    public List<Season> getAllSeasons() {
-        return seasonDao.list(new Season());
     }
 
     @Override
@@ -225,7 +221,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<PlayOffGame> findPlayOffGame(PlayOffGame playOffGame) {
+    public List<PlayOffGame> getListPlayOffGames(PlayOffGame playOffGame) {
         return playOffGameDao.list(playOffGame);
     }
 
@@ -250,7 +246,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<PlayOffResult> findPlayOffResult(PlayOffResult playOffResult) {
+    public List<PlayOffResult> getListPlayOffResults(PlayOffResult playOffResult) {
         return playOffResultDao.list(playOffResult);
     }
 
@@ -275,7 +271,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<FinalStanding> findFinalStanding(FinalStanding finalStanding) {
+    public List<FinalStanding> getListFinalStandings(FinalStanding finalStanding) {
         return finalStandingDao.list(finalStanding);
     }
 
@@ -300,46 +296,56 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userDao.list(new User());
+    public List<User> getListUsers(User user) {
+        return userDao.list(user);
     }
 
+    @Required
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
+    @Required
     public void setGameDao(GameDao gameDao) {
         this.gameDao = gameDao;
     }
 
+    @Required
     public void setSeasonDao(SeasonDao seasonDao) {
         this.seasonDao = seasonDao;
     }
 
+    @Required
     public void setTournamentDao(TournamentDao tournamentDao) {
         this.tournamentDao = tournamentDao;
     }
 
+    @Required
     public void setGroupsDao(GroupsDao groupsDao) {
         this.groupsDao = groupsDao;
     }
 
+    @Required
     public void setPlayOffGameDao(PlayOffGameDao playOffGameDao) {
         this.playOffGameDao = playOffGameDao;
     }
 
+    @Required
     public void setPlayOffResultDao(PlayOffResultDao playOffResultDao) {
         this.playOffResultDao = playOffResultDao;
     }
 
+    @Required
     public void setPlayerDao(PlayerExtDao playerDao) {
         this.playerDao = playerDao;
     }
 
+    @Required
     public void setPlayerResultDao(PlayerResultExtDao playerResultDao) {
         this.playerResultDao = playerResultDao;
     }
 
+    @Required
     public void setFinalStandingDao(FinalStandingDao finalStandingDao) {
         this.finalStandingDao = finalStandingDao;
     }

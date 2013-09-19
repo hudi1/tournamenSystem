@@ -132,9 +132,9 @@ public class UserEditPage extends BasePage {
                         }
 
                         if (user.getId() != null) {
-                            tournamentService.updateUser(user);
+                            userService.updateUser(user);
                         } else {
-                            tournamentService.createUser(user);
+                            userService.createUser(user);
                         }
                     } catch (SqlProcessorException e) {
                         logger.error("Error edit user: ", e);
@@ -185,11 +185,11 @@ public class UserEditPage extends BasePage {
     }
 
     private boolean isExistingUsername(String username) {
-        return tournamentService.getUser(new User()._setUserName(username)) != null;
+        return userService.getUser(new User()._setUserName(username)) != null;
     }
 
     private boolean isExistingEmail(String email) {
-        return tournamentService.getUser(new User()._setEmail(email)) != null;
+        return userService.getUser(new User()._setEmail(email)) != null;
     }
 
     @Override

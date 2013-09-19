@@ -7,8 +7,35 @@
 
     <import resource="repositoryContext.xml" />
 
-    <bean id="tournamentService" class="org.toursys.processor.service.TournamentService">
+    <bean id="abstractService" class="org.toursys.processor.service.AbstractService" abstract="true">
         <property name="tournamentAggregationDao" ref="tournamentAggregationDao" />
+    </bean>
+    
+    <bean id="playerService" class="org.toursys.processor.service.PlayerService" parent="abstractService" />
+    <bean id="gameService" class="org.toursys.processor.service.GameService" parent="abstractService" />
+    <bean id="playOffResultService" class="org.toursys.processor.service.PlayOffResultService" parent="abstractService" />
+    <bean id="scheduleService" class="org.toursys.processor.service.ScheduleService" parent="abstractService" />
+    <bean id="seasonService" class="org.toursys.processor.service.SeasonService" parent="abstractService" />
+    <bean id="tournamentService" class="org.toursys.processor.service.TournamentService" parent="abstractService" />
+    <bean id="userService" class="org.toursys.processor.service.UserService" parent="abstractService" />
+
+    <bean id="groupService" class="org.toursys.processor.service.GroupService" parent="abstractService">
+        <property name="gameService" ref="gameService" />
+        <property name="playerResultService" ref="playerResultService" />
+    </bean>
+    <bean id="playerResultService" class="org.toursys.processor.service.PlayerResultService" parent="abstractService">
+        <property name="groupService" ref="groupService" />
+    </bean>
+    <bean id="playOffGameService" class="org.toursys.processor.service.PlayOffGameService" parent="abstractService">
+        <property name="finalStandingService" ref="finalStandingService" />
+        <property name="groupService" ref="groupService" />
+        <property name="playerResultService" ref="playerResultService" />
+        <property name="playOffResultService" ref="playOffResultService" />
+    </bean>
+
+    <bean id="finalStandingService" class="org.toursys.processor.service.FinalStandingService" parent="abstractService">
+        <property name="groupService" ref="groupService" />
+        <property name="playerResultService" ref="playerResultService" />
     </bean>
 
     <bean id="nameGenerator" class="org.toursys.processor.util.NameGenerator" />

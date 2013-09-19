@@ -21,7 +21,17 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.toursys.processor.service.FinalStandingService;
+import org.toursys.processor.service.GameService;
+import org.toursys.processor.service.GroupService;
+import org.toursys.processor.service.PlayOffGameService;
+import org.toursys.processor.service.PlayOffResultService;
+import org.toursys.processor.service.PlayerResultService;
+import org.toursys.processor.service.PlayerService;
+import org.toursys.processor.service.ScheduleService;
+import org.toursys.processor.service.SeasonService;
 import org.toursys.processor.service.TournamentService;
+import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
@@ -33,8 +43,39 @@ public abstract class BasePage extends WebPage {
 
     private static final long serialVersionUID = 1L;
 
+    @SpringBean(name = "playerService")
+    protected PlayerService playerService;
+
+    @SpringBean(name = "gameService")
+    protected GameService gameService;
+
+    @SpringBean(name = "playOffResultService")
+    protected PlayOffResultService playOffResultService;
+
+    @SpringBean(name = "scheduleService")
+    protected ScheduleService scheduleService;
+
+    @SpringBean(name = "seasonService")
+    protected SeasonService seasonService;
+
+    @SpringBean(name = "userService")
+    protected UserService userService;
+
+    @SpringBean(name = "groupService")
+    protected GroupService groupService;
+
+    @SpringBean(name = "playerResultService")
+    protected PlayerResultService playerResultService;
+
+    @SpringBean(name = "playOffGameService")
+    protected PlayOffGameService playOffGameService;
+
+    @SpringBean(name = "finalStandingService")
+    protected FinalStandingService finalStandingService;
+
     @SpringBean(name = "tournamentService")
     protected TournamentService tournamentService;
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IModel<String> headingModel = new Model<String>();
@@ -191,11 +232,11 @@ public abstract class BasePage extends WebPage {
     }
 
     protected Groups getGroup(PageParameters parameters) {
-        return tournamentService.getGroup(new Groups()._setId(parameters.get("groupid").toInteger()));
+        return groupService.getGroup(new Groups()._setId(parameters.get("groupid").toInteger()));
     }
 
     protected Season getSeason(PageParameters parameters) {
-        return tournamentService.getSeason(new Season()._setId(parameters.get("seasonid").toInteger()));
+        return seasonService.getSeason(new Season()._setId(parameters.get("seasonid").toInteger()));
     }
 
     // automaticke prihlasovanie pri zapametani

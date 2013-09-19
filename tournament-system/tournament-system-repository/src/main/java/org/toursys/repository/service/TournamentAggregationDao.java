@@ -23,7 +23,7 @@ public interface TournamentAggregationDao {
 
     public Game getGame(Game game);
 
-    public List<Game> findGame(Game game);
+    public List<Game> getListGames(Game game);
 
     public Groups createGroup(Groups group);
 
@@ -55,7 +55,7 @@ public interface TournamentAggregationDao {
 
     public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament);
 
-    public List<PlayerResult> getListPlayerResult(PlayerResult form);
+    public List<PlayerResult> getListPlayerResults(PlayerResult form);
 
     public Season createSeason(Season season);
 
@@ -65,9 +65,7 @@ public interface TournamentAggregationDao {
 
     public Season getSeason(Season season);
 
-    public List<Season> getAllSeasons();
-
-    public List<Season> getListSeason(Season season);
+    public List<Season> getListSeasons(Season season);
 
     public Tournament createTournament(Tournament tournaments);
 
@@ -89,7 +87,7 @@ public interface TournamentAggregationDao {
 
     public PlayOffGame getPlayOffGame(PlayOffGame playOffGame);
 
-    public List<PlayOffGame> findPlayOffGame(PlayOffGame playOffGame);
+    public List<PlayOffGame> getListPlayOffGames(PlayOffGame playOffGame);
 
     public PlayOffResult createPlayOffResult(PlayOffGame playOffGame);
 
@@ -99,7 +97,7 @@ public interface TournamentAggregationDao {
 
     public PlayOffResult getPlayOffResult(PlayOffResult playOffResult);
 
-    public List<PlayOffResult> findPlayOffResult(PlayOffResult playOffResult);
+    public List<PlayOffResult> getListPlayOffResults(PlayOffResult playOffResult);
 
     public User createUser(User user);
 
@@ -109,7 +107,7 @@ public interface TournamentAggregationDao {
 
     public User getUser(User user);
 
-    public List<User> getAllUsers();
+    public List<User> getListUsers(User user);
 
     public FinalStanding createFinalStanding(FinalStanding finalStanding);
 
@@ -119,6 +117,6 @@ public interface TournamentAggregationDao {
 
     public FinalStanding getFinalStanding(FinalStanding finalStanding);
 
-    public List<FinalStanding> findFinalStanding(FinalStanding finalStanding);
+    public List<FinalStanding> getListFinalStandings(FinalStanding finalStanding);
 
 }

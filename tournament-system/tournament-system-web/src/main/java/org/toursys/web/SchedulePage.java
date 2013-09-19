@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -60,8 +61,9 @@ public class SchedulePage extends BasePage {
     }
 
     private List<GameImpl> getSchedule() {
-        return tournamentService.getSchedule(group, tournament,
-                tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group)));
+        List<PlayerResult> playerResults = playerResultService.getPlayerResults(new PlayerResult()._setGroup(group));
+        return scheduleService.getSchedule(group, playerResults,
+                playerResultService.getAdvancedPlayersByGroup(group, tournament, playerResults));
     }
 
     private class ScheduleForm extends Form<Void> {
@@ -112,13 +114,47 @@ public class SchedulePage extends BasePage {
                     listItem.setModel(new CompoundPropertyModel<GameImpl>(game));
                     PlayerResult playerResult = game.getHomePlayerResult();
                     PlayerResult opponent = game.getAwayPlayerResult();
-                    listItem.add(new Label("players", (playerResult.getPlayer() == null) ? "-" : playerResult
-                            .getPlayer().getName()
-                            + " "
-                            + playerResult.getPlayer().getSurname()
-                            + " : "
-                            + ((opponent.getPlayer() == null) ? "-" : opponent.getPlayer().getName() + " "
-                                    + opponent.getPlayer().getSurname())));
+                    String playerName = "-";
+                    String opponentName = "-";
+                    boolean winnerPlayer = false;
+                    boolean winnerOpponent = false;
+
+                    if (game.getAwayScore() < game.getHomeScore()) {
+                        winnerPlayer = true;
+                    } else if (game.getAwayScore() > game.getHomeScore()) {
+                        winnerOpponent = true;
+                    }
+
+                    final boolean winner1 = winnerPlayer;
+                    final boolean winner2 = winnerOpponent;
+
+                    if (playerResult.getPlayer() != null) {
+                        playerName = playerResult.getPlayer().getName() + playerResult.getPlayer().getSurname() + " ";
+                    }
+
+                    if (opponent.getPlayer() != null) {
+                        opponentName = opponent.getPlayer().getName() + opponent.getPlayer().getSurname();
+                    }
+
+                    listItem.add(new Label("player", playerName)
+                            .add(new AttributeModifier("style", "font-weight:bold;") {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public boolean isEnabled(Component component) {
+                                    return winner1;
+                                }
+                            }));
+
+                    listItem.add(new Label("opponent", opponentName).add(new AttributeModifier("style",
+                            "font-weight:bold;") {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public boolean isEnabled(Component component) {
+                            return winner2;
+                        }
+                    }));
 
                     listItem.add(new TextField<String>("homeScore", new PropertyModel<String>(game, "homeScore")).add(
                             new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -127,7 +163,7 @@ public class SchedulePage extends BasePage {
 
                                 @Override
                                 protected void onUpdate(AjaxRequestTarget target) {
-                                    tournamentService.updateGame(game);
+                                    gameService.updateGame(game);
                                 }
                             }).setVisible(playerResult.getPlayer() != null));
                     listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore")).add(
@@ -137,11 +173,15 @@ public class SchedulePage extends BasePage {
 
                                 @Override
                                 protected void onUpdate(AjaxRequestTarget target) {
-                                    tournamentService.updateGame(game);
+                                    gameService.updateGame(game);
                                 }
                             }).setVisible(playerResult.getPlayer() != null));
+
+                    String hockey = listItem.getIndex() % group.getNumberOfHockey() + group.getIndexOfFirstHockey()
+                            + "";
+
                     listItem.add(new Label("round", game.getRound().toString()));
-                    listItem.add(new Label("hockey", game.getHockey().toString()));
+                    listItem.add(new Label("hockey", hockey));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
@@ -160,9 +200,18 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.calculatePlayerResults(
-                            tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group)), tournament);
+                    playerResultService.calculatePlayerResults(
+                            playerResultService.getPlayerResults(new PlayerResult()._setGroup(group)), tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
+                };
+            }.setDefaultFormProcessing(false));
+            add(new Button("save", new ResourceModel("save")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(SchedulePage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }

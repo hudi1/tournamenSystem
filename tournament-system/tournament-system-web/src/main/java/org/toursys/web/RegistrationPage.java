@@ -97,7 +97,7 @@ public class RegistrationPage extends BasePage {
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        tournamentService.deletePlayerResult(playerResult);
+                        playerResultService.deletePlayerResult(playerResult);
                         setResponsePage(RegistrationPage.class);
                     }
 
@@ -125,7 +125,7 @@ public class RegistrationPage extends BasePage {
         IDataProvider<PlayerResult> registeredPlayerDataProvider = new IDataProvider<PlayerResult>() {
 
             private static final long serialVersionUID = 1L;
-            private List<PlayerResult> allTournamenPlayers = tournamentService.getRegistratedPlayerResult(tournament);
+            private List<PlayerResult> allTournamenPlayers = playerResultService.getRegistratedPlayerResult(tournament);
 
             @Override
             public Iterator<PlayerResult> iterator(int first, int count) {
@@ -202,7 +202,7 @@ public class RegistrationPage extends BasePage {
             IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
 
                 private static final long serialVersionUID = 1L;
-                private List<Player> notRegistratedPlayer = tournamentService.getNotRegistratedPlayers(tournament);
+                private List<Player> notRegistratedPlayer = playerService.getNotRegistratedPlayers(tournament);
 
                 @Override
                 public Iterator<Player> iterator(int first, int count) {
@@ -293,7 +293,7 @@ public class RegistrationPage extends BasePage {
                         @Override
                         protected void onEvent(final AjaxRequestTarget target) {
                             if (player != null) {
-                                tournamentService.createBasicPlayerResult(tournament, player, group);
+                                playerResultService.createBasicPlayerResult(tournament, player, group);
                             }
                             setResponsePage(RegistrationPage.class, getPageParameters());
                         }
@@ -325,7 +325,7 @@ public class RegistrationPage extends BasePage {
                 public void onSubmit() {
 
                     if (selectedPlayer != null) {
-                        tournamentService.createBasicPlayerResult(tournament, selectedPlayer, group);
+                        playerResultService.createBasicPlayerResult(tournament, selectedPlayer, group);
                     }
                     setResponsePage(RegistrationPage.class, getPageParameters());
                 }
@@ -349,7 +349,7 @@ public class RegistrationPage extends BasePage {
                 public void onSubmit() {
 
                     Groups group = null;
-                    List<Groups> groups = tournamentService.getBasicGroups(new Groups()._setTournament(tournament));
+                    List<Groups> groups = groupService.getBasicGroups(new Groups()._setTournament(tournament));
                     if (!groups.isEmpty()) {
                         group = groups.get(0);
                     }

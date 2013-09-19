@@ -3,6 +3,7 @@ package org.toursys.processor.schedule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
@@ -43,15 +44,13 @@ public class BasicRoundRobinSchedule implements RoundRobinSchedule {
             if (game.getRound().equals(round)) {
                 gameInRound.add(game);
             } else {
-                Collections.shuffle(gameInRound);
+                Collections.shuffle(gameInRound, new Random(group.getId().longValue()));
                 newSchedule.addAll(gameInRound);
                 gameInRound.clear();
                 gameInRound.add(game);
                 round++;
             }
         }
-        // TODO vymysliet daco ine
-        // Collections.shuffle(gameInRound);
         newSchedule.addAll(gameInRound);
         schedule = new ArrayList<GameImpl>(newSchedule);
     }
@@ -85,7 +84,8 @@ public class BasicRoundRobinSchedule implements RoundRobinSchedule {
                 if (game.getAwayPlayerResult().equals(awayPlayer)) {
                     game._setHomePlayerResult(homePlayer)._setAwayPlayerResult(awayPlayer);
                     GameImpl gameImpl = new GameImpl(game);
-                    gameImpl.setHockey(schedule.size() % group.getNumberOfHockey() + group.getIndexOfFirstHockey());
+                    // TODO Vyplnuje sa az pri vypise schedule zrusit aj round ?
+                    // gameImpl.setHockey(schedule.size() % group.getNumberOfHockey() + group.getIndexOfFirstHockey());
                     gameImpl.setRound(schedule.size() / group.getNumberOfHockey() + 1);
                     schedule.add(gameImpl);
                     break;

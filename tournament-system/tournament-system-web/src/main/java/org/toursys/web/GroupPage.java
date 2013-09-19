@@ -66,10 +66,10 @@ public class GroupPage extends BasePage {
 
     private void getPlayerResults() {
         if (group != null) {
-            this.playerResults = tournamentService.getPlayerResultInGroup(new PlayerResult()._setGroup(group));
-            tournamentService.createGames(playerResults);
+            this.playerResults = playerResultService.getPlayerResults(new PlayerResult()._setGroup(group));
+            gameService.processGames(playerResults);
 
-            if (/* calculateResult || */group.getType() != GroupsType.BASIC) {
+            if (group.getType() != GroupsType.BASIC) {
                 try {
                     calculatePlayerResults();
                 } catch (SamePlayerRankException e) {
@@ -78,7 +78,7 @@ public class GroupPage extends BasePage {
             }
 
             if (group.getType().equals(GroupsType.FINAL)) {
-                tournamentService.updateNotPromotingFinalStandings(playerResults, group, tournament);
+                finalStandingService.updateNotPromotingFinalStandings(playerResults, group, tournament);
             }
 
         } else {
@@ -157,7 +157,7 @@ public class GroupPage extends BasePage {
     }
 
     private void calculatePlayerResults() {
-        tournamentService.calculatePlayerResults(playerResults, tournament);
+        playerResultService.calculatePlayerResults(playerResults, tournament);
     }
 
     private void createGroups() {
@@ -286,14 +286,10 @@ public class GroupPage extends BasePage {
     private class GroupForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
-        private List<Groups> groups = new ArrayList<Groups>();
+        private List<Groups> groups = groupService.getGroups(new Groups()._setTournament(tournament));
 
         public GroupForm() {
             super("groupForm");
-            List<Groups> basicGroups = tournamentService.getBasicGroups(new Groups()._setTournament(tournament));
-            List<Groups> finalGroups = tournamentService.getFinalGroups(new Groups()._setTournament(tournament));
-            groups.addAll(basicGroups);
-            groups.addAll(finalGroups);
 
             IDataProvider<Groups> dataProvider = new IDataProvider<Groups>() {
 
@@ -394,8 +390,11 @@ public class GroupPage extends BasePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createSheets(WicketApplication.getFilesPath(),
-                                tournamentService.getSchedule(group, tournament, playerResults), group);
+                        tempFile = PdfFactory.createSheets(
+                                WicketApplication.getFilesPath(),
+                                scheduleService.getSchedule(group, playerResults,
+                                        playerResultService.getAdvancedPlayersByGroup(group, tournament, playerResults)),
+                                group);
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
                         throw new RuntimeException(e);
@@ -414,8 +413,10 @@ public class GroupPage extends BasePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createSchedule(WicketApplication.getFilesPath(),
-                                tournamentService.getSchedule(group, tournament, playerResults));
+                        tempFile = PdfFactory.createSchedule(
+                                WicketApplication.getFilesPath(),
+                                scheduleService.getSchedule(group, playerResults,
+                                        playerResultService.getAdvancedPlayersByGroup(group, tournament, playerResults)));
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -454,9 +455,9 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.createFinalGroup(tournament);
-                    tournamentService.createFinalStandings(tournament,
-                            tournamentService.getRegistratedPlayerResult(tournament).size());
+                    groupService.createFinalGroup(tournament);
+                    finalStandingService.processFinalStandings(tournament, playerResultService
+                            .getRegistratedPlayerResult(tournament).size());
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -469,7 +470,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.copyResult(tournament);
+                    groupService.copyResult(tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };

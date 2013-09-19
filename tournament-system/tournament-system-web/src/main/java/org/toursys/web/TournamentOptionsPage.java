@@ -108,7 +108,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    tournamentService.updateGroups(tournament, group);
+                    groupService.updateGroups(tournament, group);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });

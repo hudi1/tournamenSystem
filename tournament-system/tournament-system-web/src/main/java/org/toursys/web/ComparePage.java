@@ -12,7 +12,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.TournamentService;
+import org.toursys.processor.service.GroupService;
+import org.toursys.processor.service.PlayerResultService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.PlayerResult;
 
@@ -21,8 +22,11 @@ public class ComparePage extends WebPage {
 
     private static final long serialVersionUID = 1L;
 
-    @SpringBean(name = "tournamentService")
-    protected TournamentService tournamentService;
+    @SpringBean(name = "playerResultService")
+    protected PlayerResultService playerResultService;
+
+    @SpringBean(name = "groupService")
+    protected GroupService groupService;
 
     private PlayerResult playerResult1;
     private PlayerResult playerResult2;
@@ -82,8 +86,8 @@ public class ComparePage extends WebPage {
                 private static final long serialVersionUID = 1L;
 
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    tournamentService.updatePlayerResult(player1);
-                    tournamentService.updatePlayerResult(player2);
+                    playerResultService.updatePlayerResult(player1);
+                    playerResultService.updatePlayerResult(player2);
                     window.close(target);
                 }
             });
@@ -92,7 +96,7 @@ public class ComparePage extends WebPage {
                 private static final long serialVersionUID = 1L;
 
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    tournamentService.resetEqualRank(group);
+                    groupService.resetEqualRank(group);
                     window.close(target);
                 }
             });

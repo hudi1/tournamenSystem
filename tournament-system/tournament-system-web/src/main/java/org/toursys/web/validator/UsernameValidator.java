@@ -5,13 +5,13 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.toursys.processor.service.TournamentService;
+import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.User;
 
 public class UsernameValidator extends AbstractValidator<String> {
 
-    @SpringBean(name = "tournamentService")
-    protected TournamentService tournamentService;
+    @SpringBean(name = "userService")
+    protected UserService userService;
 
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class UsernameValidator extends AbstractValidator<String> {
     @Override
     protected void onValidate(IValidatable<String> validatable) {
         String username = validatable.getValue();
-        User user = tournamentService.getUser(new User()._setUserName(username));
+        User user = userService.getUser(new User()._setUserName(username));
         if (user != null) {
             error(validatable);
         }

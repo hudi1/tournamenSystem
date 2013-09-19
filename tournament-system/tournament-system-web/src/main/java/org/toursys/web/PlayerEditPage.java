@@ -46,9 +46,9 @@ public class PlayerEditPage extends BasePage {
                 public void onSubmit() {
                     try {
                         if (player.getId() != null) {
-                            tournamentService.updatePlayer(player);
+                            playerService.updatePlayer(player);
                         } else {
-                            tournamentService.createPlayer(player);
+                            playerService.createPlayer(player);
                         }
                     } catch (SqlProcessorException e) {
                         logger.error("Error edit player: ", e);

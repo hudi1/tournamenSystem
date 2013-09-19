@@ -46,9 +46,9 @@ public class SeasonEditPage extends BasePage {
                 public void onSubmit() {
                     try {
                         if (season.getId() != null) {
-                            tournamentService.updateSeason(season);
+                            seasonService.updateSeason(season);
                         } else {
-                            tournamentService.createSeason(season);
+                            seasonService.createSeason(season);
                         }
                     } catch (SqlProcessorException e) {
                         logger.error("Error edit season: ", e);
