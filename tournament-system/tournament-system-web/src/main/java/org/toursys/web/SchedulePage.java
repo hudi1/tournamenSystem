@@ -1,5 +1,6 @@
 package org.toursys.web;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -119,10 +120,12 @@ public class SchedulePage extends BasePage {
                     boolean winnerPlayer = false;
                     boolean winnerOpponent = false;
 
-                    if (game.getAwayScore() < game.getHomeScore()) {
-                        winnerPlayer = true;
-                    } else if (game.getAwayScore() > game.getHomeScore()) {
-                        winnerOpponent = true;
+                    if (game.getAwayScore() != null && game.getHomeScore() != null) {
+                        if (game.getAwayScore() < game.getHomeScore()) {
+                            winnerPlayer = true;
+                        } else if (game.getAwayScore() > game.getHomeScore()) {
+                            winnerOpponent = true;
+                        }
                     }
 
                     final boolean winner1 = winnerPlayer;
@@ -163,7 +166,7 @@ public class SchedulePage extends BasePage {
 
                                 @Override
                                 protected void onUpdate(AjaxRequestTarget target) {
-                                    gameService.updateGame(game);
+                                    gameService.updateBothGames(game);
                                 }
                             }).setVisible(playerResult.getPlayer() != null));
                     listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore")).add(
@@ -173,7 +176,7 @@ public class SchedulePage extends BasePage {
 
                                 @Override
                                 protected void onUpdate(AjaxRequestTarget target) {
-                                    gameService.updateGame(game);
+                                    gameService.updateBothGames(game);
                                 }
                             }).setVisible(playerResult.getPlayer() != null));
 
@@ -200,8 +203,10 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    playerResultService.calculatePlayerResults(
-                            playerResultService.getPlayerResults(new PlayerResult()._setGroup(group)), tournament);
+                    List<PlayerResult> playerResult = playerResultService.getPlayerResults(new PlayerResult()
+                            ._setGroup(group));
+                    System.out.println(Arrays.toString(playerResult.toArray()) + "aaaaaaaaaaa");
+                    playerResultService.calculatePlayerResults(playerResult, tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
