@@ -1,6 +1,5 @@
 package org.toursys.web;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -205,7 +204,6 @@ public class SchedulePage extends BasePage {
                 public void onSubmit() {
                     List<PlayerResult> playerResult = playerResultService.getPlayerResults(new PlayerResult()
                             ._setGroup(group));
-                    System.out.println(Arrays.toString(playerResult.toArray()) + "aaaaaaaaaaa");
                     playerResultService.calculatePlayerResults(playerResult, tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
