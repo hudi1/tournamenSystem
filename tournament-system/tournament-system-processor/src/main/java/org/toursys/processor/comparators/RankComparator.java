@@ -2,11 +2,11 @@ package org.toursys.processor.comparators;
 
 import java.util.Comparator;
 
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
-public class RankComparator implements Comparator<PlayerResult> {
+public class RankComparator implements Comparator<Participant> {
 
-    public int compare(PlayerResult o1, PlayerResult o2) {
+    public int compare(Participant o1, Participant o2) {
 
         if (o1.getRank() == null || o2.getRank() == null) {
             return 0;

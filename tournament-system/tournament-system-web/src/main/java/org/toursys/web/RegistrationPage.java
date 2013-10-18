@@ -32,8 +32,8 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Tournament;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -69,35 +69,35 @@ public class RegistrationPage extends BasePage {
     }
 
     private void createPage() {
-        IDataProvider<PlayerResult> registeredPlayerDataProvider = createRegisteredPlayerDataProvider();
-        DataView<PlayerResult> dataView = createDataview(registeredPlayerDataProvider);
+        IDataProvider<Participant> registeredPlayerDataProvider = createRegisteredPlayerDataProvider();
+        DataView<Participant> dataView = createDataview(registeredPlayerDataProvider);
         add(dataView);
 
         add(new RegistrationForm());
         add(new CreateTournamentForm());
     }
 
-    private DataView<PlayerResult> createDataview(IDataProvider<PlayerResult> registeredPlayerDataProvider) {
+    private DataView<Participant> createDataview(IDataProvider<Participant> registeredPlayerDataProvider) {
 
-        DataView<PlayerResult> registeredDataView = new DataView<PlayerResult>("registeredRows",
+        DataView<Participant> registeredDataView = new DataView<Participant>("registeredRows",
                 registeredPlayerDataProvider) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final Item<PlayerResult> listItem) {
-                final PlayerResult playerResult = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<PlayerResult>(playerResult));
-                listItem.add(new Label("name", playerResult.getPlayer().getName()));
-                listItem.add(new Label("surname", playerResult.getPlayer().getSurname()));
-                listItem.add(new Label("tableName", playerResult.getGroup().getName()));
+            protected void populateItem(final Item<Participant> listItem) {
+                final Participant participant = listItem.getModelObject();
+                listItem.setModel(new CompoundPropertyModel<Participant>(participant));
+                listItem.add(new Label("name", participant.getPlayer().getName()));
+                listItem.add(new Label("surname", participant.getPlayer().getSurname()));
+                listItem.add(new Label("tableName", participant.getGroup().getName()));
                 listItem.add(new Label("number", listItem.getIndex() + 1 + "."));
                 listItem.add(new AjaxLink<Void>("deletePlayer") {
 
                     private static final long serialVersionUID = 1L;
 
                     public void onClick(AjaxRequestTarget target) {
-                        playerResultService.deletePlayerResult(playerResult);
+                        participantService.deleteParticipant(participant);
                         setResponsePage(RegistrationPage.class);
                     }
 
@@ -121,14 +121,14 @@ public class RegistrationPage extends BasePage {
         return registeredDataView;
     }
 
-    private IDataProvider<PlayerResult> createRegisteredPlayerDataProvider() {
-        IDataProvider<PlayerResult> registeredPlayerDataProvider = new IDataProvider<PlayerResult>() {
+    private IDataProvider<Participant> createRegisteredPlayerDataProvider() {
+        IDataProvider<Participant> registeredPlayerDataProvider = new IDataProvider<Participant>() {
 
             private static final long serialVersionUID = 1L;
-            private List<PlayerResult> allTournamenPlayers = playerResultService.getRegistratedPlayerResult(tournament);
+            private List<Participant> allTournamenPlayers = participantService.getRegistratedParticipant(tournament);
 
             @Override
-            public Iterator<PlayerResult> iterator(int first, int count) {
+            public Iterator<Participant> iterator(int first, int count) {
                 return allTournamenPlayers.subList(first, first + count).iterator();
             }
 
@@ -138,13 +138,13 @@ public class RegistrationPage extends BasePage {
             }
 
             @Override
-            public IModel<PlayerResult> model(final PlayerResult object) {
-                return new LoadableDetachableModel<PlayerResult>() {
+            public IModel<Participant> model(final Participant object) {
+                return new LoadableDetachableModel<Participant>() {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected PlayerResult load() {
+                    protected Participant load() {
                         return object;
                     }
                 };
@@ -293,7 +293,7 @@ public class RegistrationPage extends BasePage {
                         @Override
                         protected void onEvent(final AjaxRequestTarget target) {
                             if (player != null) {
-                                playerResultService.createBasicPlayerResult(tournament, player, group);
+                                participantService.createBasicParticipant(tournament, player, group);
                             }
                             setResponsePage(RegistrationPage.class, getPageParameters());
                         }
@@ -325,7 +325,7 @@ public class RegistrationPage extends BasePage {
                 public void onSubmit() {
 
                     if (selectedPlayer != null) {
-                        playerResultService.createBasicPlayerResult(tournament, selectedPlayer, group);
+                        participantService.createBasicParticipant(tournament, selectedPlayer, group);
                     }
                     setResponsePage(RegistrationPage.class, getPageParameters());
                 }

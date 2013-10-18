@@ -12,12 +12,12 @@ import org.toursys.processor.util.GroupsName;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Tournament;
 
 public class GroupService extends AbstractService {
 
-    private PlayerResultService playerResultService;
+    private ParticipantService participantService;
     private GameService gameService;
 
     // Basic operations
@@ -46,8 +46,8 @@ public class GroupService extends AbstractService {
 
     public int updateGroups(Tournament tournament, Groups group) {
         if (group.getCopyResult()) {
-            // TODO nasetovat hracov getPlayerResultInGroup(new PlayerResult()._setGroup(group));
-            List<PlayerResult> player = group.getPlayerResults();
+            // TODO nasetovat hracov getParticipantInGroup(new Participant()._setGroup(group));
+            List<Participant> player = group.getParticipants();
             // TODO co ked ich bude menej postupovat ako je zadane
             if (tournament.getFinalPromoting() % 2 == 0) {
                 group.setNumberOfHockey(player.size() / 2);
@@ -92,10 +92,9 @@ public class GroupService extends AbstractService {
         String groupName = null;
 
         for (Groups group : basicGroups) {
-            List<PlayerResult> playerResults = playerResultService
-                    .getPlayerResults(new PlayerResult()._setGroup(group));
-            Collections.sort(playerResults, new RankComparator());
-            int promotingA = Math.min(playerResults.size(), tournament.getFinalPromoting());
+            List<Participant> participants = participantService.getParticipants(new Participant()._setGroup(group));
+            Collections.sort(participants, new RankComparator());
+            int promotingA = Math.min(participants.size(), tournament.getFinalPromoting());
             groupName = groupsName.getFirst();
             if (createGroups) {
                 int hockeyCount;
@@ -114,17 +113,17 @@ public class GroupService extends AbstractService {
             }
 
             for (int i = 0; i < promotingA; i++) {
-                logger.info("creating player result " + playerResults.get(i).getPlayer());
-                PlayerResult playerResult = playerResultService.createPlayerResult(playerResults.get(i).getPlayer(),
+                logger.info("creating player result " + participants.get(i).getPlayer());
+                Participant participant = participantService.createParticipant(participants.get(i).getPlayer(),
                         finalGroup);
-                finalGroup.getPlayerResults().add(playerResult);
+                finalGroup.getParticipants().add(participant);
             }
 
             int countLowerGroup = 1;
             while (true) {
 
                 String nextGroups = groupsName.getNext(groupName);
-                int promotingLower = Math.min(playerResults.size(), tournament.getFinalPromoting() + countLowerGroup
+                int promotingLower = Math.min(participants.size(), tournament.getFinalPromoting() + countLowerGroup
                         * tournament.getLowerPromoting());
                 int startIndex = promotingA + ((countLowerGroup - 1) * tournament.getLowerPromoting());
 
@@ -142,14 +141,14 @@ public class GroupService extends AbstractService {
                         logger.info("getting final group " + finalGroup);
                     }
                     for (int i = startIndex; i < promotingLower; i++) {
-                        logger.info("creating player result " + playerResults.get(i).getPlayer());
-                        PlayerResult playerResult = playerResultService.createPlayerResult(playerResults.get(i)
-                                .getPlayer(), finalGroup);
-                        finalGroup.getPlayerResults().add(playerResult);
+                        logger.info("creating player result " + participants.get(i).getPlayer());
+                        Participant participant = participantService.createParticipant(participants.get(i).getPlayer(),
+                                finalGroup);
+                        finalGroup.getParticipants().add(participant);
                     }
                 }
 
-                if (playerResults.size() == promotingLower) {
+                if (participants.size() == promotingLower) {
                     break;
                 }
                 countLowerGroup++;
@@ -158,13 +157,13 @@ public class GroupService extends AbstractService {
             createGroups = false;
         }
 
-        if (finalGroup.getPlayerResults().size() < tournament.getMinPlayersInGroup() && groupName != null
+        if (finalGroup.getParticipants().size() < tournament.getMinPlayersInGroup() && groupName != null
                 && !groupsName.getFirst().equals(groupName)) {
 
-            for (PlayerResult playerResult : finalGroup.getPlayerResults()) {
+            for (Participant participant : finalGroup.getParticipants()) {
                 String previousGroupName = groupsName.getPrevious(groupName);
-                playerResult.setGroup(groupByName.get(previousGroupName));
-                playerResultService.updatePlayerResult(playerResult);
+                participant.setGroup(groupByName.get(previousGroupName));
+                participantService.updateParticipant(participant);
             }
 
             logger.info("deleting final group " + finalGroup);
@@ -185,22 +184,22 @@ public class GroupService extends AbstractService {
 
         for (Groups finalGroups : finalGroupss) {
             if (finalGroups.getCopyResult()) { // TODO otestovat !!!!
-                List<PlayerResult> finalPlayerResults = playerResultService.getPlayerResults(new PlayerResult()
+                List<Participant> finalParticipants = participantService.getParticipants(new Participant()
                         ._setGroup(finalGroups));
                 for (Groups basicGroups : basicGroupss) {
-                    List<PlayerResult> playerResults = playerResultService.getPlayerResults(new PlayerResult()
+                    List<Participant> participants = participantService.getParticipants(new Participant()
                             ._setGroup(basicGroups));
-                    for (PlayerResult finalPlayerResult : finalPlayerResults) {
-                        for (PlayerResult playerResult : playerResults) {
-                            if (playerResult.getPlayer().getId().equals(finalPlayerResult.getPlayer().getId())) {
+                    for (Participant finalParticipant : finalParticipants) {
+                        for (Participant participant : participants) {
+                            if (participant.getPlayer().getId().equals(finalParticipant.getPlayer().getId())) {
                                 List<Game> finalGames = gameService.getGames(new Game()
-                                        ._setHomePlayerResult(finalPlayerResult));
+                                        ._setHomeParticipant(finalParticipant));
                                 List<Game> basicGames = gameService.getGames(new Game()
-                                        ._setHomePlayerResult(playerResult));
+                                        ._setHomeParticipant(participant));
                                 for (Game finalGame : finalGames) {
                                     for (Game basicGame : basicGames) {
-                                        if (finalGame.getAwayPlayerResult().getPlayer().getId()
-                                                .equals(basicGame.getAwayPlayerResult().getPlayer().getId())) {
+                                        if (finalGame.getAwayParticipant().getPlayer().getId()
+                                                .equals(basicGame.getAwayParticipant().getPlayer().getId())) {
                                             finalGame.setAwayScore(basicGame.getAwayScore());
                                             finalGame.setHomeScore(basicGame.getHomeScore());
                                             gameService.updateGame(finalGame);
@@ -219,16 +218,16 @@ public class GroupService extends AbstractService {
 
     @Transactional
     public void resetEqualRank(Groups group) {
-        List<PlayerResult> players = playerResultService.getPlayerResults(new PlayerResult()._setGroup(group));
-        for (PlayerResult playerResult : players) {
-            playerResult.setEqualRank(null);
-            playerResultService.updatePlayerResult(playerResult);
+        List<Participant> players = participantService.getParticipants(new Participant()._setGroup(group));
+        for (Participant participant : players) {
+            participant.setEqualRank(null);
+            participantService.updateParticipant(participant);
         }
     }
 
     @Required
-    public void setPlayerResultService(PlayerResultService playerResultService) {
-        this.playerResultService = playerResultService;
+    public void setParticipantService(ParticipantService participantService) {
+        this.participantService = participantService;
     }
 
     @Required

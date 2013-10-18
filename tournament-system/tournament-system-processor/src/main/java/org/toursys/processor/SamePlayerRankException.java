@@ -1,31 +1,31 @@
 package org.toursys.processor;
 
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
 public class SamePlayerRankException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    private PlayerResult player1;
-    private PlayerResult player2;
+    private Participant player1;
+    private Participant player2;
 
-    public SamePlayerRankException(PlayerResult player1, PlayerResult player2) {
+    public SamePlayerRankException(Participant player1, Participant player2) {
         this.player1 = player1;
         this.player2 = player2;
     }
 
-    public PlayerResult getPlayer1() {
+    public Participant getPlayer1() {
         return player1;
     }
 
-    public void setPlayer1(PlayerResult player1) {
+    public void setPlayer1(Participant player1) {
         this.player1 = player1;
     }
 
-    public PlayerResult getPlayer2() {
+    public Participant getPlayer2() {
         return player2;
     }
 
-    public void setPlayer2(PlayerResult player2) {
+    public void setPlayer2(Participant player2) {
         this.player2 = player2;
     }
 

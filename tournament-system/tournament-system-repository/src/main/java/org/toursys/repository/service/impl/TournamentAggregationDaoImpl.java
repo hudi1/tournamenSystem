@@ -6,20 +6,20 @@ import org.springframework.beans.factory.annotation.Required;
 import org.toursys.repository.dao.FinalStandingDao;
 import org.toursys.repository.dao.GameDao;
 import org.toursys.repository.dao.GroupsDao;
+import org.toursys.repository.dao.ParticipantExtDao;
 import org.toursys.repository.dao.PlayOffGameDao;
 import org.toursys.repository.dao.PlayOffResultDao;
 import org.toursys.repository.dao.PlayerExtDao;
-import org.toursys.repository.dao.PlayerResultExtDao;
 import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.dao.TournamentDao;
 import org.toursys.repository.dao.UserDao;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Score;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
@@ -32,7 +32,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     private PlayOffGameDao playOffGameDao;
     private PlayOffResultDao playOffResultDao;
     private PlayerExtDao playerDao;
-    private PlayerResultExtDao playerResultDao;
+    private ParticipantExtDao participantDao;
     private SeasonDao seasonDao;
     private GroupsDao groupsDao;
     private TournamentDao tournamentDao;
@@ -40,7 +40,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     private FinalStandingDao finalStandingDao;
 
     @Override
-    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
+    public Game createGame(Participant homePlayer, Participant awayPlayer) {
         return gameDao.insert(new Game(homePlayer, awayPlayer));
     }
 
@@ -120,33 +120,33 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public PlayerResult createPlayerResult(Player player, Groups group) {
-        return playerResultDao.insert(new PlayerResult(0, group, player, new Score(0, 0)));
+    public Participant createParticipant(Player player, Groups group) {
+        return participantDao.insert(new Participant(0, group, player, new Score(0, 0)));
     }
 
     @Override
-    public int updatePlayerResult(PlayerResult playerResult) {
-        return playerResultDao.update(playerResult);
+    public int updateParticipant(Participant participant) {
+        return participantDao.update(participant);
     }
 
     @Override
-    public int deletePlayerResult(PlayerResult playerResult) {
-        return playerResultDao.delete(playerResult);
+    public int deleteParticipant(Participant participant) {
+        return participantDao.delete(participant);
     }
 
     @Override
-    public PlayerResult getPlayerResult(PlayerResult playerResult) {
-        return playerResultDao.get(playerResult);
+    public Participant getParticipant(Participant participant) {
+        return participantDao.get(participant);
     }
 
     @Override
-    public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament) {
-        return playerResultDao.listRegistratedPlayerResult(tournament);
+    public List<Participant> getRegistratedParticipant(Tournament tournament) {
+        return participantDao.listTournamentParticipants(tournament);
     }
 
     @Override
-    public List<PlayerResult> getListPlayerResults(PlayerResult playerResult) {
-        return playerResultDao.list(playerResult);
+    public List<Participant> getListParticipants(Participant participant) {
+        return participantDao.list(participant);
     }
 
     @Override
@@ -200,9 +200,9 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public PlayOffGame createPlayOffGame(PlayerResult homePlayer, PlayerResult awayPlayer, Groups group, int position) {
-        return playOffGameDao.insert(new PlayOffGame(group, position)._setAwayPlayerResult(awayPlayer)
-                ._setHomePlayerResult(homePlayer));
+    public PlayOffGame createPlayOffGame(Participant homePlayer, Participant awayPlayer, Groups group, int position) {
+        return playOffGameDao.insert(new PlayOffGame(group, position)._setAwayParticipant(awayPlayer)
+                ._setHomeParticipant(homePlayer));
     }
 
     @Override
@@ -341,8 +341,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Required
-    public void setPlayerResultDao(PlayerResultExtDao playerResultDao) {
-        this.playerResultDao = playerResultDao;
+    public void setparticipantDao(ParticipantExtDao participantDao) {
+        this.participantDao = participantDao;
     }
 
     @Required

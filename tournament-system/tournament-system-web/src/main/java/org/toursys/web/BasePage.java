@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.FinalStandingService;
 import org.toursys.processor.service.GameService;
 import org.toursys.processor.service.GroupService;
+import org.toursys.processor.service.ParticipantService;
 import org.toursys.processor.service.PlayOffGameService;
 import org.toursys.processor.service.PlayOffResultService;
-import org.toursys.processor.service.PlayerResultService;
 import org.toursys.processor.service.PlayerService;
 import org.toursys.processor.service.ScheduleService;
 import org.toursys.processor.service.SeasonService;
@@ -64,8 +64,8 @@ public abstract class BasePage extends WebPage {
     @SpringBean(name = "groupService")
     protected GroupService groupService;
 
-    @SpringBean(name = "playerResultService")
-    protected PlayerResultService playerResultService;
+    @SpringBean(name = "participantService")
+    protected ParticipantService participantService;
 
     @SpringBean(name = "playOffGameService")
     protected PlayOffGameService playOffGameService;

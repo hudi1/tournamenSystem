@@ -30,9 +30,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
-import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -121,13 +121,13 @@ public class PlayOffPage extends BasePage {
                         protected void populateItem(final ListItem<PlayOffGame> listItem) {
                             final PlayOffGame playOffGame = listItem.getModelObject();
                             listItem.setModel(new CompoundPropertyModel<PlayOffGame>(playOffGame));
-                            PlayerResult playerResult = playOffGame.getHomePlayerResult();
-                            PlayerResult opponentResult = playOffGame.getAwayPlayerResult();
+                            Participant participant = playOffGame.getHomeParticipant();
+                            Participant opponentResult = playOffGame.getAwayParticipant();
 
                             listItem.add(new Label(
                                     "players",
-                                    ((playerResult != null && playerResult.getPlayer() != null) ? (playerResult
-                                            .getPlayer().getName() + " " + playerResult.getPlayer().getSurname()) : " ")
+                                    ((participant != null && participant.getPlayer() != null) ? (participant
+                                            .getPlayer().getName() + " " + participant.getPlayer().getSurname()) : " ")
                                             + "           :           "
                                             + ((opponentResult != null && opponentResult.getPlayer() != null) ? (opponentResult
                                                     .getPlayer().getName() + " " + opponentResult.getPlayer()

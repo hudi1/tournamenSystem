@@ -13,8 +13,8 @@ public class PlayOffGame implements Serializable {
   
   private static final long serialVersionUID = 1L;
   public static final int ORDER_BY_ID = 1;
-  public static final int ORDER_BY_HOME_PLAYER_RESULT = 4;
-  public static final int ORDER_BY_AWAY_PLAYER_RESULT = 3;
+  public static final int ORDER_BY_HOME_PARTICIPANT = 4;
+  public static final int ORDER_BY_AWAY_PARTICIPANT = 3;
   public static final int ORDER_BY_GROUP = 2;
 	
   public PlayOffGame() {
@@ -40,33 +40,33 @@ public class PlayOffGame implements Serializable {
     return this;
   }
   
-  private PlayerResult homePlayerResult;
+  private Participant homeParticipant;
   
-  public PlayerResult getHomePlayerResult() {
-    return homePlayerResult;
+  public Participant getHomeParticipant() {
+    return homeParticipant;
   }
   
-  public void setHomePlayerResult(PlayerResult homePlayerResult) {
-    this.homePlayerResult = homePlayerResult;
+  public void setHomeParticipant(Participant homeParticipant) {
+    this.homeParticipant = homeParticipant;
   }
   
-  public PlayOffGame _setHomePlayerResult(PlayerResult homePlayerResult) {
-    this.homePlayerResult = homePlayerResult;
+  public PlayOffGame _setHomeParticipant(Participant homeParticipant) {
+    this.homeParticipant = homeParticipant;
     return this;
   }
   
-  private PlayerResult awayPlayerResult;
+  private Participant awayParticipant;
   
-  public PlayerResult getAwayPlayerResult() {
-    return awayPlayerResult;
+  public Participant getAwayParticipant() {
+    return awayParticipant;
   }
   
-  public void setAwayPlayerResult(PlayerResult awayPlayerResult) {
-    this.awayPlayerResult = awayPlayerResult;
+  public void setAwayParticipant(Participant awayParticipant) {
+    this.awayParticipant = awayParticipant;
   }
   
-  public PlayOffGame _setAwayPlayerResult(PlayerResult awayPlayerResult) {
-    this.awayPlayerResult = awayPlayerResult;
+  public PlayOffGame _setAwayParticipant(Participant awayParticipant) {
+    this.awayParticipant = awayParticipant;
     return this;
   }
   
@@ -130,7 +130,7 @@ public class PlayOffGame implements Serializable {
   }  
   
   public enum Association {
-    playOffResults, awayPlayerResult, group, homePlayerResult
+    playOffResults, homeParticipant, awayParticipant, group
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -179,6 +179,6 @@ public class PlayOffGame implements Serializable {
   }
   
   public String toStringFull() {
-    return "PlayOffGame [position=" + position + ", id=" + id + ", awayPlayerResult=" + awayPlayerResult + ", group=" + group + ", homePlayerResult=" + homePlayerResult + "]";
+    return "PlayOffGame [position=" + position + ", id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + "]";
   }
 }

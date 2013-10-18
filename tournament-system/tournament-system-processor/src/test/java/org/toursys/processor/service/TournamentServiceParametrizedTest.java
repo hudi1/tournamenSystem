@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.toursys.processor.util.NameGenerator;
 import org.toursys.repository.dao.helper.TournamentFactory;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
@@ -39,7 +39,7 @@ public class TournamentServiceParametrizedTest {
     GroupService groupService;
 
     @Autowired
-    PlayerResultService playerResultService;
+    ParticipantService playerResultService;
 
     @Autowired
     PlayerService playerService;
@@ -55,6 +55,9 @@ public class TournamentServiceParametrizedTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    SeasonService seasonService;
 
     @Autowired
     NameGenerator nameGenerator;
@@ -97,11 +100,11 @@ public class TournamentServiceParametrizedTest {
         testContextManager.prepareTestInstance(this);
 
         user = TournamentFactory.createUser();
-        // user = tournamentService.createUser(user);
+        user = userService.createUser(user);
 
         Season season = TournamentFactory.createSeason();
         season.setUser(user);
-        // season = tournamentService.createSeason(season);
+        season = seasonService.createSeason(season);
 
         tournament = TournamentFactory.createTournament();
         tournament.setSeason(season);
@@ -110,7 +113,7 @@ public class TournamentServiceParametrizedTest {
 
     @After
     public void deleteUser() {
-        // tournamentService.deleteUser(user);
+        userService.deleteUser(user);
     }
 
     @Test
@@ -189,7 +192,7 @@ public class TournamentServiceParametrizedTest {
          */
     }
 
-    private void checkConstainsInRound(PlayerResult playerResult, Set<PlayerResult> players) {
+    private void checkConstainsInRound(Participant playerResult, Set<Participant> players) {
         if (playerResult != null) {
             boolean contains = !players.add(playerResult);
             if (contains) {

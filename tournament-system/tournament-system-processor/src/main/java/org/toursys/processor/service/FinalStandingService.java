@@ -9,13 +9,13 @@ import org.toursys.processor.util.GroupsName;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Tournament;
 
 public class FinalStandingService extends AbstractService {
 
     private GroupService groupService;
-    private PlayerResultService playerResultService;
+    private ParticipantService participantService;
 
     // Basic operations
 
@@ -58,39 +58,38 @@ public class FinalStandingService extends AbstractService {
         }
     }
 
-    public void updateFinalStandings(List<PlayerResult> playerResults, int round, int playerPlayOffCount,
+    public void updateFinalStandings(List<Participant> participants, int round, int playerPlayOffCount,
             Tournament tournament, int playerGroupCountSuffix) {
-        Collections.sort(playerResults, new RankComparator());
+        Collections.sort(participants, new RankComparator());
         // TODO optimalizovat !!!
-        Collections.reverse(playerResults);
+        Collections.reverse(participants);
         int maxRound = TournamentUtil.binlog(playerPlayOffCount);
         int actualRank = (int) Math.pow(2, maxRound - (round - 2)) + playerGroupCountSuffix;
-        for (PlayerResult playerResult : playerResults) {
+        for (Participant participant : participants) {
             FinalStanding finalStanding = getFinalStanding(new FinalStanding()._setFinalRank(actualRank)
                     ._setTournament(tournament));
-            if ((finalStanding != null && playerResult != null)
-                    && (finalStanding.getPlayer() == null || !finalStanding.getPlayer()
-                            .equals(playerResult.getPlayer()))) {
-                finalStanding.setPlayer(playerResult.getPlayer());
+            if ((finalStanding != null && participant != null)
+                    && (finalStanding.getPlayer() == null || !finalStanding.getPlayer().equals(participant.getPlayer()))) {
+                finalStanding.setPlayer(participant.getPlayer());
                 updateFinalStanding(finalStanding);
             }
             actualRank--;
         }
-        playerResults.clear();
+        participants.clear();
     }
 
-    public void updateNotPromotingFinalStandings(List<PlayerResult> playerResults, Groups group, Tournament tournament) {
+    public void updateNotPromotingFinalStandings(List<Participant> participants, Groups group, Tournament tournament) {
         logger.info("Start updating  not promoting final standing");
         GroupsName groupsName = new GroupsName();
         String previousGroupName = groupsName.getPrevious(group.getName());
 
-        int previousPlayerResultCount = 0;
+        int previousParticipantCount = 0;
         if (previousGroupName.length() > 0) {
             Groups previousGroup = groupService.getGroup(new Groups()._setName(previousGroupName)._setTournament(
                     tournament));
-            List<PlayerResult> previousPlayerResult = playerResultService.getPlayerResults(new PlayerResult()
+            List<Participant> previousParticipant = participantService.getParticipants(new Participant()
                     ._setGroup(previousGroup));
-            previousPlayerResultCount = previousPlayerResult.size();
+            previousParticipantCount = previousParticipant.size();
         }
         int playOffCountPlayer = 0;
         if (group.getName().equals("A")) {
@@ -99,13 +98,13 @@ public class FinalStandingService extends AbstractService {
             playOffCountPlayer = tournament.getPlayOffLower();
         }
 
-        for (int i = playerResults.size(); i > playOffCountPlayer; i--) {
+        for (int i = participants.size(); i > playOffCountPlayer; i--) {
             FinalStanding finalStanding = getFinalStanding(new FinalStanding()._setFinalRank(
-                    i + previousPlayerResultCount)._setTournament(tournament));
+                    i + previousParticipantCount)._setTournament(tournament));
             if (finalStanding != null
                     && (finalStanding.getPlayer() == null || !finalStanding.getPlayer().equals(
-                            playerResults.get(i - 1).getPlayer()))) {
-                finalStanding.setPlayer(playerResults.get(i - 1).getPlayer());
+                            participants.get(i - 1).getPlayer()))) {
+                finalStanding.setPlayer(participants.get(i - 1).getPlayer());
                 updateFinalStanding(finalStanding);
             }
         }
@@ -117,7 +116,7 @@ public class FinalStandingService extends AbstractService {
     }
 
     @Required
-    public void setPlayerResultService(PlayerResultService playerResultService) {
-        this.playerResultService = playerResultService;
+    public void setParticipantService(ParticipantService participantService) {
+        this.participantService = participantService;
     }
 }

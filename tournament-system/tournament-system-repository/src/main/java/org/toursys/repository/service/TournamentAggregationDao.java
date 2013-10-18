@@ -5,17 +5,17 @@ import java.util.List;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 
 public interface TournamentAggregationDao {
 
-    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer);
+    public Game createGame(Participant homePlayer, Participant awayPlayer);
 
     public int updateGame(Game game);
 
@@ -45,17 +45,17 @@ public interface TournamentAggregationDao {
 
     public List<Player> getListPlayers(Player player);
 
-    public PlayerResult createPlayerResult(Player player, Groups group);
+    public Participant createParticipant(Player player, Groups group);
 
-    public int updatePlayerResult(PlayerResult playerResult);
+    public int updateParticipant(Participant participant);
 
-    public int deletePlayerResult(PlayerResult playerResult);
+    public int deleteParticipant(Participant participant);
 
-    public PlayerResult getPlayerResult(PlayerResult playerResult);
+    public Participant getParticipant(Participant participant);
 
-    public List<PlayerResult> getRegistratedPlayerResult(Tournament tournament);
+    public List<Participant> getRegistratedParticipant(Tournament tournament);
 
-    public List<PlayerResult> getListPlayerResults(PlayerResult form);
+    public List<Participant> getListParticipants(Participant form);
 
     public Season createSeason(Season season);
 
@@ -79,7 +79,7 @@ public interface TournamentAggregationDao {
 
     public List<Player> getNotRegistratedPlayers(Tournament tournament);
 
-    public PlayOffGame createPlayOffGame(PlayerResult homePlayer, PlayerResult awayPlayer, Groups group, int position);
+    public PlayOffGame createPlayOffGame(Participant homePlayer, Participant awayPlayer, Groups group, int position);
 
     public int updatePlayOffGame(PlayOffGame playOffGame);
 

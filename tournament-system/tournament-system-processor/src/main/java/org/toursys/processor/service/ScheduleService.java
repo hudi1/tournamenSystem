@@ -11,13 +11,13 @@ import org.toursys.processor.schedule.RoundRobinSchedule;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
 public class ScheduleService extends AbstractService {
 
     @Transactional
-    public List<GameImpl> getSchedule(Groups group, List<PlayerResult> playerResults,
-            LinkedList<List<PlayerResult>> playerResultsByGroup) {
+    public List<GameImpl> getSchedule(Groups group, List<Participant> playerResults,
+            LinkedList<List<Participant>> playerResultsByGroup) {
         long time = System.currentTimeMillis();
         logger.info("creating schedule: " + Arrays.toString(playerResults.toArray()));
         RoundRobinSchedule roundRobinSchedule;

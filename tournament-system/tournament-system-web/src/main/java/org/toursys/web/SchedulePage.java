@@ -26,7 +26,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -61,9 +61,9 @@ public class SchedulePage extends BasePage {
     }
 
     private List<GameImpl> getSchedule() {
-        List<PlayerResult> playerResults = playerResultService.getPlayerResults(new PlayerResult()._setGroup(group));
-        return scheduleService.getSchedule(group, playerResults,
-                playerResultService.getAdvancedPlayersByGroup(group, tournament, playerResults));
+        List<Participant> participants = participantService.getParticipants(new Participant()._setGroup(group));
+        return scheduleService.getSchedule(group, participants,
+                participantService.getAdvancedPlayersByGroup(group, tournament, participants));
     }
 
     private class ScheduleForm extends Form<Void> {
@@ -112,8 +112,8 @@ public class SchedulePage extends BasePage {
                 protected void populateItem(final Item<GameImpl> listItem) {
                     final GameImpl game = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<GameImpl>(game));
-                    PlayerResult playerResult = game.getHomePlayerResult();
-                    PlayerResult opponent = game.getAwayPlayerResult();
+                    Participant participant = game.getHomeParticipant();
+                    Participant opponent = game.getAwayParticipant();
                     String playerName = "-";
                     String opponentName = "-";
                     boolean winnerPlayer = false;
@@ -130,8 +130,8 @@ public class SchedulePage extends BasePage {
                     final boolean winner1 = winnerPlayer;
                     final boolean winner2 = winnerOpponent;
 
-                    if (playerResult.getPlayer() != null) {
-                        playerName = playerResult.getPlayer().getName() + playerResult.getPlayer().getSurname() + " ";
+                    if (participant.getPlayer() != null) {
+                        playerName = participant.getPlayer().getName() + participant.getPlayer().getSurname() + " ";
                     }
 
                     if (opponent.getPlayer() != null) {
@@ -167,7 +167,7 @@ public class SchedulePage extends BasePage {
                                 protected void onUpdate(AjaxRequestTarget target) {
                                     gameService.updateBothGames(game);
                                 }
-                            }).setVisible(playerResult.getPlayer() != null));
+                            }).setVisible(participant.getPlayer() != null));
                     listItem.add(new TextField<String>("awayScore", new PropertyModel<String>(game, "awayScore")).add(
                             new AjaxFormComponentUpdatingBehavior("onchange") {
 
@@ -177,7 +177,7 @@ public class SchedulePage extends BasePage {
                                 protected void onUpdate(AjaxRequestTarget target) {
                                     gameService.updateBothGames(game);
                                 }
-                            }).setVisible(playerResult.getPlayer() != null));
+                            }).setVisible(participant.getPlayer() != null));
 
                     String hockey = listItem.getIndex() % group.getNumberOfHockey() + group.getIndexOfFirstHockey()
                             + "";
@@ -202,9 +202,9 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    List<PlayerResult> playerResult = playerResultService.getPlayerResults(new PlayerResult()
+                    List<Participant> participant = participantService.getParticipants(new Participant()
                             ._setGroup(group));
-                    playerResultService.calculatePlayerResults(playerResult, tournament);
+                    participantService.calculateParticipants(participant, tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
@@ -216,7 +216,7 @@ public class SchedulePage extends BasePage {
                 public void onSubmit() {
                     setResponsePage(SchedulePage.class, getPageParameters());
                 };
-            }.setDefaultFormProcessing(false));
+            });
         }
     }
 

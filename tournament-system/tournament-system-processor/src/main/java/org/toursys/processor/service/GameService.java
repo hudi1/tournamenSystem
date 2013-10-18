@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.repository.model.Game;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
 public class GameService extends AbstractService {
 
     // Basic operations
 
-    public Game createGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
+    public Game createGame(Participant homePlayer, Participant awayPlayer) {
         return tournamentAggregationDao.createGame(homePlayer, awayPlayer);
     }
 
@@ -28,7 +28,7 @@ public class GameService extends AbstractService {
     }
 
     public List<Game> getGames(Game game) {
-        game.setInit(Game.Association.homePlayerResult.name(), Game.Association.awayPlayerResult.name());
+        game.setInit(Game.Association.homeParticipant.name(), Game.Association.awayParticipant.name());
         return tournamentAggregationDao.getListGames(game);
     }
 
@@ -39,32 +39,32 @@ public class GameService extends AbstractService {
     // pomale
     public void updateBothGames(Game game) {
         updateGame(game);
-        Game gameDb = getGame(new Game()._setHomePlayerResult(game.getAwayPlayerResult())._setAwayPlayerResult(
-                game.getHomePlayerResult()));
+        Game gameDb = getGame(new Game()._setHomeParticipant(game.getAwayParticipant())._setAwayParticipant(
+                game.getHomeParticipant()));
         gameDb.setHomeScore(game.getAwayScore());
         gameDb.setAwayScore(game.getHomeScore());
         updateGame(gameDb);
     }
 
     @Transactional
-    public void processGames(final List<PlayerResult> playerResults) {
+    public void processGames(final List<Participant> participants) {
         long time = System.currentTimeMillis();
-        if (!playerResults.isEmpty() && playerResults.get(0).getGames().size() < playerResults.size() - 1) {
+        if (!participants.isEmpty() && participants.get(0).getGames().size() < participants.size() - 1) {
 
             // TODO zamysliet sa ci je v poriadku ked mazeme vysledky, pridat
             // aspon nejake varovanie
-            if (!playerResults.get(0).getGames().isEmpty()) {
-                for (PlayerResult playerResult : playerResults) {
-                    for (Game game : playerResult.getGames()) {
+            if (!participants.get(0).getGames().isEmpty()) {
+                for (Participant participant : participants) {
+                    for (Game game : participant.getGames()) {
                         deleteGame(game);
                     }
                 }
             }
 
-            for (PlayerResult playerResult1 : playerResults) {
-                for (PlayerResult playerResult2 : playerResults) {
-                    if (!playerResult1.equals(playerResult2)) {
-                        playerResult1.getGames().add(createGame(playerResult1, playerResult2));
+            for (Participant participant1 : participants) {
+                for (Participant participant2 : participants) {
+                    if (!participant1.equals(participant2)) {
+                        participant1.getGames().add(createGame(participant1, participant2));
                     }
                 }
             }

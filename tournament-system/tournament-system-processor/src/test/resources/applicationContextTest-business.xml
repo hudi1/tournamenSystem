@@ -21,21 +21,21 @@
 
     <bean id="groupService" class="org.toursys.processor.service.GroupService" parent="abstractService">
         <property name="gameService" ref="gameService" />
-        <property name="playerResultService" ref="playerResultService" />
+        <property name="participantService" ref="participantService" />
     </bean>
-    <bean id="playerResultService" class="org.toursys.processor.service.PlayerResultService" parent="abstractService">
+    <bean id="participantService" class="org.toursys.processor.service.ParticipantService" parent="abstractService">
         <property name="groupService" ref="groupService" />
     </bean>
     <bean id="playOffGameService" class="org.toursys.processor.service.PlayOffGameService" parent="abstractService">
         <property name="finalStandingService" ref="finalStandingService" />
         <property name="groupService" ref="groupService" />
-        <property name="playerResultService" ref="playerResultService" />
+        <property name="participantService" ref="participantService" />
         <property name="playOffResultService" ref="playOffResultService" />
     </bean>
 
     <bean id="finalStandingService" class="org.toursys.processor.service.FinalStandingService" parent="abstractService">
         <property name="groupService" ref="groupService" />
-        <property name="playerResultService" ref="playerResultService" />
+        <property name="participantService" ref="participantService" />
     </bean>
 
     <bean id="nameGenerator" class="org.toursys.processor.util.NameGenerator" />

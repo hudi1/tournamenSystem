@@ -3,11 +3,11 @@ package org.toursys.processor.comparators;
 import java.util.Comparator;
 
 import org.toursys.repository.model.Game;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
-public class BasicComparator implements Comparator<PlayerResult> {
+public class BasicComparator implements Comparator<Participant> {
 
-    public int compare(PlayerResult o1, PlayerResult o2) {
+    public int compare(Participant o1, Participant o2) {
 
         if (o1.getPoints() > o2.getPoints()) {
             return -1;
@@ -19,7 +19,7 @@ public class BasicComparator implements Comparator<PlayerResult> {
             Game playerGame = null;
 
             for (Game game : o1.getGames()) {
-                if (game.getAwayPlayerResult().equals(o2)) {
+                if (game.getAwayParticipant().equals(o2)) {
                     playerGame = game;
                     break;
                 }

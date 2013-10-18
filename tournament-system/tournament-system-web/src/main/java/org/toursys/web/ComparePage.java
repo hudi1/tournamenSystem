@@ -13,57 +13,57 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.service.GroupService;
-import org.toursys.processor.service.PlayerResultService;
+import org.toursys.processor.service.ParticipantService;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
 @AuthorizeInstantiation(Roles.USER)
 public class ComparePage extends WebPage {
 
     private static final long serialVersionUID = 1L;
 
-    @SpringBean(name = "playerResultService")
-    protected PlayerResultService playerResultService;
+    @SpringBean(name = "participantService")
+    protected ParticipantService participantService;
 
     @SpringBean(name = "groupService")
     protected GroupService groupService;
 
-    private PlayerResult playerResult1;
-    private PlayerResult playerResult2;
+    private Participant participant1;
+    private Participant participant2;
     private Groups group;
 
     public ComparePage(Groups group, final ModalWindow window) {
         this(group, window, null, null);
     }
 
-    public ComparePage(Groups group, final ModalWindow window, PlayerResult playerResult1, PlayerResult playerResult2) {
-        this.playerResult1 = playerResult1;
-        this.playerResult2 = playerResult2;
+    public ComparePage(Groups group, final ModalWindow window, Participant participant1, Participant participant2) {
+        this.participant1 = participant1;
+        this.participant2 = participant2;
         this.group = group;
         createPage(window);
     }
 
     private void createPage(final ModalWindow window) {
-        add(new PlayerForm("playerEditForm", playerResult1, playerResult2, window));
+        add(new PlayerForm("playerEditForm", participant1, participant2, window));
     }
 
-    private class PlayerForm extends Form<PlayerResult> {
+    private class PlayerForm extends Form<Participant> {
 
         private static final long serialVersionUID = 1L;
 
-        public PlayerForm(String id, final PlayerResult player1, final PlayerResult player2, final ModalWindow window) {
+        public PlayerForm(String id, final Participant player1, final Participant player2, final ModalWindow window) {
             super(id);
             setOutputMarkupId(true);
             Label nameLabel1 = new Label("name1", (player1 != null) ? player1.getPlayer().getSurname() + " "
                     + player1.getPlayer().getName() : "");
             TextField<Integer> rankTextField1 = new TextField<Integer>("equalRank1", new PropertyModel<Integer>(
-                    (player1 != null) ? player1 : new PlayerResult(), "equalRank"));
+                    (player1 != null) ? player1 : new Participant(), "equalRank"));
             Label rank1 = new Label("rank1", new ResourceModel("rank"));
 
             Label nameLabel2 = new Label("name2", (player2 != null) ? player2.getPlayer().getSurname() + " "
                     + player2.getPlayer().getName() : "");
             TextField<Integer> rankTextField2 = new TextField<Integer>("equalRank2", new PropertyModel<Integer>(
-                    (player2 != null) ? player2 : new PlayerResult(), "equalRank"));
+                    (player2 != null) ? player2 : new Participant(), "equalRank"));
             Label rank2 = new Label("rank2", new ResourceModel("rank"));
 
             if (player1 == null || player2 == null) {
@@ -86,8 +86,8 @@ public class ComparePage extends WebPage {
                 private static final long serialVersionUID = 1L;
 
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    playerResultService.updatePlayerResult(player1);
-                    playerResultService.updatePlayerResult(player2);
+                    participantService.updateParticipant(player1);
+                    participantService.updateParticipant(player2);
                     window.close(target);
                 }
             });
@@ -103,20 +103,20 @@ public class ComparePage extends WebPage {
         }
     }
 
-    public PlayerResult getPlayerResult1() {
-        return playerResult1;
+    public Participant getParticipant1() {
+        return participant1;
     }
 
-    public void setPlayerResult1(PlayerResult playerResult1) {
-        this.playerResult1 = playerResult1;
+    public void setParticipant1(Participant participant1) {
+        this.participant1 = participant1;
     }
 
-    public PlayerResult getPlayerResult2() {
-        return playerResult2;
+    public Participant getParticipant2() {
+        return participant2;
     }
 
-    public void setPlayerResult2(PlayerResult playerResult2) {
-        this.playerResult2 = playerResult2;
+    public void setParticipant2(Participant participant2) {
+        this.participant2 = participant2;
     }
 
 }

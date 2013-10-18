@@ -148,6 +148,21 @@ public class Groups implements Serializable {
     return this;
   }
   
+  private List<Participant> participants = new ArrayList<Participant>();
+  
+  public List<Participant> getParticipants() {
+    return participants;
+  }
+  
+  public void setParticipants(List<Participant> participants) {
+    this.participants = participants;
+  }
+  
+  public Groups _setParticipants(List<Participant> participants) {
+    this.participants = participants;
+    return this;
+  }
+  
   private List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
   
   public List<PlayOffGame> getPlayOffGames() {
@@ -160,21 +175,6 @@ public class Groups implements Serializable {
   
   public Groups _setPlayOffGames(List<PlayOffGame> playOffGames) {
     this.playOffGames = playOffGames;
-    return this;
-  }
-  
-  private List<PlayerResult> playerResults = new ArrayList<PlayerResult>();
-  
-  public List<PlayerResult> getPlayerResults() {
-    return playerResults;
-  }
-  
-  public void setPlayerResults(List<PlayerResult> playerResults) {
-    this.playerResults = playerResults;
-  }
-  
-  public Groups _setPlayerResults(List<PlayerResult> playerResults) {
-    this.playerResults = playerResults;
     return this;
   }
   
@@ -193,7 +193,7 @@ public class Groups implements Serializable {
   }  
   
   public enum Association {
-    playOffGames, tournament, playerResults
+    playOffGames, tournament, participants
   }
   
   private Set<String> initAssociations = new HashSet<String>();

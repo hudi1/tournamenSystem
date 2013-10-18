@@ -38,7 +38,7 @@ import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -48,7 +48,7 @@ public class GroupPage extends BasePage {
 
     private TournamentImpl tournament;
     private Groups group;
-    private List<PlayerResult> playerResults;
+    private List<Participant> participants;
     private ModalWindow modalWindow;
 
     public GroupPage() {
@@ -60,29 +60,29 @@ public class GroupPage extends BasePage {
         checkPageParameters(parameters);
         tournament = getTournament(parameters);
         group = getGroup(parameters);
-        getPlayerResults();
+        getParticipants();
         createPage();
     }
 
-    private void getPlayerResults() {
+    private void getParticipants() {
         if (group != null) {
-            this.playerResults = playerResultService.getPlayerResults(new PlayerResult()._setGroup(group));
-            gameService.processGames(playerResults);
+            this.participants = participantService.getParticipants(new Participant()._setGroup(group));
+            gameService.processGames(participants);
 
             if (group.getType() != GroupsType.BASIC) {
                 try {
-                    calculatePlayerResults();
+                    calculateParticipants();
                 } catch (SamePlayerRankException e) {
                     createModalWindow(e);
                 }
             }
 
             if (group.getType().equals(GroupsType.FINAL)) {
-                finalStandingService.updateNotPromotingFinalStandings(playerResults, group, tournament);
+                finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
             }
 
         } else {
-            playerResults = new ArrayList<PlayerResult>();
+            participants = new ArrayList<Participant>();
         }
     }
 
@@ -156,34 +156,34 @@ public class GroupPage extends BasePage {
         createGroups();
     }
 
-    private void calculatePlayerResults() {
-        playerResultService.calculatePlayerResults(playerResults, tournament);
+    private void calculateParticipants() {
+        participantService.calculateParticipants(participants, tournament);
     }
 
     private void createGroups() {
 
-        IDataProvider<PlayerResult> dataProvider = new IDataProvider<PlayerResult>() {
+        IDataProvider<Participant> dataProvider = new IDataProvider<Participant>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator<PlayerResult> iterator(int first, int count) {
-                return playerResults.subList(first, first + count).iterator();
+            public Iterator<Participant> iterator(int first, int count) {
+                return participants.subList(first, first + count).iterator();
             }
 
             @Override
             public int size() {
-                return playerResults.size();
+                return participants.size();
             }
 
             @Override
-            public IModel<PlayerResult> model(final PlayerResult object) {
-                return new LoadableDetachableModel<PlayerResult>() {
+            public IModel<Participant> model(final Participant object) {
+                return new LoadableDetachableModel<Participant>() {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected PlayerResult load() {
+                    protected Participant load() {
                         return object;
                     }
                 };
@@ -194,35 +194,34 @@ public class GroupPage extends BasePage {
             }
         };
 
-        DataView<PlayerResult> dataView = new DataView<PlayerResult>("rows", dataProvider) {
+        DataView<Participant> dataView = new DataView<Participant>("rows", dataProvider) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final Item<PlayerResult> listItem) {
-                final PlayerResult playerResult = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<PlayerResult>(playerResult));
-                listItem.add(new Label("name", playerResult.getPlayer().getSurname() + " "
-                        + playerResult.getPlayer().getName().charAt(0) + "."));
-                listItem.add(new Label("score", playerResult.getScore().toString()));
-                listItem.add(new Label("points", ((Integer) playerResult.getPoints()).toString()));
-                listItem.add(new Label("rank", (playerResult.getRank() != null) ? playerResult.getRank().toString()
-                        : " "));
+            protected void populateItem(final Item<Participant> listItem) {
+                final Participant participant = listItem.getModelObject();
+                listItem.setModel(new CompoundPropertyModel<Participant>(participant));
+                listItem.add(new Label("name", participant.getPlayer().getSurname() + " "
+                        + participant.getPlayer().getName().charAt(0) + "."));
+                listItem.add(new Label("score", participant.getScore().toString()));
+                listItem.add(new Label("points", ((Integer) participant.getPoints()).toString()));
+                listItem.add(new Label("rank", (participant.getRank() != null) ? participant.getRank().toString() : " "));
 
-                ListView<PlayerResult> scoreList = new ListView<PlayerResult>("gameList", playerResults) {
+                ListView<Participant> scoreList = new ListView<Participant>("gameList", participants) {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void populateItem(ListItem<PlayerResult> gameItem) {
-                        final PlayerResult playerResult1 = gameItem.getModelObject();
+                    protected void populateItem(ListItem<Participant> gameItem) {
+                        final Participant participant1 = gameItem.getModelObject();
 
-                        if (playerResult.equals(playerResult1)) {
+                        if (participant.equals(participant1)) {
                             gameItem.add(new Label("game", "X"));
                         } else {
                             Game game = null;
-                            for (Game pomGame : playerResult.getGames()) {
-                                if (pomGame.getAwayPlayerResult().getId().equals(playerResult1.getId())) {
+                            for (Game pomGame : participant.getGames()) {
+                                if (pomGame.getAwayParticipant().getId().equals(participant1.getId())) {
                                     game = pomGame;
                                     break;
                                 }
@@ -246,17 +245,17 @@ public class GroupPage extends BasePage {
             }
         };
 
-        Collections.sort(playerResults, new RankComparator());
+        Collections.sort(participants, new RankComparator());
 
-        ListView<PlayerResult> nameList = new ListView<PlayerResult>("nameList", playerResults) {
+        ListView<Participant> nameList = new ListView<Participant>("nameList", participants) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<PlayerResult> gameItem) {
-                final PlayerResult playerResult1 = gameItem.getModelObject();
-                String name = playerResult1.getPlayer().getName().charAt(0) + "."
-                        + playerResult1.getPlayer().getSurname().charAt(0);
+            protected void populateItem(ListItem<Participant> gameItem) {
+                final Participant participant1 = gameItem.getModelObject();
+                String name = participant1.getPlayer().getName().charAt(0) + "."
+                        + participant1.getPlayer().getSurname().charAt(0);
                 gameItem.add(new Label("playerName", name));
 
             }
@@ -392,8 +391,8 @@ public class GroupPage extends BasePage {
                     try {
                         tempFile = PdfFactory.createSheets(
                                 WicketApplication.getFilesPath(),
-                                scheduleService.getSchedule(group, playerResults,
-                                        playerResultService.getAdvancedPlayersByGroup(group, tournament, playerResults)),
+                                scheduleService.getSchedule(group, participants,
+                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants)),
                                 group);
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
@@ -415,8 +414,8 @@ public class GroupPage extends BasePage {
                     try {
                         tempFile = PdfFactory.createSchedule(
                                 WicketApplication.getFilesPath(),
-                                scheduleService.getSchedule(group, playerResults,
-                                        playerResultService.getAdvancedPlayersByGroup(group, tournament, playerResults)));
+                                scheduleService.getSchedule(group, participants,
+                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants)));
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
@@ -456,8 +455,8 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     groupService.createFinalGroup(tournament);
-                    finalStandingService.processFinalStandings(tournament, playerResultService
-                            .getRegistratedPlayerResult(tournament).size());
+                    finalStandingService.processFinalStandings(tournament, participantService
+                            .getRegistratedParticipant(tournament).size());
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -483,7 +482,7 @@ public class GroupPage extends BasePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createTable(WicketApplication.getFilesPath(), playerResults, group);
+                        tempFile = PdfFactory.createTable(WicketApplication.getFilesPath(), participants, group);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);

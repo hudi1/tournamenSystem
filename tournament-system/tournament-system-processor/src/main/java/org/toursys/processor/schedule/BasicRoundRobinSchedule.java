@@ -8,23 +8,23 @@ import java.util.Random;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
 public class BasicRoundRobinSchedule implements RoundRobinSchedule {
     private Groups group;
     private int playerCount;
     private int roundCount;
-    private List<PlayerResult> playerResults;
+    private List<Participant> participants;
     private List<GameImpl> schedule;
 
-    public BasicRoundRobinSchedule(Groups group, List<PlayerResult> playerResults) {
+    public BasicRoundRobinSchedule(Groups group, List<Participant> participants) {
         this.group = group;
-        this.playerResults = new ArrayList<PlayerResult>(playerResults);
-        this.roundCount = playerResults.size();
-        if (this.playerResults.size() % 2 == 1) {
-            this.playerResults.add(new PlayerResult()._setTemp(true));
+        this.participants = new ArrayList<Participant>(participants);
+        this.roundCount = participants.size();
+        if (this.participants.size() % 2 == 1) {
+            this.participants.add(new Participant()._setTemp(true));
         }
-        this.playerCount = this.playerResults.size();
+        this.playerCount = this.participants.size();
         this.roundCount = playerCount - 1;
     }
 
@@ -59,30 +59,30 @@ public class BasicRoundRobinSchedule implements RoundRobinSchedule {
         schedule = new ArrayList<GameImpl>();
         for (int i = 0; i < roundCount; i++) {
             addRoundGames(i % 2 == 1);
-            rotate(playerResults);
+            rotate(participants);
         }
     }
 
-    private void rotate(List<PlayerResult> playerResults) {
-        PlayerResult temp = playerResults.remove(playerResults.size() - 1);
-        playerResults.add(1, temp);
+    private void rotate(List<Participant> participants) {
+        Participant temp = participants.remove(participants.size() - 1);
+        participants.add(1, temp);
     }
 
     private void addRoundGames(boolean rotate) {
         for (int i = 0; i < playerCount / 2; i++) {
             if ((i == 0 && rotate) || (i % 2 == 1)) {
-                addNewGame(playerResults.get(playerCount - i - 1), playerResults.get(i));
+                addNewGame(participants.get(playerCount - i - 1), participants.get(i));
             } else {
-                addNewGame(playerResults.get(i), playerResults.get(playerCount - i - 1));
+                addNewGame(participants.get(i), participants.get(playerCount - i - 1));
             }
         }
     }
 
-    private void addNewGame(PlayerResult homePlayer, PlayerResult awayPlayer) {
+    private void addNewGame(Participant homePlayer, Participant awayPlayer) {
         if (!homePlayer.getTemp() && !awayPlayer.getTemp()) {
             for (Game game : homePlayer.getGames()) {
-                if (game.getAwayPlayerResult().equals(awayPlayer)) {
-                    game._setHomePlayerResult(homePlayer)._setAwayPlayerResult(awayPlayer);
+                if (game.getAwayParticipant().equals(awayPlayer)) {
+                    game._setHomeParticipant(homePlayer)._setAwayParticipant(awayPlayer);
                     GameImpl gameImpl = new GameImpl(game);
                     // TODO Vyplnuje sa az pri vypise schedule zrusit aj round ?
                     // gameImpl.setHockey(schedule.size() % group.getNumberOfHockey() + group.getIndexOfFirstHockey());

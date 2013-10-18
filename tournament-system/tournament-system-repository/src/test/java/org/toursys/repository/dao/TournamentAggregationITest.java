@@ -14,9 +14,9 @@ import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Score;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
@@ -61,13 +61,13 @@ public class TournamentAggregationITest {
         tournamentAggregationDao.createGroup(group);
         Assert.assertNotNull(group);
 
-        PlayerResult playerResult = tournamentAggregationDao.createPlayerResult(player, group);
-        Assert.assertNotNull(playerResult);
+        Participant participant = tournamentAggregationDao.createParticipant(player, group);
+        Assert.assertNotNull(participant);
 
-        Game game = tournamentAggregationDao.createGame(playerResult, playerResult);
+        Game game = tournamentAggregationDao.createGame(participant, participant);
         Assert.assertNotNull(game);
 
-        PlayOffGame playOffGame = tournamentAggregationDao.createPlayOffGame(playerResult, playerResult, group, 1);
+        PlayOffGame playOffGame = tournamentAggregationDao.createPlayOffGame(participant, participant, group, 1);
         Assert.assertNotNull(playOffGame);
 
         // update
@@ -112,19 +112,19 @@ public class TournamentAggregationITest {
         tournamentAggregationDao.updateGroup(updatedGroup);
         Assert.assertNotNull(updatedGroup);
 
-        PlayerResult updatedPlayerResult = new PlayerResult();
-        updatedPlayerResult.setId(playerResult.getId());
-        updatedPlayerResult.setPlayer(updatedPlayer);
-        updatedPlayerResult.setGroup(updatedGroup);
-        updatedPlayerResult.setPoints(10);
-        updatedPlayerResult.setScore(new Score(1, 1));
-        tournamentAggregationDao.updatePlayerResult(updatedPlayerResult);
-        Assert.assertNotNull(updatedPlayerResult);
+        Participant updatedParticipant = new Participant();
+        updatedParticipant.setId(participant.getId());
+        updatedParticipant.setPlayer(updatedPlayer);
+        updatedParticipant.setGroup(updatedGroup);
+        updatedParticipant.setPoints(10);
+        updatedParticipant.setScore(new Score(1, 1));
+        tournamentAggregationDao.updateParticipant(updatedParticipant);
+        Assert.assertNotNull(updatedParticipant);
 
         Game updatedGame = new Game();
         updatedGame.setId(game.getId());
-        updatedGame.setAwayPlayerResult(updatedPlayerResult);
-        updatedGame.setHomePlayerResult(updatedPlayerResult);
+        updatedGame.setAwayParticipant(updatedParticipant);
+        updatedGame.setHomeParticipant(updatedParticipant);
         updatedGame.setAwayScore(5);
         updatedGame.setHomeScore(6);
         tournamentAggregationDao.updateGame(updatedGame);
@@ -132,8 +132,8 @@ public class TournamentAggregationITest {
 
         PlayOffGame updatedPlayOffGame = new PlayOffGame();
         updatedPlayOffGame.setId(playOffGame.getId());
-        updatedPlayOffGame.setAwayPlayerResult(updatedPlayerResult);
-        updatedPlayOffGame.setHomePlayerResult(updatedPlayerResult);
+        updatedPlayOffGame.setAwayParticipant(updatedParticipant);
+        updatedPlayOffGame.setHomeParticipant(updatedParticipant);
         updatedPlayOffGame.setPosition(2);
         updatedPlayOffGame.setGroup(updatedGroup);
         tournamentAggregationDao.updatePlayOffGame(updatedPlayOffGame);
@@ -172,10 +172,10 @@ public class TournamentAggregationITest {
         Assert.assertNotNull(g);
         Assert.assertEquals(TournamentFactory.GROUP_NAME + UPDATED, g.getName());
 
-        PlayerResult pr = new PlayerResult();
-        pr.setId(updatedPlayerResult.getId());
+        Participant pr = new Participant();
+        pr.setId(updatedParticipant.getId());
         pr.setPoints(10);
-        pr = tournamentAggregationDao.getPlayerResult(pr);
+        pr = tournamentAggregationDao.getParticipant(pr);
         Assert.assertNotNull(pr);
         Assert.assertEquals((Integer) 10, pr.getPoints());
         Assert.assertEquals(new Score(1, 1), pr.getScore());
@@ -198,8 +198,8 @@ public class TournamentAggregationITest {
         List<Player> notRegistratedPlayer = tournamentAggregationDao.getNotRegistratedPlayers(tournament);
         Assert.assertNotNull(notRegistratedPlayer);
 
-        List<PlayerResult> registratedPlayerResult = tournamentAggregationDao.getRegistratedPlayerResult(tournament);
-        Assert.assertNotNull(registratedPlayerResult);
+        List<Participant> registratedParticipant = tournamentAggregationDao.getRegistratedParticipant(tournament);
+        Assert.assertNotNull(registratedParticipant);
 
     }
 }

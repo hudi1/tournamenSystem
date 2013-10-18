@@ -18,10 +18,10 @@ import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.PlayerResult;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -43,7 +43,7 @@ public class PdfFactory {
     private static final int LISTS_TABLE_WIDTH = 134;
     private static final Logger logger = LoggerFactory.getLogger(PdfFactory.class);
 
-    public static File createTable(String path, List<PlayerResult> players, Groups group) throws Exception {
+    public static File createTable(String path, List<Participant> players, Groups group) throws Exception {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
         File file = new File(path + "group" + df.format(new Date()) + ".pdf");
@@ -65,25 +65,25 @@ public class PdfFactory {
         pdfTable.setWidths(widths);
 
         pdfTable.addCell(createCenterAlignBorderCell("name"));
-        for (PlayerResult playerResult : players) {
-            pdfTable.addCell(createCenterAlignBorderCell(playerResult.getPlayer().getName().charAt(0) + "."
-                    + playerResult.getPlayer().getSurname().charAt(0) + "."));
+        for (Participant participant : players) {
+            pdfTable.addCell(createCenterAlignBorderCell(participant.getPlayer().getName().charAt(0) + "."
+                    + participant.getPlayer().getSurname().charAt(0) + "."));
         }
         pdfTable.addCell(createCenterAlignBorderCell("score"));
         pdfTable.addCell(createCenterAlignBorderCell("points"));
         pdfTable.addCell(createCenterAlignBorderCell("rank"));
 
-        for (PlayerResult playerResult1 : players) {
-            pdfTable.addCell(createCenterAlignBorderCell(playerResult1.getPlayer().getSurname() + " "
-                    + playerResult1.getPlayer().getName().charAt(0) + "."));
+        for (Participant participant1 : players) {
+            pdfTable.addCell(createCenterAlignBorderCell(participant1.getPlayer().getSurname() + " "
+                    + participant1.getPlayer().getName().charAt(0) + "."));
 
-            for (PlayerResult playerResult2 : players) {
-                if (playerResult1.equals(playerResult2)) {
+            for (Participant participant2 : players) {
+                if (participant1.equals(participant2)) {
                     pdfTable.addCell(createCenterAlignBorderCell("X"));
                 } else {
                     Game game = null;
-                    for (Game pomGame : playerResult1.getGames()) {
-                        if (pomGame.getAwayPlayerResult().getId().equals(playerResult2.getId())) {
+                    for (Game pomGame : participant1.getGames()) {
+                        if (pomGame.getAwayParticipant().getId().equals(participant2.getId())) {
                             game = pomGame;
                             break;
                         }
@@ -98,9 +98,9 @@ public class PdfFactory {
                     }
                 }
             }
-            pdfTable.addCell(createCenterAlignBorderCell(playerResult1.getScore().toString()));
-            pdfTable.addCell(createCenterAlignBorderCell(((Integer) playerResult1.getPoints()).toString()));
-            pdfTable.addCell(createCenterAlignBorderCell(playerResult1.getRank().toString()));
+            pdfTable.addCell(createCenterAlignBorderCell(participant1.getScore().toString()));
+            pdfTable.addCell(createCenterAlignBorderCell(((Integer) participant1.getPoints()).toString()));
+            pdfTable.addCell(createCenterAlignBorderCell(participant1.getRank().toString()));
         }
 
         document.add(new Paragraph("Group: " + group.getName()));
@@ -196,10 +196,10 @@ public class PdfFactory {
             }
 
             pdfTable.addCell(createLeftAlignCell(game.getHockey().toString()));
-            pdfTable.addCell(createLeftAlignCell(game.getHomePlayerResult().getPlayer().getSurname() + " "
-                    + game.getHomePlayerResult().getPlayer().getName().charAt(0) + " - "
-                    + game.getAwayPlayerResult().getPlayer().getSurname() + " "
-                    + game.getAwayPlayerResult().getPlayer().getName().charAt(0)));
+            pdfTable.addCell(createLeftAlignCell(game.getHomeParticipant().getPlayer().getSurname() + " "
+                    + game.getHomeParticipant().getPlayer().getName().charAt(0) + " - "
+                    + game.getAwayParticipant().getPlayer().getSurname() + " "
+                    + game.getAwayParticipant().getPlayer().getName().charAt(0)));
             pdfTable.addCell(createBorderCell("  "));
             pdfTable.addCell(createCell(":"));
             pdfTable.addCell(createBorderCell("  "));
@@ -224,7 +224,7 @@ public class PdfFactory {
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
         document.open();
 
-        LinkedHashMap<PlayerResult, List<GameImpl>> wholeSheets = new LinkedHashMap<PlayerResult, List<GameImpl>>();
+        LinkedHashMap<Participant, List<GameImpl>> wholeSheets = new LinkedHashMap<Participant, List<GameImpl>>();
         if (!schedule.isEmpty()) {
             int maxRound = schedule.get(schedule.size() - 1).getRound();
             int spaceCount = 0;
@@ -239,15 +239,15 @@ public class PdfFactory {
             }
 
             for (GameImpl game : schedule) {
-                if (wholeSheets.get(game.getAwayPlayerResult()) == null) {
-                    wholeSheets.put(game.getAwayPlayerResult(), new ArrayList<GameImpl>());
+                if (wholeSheets.get(game.getAwayParticipant()) == null) {
+                    wholeSheets.put(game.getAwayParticipant(), new ArrayList<GameImpl>());
                 }
-                if (wholeSheets.get(game.getHomePlayerResult()) == null) {
-                    wholeSheets.put(game.getHomePlayerResult(), new ArrayList<GameImpl>());
+                if (wholeSheets.get(game.getHomeParticipant()) == null) {
+                    wholeSheets.put(game.getHomeParticipant(), new ArrayList<GameImpl>());
                 }
 
-                wholeSheets.get(game.getAwayPlayerResult()).add(game);
-                wholeSheets.get(game.getHomePlayerResult()).add(game);
+                wholeSheets.get(game.getAwayParticipant()).add(game);
+                wholeSheets.get(game.getHomeParticipant()).add(game);
             }
 
             for (int i = 0; i <= wholeSheets.size() / PLAYERS_PER_PAGE; i++) {
@@ -255,7 +255,7 @@ public class PdfFactory {
                 if (i == wholeSheets.size()) {
                     toIndex = i * PLAYERS_PER_PAGE + wholeSheets.size() % PLAYERS_PER_PAGE;
                 }
-                Map<PlayerResult, List<GameImpl>> sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
+                Map<Participant, List<GameImpl>> sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
 
                 if (sheets.size() == 0) {
                     break;
@@ -271,13 +271,13 @@ public class PdfFactory {
                 document.setPageSize(PageSize.A4.rotate());
                 document.newPage();
 
-                Set<Entry<PlayerResult, List<GameImpl>>> entrySet = sheets.entrySet();
+                Set<Entry<Participant, List<GameImpl>>> entrySet = sheets.entrySet();
 
                 // hlavicka
-                for (Map.Entry<PlayerResult, List<GameImpl>> entry : entrySet) {
-                    PlayerResult playerResult = entry.getKey();
-                    pdfTable.addCell(createCell("(" + group.getName() + ") " + playerResult.getPlayer().getSurname()
-                            + " " + playerResult.getPlayer().getName().charAt(0)));
+                for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
+                    Participant participant = entry.getKey();
+                    pdfTable.addCell(createCell("(" + group.getName() + ") " + participant.getPlayer().getSurname()
+                            + " " + participant.getPlayer().getName().charAt(0)));
                 }
 
                 // hokeje
@@ -289,8 +289,8 @@ public class PdfFactory {
                     pdfTable.addCell(cell);
                 }
 
-                for (Map.Entry<PlayerResult, List<GameImpl>> entry : entrySet) {
-                    PlayerResult playerResult = entry.getKey();
+                for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
+                    Participant participant = entry.getKey();
                     List<GameImpl> games = entry.getValue();
 
                     PdfPTable nestedTable = new PdfPTable(3);
@@ -303,11 +303,11 @@ public class PdfFactory {
                     for (GameImpl game : games) {
                         Player player;
                         String side;
-                        if (game.getAwayPlayerResult().equals(playerResult)) {
-                            player = game.getHomePlayerResult().getPlayer();
+                        if (game.getAwayParticipant().equals(participant)) {
+                            player = game.getHomeParticipant().getPlayer();
                             side = "S";
                         } else {
-                            player = game.getAwayPlayerResult().getPlayer();
+                            player = game.getAwayParticipant().getPlayer();
                             side = "F";
                         }
 
@@ -458,11 +458,11 @@ public class PdfFactory {
 
                 pdfTable.addCell(createLeftAlignCell(getRound(entry.getValue().size(), playOffGame.getPosition()) + ""));
 
-                if (playOffGame.getHomePlayerResult() != null && playOffGame.getAwayPlayerResult() != null) {
-                    String playersGame = playOffGame.getHomePlayerResult().getPlayer().getSurname() + " "
-                            + playOffGame.getHomePlayerResult().getPlayer().getName().charAt(0) + ". : "
-                            + playOffGame.getAwayPlayerResult().getPlayer().getSurname() + " "
-                            + playOffGame.getAwayPlayerResult().getPlayer().getName().charAt(0) + ". ";
+                if (playOffGame.getHomeParticipant() != null && playOffGame.getAwayParticipant() != null) {
+                    String playersGame = playOffGame.getHomeParticipant().getPlayer().getSurname() + " "
+                            + playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + ". : "
+                            + playOffGame.getAwayParticipant().getPlayer().getSurname() + " "
+                            + playOffGame.getAwayParticipant().getPlayer().getName().charAt(0) + ". ";
 
                     pdfTable.addCell(createLeftAlignCell(playersGame));
 

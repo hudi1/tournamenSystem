@@ -3,15 +3,15 @@ package org.toursys.processor.comparators;
 import java.util.Comparator;
 
 import org.toursys.processor.SamePlayerRankException;
-import org.toursys.repository.model.PlayerResult;
+import org.toursys.repository.model.Participant;
 
 /**
  * 
  * @author Hudi
  */
-public class AdvantageComparator implements Comparator<PlayerResult> {
+public class AdvantageComparator implements Comparator<Participant> {
 
-    public int compare(PlayerResult o1, PlayerResult o2) {
+    public int compare(Participant o1, Participant o2) {
 
         if (o1.getPoints() > o2.getPoints()) {
             return -1;

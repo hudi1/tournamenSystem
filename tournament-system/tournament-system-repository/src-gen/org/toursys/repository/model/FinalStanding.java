@@ -10,8 +10,8 @@ public class FinalStanding implements Serializable {
   
   private static final long serialVersionUID = 1L;
   public static final int ORDER_BY_ID = 1;
-  public static final int ORDER_BY_PLAYER = 3;
-  public static final int ORDER_BY_TOURNAMENT = 2;
+  public static final int ORDER_BY_PLAYER = 4;
+  public static final int ORDER_BY_TOURNAMENT = 3;
 	
   public FinalStanding() {
   }

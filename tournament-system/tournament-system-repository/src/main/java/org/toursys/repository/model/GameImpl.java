@@ -11,9 +11,9 @@ public class GameImpl extends Game {
     }
 
     public GameImpl(Game game) {
-        super.setAwayPlayerResult(game.getAwayPlayerResult());
+        super.setAwayParticipant(game.getAwayParticipant());
         super.setAwayScore(game.getAwayScore());
-        super.setHomePlayerResult(game.getHomePlayerResult());
+        super.setHomeParticipant(game.getHomeParticipant());
         super.setHomeScore(game.getHomeScore());
         super.setId(game.getId());
     }

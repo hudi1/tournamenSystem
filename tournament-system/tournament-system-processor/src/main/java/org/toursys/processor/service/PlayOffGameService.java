@@ -14,21 +14,21 @@ import org.toursys.processor.util.GroupsName;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffResult;
-import org.toursys.repository.model.PlayerResult;
 import org.toursys.repository.model.Tournament;
 
 public class PlayOffGameService extends AbstractService {
 
     private FinalStandingService finalStandingService;
-    private PlayerResultService playerResultService;
+    private ParticipantService participantService;
     private PlayOffResultService playOffResultService;
     private GroupService groupService;
 
     // Basic operations
 
-    public PlayOffGame createPlayOffGame(PlayerResult homePlayer, PlayerResult awayPlayer, Groups group, int position) {
+    public PlayOffGame createPlayOffGame(Participant homePlayer, Participant awayPlayer, Groups group, int position) {
         return tournamentAggregationDao.createPlayOffGame(homePlayer, awayPlayer, group, position);
     }
 
@@ -47,7 +47,7 @@ public class PlayOffGameService extends AbstractService {
     @Transactional
     private List<PlayOffGame> getPlayOffGames(PlayOffGame playOffGame) {
         playOffGame.setInit(PlayOffGame.Association.playOffResults.name(),
-                PlayOffGame.Association.awayPlayerResult.name(), PlayOffGame.Association.homePlayerResult.name());
+                PlayOffGame.Association.awayParticipant.name(), PlayOffGame.Association.homeParticipant.name());
         return tournamentAggregationDao.getListPlayOffGames(playOffGame);
     }
 
@@ -78,7 +78,7 @@ public class PlayOffGameService extends AbstractService {
         }
     }
 
-    private List<PlayOffGame> createPlayOffGames(LinkedList<PlayerResult> playOffPlayer, Groups group,
+    private List<PlayOffGame> createPlayOffGames(LinkedList<Participant> playOffPlayer, Groups group,
             int playerPlayOffCountAfterCheckThirdPlace) {
         List<PlayOffGame> playOffGames = new LinkedList<PlayOffGame>();
 
@@ -144,19 +144,19 @@ public class PlayOffGameService extends AbstractService {
         if (group == null) {
             return new ArrayList<PlayOffGame>();
         }
-        List<PlayerResult> players = playerResultService.getPlayerResults(new PlayerResult()._setGroup(group));
+        List<Participant> players = participantService.getParticipants(new Participant()._setGroup(group));
         Collections.sort(players, new RankComparator());
 
         GroupsName groupsName = new GroupsName();
         String previousGroupName = groupsName.getPrevious(group.getName());
 
-        int previousPlayerResultCount = 0;
+        int previousParticipantCount = 0;
         if (previousGroupName.length() > 0) {
             Groups previousGroup = groupService.getGroup(new Groups()._setName(previousGroupName)._setTournament(
                     tournament));
-            List<PlayerResult> previousPlayerResult = playerResultService.getPlayerResults(new PlayerResult()
+            List<Participant> previousParticipant = participantService.getParticipants(new Participant()
                     ._setGroup(previousGroup));
-            previousPlayerResultCount = previousPlayerResult.size();
+            previousParticipantCount = previousParticipant.size();
         }
 
         int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
@@ -166,10 +166,10 @@ public class PlayOffGameService extends AbstractService {
         // checkPlayOffCount(group, players.size(), playOffPlayerCount);
 
         while (players.size() < playOffPlayerCount) {
-            players.add(new PlayerResult());
+            players.add(new Participant());
         }
 
-        LinkedList<PlayerResult> playOffPlayer = new LinkedList<PlayerResult>(players.subList(0, playOffPlayerCount));
+        LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
 
         List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
         Collections.sort(finalgames, new Comparator<PlayOffGame>() {
@@ -184,7 +184,7 @@ public class PlayOffGameService extends AbstractService {
             playOffGames = createPlayOffGames(playOffPlayer, group, playerPlayOffCountAfterCheckThirdPlace);
         } else {
             logger.info("Updating playOff games");
-            updatePlayOffGames(playOffPlayerCount, finalgames, tournament, previousPlayerResultCount);
+            updatePlayOffGames(playOffPlayerCount, finalgames, tournament, previousParticipantCount);
             playOffGames = finalgames;
         }
         time = System.currentTimeMillis() - time;
@@ -196,7 +196,7 @@ public class PlayOffGameService extends AbstractService {
             int playerGroupCountSuffix) {
         int lastRound = 1;
 
-        ArrayList<PlayerResult> finalStandings = new ArrayList<PlayerResult>();
+        ArrayList<Participant> finalStandings = new ArrayList<Participant>();
         int gameCount = (playOffGames.size() % 2 == 1) ? playOffGames.size() - 1 : playOffGames.size() - 2;
         for (int i = 0; i < gameCount; i++) {
             int round = TournamentUtil.getRound(playerPlayOffCount, i + 1);
@@ -233,11 +233,11 @@ public class PlayOffGameService extends AbstractService {
             }
 
             if (homeWin > awayWin) {
-                firstFinalStanding.setPlayer(playOffGames.get(i).getHomePlayerResult().getPlayer());
-                secondFinalStanding.setPlayer(playOffGames.get(i).getAwayPlayerResult().getPlayer());
+                firstFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
+                secondFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
             } else if (homeWin < awayWin) {
-                firstFinalStanding.setPlayer(playOffGames.get(i).getAwayPlayerResult().getPlayer());
-                secondFinalStanding.setPlayer(playOffGames.get(i).getHomePlayerResult().getPlayer());
+                firstFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
+                secondFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
             } else {
                 firstFinalStanding.setPlayer(null);
                 secondFinalStanding.setPlayer(null);
@@ -250,7 +250,7 @@ public class PlayOffGameService extends AbstractService {
     }
 
     private void updatePlayOffGame(PlayOffGame playOffGame, List<PlayOffGame> playOffGames, int position,
-            int playerPlayOffCount, boolean newRound, List<PlayerResult> finalStandings, int round,
+            int playerPlayOffCount, boolean newRound, List<Participant> finalStandings, int round,
             Tournament tournament, int playerGroupCountSuffix) {
 
         int homeWin = 0;
@@ -282,42 +282,42 @@ public class PlayOffGameService extends AbstractService {
         }
 
         if (homeWin > awayWin) {
-            finalStandings.add(playOffGame.getAwayPlayerResult());
+            finalStandings.add(playOffGame.getAwayParticipant());
             if (position % 2 == 1) {
-                tempPlayOffGame._setHomePlayerResult((playOffGame.getHomePlayerResult()));
+                tempPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
                 if (isThirdPlace) {
-                    tempThirdPlayOffGame._setHomePlayerResult((playOffGame.getAwayPlayerResult()));
+                    tempThirdPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
                 }
             } else {
-                tempPlayOffGame._setAwayPlayerResult((playOffGame.getHomePlayerResult()));
+                tempPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
                 if (isThirdPlace) {
-                    tempThirdPlayOffGame._setAwayPlayerResult((playOffGame.getAwayPlayerResult()));
+                    tempThirdPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
                 }
             }
         } else if (homeWin < awayWin) {
-            finalStandings.add(playOffGame.getHomePlayerResult());
+            finalStandings.add(playOffGame.getHomeParticipant());
             if (position % 2 == 1) {
-                tempPlayOffGame._setHomePlayerResult((playOffGame.getAwayPlayerResult()));
+                tempPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
                 if (isThirdPlace) {
-                    tempThirdPlayOffGame._setHomePlayerResult((playOffGame.getHomePlayerResult()));
+                    tempThirdPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
                 }
             } else {
-                tempPlayOffGame._setAwayPlayerResult((playOffGame.getAwayPlayerResult()));
+                tempPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
                 if (isThirdPlace) {
-                    tempThirdPlayOffGame._setAwayPlayerResult((playOffGame.getHomePlayerResult()));
+                    tempThirdPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
                 }
             }
         } else {
-            finalStandings.add(new PlayerResult());
+            finalStandings.add(new Participant());
             if (position % 2 == 1) {
-                tempPlayOffGame._setHomePlayerResult((null));
+                tempPlayOffGame._setHomeParticipant((null));
                 if (isThirdPlace) {
-                    tempThirdPlayOffGame._setHomePlayerResult((null));
+                    tempThirdPlayOffGame._setHomeParticipant((null));
                 }
             } else {
-                tempPlayOffGame._setAwayPlayerResult((null));
+                tempPlayOffGame._setAwayParticipant((null));
                 if (isThirdPlace) {
-                    tempThirdPlayOffGame._setAwayPlayerResult((null));
+                    tempThirdPlayOffGame._setAwayParticipant((null));
                 }
             }
         }
@@ -354,8 +354,8 @@ public class PlayOffGameService extends AbstractService {
     }
 
     @Required
-    public void setPlayerResultService(PlayerResultService playerResultService) {
-        this.playerResultService = playerResultService;
+    public void setParticipantService(ParticipantService participantService) {
+        this.participantService = participantService;
     }
 
     @Required
