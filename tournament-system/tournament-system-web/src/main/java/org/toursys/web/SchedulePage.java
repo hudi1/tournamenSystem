@@ -202,9 +202,6 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    List<Participant> participant = participantService.getParticipants(new Participant()
-                            ._setGroup(group));
-                    participantService.calculateParticipants(participant, tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));

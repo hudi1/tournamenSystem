@@ -69,7 +69,8 @@ public class GroupPage extends BasePage {
             this.participants = participantService.getParticipants(new Participant()._setGroup(group));
             gameService.processGames(participants);
 
-            if (group.getType() != GroupsType.BASIC) {
+            // TODO asi nema cenu vzdy pocitat ale trebalo by vyrobit novy parameter kedy ano a kedy nie
+            if (true /* group.getType() != GroupsType.BASIC */) {
                 try {
                     calculateParticipants();
                 } catch (SamePlayerRankException e) {
@@ -91,19 +92,6 @@ public class GroupPage extends BasePage {
                 || parameters.get("groupid").isNull()) {
             throw new RestartResponseAtInterceptPageException(new SeasonPage());
         }
-    }
-
-    public void createEmptyModalWindow() {
-        modalWindow = createDefaultModalWindow();
-
-        modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-
-            private static final long serialVersionUID = 1L;
-
-            public Page createPage() {
-                return new ComparePage(group, modalWindow);
-            }
-        });
     }
 
     private void createModalWindow(final SamePlayerRankException e) {
@@ -149,9 +137,10 @@ public class GroupPage extends BasePage {
 
     protected void createPage() {
         if (modalWindow == null) {
-            createEmptyModalWindow();
+            add(new ModalWindow("modalWindow"));
+        } else {
+            add(modalWindow);
         }
-        add(modalWindow);
         add(new GroupForm());
         createGroups();
     }
@@ -455,8 +444,8 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     groupService.createFinalGroup(tournament);
-                    finalStandingService.processFinalStandings(tournament, participantService
-                            .getRegisteredParticipant(tournament).size());
+                    finalStandingService.processFinalStandings(tournament,
+                            participantService.getRegisteredParticipant(tournament).size());
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -494,14 +483,18 @@ public class GroupPage extends BasePage {
 
             add(printGroup);
 
-            add(new AjaxButton("editEqualRank", new ResourceModel("editEqualRank")) {
+            Button equalRankButton = new AjaxButton("editEqualRank", new ResourceModel("editEqualRank")) {
 
                 private static final long serialVersionUID = 1L;
 
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     modalWindow.show(target);
                 }
-            });
+            };
+
+            add(equalRankButton);
+
+            equalRankButton.setVisible(modalWindow != null);
 
             if (group == null) {
                 options.setVisible(false);
