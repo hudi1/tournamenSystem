@@ -22,29 +22,41 @@ public class GroupService extends AbstractService {
 
     // Basic operations
 
+    @Transactional
     public Groups createGroup(Groups group) {
+        logger.debug("Create group: " + group);
         return tournamentAggregationDao.createGroup(group);
     }
 
+    @Transactional(readOnly = true)
     public Groups getGroup(Groups group) {
+        logger.debug("Get group: " + group);
         return tournamentAggregationDao.getGroup(group);
     }
 
+    @Transactional
     public int updateGroup(Groups group) {
+        logger.debug("Update group: " + group);
         return tournamentAggregationDao.updateGroup(group);
     }
 
+    @Transactional
     public int deleteGroup(Groups group) {
+        logger.debug("Delete group: " + group);
         return tournamentAggregationDao.deleteGroup(group);
     }
 
+    @Transactional(readOnly = true)
     public List<Groups> getGroups(Groups group) {
+        logger.debug("Get list groups: " + group);
         return tournamentAggregationDao.getListGroups(group);
     }
 
     // Advanced operations
 
-    public int updateGroups(Tournament tournament, Groups group) {
+    @Transactional
+    public int updateGroupOptions(Tournament tournament, Groups group) {
+        logger.debug("Update group options: " + group);
         if (group.getCopyResult()) {
             // TODO nasetovat hracov getParticipantInGroup(new Participant()._setGroup(group));
             List<Participant> player = group.getParticipants();
@@ -59,14 +71,16 @@ public class GroupService extends AbstractService {
         return updateGroup(group);
     }
 
+    @Transactional(readOnly = true)
     public List<Groups> getBasicGroups(Groups group) {
-        logger.info("get basic groups: " + group.toStringFull());
+        logger.debug("Get basic groups: " + group);
         group.setType(GroupsType.BASIC);
         return getGroups(group);
     }
 
+    @Transactional(readOnly = true)
     public List<Groups> getFinalGroups(Groups group) {
-        logger.info("get basic groups: " + group.toStringFull());
+        logger.debug("Get basic groups: " + group);
         group.setType(GroupsType.FINAL);
         return getGroups(group);
     }
@@ -74,7 +88,7 @@ public class GroupService extends AbstractService {
     @Transactional
     public void createFinalGroup(Tournament tournament) {
         long time = System.currentTimeMillis();
-        logger.info("creating final groups in tournament: " + tournament);
+        logger.debug("Creating final groups in tournament: " + tournament);
         List<Groups> basicGroups = getBasicGroups(new Groups()._setTournament(tournament));
         List<Groups> finalGroups = getFinalGroups(new Groups()._setTournament(tournament));
 
@@ -104,16 +118,15 @@ public class GroupService extends AbstractService {
                     hockeyCount = promotingA;
                 }
                 finalGroup = new Groups(groupName, hockeyCount, GroupsType.FINAL, 1, tournament, true, false);
-                logger.info("creating final group " + finalGroup);
+                logger.trace("Create final group " + finalGroup);
                 finalGroup = createGroup(finalGroup);
                 groupByName.put(groupName, finalGroup);
             } else {
                 finalGroup = groupByName.get(groupName);
-                logger.info("getting final group " + finalGroup);
+                logger.trace("Get final group " + finalGroup);
             }
 
             for (int i = 0; i < promotingA; i++) {
-                logger.info("creating player result " + participants.get(i).getPlayer());
                 Participant participant = participantService.createParticipant(participants.get(i).getPlayer(),
                         finalGroup);
                 finalGroup.getParticipants().add(participant);
@@ -166,19 +179,19 @@ public class GroupService extends AbstractService {
                 participantService.updateParticipant(participant);
             }
 
-            logger.info("deleting final group " + finalGroup);
+            logger.trace("deleting final group " + finalGroup);
             deleteGroup(finalGroup);
             groupByName.remove(finalGroup);
         }
 
         time = System.currentTimeMillis() - time;
-        logger.debug("Celkova doba: " + time + " ms");
+        logger.debug("End: Creating final groups in tournament: " + time + " ms");
     }
 
     @Transactional
     public void copyResult(Tournament tournament) {
         long time = System.currentTimeMillis();
-        logger.info("copy result: " + tournament);
+        logger.debug("Copy result: " + tournament);
         List<Groups> basicGroupss = getBasicGroups(new Groups()._setTournament(tournament));
         List<Groups> finalGroupss = getFinalGroups(new Groups()._setTournament(tournament));
 
@@ -213,11 +226,13 @@ public class GroupService extends AbstractService {
                 }
             }
         }
-        logger.debug("Celkova doba: " + time + " ms");
+        time = System.currentTimeMillis() - time;
+        logger.debug("End: Copy result: " + time + " ms");
     }
 
     @Transactional
     public void resetEqualRank(Groups group) {
+        logger.debug("Reset equal rank in group: " + group);
         List<Participant> players = participantService.getParticipants(new Participant()._setGroup(group));
         for (Participant participant : players) {
             participant.setEqualRank(null);

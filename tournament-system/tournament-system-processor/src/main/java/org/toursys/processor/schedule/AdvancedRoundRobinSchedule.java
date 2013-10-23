@@ -28,7 +28,7 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
         this.playerPerBasicGroup = playerPerBasicGroup;
     }
 
-    public void createSchedule() {
+    private void createSchedule() {
         schedule = new ArrayList<GameImpl>();
         if (playerPerBasicGroup.isEmpty()) {
             return;

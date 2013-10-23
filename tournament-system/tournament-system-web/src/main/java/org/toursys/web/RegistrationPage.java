@@ -125,7 +125,7 @@ public class RegistrationPage extends BasePage {
         IDataProvider<Participant> registeredPlayerDataProvider = new IDataProvider<Participant>() {
 
             private static final long serialVersionUID = 1L;
-            private List<Participant> allTournamenPlayers = participantService.getRegistratedParticipant(tournament);
+            private List<Participant> allTournamenPlayers = participantService.getRegisteredParticipant(tournament);
 
             @Override
             public Iterator<Participant> iterator(int first, int count) {
@@ -202,7 +202,7 @@ public class RegistrationPage extends BasePage {
             IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
 
                 private static final long serialVersionUID = 1L;
-                private List<Player> notRegistratedPlayer = playerService.getNotRegistratedPlayers(tournament);
+                private List<Player> notRegistratedPlayer = playerService.getNotRegisteredPlayers(tournament);
 
                 @Override
                 public Iterator<Player> iterator(int first, int count) {
@@ -352,10 +352,12 @@ public class RegistrationPage extends BasePage {
                     List<Groups> groups = groupService.getBasicGroups(new Groups()._setTournament(tournament));
                     if (!groups.isEmpty()) {
                         group = groups.get(0);
+                        getPageParameters().set("groupid", group.getId());
+                        setResponsePage(GroupPage.class, getPageParameters());
+                    } else {
+                        error(getString("noGroupError"));
                     }
 
-                    getPageParameters().set("groupid", group.getId());
-                    setResponsePage(GroupPage.class, getPageParameters());
                 }
             });
 

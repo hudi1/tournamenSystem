@@ -1,5 +1,6 @@
 package org.toursys.web;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
@@ -154,7 +155,9 @@ public class TournamentSignInPanel extends Panel {
      * Called when sign in was successful
      */
     protected void onSignInSucceeded() {
-        setResponsePage(getApplication().getHomePage());
+        if (!continueToOriginalDestination()) {
+            throw new RestartResponseException(getSession().getPageFactory().newPage(getApplication().getHomePage()));
+        }
     }
 
     /**

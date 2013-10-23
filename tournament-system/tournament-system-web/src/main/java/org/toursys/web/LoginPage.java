@@ -2,7 +2,6 @@ package org.toursys.web;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 public class LoginPage extends BasePage {
     private static final long serialVersionUID = 1L;
@@ -13,13 +12,6 @@ public class LoginPage extends BasePage {
 
     private void createPage() {
         add(new TournamentSignInPanel("signInPanel"));
-    }
-
-    @Override
-    protected void setVisibility() {
-        if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
-            // setVisible(false);
-        }
     }
 
     @Override

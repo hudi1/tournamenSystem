@@ -195,10 +195,10 @@ public class TournamentAggregationITest {
 
         // test of my own sql
 
-        List<Player> notRegistratedPlayer = tournamentAggregationDao.getNotRegistratedPlayers(tournament);
+        List<Player> notRegistratedPlayer = tournamentAggregationDao.getNotRegisteredPlayers(tournament);
         Assert.assertNotNull(notRegistratedPlayer);
 
-        List<Participant> registratedParticipant = tournamentAggregationDao.getRegistratedParticipant(tournament);
+        List<Participant> registratedParticipant = tournamentAggregationDao.getRegisteredParticipant(tournament);
         Assert.assertNotNull(registratedParticipant);
 
     }

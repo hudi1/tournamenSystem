@@ -53,7 +53,7 @@ public interface TournamentAggregationDao {
 
     public Participant getParticipant(Participant participant);
 
-    public List<Participant> getRegistratedParticipant(Tournament tournament);
+    public List<Participant> getRegisteredParticipant(Tournament tournament);
 
     public List<Participant> getListParticipants(Participant form);
 
@@ -77,7 +77,7 @@ public interface TournamentAggregationDao {
 
     public List<Tournament> getListTournaments(Tournament tournament);
 
-    public List<Player> getNotRegistratedPlayers(Tournament tournament);
+    public List<Player> getNotRegisteredPlayers(Tournament tournament);
 
     public PlayOffGame createPlayOffGame(Participant homePlayer, Participant awayPlayer, Groups group, int position);
 

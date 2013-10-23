@@ -178,13 +178,6 @@ public class PlayerPage extends BasePage {
     }
 
     @Override
-    protected void setVisibility() {
-        if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
-            setVisible(false);
-        }
-    }
-
-    @Override
     protected IModel<String> newHeadingModel() {
         return new ResourceModel("playerList");
     }

@@ -26,20 +26,28 @@ public class ParticipantService extends AbstractService {
 
     // Basic operations
 
+    @Transactional
     public Participant createParticipant(Player player, Groups group) {
+        logger.debug("Create participant: " + player + " " + group);
         return tournamentAggregationDao.createParticipant(player, group);
     }
 
+    @Transactional(readOnly = true)
     public Participant getParticipant(Participant participant) {
+        logger.debug("Get participant: " + participant);
         participant.setInit(Participant.Association.games.name(), Participant.Association.player.name());
         return tournamentAggregationDao.getParticipant(participant);
     }
 
+    @Transactional
     public int updateParticipant(Participant participant) {
+        logger.debug("Update participant: " + participant);
         return tournamentAggregationDao.updateParticipant(participant);
     }
 
+    @Transactional
     public int deleteParticipant(Participant participant) {
+        logger.debug("Delete participant: " + participant);
         int count = 0;
         List<Participant> participants = tournamentAggregationDao.getListParticipants(new Participant()._setGroup(
                 participant.getGroup())._setPlayer(participant.getPlayer()));
@@ -49,20 +57,24 @@ public class ParticipantService extends AbstractService {
         return count;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Participant> getParticipants(Participant participant) {
+        logger.debug("Get list participants: " + participant);
         participant.setInit(Participant.Association.games.name(), Participant.Association.player.name());
         return tournamentAggregationDao.getListParticipants(participant);
     }
 
     // Advanced operations
 
-    public List<Participant> getRegistratedParticipant(Tournament tournament) {
-        return tournamentAggregationDao.getRegistratedParticipant(tournament);
+    @Transactional(readOnly = true)
+    public List<Participant> getRegisteredParticipant(Tournament tournament) {
+        logger.debug("Get registrated participant in tournament: " + tournament);
+        return tournamentAggregationDao.getRegisteredParticipant(tournament);
     }
 
+    @Transactional
     public Participant createBasicParticipant(Tournament tournament, Player player, Groups group) {
-        logger.info("creating basic participant, player: " + player + " group: " + group);
+        logger.debug("Creating basic participant, player: " + player + " group: " + group);
         if (group.getName() != null) {
             Groups savedGroup = tournamentAggregationDao.getGroup(group._setTournament(tournament)._setType(
                     GroupsType.BASIC));
@@ -76,6 +88,7 @@ public class ParticipantService extends AbstractService {
     }
 
     public void calculateParticipants(List<Participant> participants, Tournament tournament) {
+        logger.debug("Calculate participants: " + tournament);
         for (Participant participant : participants) {
             calculateParticipant(participant, tournament);
         }
@@ -86,7 +99,7 @@ public class ParticipantService extends AbstractService {
 
     private void calculateParticipant(Participant participant, Tournament tournament) {
         long time = System.currentTimeMillis();
-        logger.info("calculating participant: " + participant);
+        logger.debug("Calculate participant: " + participant);
         int points = 0;
         Integer homeScore = 0;
         Integer awayScore = 0;
@@ -108,10 +121,11 @@ public class ParticipantService extends AbstractService {
         participant.setPoints(points);
         participant.setScore(new Score(homeScore, awayScore));
         time = System.currentTimeMillis() - time;
-        logger.debug("Celkova doba: " + time + " ms");
+        logger.debug("End: Calculate participant: " + time + " ms");
     }
 
     private Participant cloneParticipant(Participant participant) {
+        logger.debug("Clone participant: " + participant);
         Participant clone = new Participant();
         clone._setGroup(participant.getGroup())._setId(participant.getId())._setPlayer(participant.getPlayer())
                 ._setPoints(participant.getPoints())._setRank(participant.getRank())._setScore(participant.getScore())
@@ -120,8 +134,9 @@ public class ParticipantService extends AbstractService {
         return clone;
     }
 
+    @Transactional
     private void sortParticipant(List<Participant> participants, Tournament tournament) {
-        logger.info("sort participants: " + Arrays.toString(participants.toArray()));
+        logger.debug("Sort participants: " + Arrays.toString(participants.toArray()));
 
         Collections.sort(participants, new BasicComparator());
 
@@ -184,8 +199,11 @@ public class ParticipantService extends AbstractService {
     }
 
     // vrati hracov pre rozpis kde sa pocitaju vysledky(postupujuci hraci)
+    @Transactional(readOnly = true)
     public LinkedList<List<Participant>> getAdvancedPlayersByGroup(Groups group, Tournament tournament,
             List<Participant> finalParticipants) {
+        logger.debug("Get Advanced Players By Group" + group);
+
         LinkedList<List<Participant>> playerByGroup = new LinkedList<List<Participant>>();
 
         List<Groups> basicGroups = groupService.getBasicGroups(new Groups()._setTournament(tournament));

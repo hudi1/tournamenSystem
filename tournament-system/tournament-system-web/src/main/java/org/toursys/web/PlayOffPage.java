@@ -111,7 +111,7 @@ public class PlayOffPage extends BasePage {
                 @Override
                 protected void populateItem(final Item<Groups> listItem) {
                     final Groups group = listItem.getModelObject();
-                    playOffGames = playOffGameService.getPlayOffGames(tournament, group);
+                    playOffGames = playOffGameService.processPlayOffGames(tournament, group);
 
                     final ListView<PlayOffGame> dataView = new ListView<PlayOffGame>("rows", playOffGames) {
 

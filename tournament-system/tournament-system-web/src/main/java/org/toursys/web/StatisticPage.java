@@ -6,7 +6,6 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 @AuthorizeInstantiation(Roles.USER)
 public class StatisticPage extends BasePage {
@@ -19,13 +18,6 @@ public class StatisticPage extends BasePage {
 
     protected void createPage() {
 
-    }
-
-    @Override
-    protected void setVisibility() {
-        if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
-            setVisible(false);
-        }
     }
 
     @Override

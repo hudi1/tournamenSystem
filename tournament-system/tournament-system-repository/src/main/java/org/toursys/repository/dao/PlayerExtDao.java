@@ -7,6 +7,6 @@ import org.toursys.repository.model.Tournament;
 
 public interface PlayerExtDao extends PlayerDao {
 
-    public List<Player> listNotRegistratedPlayers(Tournament tournament);
+    public List<Player> listNotRegisteredPlayers(Tournament tournament);
 
 }

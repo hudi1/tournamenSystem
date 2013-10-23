@@ -115,8 +115,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Player> getNotRegistratedPlayers(Tournament tournament) {
-        return playerDao.listNotRegistratedPlayers(tournament);
+    public List<Player> getNotRegisteredPlayers(Tournament tournament) {
+        return playerDao.listNotRegisteredPlayers(tournament);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public List<Participant> getRegistratedParticipant(Tournament tournament) {
+    public List<Participant> getRegisteredParticipant(Tournament tournament) {
         return participantDao.listTournamentParticipants(tournament);
     }
 

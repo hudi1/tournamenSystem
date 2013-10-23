@@ -43,6 +43,10 @@ public class TournamentOptionsPage extends BasePage {
         createPage();
     }
 
+    private void clearPageParameters() {
+        getPageParameters().remove("showTableOptions").remove("showTournamentOptions");
+    }
+
     private void checkPageParameters(PageParameters parameters) {
         if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
                 || parameters.get("groupid").isNull()) {
@@ -108,7 +112,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    groupService.updateGroups(tournament, group);
+                    groupService.updateGroupOptions(tournament, group);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
@@ -119,6 +123,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    clearPageParameters();
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
@@ -163,6 +168,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    clearPageParameters();
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));

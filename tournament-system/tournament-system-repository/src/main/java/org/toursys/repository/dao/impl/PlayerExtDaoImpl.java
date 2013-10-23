@@ -19,7 +19,7 @@ public class PlayerExtDaoImpl extends PlayerDaoImpl implements PlayerExtDao {
         super(sqlEngineFactory, sqlSessionFactory);
     }
 
-    public List<Player> listNotRegistratedPlayers(Tournament tournament) {
+    public List<Player> listNotRegisteredPlayers(Tournament tournament) {
         if (logger.isTraceEnabled()) {
             logger.trace("list not registrated players: " + tournament);
         }

@@ -456,7 +456,7 @@ public class GroupPage extends BasePage {
                 public void onSubmit() {
                     groupService.createFinalGroup(tournament);
                     finalStandingService.processFinalStandings(tournament, participantService
-                            .getRegistratedParticipant(tournament).size());
+                            .getRegisteredParticipant(tournament).size());
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };

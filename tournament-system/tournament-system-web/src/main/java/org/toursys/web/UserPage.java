@@ -17,7 +17,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.User;
-import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 @AuthorizeInstantiation(Roles.ADMIN)
 public class UserPage extends BasePage {
@@ -131,13 +130,6 @@ public class UserPage extends BasePage {
             });
         }
     }
-
-    @Override
-    protected void setVisibility() {
-        if (!((TournamentAuthenticatedWebSession) getSession()).getRoles().contains(Roles.ADMIN)) {
-            setVisible(false);
-        }
-    };
 
     @Override
     protected IModel<String> newHeadingModel() {

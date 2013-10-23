@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.transaction.annotation.Transactional;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.util.GroupsName;
 import org.toursys.processor.util.TournamentUtil;
@@ -19,33 +20,43 @@ public class FinalStandingService extends AbstractService {
 
     // Basic operations
 
+    @Transactional
     public FinalStanding createFinalStanding(FinalStanding finalStanding) {
-        logger.info("Creating final standing: " + finalStanding);
+        logger.debug("Create final standing: " + finalStanding);
         return tournamentAggregationDao.createFinalStanding(finalStanding);
     }
 
+    @Transactional(readOnly = true)
     public FinalStanding getFinalStanding(FinalStanding finalStanding) {
+        logger.debug("Get final standing: " + finalStanding);
         return tournamentAggregationDao.getFinalStanding(finalStanding);
     }
 
+    @Transactional
     public int updateFinalStanding(FinalStanding finalStanding) {
-        logger.info("Updating final standing: " + finalStanding);
+        logger.info("Update final standing: " + finalStanding);
         return tournamentAggregationDao.updateFinalStanding(finalStanding);
     }
 
+    @Transactional
     public int deleteFinalStanding(FinalStanding finalStanding) {
+        logger.info("Delete final standing: " + finalStanding);
         return tournamentAggregationDao.deleteFinalStanding(finalStanding);
     }
 
+    @Transactional(readOnly = true)
     public List<FinalStanding> getFinalStandings(Tournament tournament) {
         FinalStanding finalStanding = new FinalStanding()._setTournament(tournament);
         finalStanding.setInit(FinalStanding.Association.player.name());
+        logger.debug("Get list final standings: " + finalStanding);
         return tournamentAggregationDao.getListFinalStandings(finalStanding);
     }
 
     // Advanced operations
 
+    @Transactional
     public void processFinalStandings(Tournament tournament, int playerCount) {
+        logger.debug("Process final standings: " + tournament);
         List<FinalStanding> finalStandings = getFinalStandings(tournament);
         for (FinalStanding finalStanding : finalStandings) {
             deleteFinalStanding(finalStanding);
@@ -58,10 +69,12 @@ public class FinalStandingService extends AbstractService {
         }
     }
 
-    public void updateFinalStandings(List<Participant> participants, int round, int playerPlayOffCount,
+    @Transactional
+    public void updatePromotingFinalStandings(List<Participant> participants, int round, int playerPlayOffCount,
             Tournament tournament, int playerGroupCountSuffix) {
+        logger.debug("Update promiting final standings");
+        long time = System.currentTimeMillis();
         Collections.sort(participants, new RankComparator());
-        // TODO optimalizovat !!!
         Collections.reverse(participants);
         int maxRound = TournamentUtil.binlog(playerPlayOffCount);
         int actualRank = (int) Math.pow(2, maxRound - (round - 2)) + playerGroupCountSuffix;
@@ -76,10 +89,14 @@ public class FinalStandingService extends AbstractService {
             actualRank--;
         }
         participants.clear();
+        time = System.currentTimeMillis() - time;
+        logger.debug("End:  Update promiting final standings: " + time + " ms");
     }
 
+    @Transactional
     public void updateNotPromotingFinalStandings(List<Participant> participants, Groups group, Tournament tournament) {
-        logger.info("Start updating  not promoting final standing");
+        logger.info("Update not promoting final standings");
+        long time = System.currentTimeMillis();
         GroupsName groupsName = new GroupsName();
         String previousGroupName = groupsName.getPrevious(group.getName());
 
@@ -108,6 +125,8 @@ public class FinalStandingService extends AbstractService {
                 updateFinalStanding(finalStanding);
             }
         }
+        time = System.currentTimeMillis() - time;
+        logger.debug("End:  Update not promoting final standings: " + time + " ms");
     }
 
     @Required

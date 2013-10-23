@@ -89,7 +89,6 @@ public abstract class BasePage extends WebPage {
     public BasePage(PageParameters parameters) {
         super(parameters);
         addMyComponents();
-        setVisibility();
     }
 
     public final IModel<String> getHeadingModel() {
@@ -205,10 +204,6 @@ public abstract class BasePage extends WebPage {
 
     }
 
-    protected void setVisibility() {
-        setVisible(true);
-    }
-
     private class ActiveReplaceModel extends AbstractReadOnlyModel<String> {
 
         private static final long serialVersionUID = 1L;
@@ -227,8 +222,12 @@ public abstract class BasePage extends WebPage {
     }
 
     protected TournamentImpl getTournament(PageParameters parameters) {
-        return new TournamentImpl(tournamentService.getTournament(new Tournament()._setId(parameters
-                .get("tournamentid").toInteger())));
+        Tournament tournamentDb = tournamentService.getTournament(new Tournament()._setId(parameters
+                .get("tournamentid").toInteger()));
+        if (tournamentDb == null) {
+            return null;
+        }
+        return new TournamentImpl(tournamentDb);
     }
 
     protected Groups getGroup(PageParameters parameters) {
