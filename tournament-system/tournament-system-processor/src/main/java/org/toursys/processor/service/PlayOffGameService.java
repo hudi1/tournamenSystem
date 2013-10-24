@@ -1,6 +1,7 @@
 package org.toursys.processor.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -63,7 +64,7 @@ public class PlayOffGameService extends AbstractService {
     // Advanced operations
 
     @Transactional
-    // TODO dost dlho to trva
+    // TODO dost dlho to trva. Zvazit ci to nevytvarat v priebehu turnaja ako final standings a nie na tlacidlo
     public List<PlayOffGame> processPlayOffGames(Tournament tournament, Groups group) {
         long time = System.currentTimeMillis();
         logger.debug("Process playerOff games: " + tournament + " " + group);
@@ -124,6 +125,8 @@ public class PlayOffGameService extends AbstractService {
     private void updatePlayOffGames(int playerPlayOffCount, List<PlayOffGame> playOffGames, Tournament tournament,
             int playerGroupCountSuffix) {
 
+        logger.debug("Update playOff games: " + playerPlayOffCount + " " + Arrays.toString(playOffGames.toArray())
+                + " " + tournament + " " + playerGroupCountSuffix);
         int lastRound = 1;
 
         ArrayList<Participant> finalStandings = new ArrayList<Participant>();
@@ -213,7 +216,7 @@ public class PlayOffGameService extends AbstractService {
             PlayOffGame playOffGame;
             if (!playOffPlayer.isEmpty()) {
                 playOffGame = createPlayOffGame(playOffPlayer.removeFirst(), playOffPlayer.removeLast(), group,
-                        getPosition(i, playOffPlayer.size() / 2));
+                        getPosition(i + 1, playOffPlayer.size() / 2));
             } else {
                 playOffGame = createPlayOffGame(null, null, group, i + 1);
             }
@@ -233,7 +236,11 @@ public class PlayOffGameService extends AbstractService {
         return playOffGames;
     }
 
-    private int getPosition(int i, int size) {
+    public static void main(String[] args) {
+        System.out.println(getPosition(2, 16));
+    }
+
+    private static int getPosition(int i, int size) {
         if (i == 1) {
             return 1;
         } else if (i == size) {
@@ -243,6 +250,9 @@ public class PlayOffGameService extends AbstractService {
             return size;
         }
         if (i == 3) {
+            return size / 2 + 1;
+        }
+        if (i == 4) {
             return size / 2;
         } else {
             if (i % 2 == 0) {

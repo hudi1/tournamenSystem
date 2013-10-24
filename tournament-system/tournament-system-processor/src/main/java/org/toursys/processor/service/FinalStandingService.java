@@ -1,5 +1,6 @@
 package org.toursys.processor.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,8 +73,10 @@ public class FinalStandingService extends AbstractService {
     @Transactional
     public void updatePromotingFinalStandings(List<Participant> participants, int round, int playerPlayOffCount,
             Tournament tournament, int playerGroupCountSuffix) {
-        logger.debug("Update promiting final standings");
+        logger.debug("Update promiting final standings" + Arrays.toString(participants.toArray()) + " " + round + " "
+                + playerPlayOffCount + " " + tournament + " " + playerGroupCountSuffix);
         long time = System.currentTimeMillis();
+        participants.removeAll(Collections.singleton(null));
         Collections.sort(participants, new RankComparator());
         Collections.reverse(participants);
         int maxRound = TournamentUtil.binlog(playerPlayOffCount);
