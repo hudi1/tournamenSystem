@@ -1,6 +1,7 @@
 package org.toursys.processor.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,7 +19,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.toursys.processor.util.NameGenerator;
 import org.toursys.repository.dao.helper.TournamentFactory;
+import org.toursys.repository.model.GameImpl;
+import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
@@ -48,13 +53,13 @@ public class TournamentServiceParametrizedTest {
     PlayOffGameService playOffGameService;
 
     @Autowired
-    PlayOffResultService playOffResultService;
-
-    @Autowired
     ScheduleService scheduleService;
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ParticipantService participantService;
 
     @Autowired
     SeasonService seasonService;
@@ -117,79 +122,127 @@ public class TournamentServiceParametrizedTest {
     }
 
     @Test
+    @Ignore
     public void createTournamentGamesTest() {
-        /*
-         * System.out.println("Start Players: " + playerCount + " HockeyCount: " + hockeyCount + " Groups: " +
-         * groupCount);
-         * 
-         * for (int i = 0; i < groupCount; i++) { List<PlayerResult> playerResults = new ArrayList<PlayerResult>();
-         * Groups group = TournamentFactory.createGroup(); group.setName(Integer.toString(i + 1)); for (int j = 0; j <
-         * playerCount; j++) { Player player = new Player(nameGenerator.getName(), nameGenerator.getName(), user);
-         * player = tournamentService.createPlayer(player);
-         * playerResults.add(tournamentService.createBasicPlayerResult(tournament, player, group)); }
-         * tournamentService.createGames(playerResults);
-         * 
-         * for (PlayerResult playerResult : playerResults) { Assert.assertFalse(playerResult.getGames().isEmpty());
-         * Assert.assertEquals(playerResult.getGames().size(), playerCount - 1); }
-         * 
-         * group.setNumberOfHockey(hockeyCount);
-         * 
-         * List<GameImpl> schedule = tournamentService.getSchedule(group, tournament, playerResults); int gamesCount =
-         * playerCount * (playerCount - 1) / 2; Assert.assertEquals(schedule.size(), gamesCount);
-         * 
-         * Set<PlayerResult> players = new HashSet<PlayerResult>(); int round = 1; for (GameImpl gameImpl : schedule) {
-         * if (gameImpl.getRound() == round) { checkConstainsInRound(gameImpl.getAwayPlayerResult(), players);
-         * checkConstainsInRound(gameImpl.getHomePlayerResult(), players); } else { Assert.assertEquals(players.size(),
-         * hockeyCount * 2); players.clear(); round++; checkConstainsInRound(gameImpl.getAwayPlayerResult(), players);
-         * checkConstainsInRound(gameImpl.getHomePlayerResult(), players); } }
-         * 
-         * for (GameImpl game : schedule) { game.setHomeScore(getRandomScore()); game.setHomeScore(getRandomScore()); }
-         * 
-         * PlayerResult previousPlayerResult = playerResults.get(0); for (PlayerResult playerResult : playerResults) {
-         * Assert.assertTrue(playerResult.getPoints() >= previousPlayerResult.getPoints()); previousPlayerResult =
-         * playerResult; } } // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A // skupine tak vyhodi
-         * vyjimku tournamentService.createFinalGroup(tournament); tournamentService.createFinalStandings(tournament,
-         * playerCount * 2);
-         * 
-         * List<Groups> finalGroups = tournamentService.getFinalGroups(new Groups()._setTournament(tournament));
-         * 
-         * Assert.assertFalse(finalGroups.isEmpty());
-         * 
-         * for (Groups finalGroup : finalGroups) { List<PlayerResult> playerResult =
-         * tournamentService.getPlayerResults(new PlayerResult() ._setGroup(finalGroup));
-         * Assert.assertFalse(playerResult.isEmpty()); tournamentService.copyResult(tournament);
-         * 
-         * if (finalGroup.getName().equals("A")) { Assert.assertTrue(playerResult.size() <= (groupCount *
-         * tournament.getFinalPromoting()));
-         * 
-         * if (Math.min(playerCount, tournament.getFinalPromoting()) % 2 == 0) {
-         * finalGroup.setNumberOfHockey(playerResult.size() / 2); } else {
-         * finalGroup.setNumberOfHockey(playerResult.size() / groupCount); }
-         * 
-         * List<GameImpl> finalSchedule = tournamentService.getSchedule(finalGroup, tournament, playerResult);
-         * 
-         * // TODO zatial mi finalove skupiny funguju len s parnym poctom // ked sa prenasaju vysledky Set<PlayerResult>
-         * finalPlayers = new HashSet<PlayerResult>(); int finalRound = 1; for (GameImpl gameImpl : finalSchedule) { if
-         * (gameImpl.getRound() == finalRound) { checkConstainsInRound(gameImpl.getAwayPlayerResult(), finalPlayers);
-         * checkConstainsInRound(gameImpl.getHomePlayerResult(), finalPlayers); } else {
-         * Assert.assertEquals(finalPlayers.size(), finalGroup.getNumberOfHockey() * 2); finalPlayers.clear();
-         * finalRound++; checkConstainsInRound(gameImpl.getAwayPlayerResult(), finalPlayers);
-         * checkConstainsInRound(gameImpl.getHomePlayerResult(), finalPlayers); } } } else {
-         * Assert.assertTrue(playerResult.size() <= (groupCount * tournament.getLowerPromoting()));
-         * tournamentService.getSchedule(finalGroup, tournament, playerResult); }
-         * 
-         * // playOff finalGroup.setPlayThirdPlace(random.nextBoolean()); List<PlayOffGame> playOffGames =
-         * tournamentService.getPlayOffGames(tournament, finalGroup);
-         * 
-         * if (finalGroup.getName().equals("A")) { int gamesCount = tournament.getPlayOffA(); if
-         * (!finalGroup.getPlayThirdPlace()) { gamesCount--; } Assert.assertEquals(gamesCount, playOffGames.size()); }
-         * else { int gamesCount = tournament.getPlayOffLower(); if (!finalGroup.getPlayThirdPlace()) { gamesCount--; }
-         * Assert.assertEquals(gamesCount, playOffGames.size()); }
-         * 
-         * tournamentService.getPlayOffGames(tournament, finalGroup);
-         * 
-         * }
-         */
+
+        System.out.println("Start Players: " + playerCount + " HockeyCount: " + hockeyCount + " Groups: " + groupCount);
+
+        for (int i = 0; i < groupCount; i++) {
+            List<Participant> playerResults = new ArrayList<Participant>();
+            Groups group = TournamentFactory.createGroup();
+            group.setName(Integer.toString(i + 1));
+            for (int j = 0; j < playerCount; j++) {
+                Player player = new Player(nameGenerator.getName(), nameGenerator.getName(), user);
+                player = playerService.createPlayer(player);
+                playerResults.add(participantService.createBasicParticipant(tournament, player, group));
+            }
+            // tournamentService.createGames(playerResults);
+
+            for (Participant playerResult : playerResults) {
+                Assert.assertFalse(playerResult.getGames().isEmpty());
+                Assert.assertEquals(playerResult.getGames().size(), playerCount - 1);
+            }
+
+            group.setNumberOfHockey(hockeyCount);
+
+            List<GameImpl> schedule = new ArrayList<GameImpl>();// = scheduleService.getSchedule(group, tournament,
+                                                                // playerResults);
+            int gamesCount = playerCount * (playerCount - 1) / 2;
+            Assert.assertEquals(schedule.size(), gamesCount);
+
+            Set<Participant> players = new HashSet<Participant>();
+            int round = 1;
+            for (GameImpl gameImpl : schedule) {
+                if (gameImpl.getRound() == round) {
+                    checkConstainsInRound(gameImpl.getAwayParticipant(), players);
+                    checkConstainsInRound(gameImpl.getHomeParticipant(), players);
+                } else {
+                    Assert.assertEquals(players.size(), hockeyCount * 2);
+                    players.clear();
+                    round++;
+                    checkConstainsInRound(gameImpl.getAwayParticipant(), players);
+                    checkConstainsInRound(gameImpl.getHomeParticipant(), players);
+                }
+            }
+
+            for (GameImpl game : schedule) {
+                game.setHomeScore(getRandomScore());
+                game.setHomeScore(getRandomScore());
+            }
+
+            Participant previousParticipant = playerResults.get(0);
+            for (Participant playerResult : playerResults) {
+                Assert.assertTrue(playerResult.getPoints() >= previousParticipant.getPoints());
+                previousParticipant = playerResult;
+            }
+        } // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A // skupine tak vyhodi vyjimku
+        groupService.createFinalGroup(tournament);
+        // finalStandingService.createFinalStandings(tournament, playerCount * 2);
+
+        List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
+
+        Assert.assertFalse(finalGroups.isEmpty());
+
+        for (Groups finalGroup : finalGroups) {
+            List<Participant> playerResult = participantService
+                    .getParticipants(new Participant()._setGroup(finalGroup));
+            Assert.assertFalse(playerResult.isEmpty());
+            // tournamentService.copyResult(tournament);
+
+            if (finalGroup.getName().equals("A")) {
+                Assert.assertTrue(playerResult.size() <= (groupCount * tournament.getFinalPromoting()));
+
+                if (Math.min(playerCount, tournament.getFinalPromoting()) % 2 == 0) {
+                    finalGroup.setNumberOfHockey(playerResult.size() / 2);
+                } else {
+                    finalGroup.setNumberOfHockey(playerResult.size() / groupCount);
+                }
+
+                List<GameImpl> finalSchedule = new ArrayList<GameImpl>();// = scheduleService.getSchedule(finalGroup,
+                                                                         // tournament, playerResult);
+
+                // TODO zatial mi finalove skupiny funguju len s parnym poctom // ked sa prenasaju vysledky
+                // Set<Participant>
+                HashSet<Participant> finalPlayers = new HashSet<Participant>();
+                int finalRound = 1;
+                for (GameImpl gameImpl : finalSchedule) {
+                    if (gameImpl.getRound() == finalRound) {
+                        checkConstainsInRound(gameImpl.getAwayParticipant(), finalPlayers);
+                        checkConstainsInRound(gameImpl.getHomeParticipant(), finalPlayers);
+                    } else {
+                        Assert.assertEquals(finalPlayers.size(), finalGroup.getNumberOfHockey() * 2);
+                        finalPlayers.clear();
+                        finalRound++;
+                        checkConstainsInRound(gameImpl.getAwayParticipant(), finalPlayers);
+                        checkConstainsInRound(gameImpl.getHomeParticipant(), finalPlayers);
+                    }
+                }
+            } else {
+                Assert.assertTrue(playerResult.size() <= (groupCount * tournament.getLowerPromoting()));
+                // tournamentService.getSchedule(finalGroup, tournament, playerResult);
+            }
+
+            // playOff finalGroup.setPlayThirdPlace(random.nextBoolean()); List<PlayOffGame> playOffGames =
+            // playOffGameService.getPlayOffGames(tournament, finalGroup);
+
+            if (finalGroup.getName().equals("A")) {
+                int gamesCount = tournament.getPlayOffA();
+                if (!finalGroup.getPlayThirdPlace()) {
+                    gamesCount--;
+                }
+                // Assert.assertEquals(gamesCount, playOffGames.size());
+            } else {
+                int gamesCount = tournament.getPlayOffLower();
+                if (!finalGroup.getPlayThirdPlace()) {
+                    gamesCount--;
+                }
+                // Assert.assertEquals(gamesCount, playOffGames.size());
+            }
+
+            // tournamentService.getPlayOffGames(tournament, finalGroup);
+
+        }
+
     }
 
     private void checkConstainsInRound(Participant playerResult, Set<Participant> players) {

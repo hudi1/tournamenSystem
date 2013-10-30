@@ -24,6 +24,11 @@
         <version.itextpdf>5.1.3</version.itextpdf>
         <version.itextpdf-tool>1.1.1</version.itextpdf-tool>
         <version.servlet>2.4</version.servlet>
+        <version.seaf>1.4</version.seaf>
+        <version.jmock>2.5.1</version.jmock>
+        <version.light-air>0.5</version.light-air>
+        <version.dbcp>1.2.2</version.dbcp>
+        <version.mysql>5.1.20</version.mysql>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -265,6 +270,7 @@
                 <version>${version.sql-processor}</version>
             </dependency>
 
+            <!-- Test -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
@@ -283,6 +289,32 @@
                 <version>${version.junit}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>net.sf.seaf</groupId>
+                <artifactId>seaf-test-commons</artifactId>
+                <version>${version.seaf}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock</artifactId>
+                <version>${version.jmock}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock-legacy</artifactId>
+                <version>${version.jmock}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.lightair</groupId>
+                <artifactId>light-air</artifactId>
+                <version>${version.light-air}</version>
+                <scope>test</scope>
+            </dependency>
+
+
             <!-- CGLIB -->
             <dependency>
                 <groupId>cglib</groupId>
@@ -292,13 +324,13 @@
             <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
-                <version>1.2.2</version>
+                <version>${version.dbcp}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.20</version>
+                <version>${version.mysql}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

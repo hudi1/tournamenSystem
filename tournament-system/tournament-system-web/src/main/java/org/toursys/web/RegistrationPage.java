@@ -258,14 +258,6 @@ public class RegistrationPage extends BasePage {
                             HighlitableDataItem<Player> hitem = (HighlitableDataItem<Player>) listItem;
                             hitem.toggleHighlite();
 
-                            /*
-                             * Iterator<Item<Player>> items = getItems();
-                             * 
-                             * while (items.hasNext()) { HighlitableDataItem<Player> hitem =
-                             * (HighlitableDataItem<Player>) items.next(); if (hitem.equals(listItem)) {
-                             * hitem.toggleHighlite(); } else { hitem.toggleOff(); } target.add(hitem); }
-                             */
-
                             if (selectedItem != null) {
                                 selectedItem.toggleOff();
                                 target.add(selectedItem);
@@ -286,20 +278,6 @@ public class RegistrationPage extends BasePage {
                         }
                     });
 
-                    listItem.add(new AjaxEventBehavior("ondblclick") {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected void onEvent(final AjaxRequestTarget target) {
-                            if (player != null) {
-                                participantService.createBasicParticipant(tournament, player, group);
-                            }
-                            setResponsePage(RegistrationPage.class, getPageParameters());
-                        }
-
-                    });
-
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
 
@@ -311,8 +289,23 @@ public class RegistrationPage extends BasePage {
                 }
 
                 @Override
-                protected Item<Player> newItem(String id, int index, IModel<Player> model) {
-                    return new HighlitableDataItem<Player>(id, index, model);
+                protected Item<Player> newItem(String id, int index, final IModel<Player> model) {
+                    HighlitableDataItem<Player> item = new HighlitableDataItem<Player>(id, index, model);
+                    item.add(new AjaxEventBehavior("ondblclick") {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected void onEvent(final AjaxRequestTarget target) {
+                            if (model.getObject() != null) {
+                                participantService.createBasicParticipant(tournament, model.getObject(), group);
+                            }
+                            setResponsePage(RegistrationPage.class, getPageParameters());
+                        }
+
+                    });
+
+                    return item;
                 }
 
             };

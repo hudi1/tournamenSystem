@@ -52,7 +52,7 @@ public class ParticipantService extends AbstractService {
         List<Participant> participants = tournamentAggregationDao.getListParticipants(new Participant()._setGroup(
                 participant.getGroup())._setPlayer(participant.getPlayer()));
         for (Participant deletedParticipant : participants) {
-            count += deleteParticipant(deletedParticipant);
+            count += tournamentAggregationDao.deleteParticipant(deletedParticipant);
         }
         return count;
     }
