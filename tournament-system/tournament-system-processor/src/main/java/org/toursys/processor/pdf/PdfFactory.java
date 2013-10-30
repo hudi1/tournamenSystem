@@ -20,7 +20,6 @@ import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
 
 import com.itextpdf.text.Document;
@@ -466,12 +465,8 @@ public class PdfFactory {
 
                     pdfTable.addCell(createLeftAlignCell(playersGame));
 
-                    String results = "";
-                    for (PlayOffResult playOffResult : playOffGame.getPlayOffResults()) {
-                        if (playOffResult.getAwayScore() != null && playOffResult.getHomeScore() != null) {
-                            results += playOffResult.getHomeScore() + " : " + playOffResult.getAwayScore() + " , ";
-                        }
-                    }
+                    String results = playOffGame.getResults();
+
                     if (!results.isEmpty()) {
                         pdfTable.addCell(createLeftAlignCell(results));
                     } else {

@@ -50,6 +50,7 @@ public class GroupPage extends BasePage {
     private Groups group;
     private List<Participant> participants;
     private ModalWindow modalWindow;
+    private boolean calculateParticipants;
 
     public GroupPage() {
         throw new RestartResponseAtInterceptPageException(new SeasonPage());
@@ -60,8 +61,17 @@ public class GroupPage extends BasePage {
         checkPageParameters(parameters);
         tournament = getTournament(parameters);
         group = getGroup(parameters);
+        calculateParticipants = getCalculateParticipants(parameters);
         getParticipants();
         createPage();
+    }
+
+    private boolean getCalculateParticipants(PageParameters parameters) {
+        if (parameters.get("update").isNull()) {
+            return false;
+        } else {
+            return parameters.get("update").toBoolean();
+        }
     }
 
     private void getParticipants() {
@@ -69,8 +79,7 @@ public class GroupPage extends BasePage {
             this.participants = participantService.getParticipants(new Participant()._setGroup(group));
             gameService.processGames(participants);
 
-            // TODO asi nema cenu vzdy pocitat ale trebalo by vyrobit novy parameter kedy ano a kedy nie
-            if (true /* group.getType() != GroupsType.BASIC */) {
+            if (calculateParticipants) {
                 try {
                     calculateParticipants();
                 } catch (SamePlayerRankException e) {
@@ -78,7 +87,7 @@ public class GroupPage extends BasePage {
                 }
             }
 
-            if (group.getType().equals(GroupsType.FINAL)) {
+            if (group.getType().equals(GroupsType.FINAL) && calculateParticipants) {
                 finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
             }
 
@@ -120,6 +129,7 @@ public class GroupPage extends BasePage {
             private static final long serialVersionUID = 1L;
 
             public void onClose(AjaxRequestTarget target) {
+                getPageParameters().set("update", false);
                 setResponsePage(GroupPage.class, getPageParameters());
             }
         });
@@ -326,6 +336,7 @@ public class GroupPage extends BasePage {
                         @Override
                         public void onSubmit() {
                             getPageParameters().set("groupid", group.getId());
+                            getPageParameters().set("update", false);
                             setResponsePage(GroupPage.class, getPageParameters());
                         }
                     };
@@ -385,6 +396,7 @@ public class GroupPage extends BasePage {
                                 group);
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
+                        // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
                         throw new RuntimeException(e);
                     }
                     return tempFile;
@@ -406,7 +418,8 @@ public class GroupPage extends BasePage {
                                 scheduleService.getSchedule(group, participants,
                                         participantService.getAdvancedPlayersByGroup(group, tournament, participants)));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error("!! GroupPage error: ", e);
+                        // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
                         throw new RuntimeException(e);
                     }
                     return tempFile;
@@ -444,8 +457,9 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     groupService.createFinalGroup(tournament);
-                    finalStandingService.processFinalStandings(tournament,
-                            participantService.getRegisteredParticipant(tournament).size());
+                    finalStandingService.processFinalStandings(tournament);
+                    playOffGameService.processPlayOffGames(tournament);
+                    getPageParameters().set("update", false);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -459,6 +473,7 @@ public class GroupPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     groupService.copyResult(tournament);
+                    getPageParameters().set("update", false);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };

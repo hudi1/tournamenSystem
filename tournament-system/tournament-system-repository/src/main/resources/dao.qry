@@ -2,6 +2,7 @@ package org.toursys.repository.dao {
 	
 	implementation-package impl		
 
+  
   dao FinalStandingDao :: FinalStanding {
     scaffold
   }
@@ -26,10 +27,6 @@ package org.toursys.repository.dao {
     scaffold
   }
 
-  dao PlayOffResultDao :: PlayOffResult {
-    scaffold
-  }
-
   dao SeasonDao :: Season {
     scaffold
   }
@@ -41,4 +38,5 @@ package org.toursys.repository.dao {
   dao UserDao :: User {
     scaffold
   }
+
 }

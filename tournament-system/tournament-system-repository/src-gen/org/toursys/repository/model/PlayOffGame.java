@@ -1,9 +1,6 @@
 package org.toursys.repository.model;
-  
-import java.util.List;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.lang.reflect.InvocationTargetException;
@@ -100,18 +97,33 @@ public class PlayOffGame implements Serializable {
     return this;
   }
   
-  private List<PlayOffResult> playOffResults = new ArrayList<PlayOffResult>();
+  private String results;
   
-  public List<PlayOffResult> getPlayOffResults() {
-    return playOffResults;
+  public String getResults() {
+    return results;
   }
   
-  public void setPlayOffResults(List<PlayOffResult> playOffResults) {
-    this.playOffResults = playOffResults;
+  public void setResults(String results) {
+    this.results = results;
   }
   
-  public PlayOffGame _setPlayOffResults(List<PlayOffResult> playOffResults) {
-    this.playOffResults = playOffResults;
+  public PlayOffGame _setResults(String results) {
+    this.results = results;
+    return this;
+  }
+  
+  private PlayOffGameWinner winner;
+  
+  public PlayOffGameWinner getWinner() {
+    return winner;
+  }
+  
+  public void setWinner(PlayOffGameWinner winner) {
+    this.winner = winner;
+  }
+  
+  public PlayOffGame _setWinner(PlayOffGameWinner winner) {
+    this.winner = winner;
     return this;
   }
   
@@ -130,7 +142,7 @@ public class PlayOffGame implements Serializable {
   }  
   
   public enum Association {
-    playOffResults, homeParticipant, awayParticipant, group
+    homeParticipant, awayParticipant, group
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -175,10 +187,10 @@ public class PlayOffGame implements Serializable {
   
   @Override
   public String toString() {
-    return "PlayOffGame [position=" + position + ", id=" + id + "]";
+    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + "]";
   }
   
   public String toStringFull() {
-    return "PlayOffGame [position=" + position + ", id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + "]";
+    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + ", winner=" + winner + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + "]";
   }
 }

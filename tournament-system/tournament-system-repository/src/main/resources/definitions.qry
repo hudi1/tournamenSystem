@@ -42,7 +42,6 @@ table game GAME;
 table groups GROUPS;
 table participant PARTICIPANT;
 table playOffGame PLAY_OFF_GAME;
-table playOffResult PLAY_OFF_RESULT;
 table player PLAYER;
 table season SEASON;
 table tournament TOURNAMENT;

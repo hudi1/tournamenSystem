@@ -10,8 +10,6 @@ public abstract class AbstractService {
     protected TournamentAggregationDao tournamentAggregationDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final int BEST_OF_GAMES = 9;
-
     @Required
     public void setTournamentAggregationDao(TournamentAggregationDao tournamentAggregationDao) {
         this.tournamentAggregationDao = tournamentAggregationDao;

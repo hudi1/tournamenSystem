@@ -8,7 +8,6 @@ import org.toursys.repository.dao.GameDao;
 import org.toursys.repository.dao.GroupsDao;
 import org.toursys.repository.dao.ParticipantExtDao;
 import org.toursys.repository.dao.PlayOffGameDao;
-import org.toursys.repository.dao.PlayOffResultDao;
 import org.toursys.repository.dao.PlayerExtDao;
 import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.dao.TournamentDao;
@@ -18,7 +17,6 @@ import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Score;
 import org.toursys.repository.model.Season;
@@ -30,7 +28,6 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
 
     private GameDao gameDao;
     private PlayOffGameDao playOffGameDao;
-    private PlayOffResultDao playOffResultDao;
     private PlayerExtDao playerDao;
     private ParticipantExtDao participantDao;
     private SeasonDao seasonDao;
@@ -226,31 +223,6 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public PlayOffResult createPlayOffResult(PlayOffGame playOffGame) {
-        return playOffResultDao.insert(new PlayOffResult(false, playOffGame));
-    }
-
-    @Override
-    public int updatePlayOffResult(PlayOffResult playOffResult) {
-        return playOffResultDao.update(playOffResult);
-    }
-
-    @Override
-    public int deletePlayOffResult(PlayOffResult playOffResult) {
-        return playOffResultDao.delete(playOffResult);
-    }
-
-    @Override
-    public PlayOffResult getPlayOffResult(PlayOffResult playOffResult) {
-        return playOffResultDao.get(playOffResult);
-    }
-
-    @Override
-    public List<PlayOffResult> getListPlayOffResults(PlayOffResult playOffResult) {
-        return playOffResultDao.list(playOffResult);
-    }
-
-    @Override
     public FinalStanding createFinalStanding(FinalStanding finalStanding) {
         return finalStandingDao.insert(finalStanding);
     }
@@ -328,11 +300,6 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     @Required
     public void setPlayOffGameDao(PlayOffGameDao playOffGameDao) {
         this.playOffGameDao = playOffGameDao;
-    }
-
-    @Required
-    public void setPlayOffResultDao(PlayOffResultDao playOffResultDao) {
-        this.playOffResultDao = playOffResultDao;
     }
 
     @Required

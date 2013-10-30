@@ -202,6 +202,7 @@ public class SchedulePage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    getPageParameters().set("update", true);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));

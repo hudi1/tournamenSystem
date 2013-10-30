@@ -13,7 +13,6 @@
     
     <bean id="playerService" class="org.toursys.processor.service.PlayerService" parent="abstractService" />
     <bean id="gameService" class="org.toursys.processor.service.GameService" parent="abstractService" />
-    <bean id="playOffResultService" class="org.toursys.processor.service.PlayOffResultService" parent="abstractService" />
     <bean id="scheduleService" class="org.toursys.processor.service.ScheduleService" parent="abstractService" />
     <bean id="seasonService" class="org.toursys.processor.service.SeasonService" parent="abstractService" />
     <bean id="tournamentService" class="org.toursys.processor.service.TournamentService" parent="abstractService" />
@@ -30,7 +29,6 @@
         <property name="finalStandingService" ref="finalStandingService" />
         <property name="groupService" ref="groupService" />
         <property name="participantService" ref="participantService" />
-        <property name="playOffResultService" ref="playOffResultService" />
     </bean>
 
     <bean id="finalStandingService" class="org.toursys.processor.service.FinalStandingService" parent="abstractService">

@@ -146,15 +146,15 @@ public class GroupService extends AbstractService {
                     }
                     if (createGroups) {
                         finalGroup = new Groups(nextGroups, 1, GroupsType.FINAL, 1, tournament, false, false);
-                        logger.info("creating final group " + finalGroup);
+                        logger.trace("Create final group " + finalGroup);
                         finalGroup = createGroup(finalGroup);
                         groupByName.put(nextGroups, finalGroup);
                     } else {
                         finalGroup = groupByName.get(nextGroups);
-                        logger.info("getting final group " + finalGroup);
+                        logger.trace("Get final group " + finalGroup);
                     }
                     for (int i = startIndex; i < promotingLower; i++) {
-                        logger.info("creating player result " + participants.get(i).getPlayer());
+                        logger.trace("Create participant " + participants.get(i).getPlayer());
                         Participant participant = participantService.createParticipant(participants.get(i).getPlayer(),
                                 finalGroup);
                         finalGroup.getParticipants().add(participant);

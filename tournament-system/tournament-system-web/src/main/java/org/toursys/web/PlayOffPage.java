@@ -32,7 +32,6 @@ import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -111,7 +110,7 @@ public class PlayOffPage extends BasePage {
                 @Override
                 protected void populateItem(final Item<Groups> listItem) {
                     final Groups group = listItem.getModelObject();
-                    playOffGames = playOffGameService.processPlayOffGames(tournament, group);
+                    playOffGames = playOffGameService.getPlayOffGames(new PlayOffGame()._setGroup(group));
 
                     final ListView<PlayOffGame> dataView = new ListView<PlayOffGame>("rows", playOffGames) {
 
@@ -141,79 +140,21 @@ public class PlayOffPage extends BasePage {
                             listItem.add(new Label("round", TournamentUtil.getRound(playerCount,
                                     listItem.getIndex() + 1) + "."));
 
-                            ListView<PlayOffResult> gameList = new ListView<PlayOffResult>("gameList",
-                                    playOffGame.getPlayOffResults()) {
+                            listItem.add(new TextField<String>("results", new PropertyModel<String>(playOffGame,
+                                    "results")).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                                 private static final long serialVersionUID = 1L;
 
                                 @Override
-                                protected void populateItem(ListItem<PlayOffResult> gameItem) {
-                                    final PlayOffResult playOffResult = gameItem.getModelObject();
-                                    gameItem.setModel(new CompoundPropertyModel<PlayOffResult>(playOffResult));
-
-                                    gameItem.add(new TextField<Integer>("homeScore", new PropertyModel<Integer>(
-                                            playOffResult, "homeScore")).add(new AjaxFormComponentUpdatingBehavior(
-                                            "onchange") {
-
-                                        private static final long serialVersionUID = 1L;
-
-                                        @Override
-                                        protected void onUpdate(AjaxRequestTarget target) {
-                                            playOffResultService.updatePlayOffResult(playOffResult);
-                                        }
-                                    }));
-                                    gameItem.add(new TextField<String>("awayScore", new PropertyModel<String>(
-                                            playOffResult, "awayScore") {
-
-                                        private static final long serialVersionUID = 1L;
-
-                                        @Override
-                                        public String getObject() {
-                                            Object value = super.getObject();
-                                            if (value == null) {
-                                                return null;
-                                            }
-                                            if (playOffResult.getOvertime()) {
-                                                return value + "P";
-                                            }
-                                            return value.toString();
-                                        }
-                                    }) {
-
-                                        private static final long serialVersionUID = 1L;
-
-                                        @Override
-                                        protected void convertInput() {
-                                            if (getInput().isEmpty()) {
-                                                super.convertInput();
-                                            } else {
-                                                try {
-                                                    setConvertedInput(Integer.parseInt(getInput()) + "");
-                                                } catch (NumberFormatException e) {
-                                                    try {
-                                                        int result = Integer.parseInt(getInput().substring(0,
-                                                                getInput().length() - 1));
-                                                        playOffResult.setOvertime(true);
-                                                        setConvertedInput(result + "");
-                                                    } catch (NumberFormatException e1) {
-                                                        super.convertInput();
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-
-                                        private static final long serialVersionUID = 1L;
-
-                                        @Override
-                                        protected void onUpdate(AjaxRequestTarget target) {
-                                            playOffResultService.updatePlayOffResult(playOffResult);
-                                        }
-                                    }));
+                                protected void onUpdate(AjaxRequestTarget target) {
+                                    try {
+                                        playOffGameService.updatePlayOffGameResult(playOffGame);
+                                    } catch (NumberFormatException e) {
+                                        error(getString("bad.format.exception"));
+                                        target.add(feedbackPanel);
+                                    }
                                 }
-                            };
-
-                            listItem.add(gameList);
+                            }));
 
                             listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                                 private static final long serialVersionUID = 1L;
@@ -244,6 +185,17 @@ public class PlayOffPage extends BasePage {
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
+
+            add(new Button("save", new ResourceModel("save")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    playOffGameService.updateNextRoundPlayOffGames(tournament);
+                    setResponsePage(PlayOffPage.class, getPageParameters());
+                };
+            });
 
             DownloadLink pdfPlayOff = new DownloadLink("pdfPlayOff", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;

@@ -26,7 +26,6 @@ import org.toursys.processor.service.GameService;
 import org.toursys.processor.service.GroupService;
 import org.toursys.processor.service.ParticipantService;
 import org.toursys.processor.service.PlayOffGameService;
-import org.toursys.processor.service.PlayOffResultService;
 import org.toursys.processor.service.PlayerService;
 import org.toursys.processor.service.ScheduleService;
 import org.toursys.processor.service.SeasonService;
@@ -48,9 +47,6 @@ public abstract class BasePage extends WebPage {
 
     @SpringBean(name = "gameService")
     protected GameService gameService;
-
-    @SpringBean(name = "playOffResultService")
-    protected PlayOffResultService playOffResultService;
 
     @SpringBean(name = "scheduleService")
     protected ScheduleService scheduleService;
@@ -81,6 +77,8 @@ public abstract class BasePage extends WebPage {
     private IModel<String> headingModel = new Model<String>();
 
     abstract protected IModel<String> newHeadingModel();
+
+    protected FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackPanel");
 
     public BasePage() {
         this(null);
@@ -200,7 +198,7 @@ public abstract class BasePage extends WebPage {
         }));
         add(userProfileLink);
 
-        add(new FeedbackPanel("feedbackPanel"));
+        add(feedbackPanel.setOutputMarkupId(true));
 
     }
 
@@ -231,7 +229,11 @@ public abstract class BasePage extends WebPage {
     }
 
     protected Groups getGroup(PageParameters parameters) {
-        return groupService.getGroup(new Groups()._setId(parameters.get("groupid").toInteger()));
+        Groups group = groupService.getGroup(new Groups()._setId(parameters.get("groupid").toInteger()));
+        if (group == null) {
+            group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters))._setName("1"));
+        }
+        return group;
     }
 
     protected Season getSeason(PageParameters parameters) {

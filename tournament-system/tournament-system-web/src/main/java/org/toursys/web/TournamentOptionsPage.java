@@ -44,7 +44,7 @@ public class TournamentOptionsPage extends BasePage {
     }
 
     private void clearPageParameters() {
-        getPageParameters().remove("showTableOptions").remove("showTournamentOptions");
+        getPageParameters().remove("showTableOptions").remove("showTournamentOptions").remove("update");
     }
 
     private void checkPageParameters(PageParameters parameters) {

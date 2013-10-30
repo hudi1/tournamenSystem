@@ -7,6 +7,12 @@ package org.toursys.repository.model {
     PLAY_OFF ::: "P"
   }
 
+  final enum PlayOffGameWinner serializable 1  {
+    value : java.lang.String
+    HOME ::: "HOME"
+    AWAY ::: "AWAY"
+  }
+
   final enum UserRole serializable 1  {
     value : java.lang.String
     ADMIN ::: "ADMIN"
@@ -84,21 +90,11 @@ package org.toursys.repository.model {
     awayParticipant :: Participant index 3
     group :: Groups required index 2
     position : java.lang.Integer required
-    playOffResults : java.util.List <:PlayOffResult>
+    results : java.lang.String
+    winner :: PlayOffGameWinner
     equals ::: id
-    toInit ::: playOffResults homeParticipant awayParticipant group
-    toString ::: position id homeParticipant awayParticipant group
-  }
-
-  final pojo PlayOffResult serializable 1 {
-    id : java.lang.Integer primaryKey index 1
-    homeScore : java.lang.Integer
-    awayScore : java.lang.Integer
-    overtime : java.lang.Boolean required
-    playOffGame :: PlayOffGame required index 2
-    equals ::: id
-    toInit ::: playOffGame
-    toString ::: id homeScore playOffGame overtime awayScore
+    toInit ::: homeParticipant awayParticipant group
+    toString ::: position id results winner homeParticipant awayParticipant group
   }
 
   final pojo Season serializable 1 {
@@ -143,4 +139,5 @@ package org.toursys.repository.model {
     toInit ::: seasons players
     toString ::: id email name platnost role userName surname password
   }
+
 }

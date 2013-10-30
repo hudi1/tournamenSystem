@@ -353,6 +353,7 @@ public class RegistrationPage extends BasePage {
                     if (!groups.isEmpty()) {
                         group = groups.get(0);
                         getPageParameters().set("groupid", group.getId());
+                        getPageParameters().set("update", true);
                         setResponsePage(GroupPage.class, getPageParameters());
                     } else {
                         error(getString("noGroupError"));

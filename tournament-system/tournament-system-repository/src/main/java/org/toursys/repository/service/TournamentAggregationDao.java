@@ -7,7 +7,6 @@ import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffResult;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
@@ -88,16 +87,6 @@ public interface TournamentAggregationDao {
     public PlayOffGame getPlayOffGame(PlayOffGame playOffGame);
 
     public List<PlayOffGame> getListPlayOffGames(PlayOffGame playOffGame);
-
-    public PlayOffResult createPlayOffResult(PlayOffGame playOffGame);
-
-    public int updatePlayOffResult(PlayOffResult playOffResult);
-
-    public int deletePlayOffResult(PlayOffResult playOffResult);
-
-    public PlayOffResult getPlayOffResult(PlayOffResult playOffResult);
-
-    public List<PlayOffResult> getListPlayOffResults(PlayOffResult playOffResult);
 
     public User createUser(User user);
 
