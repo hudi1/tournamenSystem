@@ -29,6 +29,7 @@
         <version.light-air>0.5</version.light-air>
         <version.dbcp>1.2.2</version.dbcp>
         <version.mysql>5.1.20</version.mysql>
+        <version.aspectj>1.6.8</version.aspectj>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -190,6 +191,13 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${version.servlet}</version>
+            </dependency>
+
+            <!-- AspectJ -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${version.aspectj}</version>
             </dependency>
 
             <!-- Spring -->

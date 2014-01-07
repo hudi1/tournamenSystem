@@ -137,8 +137,8 @@ public class PlayOffPage extends BasePage {
                                 playerCount--;
                             }
 
-                            listItem.add(new Label("round", TournamentUtil.getRound(playerCount,
-                                    listItem.getIndex() + 1) + "."));
+                            listItem.add(new Label("round", new ResourceModel(TournamentUtil.getRoundName(playerCount,
+                                    listItem.getIndex() + 1))));
 
                             listItem.add(new TextField<String>("results", new PropertyModel<String>(playOffGame,
                                     "results")).add(new AjaxFormComponentUpdatingBehavior("onchange") {

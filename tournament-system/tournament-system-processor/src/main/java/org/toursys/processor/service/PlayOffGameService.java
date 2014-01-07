@@ -262,29 +262,6 @@ public class PlayOffGameService extends AbstractService {
         return playOffGames;
     }
 
-    private static int getPosition(int i, int size) {
-        if (i == 1) {
-            return 1;
-        } else if (i == size) {
-            return size - 1;
-        }
-        if (i == 2) {
-            return size;
-        }
-        if (i == 3) {
-            return size / 2 + 1;
-        }
-        if (i == 4) {
-            return size / 2;
-        } else {
-            if (i % 2 == 0) {
-                return size / 2 + (i - 3);
-            } else {
-                return size / 2 - (i - 4);
-            }
-        }
-    }
-
     private int checkThirdPlace(Groups group, int playOffPlayerCount) {
         int playerPlayOffCountAfterCheckThirdPlace = playOffPlayerCount;
         if (playerPlayOffCountAfterCheckThirdPlace == 2 || !group.getPlayThirdPlace()) {

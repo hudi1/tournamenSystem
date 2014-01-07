@@ -2,9 +2,32 @@ package org.toursys.processor.util;
 
 import java.security.MessageDigest;
 
+import org.toursys.processor.TournamentException;
+
 public class TournamentUtil {
 
     public static final String ALGORITHM_SHA = "SHA-512";
+
+    public static String getRoundName(int playerCount, int position) {
+        int actualRound = getRound(playerCount, position);
+        int roundsCount = binlog(playerCount);
+
+        int differ = roundsCount - actualRound;
+        switch (differ) {
+        case 0:
+            return RoundName.FINAL.name();
+        case 1:
+            return RoundName.SEMI_FINALS.name();
+        case 2:
+            return RoundName.QUARTER_FINALS.name();
+        case 3:
+            return RoundName.FINALS_8.name();
+        case 4:
+            return RoundName.FINALS_16.name();
+        }
+
+        throw new TournamentException("Unknown round of playOff");
+    }
 
     /*
      * position zacinat od 1
