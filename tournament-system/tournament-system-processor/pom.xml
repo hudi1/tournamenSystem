@@ -32,6 +32,14 @@
         </testResources>
         <plugins>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*ITest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.bitstrings.maven.plugins</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
                 <executions>

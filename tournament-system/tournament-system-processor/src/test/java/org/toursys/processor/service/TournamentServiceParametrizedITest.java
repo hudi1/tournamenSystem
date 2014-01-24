@@ -9,7 +9,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,7 +28,7 @@ import org.toursys.repository.model.User;
 
 @RunWith(value = Parameterized.class)
 @ContextConfiguration(locations = { "classpath:applicationContextTest-business.xml" })
-public class TournamentServiceParametrizedTest {
+public class TournamentServiceParametrizedITest {
 
     @Autowired
     TournamentService tournamentService;
@@ -80,7 +79,7 @@ public class TournamentServiceParametrizedTest {
 
     private Random random = new Random();
 
-    public TournamentServiceParametrizedTest(int playerCount, int hockeyCount, int groupCount) {
+    public TournamentServiceParametrizedITest(int playerCount, int hockeyCount, int groupCount) {
         this.playerCount = playerCount;
         this.hockeyCount = hockeyCount;
         this.groupCount = groupCount;
@@ -89,8 +88,8 @@ public class TournamentServiceParametrizedTest {
     @Parameters
     public static List<Object[]> data() {
         final List<Object[]> parametry = new ArrayList<Object[]>();
-        for (int i = 12; i <= 12; i++) {
-            for (int j = 6; j <= 6; j++) {
+        for (int i = 2; i <= MAX_PLAYER_COUNT; i++) {
+            for (int j = i / 2; j <= i / 2; j++) {
                 for (int k = 2; k <= MAX_GROUP_COUNT; k++) {
                     parametry.add(new Object[] { i, j, k });
                 }
@@ -122,7 +121,7 @@ public class TournamentServiceParametrizedTest {
     }
 
     @Test
-    @Ignore
+    // @Ignore
     public void createTournamentGamesTest() {
 
         System.out.println("Start Players: " + playerCount + " HockeyCount: " + hockeyCount + " Groups: " + groupCount);
@@ -136,7 +135,7 @@ public class TournamentServiceParametrizedTest {
                 player = playerService.createPlayer(player);
                 playerResults.add(participantService.createBasicParticipant(tournament, player, group));
             }
-            // tournamentService.createGames(playerResults);
+            gameService.processGames(playerResults);
 
             for (Participant playerResult : playerResults) {
                 Assert.assertFalse(playerResult.getGames().isEmpty());
@@ -145,8 +144,8 @@ public class TournamentServiceParametrizedTest {
 
             group.setNumberOfHockey(hockeyCount);
 
-            List<GameImpl> schedule = new ArrayList<GameImpl>();// = scheduleService.getSchedule(group, tournament,
-                                                                // playerResults);
+            List<GameImpl> schedule = scheduleService.getSchedule(group, playerResults,
+                    participantService.getAdvancedPlayersByGroup(group, tournament, playerResults));
             int gamesCount = playerCount * (playerCount - 1) / 2;
             Assert.assertEquals(schedule.size(), gamesCount);
 
@@ -177,7 +176,7 @@ public class TournamentServiceParametrizedTest {
             }
         } // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A // skupine tak vyhodi vyjimku
         groupService.createFinalGroup(tournament);
-        // finalStandingService.createFinalStandings(tournament, playerCount * 2);
+        finalStandingService.processFinalStandings(tournament);
 
         List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
 
@@ -187,7 +186,7 @@ public class TournamentServiceParametrizedTest {
             List<Participant> playerResult = participantService
                     .getParticipants(new Participant()._setGroup(finalGroup));
             Assert.assertFalse(playerResult.isEmpty());
-            // tournamentService.copyResult(tournament);
+            groupService.copyResult(tournament);
 
             if (finalGroup.getName().equals("A")) {
                 Assert.assertTrue(playerResult.size() <= (groupCount * tournament.getFinalPromoting()));
@@ -198,12 +197,12 @@ public class TournamentServiceParametrizedTest {
                     finalGroup.setNumberOfHockey(playerResult.size() / groupCount);
                 }
 
-                List<GameImpl> finalSchedule = new ArrayList<GameImpl>();// = scheduleService.getSchedule(finalGroup,
-                                                                         // tournament, playerResult);
+                List<GameImpl> finalSchedule = scheduleService.getSchedule(finalGroup, playerResult,
+                        participantService.getAdvancedPlayersByGroup(finalGroup, tournament, playerResult));
 
                 // TODO zatial mi finalove skupiny funguju len s parnym poctom // ked sa prenasaju vysledky
                 // Set<Participant>
-                HashSet<Participant> finalPlayers = new HashSet<Participant>();
+                Set<Participant> finalPlayers = new HashSet<Participant>();
                 int finalRound = 1;
                 for (GameImpl gameImpl : finalSchedule) {
                     if (gameImpl.getRound() == finalRound) {
@@ -219,25 +218,24 @@ public class TournamentServiceParametrizedTest {
                 }
             } else {
                 Assert.assertTrue(playerResult.size() <= (groupCount * tournament.getLowerPromoting()));
-                // tournamentService.getSchedule(finalGroup, tournament, playerResult);
             }
 
             // playOff finalGroup.setPlayThirdPlace(random.nextBoolean()); List<PlayOffGame> playOffGames =
             // playOffGameService.getPlayOffGames(tournament, finalGroup);
 
-            if (finalGroup.getName().equals("A")) {
-                int gamesCount = tournament.getPlayOffA();
-                if (!finalGroup.getPlayThirdPlace()) {
-                    gamesCount--;
-                }
-                // Assert.assertEquals(gamesCount, playOffGames.size());
-            } else {
-                int gamesCount = tournament.getPlayOffLower();
-                if (!finalGroup.getPlayThirdPlace()) {
-                    gamesCount--;
-                }
-                // Assert.assertEquals(gamesCount, playOffGames.size());
-            }
+            // if (finalGroup.getName().equals("A")) {
+            // int gamesCount = tournament.getPlayOffA();
+            // if (!finalGroup.getPlayThirdPlace()) {
+            // gamesCount--;
+            // }
+            // Assert.assertEquals(gamesCount, playOffGames.size());
+            // } else {
+            // int gamesCount = tournament.getPlayOffLower();
+            // if (!finalGroup.getPlayThirdPlace()) {
+            // gamesCount--;
+            // }
+            // Assert.assertEquals(gamesCount, playOffGames.size());
+            // }
 
             // tournamentService.getPlayOffGames(tournament, finalGroup);
 

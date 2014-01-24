@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import org.toursys.processor.TournamentException;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.util.GroupsName;
 import org.toursys.processor.util.PositionCounter;
@@ -216,13 +215,6 @@ public class PlayOffGameService extends AbstractService {
         }
 
         return playOffPlayerCount;
-    }
-
-    private void checkPlayOffCount(Groups group, int playerSize, int playOffPlayerCount) {
-        if (playerSize < playOffPlayerCount) {
-            throw new TournamentException("Count of players in group: " + group.getName()
-                    + " is too little. Check tournamen options");
-        }
     }
 
     private void deletePlayOffGames(List<PlayOffGame> finalgames) {
