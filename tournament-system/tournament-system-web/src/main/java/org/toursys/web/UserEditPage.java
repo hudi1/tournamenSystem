@@ -1,7 +1,5 @@
 package org.toursys.web;
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -10,9 +8,11 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.User;
 import org.toursys.repository.model.UserImpl;
@@ -57,15 +57,22 @@ public class UserEditPage extends BasePage {
 
             // TODO dynamicka validacia policka nie len po submite
 
-            add(new RequiredTextField<String>("name"));
-            add(new RequiredTextField<String>("surname"));
-            add(new PasswordTextField("password"));
-            add(new PasswordTextField("confirmPassword"));
+            PasswordTextField password;
+            PasswordTextField confirmPassword;
+
+            add(password = new PasswordTextField("password"));
+            add(confirmPassword = new PasswordTextField("confirmPassword"));
+            password.add(StringValidator.minimumLength(6));
+            add(new EqualPasswordInputValidator(password, confirmPassword));
+
+            add(new TextField<String>("name"));
+            add(new TextField<String>("surname"));
 
             TextField<Integer> platnost = new TextField<Integer>("platnost");
             TextField<String> role = new TextField<String>("role");
-            final TextField<String> username = new TextField<String>("userName");
+            final RequiredTextField<String> username = new RequiredTextField<String>("userName");
             final EmailTextField email = new EmailTextField("email");
+            email.setRequired(true);
 
             username.add(new UsernameValidator());
             email.add(new ExistingEmailValidator());
@@ -104,11 +111,6 @@ public class UserEditPage extends BasePage {
                 public void onSubmit() {
                     try {
 
-                        if (!user.getPassword().equals(user.getConfirmPassword())) {
-                            error(getString("notSamePassword"));
-                            return;
-                        }
-
                         if (user.getId() != null) {
                             userService.updateUser(user);
                             setResponsePage(new UserPage());
@@ -135,40 +137,6 @@ public class UserEditPage extends BasePage {
                 }
             }.setDefaultFormProcessing(false));
         }
-    }
-
-    private static class HighliteTextField<T> extends TextField<T> {
-        private static final long serialVersionUID = 1L;
-
-        private boolean highlite = false;
-
-        public void toggleOff() {
-            highlite = false;
-        }
-
-        public void toggleOn() {
-            highlite = true;
-        }
-
-        public HighliteTextField(String id) {
-            super(id);
-            add(new AttributeModifier("style", "border:2px solid #ff0000;") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public boolean isEnabled(Component component) {
-                    return HighliteTextField.this.highlite;
-                }
-            });
-        }
-    }
-
-    private boolean isExistingUsername(String username) {
-        return userService.getUser(new User()._setUserName(username)) != null;
-    }
-
-    private boolean isExistingEmail(String email) {
-        return userService.getUser(new User()._setEmail(email)) != null;
     }
 
     @Override

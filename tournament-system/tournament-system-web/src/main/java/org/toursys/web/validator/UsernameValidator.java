@@ -1,6 +1,7 @@
 package org.toursys.web.validator;
 
 import org.apache.wicket.validation.CompoundValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 
 public class UsernameValidator extends CompoundValidator<String> {
 
@@ -8,9 +9,7 @@ public class UsernameValidator extends CompoundValidator<String> {
 
     public UsernameValidator() {
 
-        // TODO
-        // add(StringValidator.lengthBetween(5, 15));
-        // add(new PatternValidator("[a-z0-9_-]+"));
+        add(StringValidator.lengthBetween(3, 100));
         add(new ExistingUserValidator());
     }
 }
