@@ -24,6 +24,9 @@ public class GameDaoImpl implements GameDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public GameDaoImpl() {
+  }
+    	
   public GameDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class GameDaoImpl implements GameDao {
     }
     return (count > 0) ? game : null;
   }
-  
   public Game insert(Game game, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), game, sqlControl);
   }
-  
   public Game insert(SqlSession sqlSession, Game game) {
     return insert(sqlSession, game, null);
   }
-  
   public Game insert(Game game) {
     return insert(game, null);
   }
@@ -70,15 +70,12 @@ public class GameDaoImpl implements GameDao {
     }
     return gameGot;
   }
-  	
   public Game get(Game game, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), game, sqlControl);
   }
-  
   public Game get(SqlSession sqlSession, Game game) {
     return get(sqlSession, game, null);
   }
-  
   public Game get(Game game) {
     return get(game, null);
   }
@@ -94,15 +91,12 @@ public class GameDaoImpl implements GameDao {
     }
     return count;
   }
-  
   public int update(Game game, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), game, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, Game game) {
     return update(sqlSession, game, null);
   }
-  
   public int update(Game game) {
     return update(game, null);
   }
@@ -118,15 +112,12 @@ public class GameDaoImpl implements GameDao {
     }
     return count;
   }
-  
   public int delete(Game game, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), game, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, Game game) {
     return delete(sqlSession, game, null);
   }
-  
   public int delete(Game game) {
     return delete(game, null);
   }
@@ -143,15 +134,12 @@ public class GameDaoImpl implements GameDao {
     }
     return gameList;
   }
-  
   public List<Game> list(Game game, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), game, sqlControl);
   }
-  
-  public List<Game> list(SqlSession sqlSession, Game game) {
+      public List<Game> list(SqlSession sqlSession, Game game) {
     return list(sqlSession, game, null);
   }
-  
   public List<Game> list(Game game) {
     return list(game, null);
   }
@@ -168,15 +156,12 @@ public class GameDaoImpl implements GameDao {
     }
     return count;
   }
-  
   public int count(Game game, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), game, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, Game game) {
+      public int count(SqlSession sqlSession, Game game) {
     return count(sqlSession, game, null);
   }
-  
   public int count(Game game) {
     return count(game, null);
   }

@@ -123,11 +123,21 @@ public class Game implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public Game  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public Game _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -137,11 +147,21 @@ public class Game implements Serializable {
       initAssociations.add(association);
   }
   
+  public Game _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public Game _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -156,10 +176,10 @@ public class Game implements Serializable {
   
   @Override
   public String toString() {
-    return "Game [id=" + id + ", homeScore=" + homeScore + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", homeScore=" + homeScore + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", awayScore=" + awayScore + "]";
   }
   
   public String toStringFull() {
-    return "Game [id=" + id + ", homeScore=" + homeScore + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", homeScore=" + homeScore + ", awayScore=" + awayScore + "]";
   }
 }

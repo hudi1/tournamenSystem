@@ -219,11 +219,21 @@ public class Participant implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public Participant  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public Participant _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -233,11 +243,21 @@ public class Participant implements Serializable {
       initAssociations.add(association);
   }
   
+  public Participant _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public Participant _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -252,10 +272,10 @@ public class Participant implements Serializable {
   
   @Override
   public String toString() {
-    return "Participant [id=" + id + ", rank=" + rank + ", score=" + score + ", temp=" + temp + ", equalRank=" + equalRank + ", points=" + points + "]";
+    return "Participant [id=" + id + ", rank=" + rank + ", player=" + player + ", score=" + score + ", temp=" + temp + ", equalRank=" + equalRank + ", points=" + points + ", group=" + group + "]";
   }
   
   public String toStringFull() {
-    return "Participant [id=" + id + ", rank=" + rank + ", player=" + player + ", score=" + score + ", temp=" + temp + ", equalRank=" + equalRank + ", points=" + points + ", group=" + group + "]";
+    return "Participant [id=" + id + ", points=" + points + ", rank=" + rank + ", group=" + group + ", player=" + player + ", score=" + score + ", equalRank=" + equalRank + ", temp=" + temp + ", homeParticipantIdPlayOffGames=" + homeParticipantIdPlayOffGames + ", games=" + games + ", awayParticipantIdPlayOffGames=" + awayParticipantIdPlayOffGames + "]";
   }
 }

@@ -221,11 +221,21 @@ public class Tournament implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public Tournament  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public Tournament _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -235,11 +245,21 @@ public class Tournament implements Serializable {
       initAssociations.add(association);
   }
   
+  public Tournament _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public Tournament _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -254,10 +274,10 @@ public class Tournament implements Serializable {
   
   @Override
   public String toString() {
-    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
+    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", season=" + season + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
   }
   
   public String toStringFull() {
-    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", season=" + season + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
+    return "Tournament [id=" + id + ", name=" + name + ", season=" + season + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffA=" + playOffA + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", groups=" + groups + ", finalStandings=" + finalStandings + "]";
   }
 }

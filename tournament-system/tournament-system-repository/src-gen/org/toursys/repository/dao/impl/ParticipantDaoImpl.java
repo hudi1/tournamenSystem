@@ -24,6 +24,9 @@ public class ParticipantDaoImpl implements ParticipantDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public ParticipantDaoImpl() {
+  }
+    	
   public ParticipantDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     return (count > 0) ? participant : null;
   }
-  
   public Participant insert(Participant participant, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), participant, sqlControl);
   }
-  
   public Participant insert(SqlSession sqlSession, Participant participant) {
     return insert(sqlSession, participant, null);
   }
-  
   public Participant insert(Participant participant) {
     return insert(participant, null);
   }
@@ -70,15 +70,12 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     return participantGot;
   }
-  	
   public Participant get(Participant participant, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), participant, sqlControl);
   }
-  
   public Participant get(SqlSession sqlSession, Participant participant) {
     return get(sqlSession, participant, null);
   }
-  
   public Participant get(Participant participant) {
     return get(participant, null);
   }
@@ -94,15 +91,12 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     return count;
   }
-  
   public int update(Participant participant, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), participant, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, Participant participant) {
     return update(sqlSession, participant, null);
   }
-  
   public int update(Participant participant) {
     return update(participant, null);
   }
@@ -118,15 +112,12 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     return count;
   }
-  
   public int delete(Participant participant, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), participant, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, Participant participant) {
     return delete(sqlSession, participant, null);
   }
-  
   public int delete(Participant participant) {
     return delete(participant, null);
   }
@@ -143,15 +134,12 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     return participantList;
   }
-  
   public List<Participant> list(Participant participant, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), participant, sqlControl);
   }
-  
-  public List<Participant> list(SqlSession sqlSession, Participant participant) {
+      public List<Participant> list(SqlSession sqlSession, Participant participant) {
     return list(sqlSession, participant, null);
   }
-  
   public List<Participant> list(Participant participant) {
     return list(participant, null);
   }
@@ -168,15 +156,12 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     return count;
   }
-  
   public int count(Participant participant, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), participant, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, Participant participant) {
+      public int count(SqlSession sqlSession, Participant participant) {
     return count(sqlSession, participant, null);
   }
-  
   public int count(Participant participant) {
     return count(participant, null);
   }

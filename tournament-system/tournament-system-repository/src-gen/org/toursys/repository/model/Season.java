@@ -110,11 +110,21 @@ public class Season implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public Season  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public Season _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -124,11 +134,21 @@ public class Season implements Serializable {
       initAssociations.add(association);
   }
   
+  public Season _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public Season _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -143,10 +163,10 @@ public class Season implements Serializable {
   
   @Override
   public String toString() {
-    return "Season [id=" + id + ", name=" + name + "]";
+    return "Season [id=" + id + ", name=" + name + ", user=" + user + "]";
   }
   
   public String toStringFull() {
-    return "Season [id=" + id + ", name=" + name + ", user=" + user + "]";
+    return "Season [id=" + id + ", name=" + name + ", user=" + user + ", tournaments=" + tournaments + "]";
   }
 }

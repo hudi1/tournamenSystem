@@ -205,11 +205,21 @@ public class User implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public User  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public User _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -219,11 +229,21 @@ public class User implements Serializable {
       initAssociations.add(association);
   }
   
+  public User _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public User _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -238,10 +258,10 @@ public class User implements Serializable {
   
   @Override
   public String toString() {
-    return "User [id=" + id + ", email=" + email + ", name=" + name + ", platnost=" + platnost + ", userName=" + userName + ", surname=" + surname + ", password=" + password + "]";
+    return "User [id=" + id + ", email=" + email + ", name=" + name + ", platnost=" + platnost + ", role=" + role + ", userName=" + userName + ", surname=" + surname + ", password=" + password + "]";
   }
   
   public String toStringFull() {
-    return "User [id=" + id + ", email=" + email + ", name=" + name + ", platnost=" + platnost + ", role=" + role + ", userName=" + userName + ", surname=" + surname + ", password=" + password + "]";
+    return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", userName=" + userName + ", password=" + password + ", role=" + role + ", platnost=" + platnost + ", players=" + players + ", seasons=" + seasons + "]";
   }
 }

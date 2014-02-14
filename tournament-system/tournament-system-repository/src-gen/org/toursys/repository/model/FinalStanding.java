@@ -108,11 +108,21 @@ public class FinalStanding implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public FinalStanding  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public FinalStanding _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -122,11 +132,21 @@ public class FinalStanding implements Serializable {
       initAssociations.add(association);
   }
   
+  public FinalStanding _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public FinalStanding _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -141,10 +161,10 @@ public class FinalStanding implements Serializable {
   
   @Override
   public String toString() {
-    return "FinalStanding [id=" + id + ", finalRank=" + finalRank + "]";
+    return "FinalStanding [id=" + id + ", tournament=" + tournament + ", player=" + player + ", finalRank=" + finalRank + "]";
   }
   
   public String toStringFull() {
-    return "FinalStanding [id=" + id + ", tournament=" + tournament + ", player=" + player + ", finalRank=" + finalRank + "]";
+    return "FinalStanding [id=" + id + ", player=" + player + ", finalRank=" + finalRank + ", tournament=" + tournament + "]";
   }
 }

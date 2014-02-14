@@ -154,11 +154,21 @@ public class PlayOffGame implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public PlayOffGame  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public PlayOffGame _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -168,11 +178,21 @@ public class PlayOffGame implements Serializable {
       initAssociations.add(association);
   }
   
+  public PlayOffGame _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public PlayOffGame _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -187,10 +207,10 @@ public class PlayOffGame implements Serializable {
   
   @Override
   public String toString() {
-    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + "]";
+    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + ", winner=" + winner + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + "]";
   }
   
   public String toStringFull() {
-    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + ", winner=" + winner + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + "]";
+    return "PlayOffGame [id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + ", position=" + position + ", results=" + results + ", winner=" + winner + "]";
   }
 }

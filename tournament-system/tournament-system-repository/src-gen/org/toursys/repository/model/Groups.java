@@ -205,11 +205,21 @@ public class Groups implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public Groups  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public Groups _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -219,11 +229,21 @@ public class Groups implements Serializable {
       initAssociations.add(association);
   }
   
+  public Groups _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public Groups _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -238,10 +258,10 @@ public class Groups implements Serializable {
   
   @Override
   public String toString() {
-    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + "]";
+    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", tournament=" + tournament + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + "]";
   }
   
   public String toStringFull() {
-    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", tournament=" + tournament + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + "]";
+    return "Groups [id=" + id + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + ", indexOfFirstHockey=" + indexOfFirstHockey + ", tournament=" + tournament + ", copyResult=" + copyResult + ", playThirdPlace=" + playThirdPlace + ", participants=" + participants + ", playOffGames=" + playOffGames + "]";
   }
 }

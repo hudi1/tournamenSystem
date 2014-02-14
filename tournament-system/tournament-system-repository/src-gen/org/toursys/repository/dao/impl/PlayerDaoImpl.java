@@ -24,6 +24,9 @@ public class PlayerDaoImpl implements PlayerDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public PlayerDaoImpl() {
+  }
+    	
   public PlayerDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     return (count > 0) ? player : null;
   }
-  
   public Player insert(Player player, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), player, sqlControl);
   }
-  
   public Player insert(SqlSession sqlSession, Player player) {
     return insert(sqlSession, player, null);
   }
-  
   public Player insert(Player player) {
     return insert(player, null);
   }
@@ -70,15 +70,12 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     return playerGot;
   }
-  	
   public Player get(Player player, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), player, sqlControl);
   }
-  
   public Player get(SqlSession sqlSession, Player player) {
     return get(sqlSession, player, null);
   }
-  
   public Player get(Player player) {
     return get(player, null);
   }
@@ -94,15 +91,12 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     return count;
   }
-  
   public int update(Player player, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), player, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, Player player) {
     return update(sqlSession, player, null);
   }
-  
   public int update(Player player) {
     return update(player, null);
   }
@@ -118,15 +112,12 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     return count;
   }
-  
   public int delete(Player player, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), player, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, Player player) {
     return delete(sqlSession, player, null);
   }
-  
   public int delete(Player player) {
     return delete(player, null);
   }
@@ -143,15 +134,12 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     return playerList;
   }
-  
   public List<Player> list(Player player, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), player, sqlControl);
   }
-  
-  public List<Player> list(SqlSession sqlSession, Player player) {
+      public List<Player> list(SqlSession sqlSession, Player player) {
     return list(sqlSession, player, null);
   }
-  
   public List<Player> list(Player player) {
     return list(player, null);
   }
@@ -168,15 +156,12 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     return count;
   }
-  
   public int count(Player player, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), player, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, Player player) {
+      public int count(SqlSession sqlSession, Player player) {
     return count(sqlSession, player, null);
   }
-  
   public int count(Player player) {
     return count(player, null);
   }

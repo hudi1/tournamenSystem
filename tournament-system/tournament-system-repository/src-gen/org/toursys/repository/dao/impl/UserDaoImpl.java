@@ -24,6 +24,9 @@ public class UserDaoImpl implements UserDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public UserDaoImpl() {
+  }
+    	
   public UserDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class UserDaoImpl implements UserDao {
     }
     return (count > 0) ? user : null;
   }
-  
   public User insert(User user, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), user, sqlControl);
   }
-  
   public User insert(SqlSession sqlSession, User user) {
     return insert(sqlSession, user, null);
   }
-  
   public User insert(User user) {
     return insert(user, null);
   }
@@ -70,15 +70,12 @@ public class UserDaoImpl implements UserDao {
     }
     return userGot;
   }
-  	
   public User get(User user, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), user, sqlControl);
   }
-  
   public User get(SqlSession sqlSession, User user) {
     return get(sqlSession, user, null);
   }
-  
   public User get(User user) {
     return get(user, null);
   }
@@ -94,15 +91,12 @@ public class UserDaoImpl implements UserDao {
     }
     return count;
   }
-  
   public int update(User user, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), user, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, User user) {
     return update(sqlSession, user, null);
   }
-  
   public int update(User user) {
     return update(user, null);
   }
@@ -118,15 +112,12 @@ public class UserDaoImpl implements UserDao {
     }
     return count;
   }
-  
   public int delete(User user, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), user, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, User user) {
     return delete(sqlSession, user, null);
   }
-  
   public int delete(User user) {
     return delete(user, null);
   }
@@ -143,15 +134,12 @@ public class UserDaoImpl implements UserDao {
     }
     return userList;
   }
-  
   public List<User> list(User user, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), user, sqlControl);
   }
-  
-  public List<User> list(SqlSession sqlSession, User user) {
+      public List<User> list(SqlSession sqlSession, User user) {
     return list(sqlSession, user, null);
   }
-  
   public List<User> list(User user) {
     return list(user, null);
   }
@@ -168,15 +156,12 @@ public class UserDaoImpl implements UserDao {
     }
     return count;
   }
-  
   public int count(User user, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), user, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, User user) {
+      public int count(SqlSession sqlSession, User user) {
     return count(sqlSession, user, null);
   }
-  
   public int count(User user) {
     return count(user, null);
   }

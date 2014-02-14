@@ -24,6 +24,9 @@ public class GroupsDaoImpl implements GroupsDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public GroupsDaoImpl() {
+  }
+    	
   public GroupsDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     return (count > 0) ? groups : null;
   }
-  
   public Groups insert(Groups groups, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), groups, sqlControl);
   }
-  
   public Groups insert(SqlSession sqlSession, Groups groups) {
     return insert(sqlSession, groups, null);
   }
-  
   public Groups insert(Groups groups) {
     return insert(groups, null);
   }
@@ -70,15 +70,12 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     return groupsGot;
   }
-  	
   public Groups get(Groups groups, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), groups, sqlControl);
   }
-  
   public Groups get(SqlSession sqlSession, Groups groups) {
     return get(sqlSession, groups, null);
   }
-  
   public Groups get(Groups groups) {
     return get(groups, null);
   }
@@ -94,15 +91,12 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     return count;
   }
-  
   public int update(Groups groups, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), groups, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, Groups groups) {
     return update(sqlSession, groups, null);
   }
-  
   public int update(Groups groups) {
     return update(groups, null);
   }
@@ -118,15 +112,12 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     return count;
   }
-  
   public int delete(Groups groups, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), groups, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, Groups groups) {
     return delete(sqlSession, groups, null);
   }
-  
   public int delete(Groups groups) {
     return delete(groups, null);
   }
@@ -143,15 +134,12 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     return groupsList;
   }
-  
   public List<Groups> list(Groups groups, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), groups, sqlControl);
   }
-  
-  public List<Groups> list(SqlSession sqlSession, Groups groups) {
+      public List<Groups> list(SqlSession sqlSession, Groups groups) {
     return list(sqlSession, groups, null);
   }
-  
   public List<Groups> list(Groups groups) {
     return list(groups, null);
   }
@@ -168,15 +156,12 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     return count;
   }
-  
   public int count(Groups groups, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), groups, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, Groups groups) {
+      public int count(SqlSession sqlSession, Groups groups) {
     return count(sqlSession, groups, null);
   }
-  
   public int count(Groups groups) {
     return count(groups, null);
   }

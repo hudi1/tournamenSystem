@@ -24,6 +24,9 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public PlayOffGameDaoImpl() {
+  }
+    	
   public PlayOffGameDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     return (count > 0) ? playOffGame : null;
   }
-  
   public PlayOffGame insert(PlayOffGame playOffGame, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), playOffGame, sqlControl);
   }
-  
   public PlayOffGame insert(SqlSession sqlSession, PlayOffGame playOffGame) {
     return insert(sqlSession, playOffGame, null);
   }
-  
   public PlayOffGame insert(PlayOffGame playOffGame) {
     return insert(playOffGame, null);
   }
@@ -70,15 +70,12 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     return playOffGameGot;
   }
-  	
   public PlayOffGame get(PlayOffGame playOffGame, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), playOffGame, sqlControl);
   }
-  
   public PlayOffGame get(SqlSession sqlSession, PlayOffGame playOffGame) {
     return get(sqlSession, playOffGame, null);
   }
-  
   public PlayOffGame get(PlayOffGame playOffGame) {
     return get(playOffGame, null);
   }
@@ -94,15 +91,12 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     return count;
   }
-  
   public int update(PlayOffGame playOffGame, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), playOffGame, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, PlayOffGame playOffGame) {
     return update(sqlSession, playOffGame, null);
   }
-  
   public int update(PlayOffGame playOffGame) {
     return update(playOffGame, null);
   }
@@ -118,15 +112,12 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     return count;
   }
-  
   public int delete(PlayOffGame playOffGame, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), playOffGame, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, PlayOffGame playOffGame) {
     return delete(sqlSession, playOffGame, null);
   }
-  
   public int delete(PlayOffGame playOffGame) {
     return delete(playOffGame, null);
   }
@@ -143,15 +134,12 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     return playOffGameList;
   }
-  
   public List<PlayOffGame> list(PlayOffGame playOffGame, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), playOffGame, sqlControl);
   }
-  
-  public List<PlayOffGame> list(SqlSession sqlSession, PlayOffGame playOffGame) {
+      public List<PlayOffGame> list(SqlSession sqlSession, PlayOffGame playOffGame) {
     return list(sqlSession, playOffGame, null);
   }
-  
   public List<PlayOffGame> list(PlayOffGame playOffGame) {
     return list(playOffGame, null);
   }
@@ -168,15 +156,12 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     return count;
   }
-  
   public int count(PlayOffGame playOffGame, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), playOffGame, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, PlayOffGame playOffGame) {
+      public int count(SqlSession sqlSession, PlayOffGame playOffGame) {
     return count(sqlSession, playOffGame, null);
   }
-  
   public int count(PlayOffGame playOffGame) {
     return count(playOffGame, null);
   }

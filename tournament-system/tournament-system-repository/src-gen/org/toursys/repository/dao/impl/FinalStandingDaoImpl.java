@@ -24,6 +24,9 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public FinalStandingDaoImpl() {
+  }
+    	
   public FinalStandingDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     return (count > 0) ? finalStanding : null;
   }
-  
   public FinalStanding insert(FinalStanding finalStanding, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), finalStanding, sqlControl);
   }
-  
   public FinalStanding insert(SqlSession sqlSession, FinalStanding finalStanding) {
     return insert(sqlSession, finalStanding, null);
   }
-  
   public FinalStanding insert(FinalStanding finalStanding) {
     return insert(finalStanding, null);
   }
@@ -70,15 +70,12 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     return finalStandingGot;
   }
-  	
   public FinalStanding get(FinalStanding finalStanding, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), finalStanding, sqlControl);
   }
-  
   public FinalStanding get(SqlSession sqlSession, FinalStanding finalStanding) {
     return get(sqlSession, finalStanding, null);
   }
-  
   public FinalStanding get(FinalStanding finalStanding) {
     return get(finalStanding, null);
   }
@@ -94,15 +91,12 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     return count;
   }
-  
   public int update(FinalStanding finalStanding, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), finalStanding, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, FinalStanding finalStanding) {
     return update(sqlSession, finalStanding, null);
   }
-  
   public int update(FinalStanding finalStanding) {
     return update(finalStanding, null);
   }
@@ -118,15 +112,12 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     return count;
   }
-  
   public int delete(FinalStanding finalStanding, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), finalStanding, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, FinalStanding finalStanding) {
     return delete(sqlSession, finalStanding, null);
   }
-  
   public int delete(FinalStanding finalStanding) {
     return delete(finalStanding, null);
   }
@@ -143,15 +134,12 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     return finalStandingList;
   }
-  
   public List<FinalStanding> list(FinalStanding finalStanding, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), finalStanding, sqlControl);
   }
-  
-  public List<FinalStanding> list(SqlSession sqlSession, FinalStanding finalStanding) {
+      public List<FinalStanding> list(SqlSession sqlSession, FinalStanding finalStanding) {
     return list(sqlSession, finalStanding, null);
   }
-  
   public List<FinalStanding> list(FinalStanding finalStanding) {
     return list(finalStanding, null);
   }
@@ -168,15 +156,12 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     return count;
   }
-  
   public int count(FinalStanding finalStanding, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), finalStanding, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, FinalStanding finalStanding) {
+      public int count(SqlSession sqlSession, FinalStanding finalStanding) {
     return count(sqlSession, finalStanding, null);
   }
-  
   public int count(FinalStanding finalStanding) {
     return count(finalStanding, null);
   }

@@ -24,6 +24,9 @@ public class SeasonDaoImpl implements SeasonDao {
   protected SqlEngineFactory sqlEngineFactory;
   protected SqlSessionFactory sqlSessionFactory;
     	
+  public SeasonDaoImpl() {
+  }
+    	
   public SeasonDaoImpl(SqlEngineFactory sqlEngineFactory) {
     this.sqlEngineFactory = sqlEngineFactory;
   }
@@ -45,15 +48,12 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     return (count > 0) ? season : null;
   }
-  
   public Season insert(Season season, SqlControl sqlControl) {
   	return insert(sqlSessionFactory.getSqlSession(), season, sqlControl);
   }
-  
   public Season insert(SqlSession sqlSession, Season season) {
     return insert(sqlSession, season, null);
   }
-  
   public Season insert(Season season) {
     return insert(season, null);
   }
@@ -70,15 +70,12 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     return seasonGot;
   }
-  	
   public Season get(Season season, SqlControl sqlControl) {
   	return get(sqlSessionFactory.getSqlSession(), season, sqlControl);
   }
-  
   public Season get(SqlSession sqlSession, Season season) {
     return get(sqlSession, season, null);
   }
-  
   public Season get(Season season) {
     return get(season, null);
   }
@@ -94,15 +91,12 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     return count;
   }
-  
   public int update(Season season, SqlControl sqlControl) {
   	return update(sqlSessionFactory.getSqlSession(), season, sqlControl);
   }
-  
   public int update(SqlSession sqlSession, Season season) {
     return update(sqlSession, season, null);
   }
-  
   public int update(Season season) {
     return update(season, null);
   }
@@ -118,15 +112,12 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     return count;
   }
-  
   public int delete(Season season, SqlControl sqlControl) {
   	return delete(sqlSessionFactory.getSqlSession(), season, sqlControl);
   }
-  
   public int delete(SqlSession sqlSession, Season season) {
     return delete(sqlSession, season, null);
   }
-  
   public int delete(Season season) {
     return delete(season, null);
   }
@@ -143,15 +134,12 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     return seasonList;
   }
-  
   public List<Season> list(Season season, SqlControl sqlControl) {
   	return list(sqlSessionFactory.getSqlSession(), season, sqlControl);
   }
-  
-  public List<Season> list(SqlSession sqlSession, Season season) {
+      public List<Season> list(SqlSession sqlSession, Season season) {
     return list(sqlSession, season, null);
   }
-  
   public List<Season> list(Season season) {
     return list(season, null);
   }
@@ -168,15 +156,12 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     return count;
   }
-  
   public int count(Season season, SqlControl sqlControl) {
   	return count(sqlSessionFactory.getSqlSession(), season, sqlControl);
   }
-  
-  public int count(SqlSession sqlSession, Season season) {
+      public int count(SqlSession sqlSession, Season season) {
     return count(sqlSession, season, null);
   }
-  
   public int count(Season season) {
     return count(season, null);
   }

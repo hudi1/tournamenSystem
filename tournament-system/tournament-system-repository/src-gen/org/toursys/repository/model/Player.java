@@ -123,11 +123,21 @@ public class Player implements Serializable {
       initAssociations.add(association.name());
   }
   
+  public Player  _setInit(Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(Association... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (Association association : associations)
       initAssociations.remove(association.name());
+  }
+  
+  public Player _clearInit(Association... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public void setInit(String... associations) {
@@ -137,11 +147,21 @@ public class Player implements Serializable {
       initAssociations.add(association);
   }
   
+  public Player _setInit(String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
   public void clearInit(String... associations) {
     if (associations == null)
       throw new IllegalArgumentException();
     for (String association : associations)
       initAssociations.remove(association);
+  }
+  
+  public Player _clearInit(String... associations) {
+    clearInit(associations);
+    return this;
   }
   
   public Boolean toInit(String association) {
@@ -156,10 +176,10 @@ public class Player implements Serializable {
   
   @Override
   public String toString() {
-    return "Player [id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + "]";
+    return "Player [id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", user=" + user + "]";
   }
   
   public String toStringFull() {
-    return "Player [id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", user=" + user + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", user=" + user + "]";
   }
 }
