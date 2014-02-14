@@ -3,8 +3,6 @@ package org.toursys.web;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.EmailTextField;
@@ -18,6 +16,8 @@ import org.apache.wicket.model.ResourceModel;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.User;
 import org.toursys.repository.model.UserImpl;
+import org.toursys.web.validator.ExistingEmailValidator;
+import org.toursys.web.validator.UsernameValidator;
 
 public class UserEditPage extends BasePage {
 
@@ -54,36 +54,28 @@ public class UserEditPage extends BasePage {
         public UserForm(final UserImpl user) {
             super("userEditForm", new CompoundPropertyModel<User>(user));
             setOutputMarkupId(true);
+
+            // TODO dynamicka validacia policka nie len po submite
+
             add(new RequiredTextField<String>("name"));
-            add(new TextField<String>("surname"));
-            add(new EmailTextField("email"));
+            add(new RequiredTextField<String>("surname"));
             add(new PasswordTextField("password"));
             add(new PasswordTextField("confirmPassword"));
 
             TextField<Integer> platnost = new TextField<Integer>("platnost");
             TextField<String> role = new TextField<String>("role");
-            final HighliteTextField<String> username = new HighliteTextField<String>("userName");
-            username.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            final TextField<String> username = new TextField<String>("userName");
+            final EmailTextField email = new EmailTextField("email");
 
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    if (user.getUserName() != null && isExistingUsername(user.getUserName())) {
-                        username.toggleOn();
-                    } else {
-                        username.toggleOff();
-                    }
-                    target.add(username);
-                }
-
-            });
+            username.add(new UsernameValidator());
+            email.add(new ExistingEmailValidator());
 
             Label usernameLabel = new Label("userNameLabel", new ResourceModel("userName"));
             Label platnostLabel = new Label("platnostLabel", new ResourceModel("platnost"));
             Label roleLabel = new Label("roleLabel", new ResourceModel("role"));
 
             add(username);
+            add(email);
             add(platnost);
             add(role);
 
@@ -111,20 +103,6 @@ public class UserEditPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     try {
-                        boolean emailError = false;
-                        boolean usernameError = false;
-                        if (isExistingEmail(user.getEmail())) {
-                            error(getString("emailError"));
-                            emailError = true;
-                        }
-                        if (isExistingUsername(user.getUserName())) {
-                            error(getString("usernameError"));
-                            usernameError = true;
-                        }
-
-                        if (emailError || usernameError) {
-                            return;
-                        }
 
                         if (!user.getPassword().equals(user.getConfirmPassword())) {
                             error(getString("notSamePassword"));
@@ -133,15 +111,16 @@ public class UserEditPage extends BasePage {
 
                         if (user.getId() != null) {
                             userService.updateUser(user);
+                            setResponsePage(new UserPage());
                         } else {
                             userService.createUser(user);
+                            setResponsePage(new HomePage());
                         }
                     } catch (SqlProcessorException e) {
                         logger.error("Error edit user: ", e);
                         error(getString("sql.db.exception"));
                         return;
                     }
-                    setResponsePage(new UserPage());
                 }
 
             });

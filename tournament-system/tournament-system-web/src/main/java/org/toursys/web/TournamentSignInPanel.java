@@ -1,6 +1,5 @@
 package org.toursys.web;
 
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
@@ -155,9 +154,7 @@ public class TournamentSignInPanel extends Panel {
      * Called when sign in was successful
      */
     protected void onSignInSucceeded() {
-        if (!continueToOriginalDestination()) {
-            throw new RestartResponseException(getSession().getPageFactory().newPage(getApplication().getHomePage()));
-        }
+        setResponsePage(getApplication().getHomePage());
     }
 
     /**
@@ -172,7 +169,7 @@ public class TournamentSignInPanel extends Panel {
             setModel(new CompoundPropertyModel<TournamentSignInPanel>(TournamentSignInPanel.this));
 
             add(new TextField<String>("username").setRequired(true));
-            add(new PasswordTextField("password"));
+            add(new PasswordTextField("password").setRequired(true));
 
             WebMarkupContainer rememberMeRow = new WebMarkupContainer("rememberMeRow");
             add(rememberMeRow);
@@ -191,27 +188,29 @@ public class TournamentSignInPanel extends Panel {
                 }
             }.setDefaultFormProcessing(false));
 
-        }
+            add(new Button("signIn", new ResourceModel("signIn")) {
 
-        /**
-         * @see org.apache.wicket.markup.html.form.Form#onSubmit()
-         */
-        @Override
-        public final void onSubmit() {
-            IAuthenticationStrategy strategy = getApplication().getSecuritySettings().getAuthenticationStrategy();
+                private static final long serialVersionUID = 1L;
 
-            if (signIn(getUsername(), getPassword())) {
-                if (rememberMe == true) {
-                    strategy.save(username, password);
-                } else {
-                    strategy.remove();
+                @Override
+                public void onSubmit() {
+                    IAuthenticationStrategy strategy = getApplication().getSecuritySettings()
+                            .getAuthenticationStrategy();
+
+                    if (signIn(getUsername(), getPassword())) {
+                        if (rememberMe == true) {
+                            strategy.save(username, password);
+                        } else {
+                            strategy.remove();
+                        }
+                        onSignInSucceeded();
+                    } else {
+                        onSignInFailed();
+                        strategy.remove();
+                    }
                 }
+            });
 
-                onSignInSucceeded();
-            } else {
-                onSignInFailed();
-                strategy.remove();
-            }
         }
     }
 }
