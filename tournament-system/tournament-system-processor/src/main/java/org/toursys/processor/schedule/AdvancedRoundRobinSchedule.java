@@ -8,27 +8,25 @@ import java.util.List;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.TournamentException;
 import org.toursys.processor.service.TournamentService;
-import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 
-public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
+public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
 
     @SpringBean(name = "tournamentService")
     private TournamentService tournamentService;
 
-    private Groups finalGroup;
     private LinkedList<List<Participant>> playerPerBasicGroup;
-    private List<GameImpl> schedule;
     private int playerCount;
 
     public AdvancedRoundRobinSchedule(final Groups finalGroup, LinkedList<List<Participant>> playerPerBasicGroup) {
-        this.finalGroup = finalGroup;
+        super(finalGroup);
         this.playerPerBasicGroup = playerPerBasicGroup;
     }
 
-    private void createSchedule() {
+    @Override
+    protected void createSchedule() {
         schedule = new ArrayList<GameImpl>();
         if (playerPerBasicGroup.isEmpty()) {
             return;
@@ -48,15 +46,6 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
             // TODO neparny pocet skupin
             // createOddGroupRound();
         }
-    }
-
-    @Override
-    public List<GameImpl> getSchedule() {
-        if (schedule == null) {
-            createSchedule();
-        }
-
-        return schedule;
     }
 
     private void checkPlayerCount() {
@@ -172,25 +161,10 @@ public class AdvancedRoundRobinSchedule implements RoundRobinSchedule {
 
         public void addNextGames() {
             for (int i = 0; i < participants2.size(); i++) {
-                addNewGame(participants1.get(i), participants2.get(i));
+                addGameToSchedule(participants1.get(i), participants2.get(i));
             }
             Collections.rotate(participants2, 1);
         }
 
-        private void addNewGame(Participant homePlayer, Participant awayPlayer) {
-            if (homePlayer.getId() != null && awayPlayer.getId() != null) {
-                for (Game game : homePlayer.getGames()) {
-                    if (game.getAwayParticipant().equals(awayPlayer)) {
-                        game._setHomeParticipant(homePlayer)._setAwayParticipant(awayPlayer);
-                        GameImpl gameImpl = new GameImpl(game);
-                        gameImpl.setHockey(schedule.size() % finalGroup.getNumberOfHockey()
-                                + finalGroup.getIndexOfFirstHockey());
-                        gameImpl.setRound(schedule.size() / finalGroup.getNumberOfHockey() + 1);
-                        schedule.add(gameImpl);
-                        break;
-                    }
-                }
-            }
-        }
     }
 }

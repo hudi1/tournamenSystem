@@ -21,6 +21,7 @@ import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
@@ -220,22 +221,29 @@ public class TournamentServiceParametrizedITest {
                 Assert.assertTrue(playerResult.size() <= (groupCount * tournament.getLowerPromoting()));
             }
 
-            // playOff finalGroup.setPlayThirdPlace(random.nextBoolean()); List<PlayOffGame> playOffGames =
-            // playOffGameService.getPlayOffGames(tournament, finalGroup);
+            // playOff
+            finalGroup.setPlayThirdPlace(random.nextBoolean());
+            playOffGameService.processPlayOffGames(tournament);
+            List<PlayOffGame> playOffGames = playOffGameService
+                    .getPlayOffGames(new PlayOffGame()._setGroup(finalGroup));
 
-            // if (finalGroup.getName().equals("A")) {
-            // int gamesCount = tournament.getPlayOffA();
-            // if (!finalGroup.getPlayThirdPlace()) {
-            // gamesCount--;
-            // }
-            // Assert.assertEquals(gamesCount, playOffGames.size());
-            // } else {
-            // int gamesCount = tournament.getPlayOffLower();
-            // if (!finalGroup.getPlayThirdPlace()) {
-            // gamesCount--;
-            // }
-            // Assert.assertEquals(gamesCount, playOffGames.size());
-            // }
+            if (finalGroup.getName().equals("A")) {
+                int gamesCount = tournament.getPlayOffA();
+                System.out.println("qqqqqqqqqq" + gamesCount);
+
+                if (!finalGroup.getPlayThirdPlace()) {
+                    System.out.println("xxxxxxxxxxxxx");
+                    gamesCount--;
+                }
+                Assert.assertEquals(gamesCount, playOffGames.size());
+            } else {
+                int gamesCount = tournament.getPlayOffLower();
+                if (!finalGroup.getPlayThirdPlace()) {
+                    System.out.println("zzzzzzzzzzz");
+                    gamesCount--;
+                }
+                Assert.assertEquals(gamesCount, playOffGames.size());
+            }
 
             // tournamentService.getPlayOffGames(tournament, finalGroup);
 
