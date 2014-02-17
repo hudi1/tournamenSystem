@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	xmlns:wicket="http://wicket.apache.org/">
+<head>
+<link rel="stylesheet" type="text/css" href="css/modalScreen.css"
+	media="screen" />
+</head>
+<body>
+	<div>
+		<div wicket:id="feedbackPanel"></div>
+		<form class="compareForm" wicket:id="importForm">
+			<fieldset>
+				<div>
+					<input type="url" wicket:id="url" />
+				</div>
+
+			</fieldset>
+			<p>
+				<input wicket:id="cancel" class="tournamentButton" type="submit"
+					value="Cancel" /> <input wicket:id="import"
+					class="tournamentButton" type="submit" value="Import" />
+			</p>
+		</form>
+	</div>
+</body>
+</html>

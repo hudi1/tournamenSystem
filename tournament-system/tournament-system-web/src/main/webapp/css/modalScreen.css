@@ -1,0 +1,55 @@
+.feedbackPanel {
+	list-style-type: none;
+	padding: 10px;
+	margin: 0px 0px 20px 0px;
+	color: #ff5500;
+	background: #ffffee;
+	border: solid #ffd867 1px;
+	-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 13px;
+}
+
+input.activeTournamentButton,input.activeTournamentButton:active {
+	background: #0e3f6c;
+	border: 1px solid #064673;
+	margin: 7px 5px 3px 0px;
+	color: #fff;
+	font-weight: bold;
+	padding: 5px 10px;
+	width: auto;
+	cursor: pointer;
+	background-position: 0 -33px;
+}
+
+.tournamentButton {
+	background: url(../img/link_servicemore.png) repeat-x;
+	border: 1px solid #064673;
+	margin: 7px 5px 3px 0px;
+	color: #fff;
+	font-weight: bold;
+	padding: 5px 10px;
+	width: auto;
+	cursor: pointer;
+}
+
+.tournamentButton:hover {
+	background-position: 0 -33px;
+}
+
+a.tournamentLink,a.tournamentLink:focus {
+	background: url(../img/link_servicemore.png) repeat-x;
+	border: 1px solid #064673;
+	margin: 5px;
+	color: #fff;
+	font-weight: bold;
+	padding: 6px 10px 5px;
+	cursor: pointer;
+	width: auto;
+	font-size: 0.9em;
+	display: inline-block;
+}
+
+a.tournamentLink:hover {
+	background-position: 0 -33px;
+}

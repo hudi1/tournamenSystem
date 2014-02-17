@@ -49,9 +49,14 @@
 	<form wicket:id="playerForm">
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="newPlayer"
-				value="new player" />
+				value="new player" /> <a wicket:id="showModalLink"
+				class="tournamentLink" title="delete player"><wicket:message
+					key="showModalLink">
+                 Import player
+        </wicket:message></a>
 		</div>
 	</form>
+	<div wicket:id="modal"></div>
 </wicket:extend>
 </html>
 

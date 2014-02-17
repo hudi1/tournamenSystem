@@ -6,12 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -156,6 +158,7 @@ public class PlayerPage extends BasePage {
                     setResponsePage(new PlayerEditPage(new Player()._setUser(user)));
                 }
             });
+            createModalWindow(this);
         }
     }
 
@@ -182,4 +185,38 @@ public class PlayerPage extends BasePage {
         return new ResourceModel("playerList");
     }
 
+    private void createModalWindow(PlayerForm playerForm) {
+
+        final ModalWindow modal;
+        add(modal = new ModalWindow("modal"));
+        modal.setCookieName("modal-1");
+
+        modal.setPageCreator(new ModalWindow.PageCreator() {
+
+            private static final long serialVersionUID = 1L;
+
+            public Page createPage() {
+                return new ImportPlayerPage(PlayerPage.this.getPageReference(), modal, user);
+            }
+        });
+
+        modal.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+
+            private static final long serialVersionUID = 1L;
+
+            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                return true;
+            }
+        });
+
+        playerForm.add(new AjaxLink<Void>("showModalLink") {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                modal.show(target);
+            }
+        });
+    }
 }

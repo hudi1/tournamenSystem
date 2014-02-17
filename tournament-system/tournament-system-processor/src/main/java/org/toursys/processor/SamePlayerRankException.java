@@ -2,7 +2,7 @@ package org.toursys.processor;
 
 import org.toursys.repository.model.Participant;
 
-public class SamePlayerRankException extends RuntimeException {
+public class SamePlayerRankException extends TournamentException {
 
     private static final long serialVersionUID = 1L;
     private Participant player1;
