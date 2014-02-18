@@ -207,7 +207,7 @@ public class PlayOffGame implements Serializable {
   
   @Override
   public String toString() {
-    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + ", winner=" + winner + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + "]";
+    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + ", winner=" + winner + "]";
   }
   
   public String toStringFull() {

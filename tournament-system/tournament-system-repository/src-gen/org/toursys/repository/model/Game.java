@@ -176,7 +176,7 @@ public class Game implements Serializable {
   
   @Override
   public String toString() {
-    return "Game [id=" + id + ", homeScore=" + homeScore + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", homeScore=" + homeScore + ", awayScore=" + awayScore + "]";
   }
   
   public String toStringFull() {

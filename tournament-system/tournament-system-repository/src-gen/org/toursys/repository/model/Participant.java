@@ -272,7 +272,7 @@ public class Participant implements Serializable {
   
   @Override
   public String toString() {
-    return "Participant [id=" + id + ", rank=" + rank + ", player=" + player + ", score=" + score + ", temp=" + temp + ", equalRank=" + equalRank + ", points=" + points + ", group=" + group + "]";
+    return "Participant [id=" + id + ", rank=" + rank + ", score=" + score + ", temp=" + temp + ", equalRank=" + equalRank + ", points=" + points + "]";
   }
   
   public String toStringFull() {

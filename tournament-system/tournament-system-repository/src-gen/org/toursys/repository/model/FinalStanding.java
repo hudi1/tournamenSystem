@@ -161,7 +161,7 @@ public class FinalStanding implements Serializable {
   
   @Override
   public String toString() {
-    return "FinalStanding [id=" + id + ", tournament=" + tournament + ", player=" + player + ", finalRank=" + finalRank + "]";
+    return "FinalStanding [id=" + id + ", finalRank=" + finalRank + "]";
   }
   
   public String toStringFull() {

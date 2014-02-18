@@ -163,7 +163,7 @@ public class Season implements Serializable {
   
   @Override
   public String toString() {
-    return "Season [id=" + id + ", name=" + name + ", user=" + user + "]";
+    return "Season [id=" + id + ", name=" + name + "]";
   }
   
   public String toStringFull() {

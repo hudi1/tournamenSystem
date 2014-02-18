@@ -258,7 +258,7 @@ public class Groups implements Serializable {
   
   @Override
   public String toString() {
-    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", tournament=" + tournament + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + "]";
+    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + "]";
   }
   
   public String toStringFull() {

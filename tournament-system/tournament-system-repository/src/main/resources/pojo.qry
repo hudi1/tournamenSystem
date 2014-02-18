@@ -1,4 +1,4 @@
-package org.toursys.repository.model {  
+package org.toursys.repository.model {
 
   final enum GroupsType serializable 1  {
     value : java.lang.String
@@ -26,7 +26,7 @@ package org.toursys.repository.model {
     tournament :: Tournament required index 3
     equals ::: id
     toInit ::: tournament player
-    toString ::: id tournament player finalRank
+    toString ::: id finalRank
   }
 
   final pojo Game serializable 1 {
@@ -37,7 +37,7 @@ package org.toursys.repository.model {
     awayScore : java.lang.Integer
     equals ::: id
     toInit ::: homeParticipant awayParticipant
-    toString ::: id homeScore homeParticipant awayParticipant awayScore
+    toString ::: id homeScore awayScore
   }
 
   final pojo Groups serializable 1 {
@@ -53,7 +53,7 @@ package org.toursys.repository.model {
     playOffGames : java.util.List <:PlayOffGame>
     equals ::: id
     toInit ::: playOffGames tournament participants
-    toString ::: id playThirdPlace tournament indexOfFirstHockey copyResult name numberOfHockey type
+    toString ::: id playThirdPlace indexOfFirstHockey copyResult name numberOfHockey type
   }
 
   final pojo Participant serializable 1 {
@@ -70,7 +70,7 @@ package org.toursys.repository.model {
     awayParticipantIdPlayOffGames : java.util.List <:PlayOffGame>
     equals ::: id
     toInit ::: awayParticipantIdPlayOffGames games player group homeParticipantIdPlayOffGames
-    toString ::: id rank player score temp equalRank points group
+    toString ::: id rank score temp equalRank points
   }
 
   final pojo Player serializable 1 {
@@ -78,10 +78,12 @@ package org.toursys.repository.model {
     name : java.lang.String required
     surname : java.lang.String required
     club : java.lang.String
-    user :: User required index 2
+    playerDiscriminator : java.lang.String
+    worldRanking : java.lang.Integer
+    user :: User required index 3
     equals ::: id
     toInit ::: user
-    toString ::: id club name surname user
+    toString ::: playerDiscriminator id club name surname worldRanking
   }
 
   final pojo PlayOffGame serializable 1 {
@@ -94,7 +96,7 @@ package org.toursys.repository.model {
     winner :: PlayOffGameWinner
     equals ::: id
     toInit ::: homeParticipant awayParticipant group
-    toString ::: position id results winner homeParticipant awayParticipant group
+    toString ::: position id results winner
   }
 
   final pojo Season serializable 1 {
@@ -104,7 +106,7 @@ package org.toursys.repository.model {
     tournaments : java.util.List <:Tournament>
     equals ::: id
     toInit ::: tournaments user
-    toString ::: id name user
+    toString ::: id name
   }
 
   final pojo Tournament serializable 1 {
@@ -121,13 +123,13 @@ package org.toursys.repository.model {
     finalStandings : java.util.List <:FinalStanding>
     equals ::: id
     toInit ::: season finalStandings groups
-    toString ::: id playOffLower season playOffA winPoints finalPromoting name lowerPromoting minPlayersInGroup
+    toString ::: id playOffLower playOffA winPoints finalPromoting name lowerPromoting minPlayersInGroup
   }
 
   final pojo User serializable 1 {
     id : java.lang.Integer primaryKey index 1
-    name : java.lang.String required
-    surname : java.lang.String required
+    name : java.lang.String
+    surname : java.lang.String
     email : java.lang.String required index 3
     userName : java.lang.String required index 2
     password : java.lang.String required
@@ -139,5 +141,5 @@ package org.toursys.repository.model {
     toInit ::: seasons players
     toString ::: id email name platnost role userName surname password
   }
-
+  
 }

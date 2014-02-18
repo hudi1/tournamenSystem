@@ -10,7 +10,7 @@ public class Player implements Serializable {
   
   private static final long serialVersionUID = 1L;
   public static final int ORDER_BY_ID = 1;
-  public static final int ORDER_BY_USER = 2;
+  public static final int ORDER_BY_USER = 3;
 	
   public Player() {
   }
@@ -78,6 +78,36 @@ public class Player implements Serializable {
   
   public Player _setClub(String club) {
     this.club = club;
+    return this;
+  }
+  
+  private String playerDiscriminator;
+  
+  public String getPlayerDiscriminator() {
+    return playerDiscriminator;
+  }
+  
+  public void setPlayerDiscriminator(String playerDiscriminator) {
+    this.playerDiscriminator = playerDiscriminator;
+  }
+  
+  public Player _setPlayerDiscriminator(String playerDiscriminator) {
+    this.playerDiscriminator = playerDiscriminator;
+    return this;
+  }
+  
+  private Integer worldRanking;
+  
+  public Integer getWorldRanking() {
+    return worldRanking;
+  }
+  
+  public void setWorldRanking(Integer worldRanking) {
+    this.worldRanking = worldRanking;
+  }
+  
+  public Player _setWorldRanking(Integer worldRanking) {
+    this.worldRanking = worldRanking;
     return this;
   }
   
@@ -176,10 +206,10 @@ public class Player implements Serializable {
   
   @Override
   public String toString() {
-    return "Player [id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", user=" + user + "]";
+    return "Player [playerDiscriminator=" + playerDiscriminator + ", id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", worldRanking=" + worldRanking + "]";
   }
   
   public String toStringFull() {
-    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", user=" + user + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", user=" + user + "]";
   }
 }

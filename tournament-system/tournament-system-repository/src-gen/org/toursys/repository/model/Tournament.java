@@ -274,7 +274,7 @@ public class Tournament implements Serializable {
   
   @Override
   public String toString() {
-    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", season=" + season + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
+    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
   }
   
   public String toStringFull() {

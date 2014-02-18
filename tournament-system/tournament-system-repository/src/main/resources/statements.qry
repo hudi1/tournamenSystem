@@ -52,6 +52,11 @@ SELECT_FINAL_STANDING(QRY,inx=FinalStanding,outx=FinalStanding,tab=finalStanding
   {#2 order by %f.TOURNAMENT_ID }
 ;
 
+INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
+  insert into %%PLAYER (%ID, %NAME, %SURNAME, %CLUB, {? :playerDiscriminator | %PLAYER_DISCRIMINATOR,} %WORLD_RANKING, %USER_ID)
+  {= values (:id(seq=SEQ_PLAYER), :name, :surname, :club, {? :playerDiscriminator | :playerDiscriminator,} :worldRanking, :user.id) }
+;
+
 // generated sql
 
 INSERT_FINAL_STANDING(CRUD,inx=FinalStanding,outx=FinalStanding,tab=finalStanding)=
@@ -62,7 +67,7 @@ INSERT_FINAL_STANDING(CRUD,inx=FinalStanding,outx=FinalStanding,tab=finalStandin
 GET_FINAL_STANDING(CRUD,inx=FinalStanding,outx=FinalStanding,tab=finalStanding=f,tab=tournament=t,tab=player=p)=
   select %f.ID @id(id), %f.PLAYER_ID @player.id(id), %f.FINAL_RANK @finalRank, %f.TOURNAMENT_ID @tournament.id(id)
          {? :tournament(call=toInit) | , %t.NAME @tournament.name, %t.SEASON_ID @tournament.season.id, %t.FINAL_PROMOTING @tournament.finalPromoting, %t.LOWER_PROMOTING @tournament.lowerPromoting, %t.WIN_POINTS @tournament.winPoints, %t.PLAY_OFF_A @tournament.playOffA, %t.PLAY_OFF_LOWER @tournament.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournament.minPlayersInGroup }
-         {? :player(call=toInit) | , %p.NAME @player.name, %p.SURNAME @player.surname, %p.CLUB @player.club, %p.USER_ID @player.user.id }
+         {? :player(call=toInit) | , %p.NAME @player.name, %p.SURNAME @player.surname, %p.CLUB @player.club, %p.PLAYER_DISCRIMINATOR @player.playerDiscriminator, %p.WORLD_RANKING @player.worldRanking, %p.USER_ID @player.user.id }
   from %%FINAL_STANDING f
   {? :tournament(call=toInit) | left join %%TOURNAMENT t on %f.TOURNAMENT_ID = %t.ID }
   {? :player(call=toInit) | left join %%PLAYER p on %f.PLAYER_ID = %p.ID }
@@ -234,7 +239,7 @@ GET_PARTICIPANT(CRUD,inx=Participant,outx=Participant,tab=participant=p,tab=grou
   select %p.ID @id(id), %p.POINTS @points, %p.RANK @rank, %p.GROUP_ID @group.id(id), %p.PLAYER_ID @player.id(id), %p.SCORE @score(type=score), %p.EQUAL_RANK @equalRank
          {? :group(call=toInit) | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.TYPE @group.type, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
          {? :homeParticipantIdPlayOffGames(call=toInit) | , %p2.ID @homeParticipantIdPlayOffGames.id(id), %p2.HOME_PARTICIPANT_ID @homeParticipantIdPlayOffGames.homeParticipant.id, %p2.AWAY_PARTICIPANT_ID @homeParticipantIdPlayOffGames.awayParticipant.id, %p2.GROUP_ID @homeParticipantIdPlayOffGames.group.id(id), %p2.POSITION @homeParticipantIdPlayOffGames.position, %p2.RESULTS @homeParticipantIdPlayOffGames.results, %p2.WINNER @homeParticipantIdPlayOffGames.winner }
-         {? :player(call=toInit) | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club, %p1.USER_ID @player.user.id }
+         {? :player(call=toInit) | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club, %p1.PLAYER_DISCRIMINATOR @player.playerDiscriminator, %p1.WORLD_RANKING @player.worldRanking, %p1.USER_ID @player.user.id }
          {? :games(call=toInit) | , %g1.ID @games.id(id), %g1.HOME_PARTICIPANT_ID @games.homeParticipant.id, %g1.AWAY_PARTICIPANT_ID @games.awayParticipant.id, %g1.HOME_SCORE @games.homeScore, %g1.AWAY_SCORE @games.awayScore }
          {? :awayParticipantIdPlayOffGames(call=toInit) | , %p3.ID @awayParticipantIdPlayOffGames.id(id), %p3.HOME_PARTICIPANT_ID @awayParticipantIdPlayOffGames.homeParticipant.id, %p3.AWAY_PARTICIPANT_ID @awayParticipantIdPlayOffGames.awayParticipant.id, %p3.GROUP_ID @awayParticipantIdPlayOffGames.group.id(id), %p3.POSITION @awayParticipantIdPlayOffGames.position, %p3.RESULTS @awayParticipantIdPlayOffGames.results, %p3.WINNER @awayParticipantIdPlayOffGames.winner }
   from %%PARTICIPANT p
@@ -280,7 +285,7 @@ SELECT_PARTICIPANT(QRY,inx=Participant,outx=Participant,tab=participant=p,tab=gr
   select %p.ID @id(id), %p.POINTS @points, %p.RANK @rank, %p.GROUP_ID @group.id(id), %p.PLAYER_ID @player.id(id), %p.SCORE @score(type=score), %p.EQUAL_RANK @equalRank
          {? :group(call=toInit) | , %g.NAME @group.name, %g.NUMBER_OF_HOCKEY @group.numberOfHockey, %g.TYPE @group.type, %g.INDEX_OF_FIRST_HOCKEY @group.indexOfFirstHockey, %g.TOURNAMENT_ID @group.tournament.id, %g.COPY_RESULT @group.copyResult, %g.PLAY_THIRD_PLACE @group.playThirdPlace }
          {? :homeParticipantIdPlayOffGames(call=toInit) | , %p2.ID @homeParticipantIdPlayOffGames.id(id), %p2.HOME_PARTICIPANT_ID @homeParticipantIdPlayOffGames.homeParticipant.id, %p2.AWAY_PARTICIPANT_ID @homeParticipantIdPlayOffGames.awayParticipant.id, %p2.GROUP_ID @homeParticipantIdPlayOffGames.group.id(id), %p2.POSITION @homeParticipantIdPlayOffGames.position, %p2.RESULTS @homeParticipantIdPlayOffGames.results, %p2.WINNER @homeParticipantIdPlayOffGames.winner }
-         {? :player(call=toInit) | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club, %p1.USER_ID @player.user.id }
+         {? :player(call=toInit) | , %p1.NAME @player.name, %p1.SURNAME @player.surname, %p1.CLUB @player.club, %p1.PLAYER_DISCRIMINATOR @player.playerDiscriminator, %p1.WORLD_RANKING @player.worldRanking, %p1.USER_ID @player.user.id }
          {? :games(call=toInit) | , %g1.ID @games.id(id), %g1.HOME_PARTICIPANT_ID @games.homeParticipant.id, %g1.AWAY_PARTICIPANT_ID @games.awayParticipant.id, %g1.HOME_SCORE @games.homeScore, %g1.AWAY_SCORE @games.awayScore }
          {? :awayParticipantIdPlayOffGames(call=toInit) | , %p3.ID @awayParticipantIdPlayOffGames.id(id), %p3.HOME_PARTICIPANT_ID @awayParticipantIdPlayOffGames.homeParticipant.id, %p3.AWAY_PARTICIPANT_ID @awayParticipantIdPlayOffGames.awayParticipant.id, %p3.GROUP_ID @awayParticipantIdPlayOffGames.group.id(id), %p3.POSITION @awayParticipantIdPlayOffGames.position, %p3.RESULTS @awayParticipantIdPlayOffGames.results, %p3.WINNER @awayParticipantIdPlayOffGames.winner }
   from %%PARTICIPANT p
@@ -303,13 +308,8 @@ SELECT_PARTICIPANT(QRY,inx=Participant,outx=Participant,tab=participant=p,tab=gr
   {#2 order by %p.PLAYER_ID }
 ;
 
-INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
-  insert into %%PLAYER (%ID, %NAME, %SURNAME, %CLUB, %USER_ID)
-  {= values (:id(seq=SEQ_PLAYER), :name, :surname, :club, :user.id) }
-;
-
 GET_PLAYER(CRUD,inx=Player,outx=Player,tab=player=p,tab=user=u)=
-  select %p.ID @id(id), %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club, %p.USER_ID @user.id(id)
+  select %p.ID @id(id), %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club, %p.PLAYER_DISCRIMINATOR @playerDiscriminator, %p.WORLD_RANKING @worldRanking, %p.USER_ID @user.id(id)
          {? :user(call=toInit) | , %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.PLATNOST @user.platnost }
   from %%PLAYER p
   {? :user(call=toInit) | left join %%USER u on %p.USER_ID = %u.ID }
@@ -318,6 +318,8 @@ GET_PLAYER(CRUD,inx=Player,outx=Player,tab=player=p,tab=user=u)=
     {& %p.NAME = :name }
     {& %p.SURNAME = :surname }
     {& %p.CLUB = :club }
+    {& %p.PLAYER_DISCRIMINATOR = :playerDiscriminator }
+    {& %p.WORLD_RANKING = :worldRanking }
     {& %p.USER_ID = :user.id }
   }
 ;
@@ -328,6 +330,8 @@ UPDATE_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
     { ,%NAME = :name(call=isDef) }
     { ,%SURNAME = :surname(call=isDef) }
     { ,%CLUB = :club(call=isDef) }
+    { ,%PLAYER_DISCRIMINATOR = :playerDiscriminator(call=isDef) }
+    { ,%WORLD_RANKING = :worldRanking(call=isDef) }
     { ,%USER_ID = :user.id(call=isDef) }
   }
   {= where
@@ -343,7 +347,7 @@ DELETE_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
 ;
 
 SELECT_PLAYER(QRY,inx=Player,outx=Player,tab=player=p,tab=user=u)=
-  select %p.ID @id(id), %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club, %p.USER_ID @user.id(id)
+  select %p.ID @id(id), %p.NAME @name, %p.SURNAME @surname, %p.CLUB @club, %p.PLAYER_DISCRIMINATOR @playerDiscriminator, %p.WORLD_RANKING @worldRanking, %p.USER_ID @user.id(id)
          {? :user(call=toInit) | , %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.PLATNOST @user.platnost }
   from %%PLAYER p
   {? :user(call=toInit) | left join %%USER u on %p.USER_ID = %u.ID }
@@ -352,10 +356,12 @@ SELECT_PLAYER(QRY,inx=Player,outx=Player,tab=player=p,tab=user=u)=
     {& UPPER(%p.NAME) like :+name }
     {& UPPER(%p.SURNAME) like :+surname }
     {& UPPER(%p.CLUB) like :+club }
+    {& UPPER(%p.PLAYER_DISCRIMINATOR) like :+playerDiscriminator }
+    {& %p.WORLD_RANKING = :worldRanking }
     {& %p.USER_ID = :user.id }
   }
   {#1 order by %p.ID }
-  {#2 order by %p.USER_ID }
+  {#3 order by %p.USER_ID }
 ;
 
 INSERT_PLAY_OFF_GAME(CRUD,inx=PlayOffGame,outx=PlayOffGame,tab=playOffGame)=
@@ -540,7 +546,7 @@ INSERT_USER(CRUD,inx=User,outx=User,tab=user)=
 
 GET_USER(CRUD,inx=User,outx=User,tab=user=u,tab=player=p,tab=season=s)=
   select %u.ID @id(id), %u.NAME @name, %u.SURNAME @surname, %u.EMAIL @email, %u.USER_NAME @userName, %u.PASSWORD @password, %u.ROLE @role, %u.PLATNOST @platnost
-         {? :players(call=toInit) | , %p.ID @players.id(id), %p.NAME @players.name, %p.SURNAME @players.surname, %p.CLUB @players.club, %p.USER_ID @players.user.id }
+         {? :players(call=toInit) | , %p.ID @players.id(id), %p.NAME @players.name, %p.SURNAME @players.surname, %p.CLUB @players.club, %p.PLAYER_DISCRIMINATOR @players.playerDiscriminator, %p.WORLD_RANKING @players.worldRanking, %p.USER_ID @players.user.id }
          {? :seasons(call=toInit) | , %s.ID @seasons.id(id), %s.NAME @seasons.name, %s.USER_ID @seasons.user.id }
   from %%USER u
   {? :players(call=toInit) | left join %%PLAYER p on %u.ID = %p.USER_ID }
@@ -582,7 +588,7 @@ DELETE_USER(CRUD,inx=User,outx=User,tab=user)=
 
 SELECT_USER(QRY,inx=User,outx=User,tab=user=u,tab=player=p,tab=season=s)=
   select %u.ID @id(id), %u.NAME @name, %u.SURNAME @surname, %u.EMAIL @email, %u.USER_NAME @userName, %u.PASSWORD @password, %u.ROLE @role, %u.PLATNOST @platnost
-         {? :players(call=toInit) | , %p.ID @players.id(id), %p.NAME @players.name, %p.SURNAME @players.surname, %p.CLUB @players.club, %p.USER_ID @players.user.id }
+         {? :players(call=toInit) | , %p.ID @players.id(id), %p.NAME @players.name, %p.SURNAME @players.surname, %p.CLUB @players.club, %p.PLAYER_DISCRIMINATOR @players.playerDiscriminator, %p.WORLD_RANKING @players.worldRanking, %p.USER_ID @players.user.id }
          {? :seasons(call=toInit) | , %s.ID @seasons.id(id), %s.NAME @seasons.name, %s.USER_ID @seasons.user.id }
   from %%USER u
   {? :players(call=toInit) | left join %%PLAYER p on %u.ID = %p.USER_ID }

@@ -16,7 +16,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.toursys.processor.pdf.PlayersHtmlImportFactory;
+import org.toursys.processor.html.PlayersHtmlImportFactory;
 import org.toursys.processor.service.PlayerService;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
@@ -52,6 +52,7 @@ public class ImportPlayerPage extends WebPage {
 
             final TextField<String> url = new UrlTextField("url", new Model<String>(), new UrlValidator());
             url.setOutputMarkupId(true);
+            url.setRequired(true);
 
             add(url);
 

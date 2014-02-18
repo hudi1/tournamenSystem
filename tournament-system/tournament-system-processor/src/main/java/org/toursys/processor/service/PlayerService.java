@@ -13,7 +13,15 @@ public class PlayerService extends AbstractService {
     @Transactional
     public Player createPlayer(Player player) {
         logger.debug("Create player: " + player);
-        return tournamentAggregationDao.createPlayer(player);
+
+        Player dbPlayer = getPlayer(player);
+
+        if (dbPlayer == null) {
+            return tournamentAggregationDao.createPlayer(player);
+        } else {
+            logger.warn("Player already exists: " + dbPlayer);
+            return dbPlayer;
+        }
     }
 
     @Transactional(readOnly = true)
