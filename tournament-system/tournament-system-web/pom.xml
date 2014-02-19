@@ -43,6 +43,15 @@
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>${project.artifactId}</warName>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>src/main/webapp</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
@@ -55,26 +64,68 @@
 
     <profiles>
         <profile>
-            <id>test</id>
+            <id>config</id>
+            <activation>
+                <property>
+                    <name>config</name>
+                </property>
+            </activation>
+            <properties>
+                <konfigurace>${basedir}/../config/${config}/build.properties</konfigurace>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*ITest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.bitstrings.maven.plugins</groupId>
                         <artifactId>properties-maven-plugin</artifactId>
-                        <version>1.0-alpha-2</version>
                         <executions>
                             <execution>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>read-project-properties</goal>
+                                    <goal>read-properties</goal>
                                 </goals>
                                 <configuration>
-                                    <files>
-                                        <file>test.properties</file>
-                                    </files>
+                                    <readers>
+                                        <reader implementation="org.bitstrings.maven.plugins.properties.io.FilePropertiesReader">
+                                            <file>${konfigurace}</file>
+                                        </reader>
+                                    </readers>
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <!--resource>
+                                    <filtering>true</filtering>
+                                    <directory>${basedir}/../config/${config}/resources</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
+                                </resource-->
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>${basedir}/../config</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
+                                    <includes>
+                                        <include>log4j.properties</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>${basedir}/../config/${config}/webapp</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -164,7 +215,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
     </dependencies>
 
     <licenses>
