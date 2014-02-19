@@ -13,6 +13,10 @@
         <relativePath>..</relativePath>
     </parent>
 
+    <properties>
+        <konfigurace>${basedir}/../config/build.properties</konfigurace>
+    </properties>
+
     <build>
         <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
         <resources>
@@ -58,6 +62,25 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.1.25</version>
                 <!-- configuration> <contextPath>${path}</contextPath> </configuration -->
+            </plugin>
+            <plugin>
+                <groupId>org.bitstrings.maven.plugins</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-properties</goal>
+                        </goals>
+                        <configuration>
+                            <readers>
+                                <reader implementation="org.bitstrings.maven.plugins.properties.io.FilePropertiesReader">
+                                    <file>${konfigurace}</file>
+                                </reader>
+                            </readers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -106,11 +129,8 @@
                         <artifactId>maven-war-plugin</artifactId>
                         <configuration>
                             <webResources>
-                                <!--resource>
-                                    <filtering>true</filtering>
-                                    <directory>${basedir}/../config/${config}/resources</directory>
-                                    <targetPath>WEB-INF/classes</targetPath>
-                                </resource-->
+                                <!--resource> <filtering>true</filtering> <directory>${basedir}/../config/${config}/resources</directory> 
+                                    <targetPath>WEB-INF/classes</targetPath> </resource -->
                                 <resource>
                                     <filtering>true</filtering>
                                     <directory>${basedir}/../config</directory>
