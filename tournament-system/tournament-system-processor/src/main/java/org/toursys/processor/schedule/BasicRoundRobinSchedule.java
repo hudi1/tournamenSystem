@@ -10,11 +10,9 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 
 public class BasicRoundRobinSchedule extends RoundRobinSchedule {
-    private Groups group;
     private int playerCount;
     private int roundCount;
     private List<Participant> participants;
-    private List<GameImpl> schedule;
 
     public BasicRoundRobinSchedule(Groups group, List<Participant> participants) {
         super(group);

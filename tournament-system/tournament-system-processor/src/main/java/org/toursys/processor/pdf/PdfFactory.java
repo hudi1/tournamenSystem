@@ -65,6 +65,7 @@ public class PdfFactory {
 
         pdfTable.addCell(createCenterAlignBorderCell("name"));
         for (Participant participant : players) {
+            // TODO index miesto inicialok
             pdfTable.addCell(createCenterAlignBorderCell(participant.getPlayer().getName().charAt(0) + "."
                     + participant.getPlayer().getSurname().charAt(0) + "."));
         }
@@ -73,8 +74,8 @@ public class PdfFactory {
         pdfTable.addCell(createCenterAlignBorderCell("rank"));
 
         for (Participant participant1 : players) {
-            pdfTable.addCell(createCenterAlignBorderCell(participant1.getPlayer().getSurname() + " "
-                    + participant1.getPlayer().getName().charAt(0) + "."));
+            pdfTable.addCell(createCenterAlignBorderCell(participant1.getPlayer().getName().charAt(0) + "."
+                    + participant1.getPlayer().getSurname() + " " + participant1.getPlayer().getPlayerDiscriminator()));
 
             for (Participant participant2 : players) {
                 if (participant1.equals(participant2)) {
@@ -195,10 +196,12 @@ public class PdfFactory {
             }
 
             pdfTable.addCell(createLeftAlignCell(game.getHockey().toString()));
-            pdfTable.addCell(createLeftAlignCell(game.getHomeParticipant().getPlayer().getSurname() + " "
-                    + game.getHomeParticipant().getPlayer().getName().charAt(0) + " - "
+            pdfTable.addCell(createLeftAlignCell(game.getHomeParticipant().getPlayer().getName().charAt(0) + "."
+                    + game.getHomeParticipant().getPlayer().getSurname() + " "
+                    + game.getHomeParticipant().getPlayer().getPlayerDiscriminator() + " - "
+                    + game.getAwayParticipant().getPlayer().getName().charAt(0) + " "
                     + game.getAwayParticipant().getPlayer().getSurname() + " "
-                    + game.getAwayParticipant().getPlayer().getName().charAt(0)));
+                    + game.getAwayParticipant().getPlayer().getPlayerDiscriminator()));
             pdfTable.addCell(createBorderCell("  "));
             pdfTable.addCell(createCell(":"));
             pdfTable.addCell(createBorderCell("  "));
@@ -275,8 +278,9 @@ public class PdfFactory {
                 // hlavicka
                 for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
                     Participant participant = entry.getKey();
-                    pdfTable.addCell(createCell("(" + group.getName() + ") " + participant.getPlayer().getSurname()
-                            + " " + participant.getPlayer().getName().charAt(0)));
+                    pdfTable.addCell(createCell("(" + group.getName() + ") "
+                            + participant.getPlayer().getName().charAt(0) + "." + participant.getPlayer().getSurname()
+                            + " " + participant.getPlayer().getPlayerDiscriminator()));
                 }
 
                 // hokeje
@@ -458,10 +462,12 @@ public class PdfFactory {
                 pdfTable.addCell(createLeftAlignCell(getRound(entry.getValue().size(), playOffGame.getPosition()) + ""));
 
                 if (playOffGame.getHomeParticipant() != null && playOffGame.getAwayParticipant() != null) {
-                    String playersGame = playOffGame.getHomeParticipant().getPlayer().getSurname() + " "
-                            + playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + ". : "
+                    String playersGame = playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + "."
+                            + playOffGame.getHomeParticipant().getPlayer().getSurname() + " "
+                            + playOffGame.getHomeParticipant().getPlayer().getPlayerDiscriminator() + " : "
+                            + playOffGame.getAwayParticipant().getPlayer().getName().charAt(0) + "."
                             + playOffGame.getAwayParticipant().getPlayer().getSurname() + " "
-                            + playOffGame.getAwayParticipant().getPlayer().getName().charAt(0) + ". ";
+                            + playOffGame.getAwayParticipant().getPlayer().getPlayerDiscriminator();
 
                     pdfTable.addCell(createLeftAlignCell(playersGame));
 
@@ -544,9 +550,9 @@ public class PdfFactory {
         for (FinalStanding finalStanding : finalStandings) {
             pdfTable.addCell(createLeftAlignCell(finalStanding.getFinalRank() + "."));
             pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getSurname() != null) ? finalStanding
-                    .getPlayer().getSurname() : ""));
+                    .getPlayer().getSurname() + " " + finalStanding.getPlayer().getPlayerDiscriminator() : ""));
             pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getName() != null) ? finalStanding
-                    .getPlayer().getName() : ""));
+                    .getPlayer().getName() : " " + finalStanding.getPlayer().getPlayerDiscriminator()));
         }
 
         document.add(pdfTable);

@@ -55,13 +55,13 @@ public class ComparePage extends WebPage {
             super(id);
             setOutputMarkupId(true);
             Label nameLabel1 = new Label("name1", (player1 != null) ? player1.getPlayer().getSurname() + " "
-                    + player1.getPlayer().getName() : "");
+                    + player1.getPlayer().getName() + " " + player1.getPlayer().getPlayerDiscriminator() : "");
             TextField<Integer> rankTextField1 = new TextField<Integer>("equalRank1", new PropertyModel<Integer>(
                     (player1 != null) ? player1 : new Participant(), "equalRank"));
             Label rank1 = new Label("rank1", new ResourceModel("rank"));
 
             Label nameLabel2 = new Label("name2", (player2 != null) ? player2.getPlayer().getSurname() + " "
-                    + player2.getPlayer().getName() : "");
+                    + player2.getPlayer().getName() + " " + player2.getPlayer().getPlayerDiscriminator() : "");
             TextField<Integer> rankTextField2 = new TextField<Integer>("equalRank2", new PropertyModel<Integer>(
                     (player2 != null) ? player2 : new Participant(), "equalRank"));
             Label rank2 = new Label("rank2", new ResourceModel("rank"));

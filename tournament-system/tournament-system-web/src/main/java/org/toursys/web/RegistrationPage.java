@@ -89,7 +89,8 @@ public class RegistrationPage extends BasePage {
                 final Participant participant = listItem.getModelObject();
                 listItem.setModel(new CompoundPropertyModel<Participant>(participant));
                 listItem.add(new Label("name", participant.getPlayer().getName()));
-                listItem.add(new Label("surname", participant.getPlayer().getSurname()));
+                listItem.add(new Label("surname", participant.getPlayer().getSurname() + " "
+                        + participant.getPlayer().getPlayerDiscriminator()));
                 listItem.add(new Label("tableName", participant.getGroup().getName()));
                 listItem.add(new Label("number", listItem.getIndex() + 1 + "."));
                 listItem.add(new AjaxLink<Void>("deletePlayer") {
@@ -247,7 +248,7 @@ public class RegistrationPage extends BasePage {
                     final Player player = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Player>(player));
                     listItem.add(new Label("name", player.getName()));
-                    listItem.add(new Label("surname", player.getSurname()));
+                    listItem.add(new Label("surname", player.getSurname() + " " + player.getPlayerDiscriminator()));
                     listItem.add(new AjaxEventBehavior("onclick") {
 
                         private static final long serialVersionUID = 1L;

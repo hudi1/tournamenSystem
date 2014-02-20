@@ -98,7 +98,7 @@ public class FinalStandingsPage extends BasePage {
                     listItem.add(new Label("name", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
                             .getName() : ""));
                     listItem.add(new Label("surname", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
-                            .getSurname() : ""));
+                            .getSurname() + " " + finalStanding.getPlayer().getPlayerDiscriminator() : ""));
                     listItem.add(new Label("rank", finalStanding.getFinalRank() + "."));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {

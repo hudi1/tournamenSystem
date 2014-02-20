@@ -126,11 +126,13 @@ public class PlayOffPage extends BasePage {
                             listItem.add(new Label(
                                     "players",
                                     ((participant != null && participant.getPlayer() != null) ? (participant
-                                            .getPlayer().getName() + " " + participant.getPlayer().getSurname()) : " ")
+                                            .getPlayer().getName() + " " + participant.getPlayer().getSurname() + " " + participant
+                                            .getPlayer().getPlayerDiscriminator()) : " ")
                                             + "           :           "
                                             + ((opponentResult != null && opponentResult.getPlayer() != null) ? (opponentResult
                                                     .getPlayer().getName() + " " + opponentResult.getPlayer()
-                                                    .getSurname()) : " ")));
+                                                    .getSurname()) : " "
+                                                    + opponentResult.getPlayer().getPlayerDiscriminator())));
 
                             int playerCount = getViewSize() + 1;
                             if (group.getPlayThirdPlace() && getViewSize() > 1) {

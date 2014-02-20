@@ -201,8 +201,9 @@ public class GroupPage extends BasePage {
             protected void populateItem(final Item<Participant> listItem) {
                 final Participant participant = listItem.getModelObject();
                 listItem.setModel(new CompoundPropertyModel<Participant>(participant));
-                listItem.add(new Label("name", participant.getPlayer().getSurname() + " "
-                        + participant.getPlayer().getName().charAt(0) + "."));
+                listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
+                listItem.add(new Label("name", participant.getPlayer().getName().charAt(0) + "."
+                        + participant.getPlayer().getSurname() + " " + participant.getPlayer().getPlayerDiscriminator()));
                 listItem.add(new Label("score", participant.getScore().toString()));
                 listItem.add(new Label("points", ((Integer) participant.getPoints()).toString()));
                 listItem.add(new Label("rank", (participant.getRank() != null) ? participant.getRank().toString() : " "));
@@ -252,10 +253,7 @@ public class GroupPage extends BasePage {
 
             @Override
             protected void populateItem(ListItem<Participant> gameItem) {
-                final Participant participant1 = gameItem.getModelObject();
-                String name = participant1.getPlayer().getName().charAt(0) + "."
-                        + participant1.getPlayer().getSurname().charAt(0);
-                gameItem.add(new Label("playerName", name));
+                gameItem.add(new Label("playerName", gameItem.getIndex() + 1 + ""));
 
             }
         };

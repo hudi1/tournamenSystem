@@ -60,11 +60,7 @@ public class PlayerPage extends BasePage {
                 final Player player = listItem.getModelObject();
                 listItem.setModel(new CompoundPropertyModel<Player>(player));
                 listItem.add(new Label("name", player.getName()));
-                String discriminator = "";
-                if (!player.getPlayerDiscriminator().equals("NAS")) {
-                    discriminator = " " + player.getPlayerDiscriminator();
-                }
-                listItem.add(new Label("surname", player.getSurname() + discriminator));
+                listItem.add(new Label("surname", player.getSurname() + " " + player.getPlayerDiscriminator()));
                 listItem.add(new Label("club", player.getClub()));
                 // TODO zisti preco to funguje aj bez clone
                 listItem.add(new EditPlayerForm(((Player) listItem.getDefaultModelObject())));

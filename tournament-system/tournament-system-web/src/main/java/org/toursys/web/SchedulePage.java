@@ -131,11 +131,13 @@ public class SchedulePage extends BasePage {
                     final boolean winner2 = winnerOpponent;
 
                     if (participant.getPlayer() != null) {
-                        playerName = participant.getPlayer().getName() + participant.getPlayer().getSurname() + " ";
+                        playerName = participant.getPlayer().getName() + " " + participant.getPlayer().getSurname()
+                                + " " + participant.getPlayer().getPlayerDiscriminator();
                     }
 
                     if (opponent.getPlayer() != null) {
-                        opponentName = opponent.getPlayer().getName() + opponent.getPlayer().getSurname();
+                        opponentName = opponent.getPlayer().getName() + " " + opponent.getPlayer().getSurname() + " "
+                                + opponent.getPlayer().getPlayerDiscriminator();
                     }
 
                     listItem.add(new Label("player", playerName)
