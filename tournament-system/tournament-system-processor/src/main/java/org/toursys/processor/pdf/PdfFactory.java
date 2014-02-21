@@ -317,7 +317,7 @@ public class PdfFactory {
                         while (round != game.getRound()) {
                             nestedTable.addCell(createCell(round + ")"));
                             nestedTable.addCell(createCell("-"));
-                            nestedTable.addCell(createCell("-------"));
+                            nestedTable.addCell(createLeftAlignCell("-------"));
 
                             for (int j = 0; j < spaceCount; j++) {
                                 nestedTable.addCell(createEmptyCell());
@@ -329,8 +329,8 @@ public class PdfFactory {
 
                         nestedTable.addCell(createCell(game.getRound() + ")"));
                         nestedTable.addCell(createCell(game.getHockey().toString() + side));
-                        nestedTable
-                                .addCell(createLeftAlignCell(player.getSurname() + " " + player.getName().charAt(0)));
+                        nestedTable.addCell(createLeftAlignCell(player.getName().charAt(0) + "." + player.getSurname()
+                                + " " + player.getPlayerDiscriminator()));
 
                         round++;
 

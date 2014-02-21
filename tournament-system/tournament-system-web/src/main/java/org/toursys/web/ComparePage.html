@@ -9,17 +9,12 @@
 <body>
 	<div>
 		<form class="compareForm" wicket:id="playerEditForm">
-			<fieldset>
-				<div>
-					<label wicket:id="name1" /> <br /> <label wicket:id="rank1" /> <input
-						type="text" wicket:id="equalRank1" />
-				</div>
-				<div>
-					<label wicket:id="name2" /> <br /> <label wicket:id="rank2" /> <input
-						type="text" wicket:id="equalRank2" />
-				</div>
-
-			</fieldset>
+			<table class="dataview">
+				<tr wicket:id="rows">
+					<td><span wicket:id="player"></span></td>
+					<td><input wicket:id="equalRank"></input></td>
+				</tr>
+			</table>
 			<p>
 				<input wicket:id="close" class="tournamentButton" type="submit"
 					value="Close" /> <input wicket:id="reset" class="tournamentButton"

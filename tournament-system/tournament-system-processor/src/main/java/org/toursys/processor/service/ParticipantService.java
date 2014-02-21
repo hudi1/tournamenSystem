@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
+import org.toursys.processor.SamePlayerRankException;
 import org.toursys.processor.comparators.AdvantageComparator;
 import org.toursys.processor.comparators.BasicComparator;
 import org.toursys.processor.comparators.RankComparator;
@@ -139,12 +140,18 @@ public class ParticipantService extends AbstractService {
         logger.debug("Sort participants: " + Arrays.toString(participants.toArray()));
 
         Collections.sort(participants, new BasicComparator());
+        AdvantageComparator advantageComparator = new AdvantageComparator();
+        SamePlayerRankException ex = new SamePlayerRankException();
 
         for (int i = 0; i < participants.size(); i++) {
+            if (participants.get(i).getEqualRank() != null) {
+                ex.getPlayers().add(participants.get(i));
+            }
             participants.get(i).setRank(i + 1);
         }
 
         List<Participant> temporatyParticipant = new ArrayList<Participant>();
+
         temporatyParticipant.add(cloneParticipant(participants.get(0)));
         int actualRank = 0;
         for (int i = 0; i < participants.size() - 1; i++) {
@@ -175,7 +182,7 @@ public class ParticipantService extends AbstractService {
                         calculateParticipant(participant, tournament);
                     }
 
-                    Collections.sort(temporatyParticipant, new AdvantageComparator());
+                    Collections.sort(temporatyParticipant, advantageComparator);
 
                     for (Participant participant1 : participants) {
                         for (int j = 0; j < temporatyParticipant.size(); j++) {
@@ -184,7 +191,6 @@ public class ParticipantService extends AbstractService {
                             }
                         }
                     }
-
                 }
                 temporatyParticipant.clear();
                 temporatyParticipant.add(cloneParticipant(participants.get(i + 1)));
@@ -193,9 +199,18 @@ public class ParticipantService extends AbstractService {
         }
 
         for (int i = 0; i < participants.size(); i++) {
+            logger.debug("Updating participant: " + participants.get(i));
             tournamentAggregationDao.updateParticipant(participants.get(i));
         }
         Collections.sort(participants, new RankComparator());
+
+        for (Participant participant : advantageComparator.getSameRankPlayers()) {
+            ex.getPlayers().add(participant);
+        }
+
+        if (!ex.getPlayers().isEmpty()) {
+            throw ex;
+        }
     }
 
     // vrati hracov pre rozpis kde sa pocitaju vysledky(postupujuci hraci)
@@ -259,6 +274,19 @@ public class ParticipantService extends AbstractService {
     @Required
     public void setGroupService(GroupService groupService) {
         this.groupService = groupService;
+    }
+
+    public void checkSameRankParticipants(List<Participant> participants) {
+        SamePlayerRankException ex = new SamePlayerRankException();
+
+        for (Participant participant : participants) {
+            if (participant.getEqualRank() != null) {
+                ex.getPlayers().add(participant);
+            }
+        }
+        if (!ex.getPlayers().isEmpty()) {
+            throw ex;
+        }
     }
 
 }

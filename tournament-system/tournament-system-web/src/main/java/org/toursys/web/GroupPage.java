@@ -78,13 +78,14 @@ public class GroupPage extends BasePage {
         if (group != null) {
             this.participants = participantService.getParticipants(new Participant()._setGroup(group));
             gameService.processGames(participants);
-
-            if (calculateParticipants) {
-                try {
+            try {
+                if (calculateParticipants) {
                     calculateParticipants();
-                } catch (SamePlayerRankException e) {
-                    createModalWindow(e);
+                } else {
+                    checkSameRankParticipants();
                 }
+            } catch (SamePlayerRankException e) {
+                createModalWindow(e);
             }
 
             if (group.getType().equals(GroupsType.FINAL) && calculateParticipants) {
@@ -94,6 +95,10 @@ public class GroupPage extends BasePage {
         } else {
             participants = new ArrayList<Participant>();
         }
+    }
+
+    private void checkSameRankParticipants() {
+        participantService.checkSameRankParticipants(participants);
     }
 
     private void checkPageParameters(PageParameters parameters) {
@@ -112,7 +117,7 @@ public class GroupPage extends BasePage {
             private static final long serialVersionUID = 1L;
 
             public Page createPage() {
-                return new ComparePage(group, modalWindow, e.getPlayer1(), e.getPlayer2());
+                return new ComparePage(group, modalWindow, e.getPlayers());
             }
         });
 

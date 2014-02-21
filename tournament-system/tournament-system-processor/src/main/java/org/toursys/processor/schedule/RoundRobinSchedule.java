@@ -34,6 +34,7 @@ public abstract class RoundRobinSchedule {
                     game._setHomeParticipant(homePlayer)._setAwayParticipant(awayPlayer);
                     GameImpl gameImpl = new GameImpl(game);
                     gameImpl.setRound(schedule.size() / group.getNumberOfHockey() + 1);
+                    gameImpl.setHockey(schedule.size() % group.getNumberOfHockey() + group.getIndexOfFirstHockey());
                     schedule.add(gameImpl);
                     break;
                 }

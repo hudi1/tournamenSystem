@@ -181,11 +181,8 @@ public class SchedulePage extends BasePage {
                                 }
                             }).setVisible(participant.getPlayer() != null));
 
-                    String hockey = listItem.getIndex() % group.getNumberOfHockey() + group.getIndexOfFirstHockey()
-                            + "";
-
                     listItem.add(new Label("round", game.getRound().toString()));
-                    listItem.add(new Label("hockey", hockey));
+                    listItem.add(new Label("hockey", game.getHockey().toString()));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;

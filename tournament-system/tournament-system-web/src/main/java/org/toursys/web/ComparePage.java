@@ -1,6 +1,10 @@
 package org.toursys.web;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -9,6 +13,12 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -28,66 +38,94 @@ public class ComparePage extends WebPage {
     @SpringBean(name = "groupService")
     protected GroupService groupService;
 
-    private Participant participant1;
-    private Participant participant2;
+    private List<Participant> players;
     private Groups group;
 
-    public ComparePage(Groups group, final ModalWindow window) {
-        this(group, window, null, null);
-    }
-
-    public ComparePage(Groups group, final ModalWindow window, Participant participant1, Participant participant2) {
-        this.participant1 = participant1;
-        this.participant2 = participant2;
+    public ComparePage(Groups group, final ModalWindow window, List<Participant> players) {
+        this.players = players;
         this.group = group;
         createPage(window);
     }
 
     private void createPage(final ModalWindow window) {
-        add(new PlayerForm("playerEditForm", participant1, participant2, window));
+        add(new PlayerForm(players, window));
     }
 
     private class PlayerForm extends Form<Participant> {
 
         private static final long serialVersionUID = 1L;
 
-        public PlayerForm(String id, final Participant player1, final Participant player2, final ModalWindow window) {
-            super(id);
-            setOutputMarkupId(true);
-            Label nameLabel1 = new Label("name1", (player1 != null) ? player1.getPlayer().getSurname() + " "
-                    + player1.getPlayer().getName() + " " + player1.getPlayer().getPlayerDiscriminator() : "");
-            TextField<Integer> rankTextField1 = new TextField<Integer>("equalRank1", new PropertyModel<Integer>(
-                    (player1 != null) ? player1 : new Participant(), "equalRank"));
-            Label rank1 = new Label("rank1", new ResourceModel("rank"));
+        public PlayerForm(final List<Participant> players, final ModalWindow window) {
+            super("playerEditForm");
 
-            Label nameLabel2 = new Label("name2", (player2 != null) ? player2.getPlayer().getSurname() + " "
-                    + player2.getPlayer().getName() + " " + player2.getPlayer().getPlayerDiscriminator() : "");
-            TextField<Integer> rankTextField2 = new TextField<Integer>("equalRank2", new PropertyModel<Integer>(
-                    (player2 != null) ? player2 : new Participant(), "equalRank"));
-            Label rank2 = new Label("rank2", new ResourceModel("rank"));
+            IDataProvider<Participant> dataProvider = new IDataProvider<Participant>() {
 
-            if (player1 == null || player2 == null) {
-                nameLabel1.setVisible(false);
-                rankTextField1.setVisible(false);
-                rank1.setVisible(false);
-                nameLabel2.setVisible(false);
-                rankTextField2.setVisible(false);
-                rank2.setVisible(false);
-            }
+                private static final long serialVersionUID = 1L;
 
-            add(nameLabel1);
-            add(rankTextField1);
-            add(rank1);
-            add(nameLabel2);
-            add(rankTextField2);
-            add(rank2);
+                @Override
+                public Iterator<Participant> iterator(int first, int count) {
+                    return players.subList(first, first + count).iterator();
+                }
+
+                @Override
+                public int size() {
+                    return players.size();
+                }
+
+                @Override
+                public IModel<Participant> model(final Participant object) {
+                    return new LoadableDetachableModel<Participant>() {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected Participant load() {
+                            return object;
+                        }
+                    };
+                }
+
+                @Override
+                public void detach() {
+                }
+            };
+
+            final DataView<Participant> dataView = new DataView<Participant>("rows", dataProvider) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(final Item<Participant> listItem) {
+                    final Participant participant = listItem.getModelObject();
+                    listItem.setModel(new CompoundPropertyModel<Participant>(participant));
+                    String playerName = "";
+
+                    if (participant.getPlayer() != null) {
+                        playerName = participant.getPlayer().getName() + " " + participant.getPlayer().getSurname()
+                                + " " + participant.getPlayer().getPlayerDiscriminator();
+                    }
+
+                    listItem.add(new Label("player", playerName));
+
+                    listItem.add(new TextField<Integer>("equalRank", new PropertyModel<Integer>(participant,
+                            "equalRank")).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected void onUpdate(AjaxRequestTarget target) {
+                            participantService.updateParticipant(participant);
+                        }
+                    }).setVisible(participant.getPlayer() != null));
+
+                }
+            };
+            add(dataView);
 
             add(new AjaxButton("close", new ResourceModel("close")) {
                 private static final long serialVersionUID = 1L;
 
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    participantService.updateParticipant(player1);
-                    participantService.updateParticipant(player2);
                     window.close(target);
                 }
             });
@@ -102,21 +140,4 @@ public class ComparePage extends WebPage {
             });
         }
     }
-
-    public Participant getParticipant1() {
-        return participant1;
-    }
-
-    public void setParticipant1(Participant participant1) {
-        this.participant1 = participant1;
-    }
-
-    public Participant getParticipant2() {
-        return participant2;
-    }
-
-    public void setParticipant2(Participant participant2) {
-        this.participant2 = participant2;
-    }
-
 }

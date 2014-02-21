@@ -1,32 +1,21 @@
 package org.toursys.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.toursys.repository.model.Participant;
 
 public class SamePlayerRankException extends TournamentException {
 
     private static final long serialVersionUID = 1L;
-    private Participant player1;
-    private Participant player2;
+    private List<Participant> players;
 
-    public SamePlayerRankException(Participant player1, Participant player2) {
-        this.player1 = player1;
-        this.player2 = player2;
+    public SamePlayerRankException() {
+        players = new ArrayList<Participant>();
     }
 
-    public Participant getPlayer1() {
-        return player1;
-    }
-
-    public void setPlayer1(Participant player1) {
-        this.player1 = player1;
-    }
-
-    public Participant getPlayer2() {
-        return player2;
-    }
-
-    public void setPlayer2(Participant player2) {
-        this.player2 = player2;
+    public SamePlayerRankException(List<Participant> players) {
+        this.players = new ArrayList<Participant>(players);
     }
 
     public SamePlayerRankException(String message) {
@@ -40,4 +29,9 @@ public class SamePlayerRankException extends TournamentException {
     public SamePlayerRankException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public List<Participant> getPlayers() {
+        return players;
+    }
+
 }
