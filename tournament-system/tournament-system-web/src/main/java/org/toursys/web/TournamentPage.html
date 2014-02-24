@@ -6,46 +6,20 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<div class="naginator" wicket:id="navigator">[dataview navigator]</div>
-	<table class="seasoneTable">
-		<tr>
-			<th><wicket:message key="name">
-           Name
-        </wicket:message></th>
-			<th><wicket:message key="edit">
-            Edit
-        </wicket:message></th>
-			<th><wicket:message key="delete">
-            Delete
-        </wicket:message></th>
-		</tr>
-		<tr wicket:id="rows">
-			<td><a wicket:id="details" href="#"> <span wicket:id="name">name</span>
-			</a></td>
-
-			<td>
-
-				<form wicket:id="editTournamentForm">
-					<div>
-						<input class="tournamentButton" type="submit"
-							wicket:id="editTournament" value="edit tournament" />
-					</div>
-				</form>
-			</td>
-			<td><a wicket:id="deleteTournament" class="tournamentLink"
-				title="delete tournament"><wicket:message key="deleteTournament">
-            delete tournament
-        </wicket:message></a></td>
-		</tr>
-	</table>
-
 	<form wicket:id="tournamentForm">
 		<div>
-			<span><input wicket:id="newTournament"
-				class="tournamentButton" type="submit" value="New tournament" /> </span> <span>
-				<input class="tournamentButton" type="submit" wicket:id="back"
-				title="back" value="Back" />
-			</span>
+			<span wicket:id="season">Season</span> <select wicket:id="seasons"></select>
+			<br /> <br />
+			<table class="seasoneTable">
+				<tr wicket:id="tournaments">
+					<td class="left"><span wicket:id="name" /></td>
+					<td class="right"><a wicket:id="deleteTournament"><img
+							src="img/delete.png" /></a><a wicket:id="enterTournament"><img
+							src="img/enter.png" /></a></td>
+				</tr>
+			</table>
+			<br /> <input wicket:id="addTournament" class="tournamentButton"
+				type="submit" value="New tournament" />
 		</div>
 	</form>
 </wicket:extend>

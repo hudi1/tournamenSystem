@@ -100,6 +100,8 @@ public abstract class BasePage extends WebPage {
         add(new Label("heading", headingModel));
         Component homePage = new BookmarkablePageLink<Void>("homePageMain", HomePage.class).add(new AttributeModifier(
                 "class", new ActiveReplaceModel(this instanceof HomePage)));
+        Component tournamentPage = new BookmarkablePageLink<Void>("tournamentPage", TournamentPage.class)
+                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof TournamentPage)));
         Component seasonPage = new BookmarkablePageLink<Void>("seasonPage", SeasonPage.class)
                 .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof SeasonPage)));
         Component statisticPage = new BookmarkablePageLink<Void>("statisticPage", StatisticPage.class)
@@ -114,12 +116,14 @@ public abstract class BasePage extends WebPage {
 
         add(homePage);
         add(seasonPage);
+        add(tournamentPage);
         add(statisticPage);
         add(playerPage);
         add(userPage);
         add(logoutPage);
         add(loginPage);
         if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
+            tournamentPage.setVisible(false);
             seasonPage.setVisible(false);
             statisticPage.setVisible(false);
             playerPage.setVisible(false);
@@ -236,8 +240,20 @@ public abstract class BasePage extends WebPage {
         return group;
     }
 
-    protected Season getSeason(PageParameters parameters) {
-        return seasonService.getSeason(new Season()._setId(parameters.get("seasonid").toInteger()));
+    public TournamentAuthenticatedWebSession getTournamentSession() {
+        return ((TournamentAuthenticatedWebSession) getSession());
+    }
+
+    protected Season getSeason(User user) {
+        if (user.getSeasons().isEmpty()) {
+            return new Season();
+        } else {
+            Integer id = user.getSeasons().get(0).getId();
+            Season season = new Season();
+            season.setId(id);
+            season.setInit(Season.Association.tournaments);
+            return seasonService.getSeason(season);
+        }
     }
 
     // automaticke prihlasovanie pri zapametani

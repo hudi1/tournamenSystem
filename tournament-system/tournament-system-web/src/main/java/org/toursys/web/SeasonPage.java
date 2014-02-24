@@ -1,177 +1,139 @@
 package org.toursys.web;
 
-import java.util.Iterator;
-import java.util.List;
-
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.User;
-import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 @AuthorizeInstantiation(Roles.USER)
 public class SeasonPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-    private static final int ITEMS_PER_PAGE = 10;
     private User user;
 
     public SeasonPage() {
-        this.user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
+        this.user = getTournamentSession().getUser();
         createPage();
     }
 
     protected void createPage() {
-        IDataProvider<Season> seasonDataProvider = createSeasonProvider();
-        DataView<Season> dataView = createDataview(seasonDataProvider);
-        add(dataView);
-        add(new PagingNavigator("navigator", dataView));
-        add(new SeasonForm());
+        add(new SeasonForm(Model.of(user)));
     }
 
-    private DataView<Season> createDataview(IDataProvider<Season> seasonDataProvider) {
-        DataView<Season> dataView = new DataView<Season>("rows", seasonDataProvider, ITEMS_PER_PAGE) {
+    private class SeasonForm extends Form<User> {
 
-            private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void populateItem(final Item<Season> listItem) {
-                final Season season = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<Season>(season));
-                listItem.add(link("details", season));
-                // TODO zisti preco to funguje aj bez clone
-                listItem.add(new EditSeasonForm(((Season) listItem.getDefaultModelObject())));
-                listItem.add(new AjaxLink<Void>("deleteSeason") {
+        public SeasonForm(IModel<User> model) {
+            super("seasonForm", new CompoundPropertyModel<User>(model));
+            addSeasonListView();
+            addSeasonAddButton();
+        }
 
-                    private static final long serialVersionUID = 1L;
+        private void addSeasonListView() {
+            add(new PropertyListView<Season>("seasons") {
 
-                    public void onClick(AjaxRequestTarget target) {
-                        seasonService.deleteSeason(((Season) listItem.getDefaultModelObject()));
-                        setResponsePage(SeasonPage.class);
-                    }
+                private static final long serialVersionUID = 1L;
 
-                    @Override
-                    protected IAjaxCallDecorator getAjaxCallDecorator() {
-                        return new AjaxCallDecorator() {
+                @Override
+                protected void populateItem(final ListItem<Season> listItem) {
+                    listItem.add(new AjaxEditableLabel<String>("name") {
 
-                            private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-                            @Override
-                            public CharSequence decorateScript(Component c, CharSequence script) {
-                                return "if(confirm(" + getString("del.season") + ")){ " + script
-                                        + "}else{return false;}";
-                            }
-
+                        public void onSubmit(AjaxRequestTarget target) {
+                            super.onSubmit(target);
+                            seasonService.updateSeason(listItem.getModelObject());
                         };
-                    }
-                });
-            }
-        };
-        return dataView;
-    }
 
-    private IDataProvider<Season> createSeasonProvider() {
-        IDataProvider<Season> seasonDataProvider = new IDataProvider<Season>() {
+                    });
+                    listItem.add(new AjaxLink<Void>("deleteSeason") {
 
-            private static final long serialVersionUID = 1L;
-            private List<Season> seasons = seasonService.getSeasons(new Season()._setUser(user));
+                        private static final long serialVersionUID = 1L;
 
-            @Override
-            public Iterator<Season> iterator(int first, int count) {
-                return seasons.subList(first, first + count).iterator();
-            }
+                        public void onClick(AjaxRequestTarget target) {
+                            SeasonForm.this.getModelObject().getSeasons().remove(listItem.getModelObject());
+                            target.add(SeasonForm.this);
+                            seasonService.deleteSeason(listItem.getModelObject());
+                        }
 
-            @Override
-            public int size() {
-                return seasons.size();
-            }
+                        @Override
+                        protected IAjaxCallDecorator getAjaxCallDecorator() {
+                            return new AjaxCallDecorator() {
 
-            @Override
-            public IModel<Season> model(final Season object) {
-                return new LoadableDetachableModel<Season>() {
+                                private static final long serialVersionUID = 1L;
 
-                    private static final long serialVersionUID = 1L;
+                                @Override
+                                public CharSequence decorateScript(Component c, CharSequence script) {
+                                    return "if(confirm(" + getString("del.season") + ")){ " + script
+                                            + "}else{return false;}";
+                                }
 
-                    @Override
-                    protected Season load() {
-                        return object;
-                    }
-                };
-            }
+                            };
+                        }
+                    }.add(AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                        private static final long serialVersionUID = 1L;
 
-            @Override
-            public void detach() {
-            }
-        };
+                        @Override
+                        public String getObject() {
+                            return getString("deleteSeason");
+                        }
+                    })));
 
-        return seasonDataProvider;
-    }
+                    listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
+                        private static final long serialVersionUID = 1L;
 
-    private class SeasonForm extends Form<Void> {
-
-        private static final long serialVersionUID = 1L;
-
-        public SeasonForm() {
-            super("seasonForm");
-            add(new Button("newSeason", new ResourceModel("newSeason")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    setResponsePage(new SeasonEditPage(new Season()._setUser(user)));
-                }
-            });
-        }
-    }
-
-    private class EditSeasonForm extends Form<Void> {
-
-        private static final long serialVersionUID = 1L;
-
-        public EditSeasonForm(final Season season) {
-            super("editSeasonForm");
-            add(new Button("editSeason", new ResourceModel("editSeason")) {
-
-                private static final long serialVersionUID = 1L;
-
-                private void edit() {
-                    setResponsePage(new SeasonEditPage(season));
-                }
-
-                @Override
-                public void onSubmit() {
-                    edit();
+                        @Override
+                        public String getObject() {
+                            return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
+                        }
+                    }));
                 }
 
             });
         }
-    }
 
-    private static BookmarkablePageLink<Void> link(final String name, final Season season) {
+        private void addSeasonAddButton() {
+            add(new AjaxButton("addSeason", new ResourceModel("addSeason")) {
 
-        final BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>(name, TournamentPage.class);
+                private static final long serialVersionUID = 1L;
 
-        link.getPageParameters().set("seasonid", season.getId());
-        link.add(new Label("name", season.getName()));
-        return link;
+                public void onClick(AjaxRequestTarget target) {
+                    Season season = new Season();
+                    season.setUser(user);
+                    season.setName(getString("enterName"));
+                    user.getSeasons().add(seasonService.createSeason(season));
+                    target.add(SeasonForm.this);
+                }
+
+                @Override
+                protected void onError(AjaxRequestTarget target, Form<?> form) {
+                    onClick(target);
+                }
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    onClick(target);
+                }
+
+            });
+        }
     }
 
     @Override

@@ -57,6 +57,17 @@ INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
   {= values (:id(seq=SEQ_PLAYER), :name, :surname, :club, {? :playerDiscriminator | :playerDiscriminator,} :worldRanking, :user.id) }
 ;
 
+
+INSERT_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
+  insert into %%TOURNAMENT (%ID, %NAME, %SEASON_ID {? :finalPromoting | ,%FINAL_PROMOTING} {? :lowerPromoting | ,%LOWER_PROMOTING} {? :winPoints | ,%WIN_POINTS}
+  	{? :playOffA | ,%PLAY_OFF_A} {? :playOffLower | ,%PLAY_OFF_LOWER} {? :minPlayersInGroup | ,%MIN_PLAYERS_IN_GROUP}
+  )
+  {= values (:id(seq=SEQ_TOURNAMENT), :name, :season.id, {? :finalPromoting | :finalPromoting,} {? :lowerPromoting | :lowerPromoting,} {? :winPoints| :winPoints,} {? :playOffA | :playOffA,} {? :playOffLower | :playOffLower,} 
+  	{? :minPlayersInGroup | :minPlayersInGroup } 
+  ) }
+;
+
+
 SELECT_GROUPS(QRY,inx=Groups,outx=Groups,tab=groups=g,tab=tournament=t,tab=participant=p,tab=playOffGame=p1)=
   select %g.ID @id(id), %g.NAME @name, %g.NUMBER_OF_HOCKEY @numberOfHockey, %g.TYPE @type, %g.INDEX_OF_FIRST_HOCKEY @indexOfFirstHockey, %g.TOURNAMENT_ID @tournament.id(id), %g.COPY_RESULT @copyResult, %g.PLAY_THIRD_PLACE @playThirdPlace
          {? :tournament(call=toInit) | , %t.NAME @tournament.name, %t.SEASON_ID @tournament.season.id, %t.FINAL_PROMOTING @tournament.finalPromoting, %t.LOWER_PROMOTING @tournament.lowerPromoting, %t.WIN_POINTS @tournament.winPoints, %t.PLAY_OFF_A @tournament.playOffA, %t.PLAY_OFF_LOWER @tournament.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournament.minPlayersInGroup }
@@ -81,7 +92,25 @@ SELECT_GROUPS(QRY,inx=Groups,outx=Groups,tab=groups=g,tab=tournament=t,tab=parti
   order by %g.NAME
 ;
 
+UPDATE_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
+  update %%TOURNAMENT
+  {= set
+    { ,%NAME = :name(call=isDef) }
+    { ,%SEASON_ID = :season.id(call=isDef) }
+    { ,%FINAL_PROMOTING = :finalPromoting(call=isDef) }
+    { ,%LOWER_PROMOTING = :lowerPromoting(call=isDef) }
+    { ,%WIN_POINTS = :winPoints(call=isDef) }
+    { ,%PLAY_OFF_A = :playOffA(call=isDef) }
+    { ,%PLAY_OFF_LOWER = :playOffLower(call=isDef) }
+    { ,%MIN_PLAYERS_IN_GROUP = :minPlayersInGroup(call=isDef) }
+  }
+  {= where
+    {& %ID = :id(!empty) }
+  }
+;
+
 // generated sql
+
 
 INSERT_FINAL_STANDING(CRUD,inx=FinalStanding,outx=FinalStanding,tab=finalStanding)=
   insert into %%FINAL_STANDING (%ID, %PLAYER_ID, %FINAL_RANK, %TOURNAMENT_ID)
@@ -465,11 +494,6 @@ SELECT_SEASON(QRY,inx=Season,outx=Season,tab=season=s,tab=tournament=t,tab=user=
   {#2 order by %s.USER_ID }
 ;
 
-INSERT_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
-  insert into %%TOURNAMENT (%ID, %NAME, %SEASON_ID, %FINAL_PROMOTING, %LOWER_PROMOTING, %WIN_POINTS, %PLAY_OFF_A, %PLAY_OFF_LOWER, %MIN_PLAYERS_IN_GROUP)
-  {= values (:id(seq=SEQ_TOURNAMENT), :name, :season.id, :finalPromoting, :lowerPromoting, :winPoints, :playOffA, :playOffLower, :minPlayersInGroup) }
-;
-
 GET_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g,tab=finalStanding=f,tab=season=s)=
   select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_A @playOffA, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup
          {? :groups(call=toInit) | , %g.ID @groups.id(id), %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.TYPE @groups.type, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace }
@@ -489,23 +513,6 @@ GET_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g
     {& %t.PLAY_OFF_A = :playOffA }
     {& %t.PLAY_OFF_LOWER = :playOffLower }
     {& %t.MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
-  }
-;
-
-UPDATE_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
-  update %%TOURNAMENT
-  {= set
-    { ,%NAME = :name }
-    { ,%SEASON_ID = :season.id }
-    { ,%FINAL_PROMOTING = :finalPromoting }
-    { ,%LOWER_PROMOTING = :lowerPromoting }
-    { ,%WIN_POINTS = :winPoints }
-    { ,%PLAY_OFF_A = :playOffA }
-    { ,%PLAY_OFF_LOWER = :playOffLower }
-    { ,%MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
-  }
-  {= where
-    {& %ID = :id(!empty) }
   }
 ;
 

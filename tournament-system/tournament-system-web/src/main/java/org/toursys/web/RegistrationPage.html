@@ -6,42 +6,8 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<div class="leftColumn">
-		<form wicket:id="registrationForm">
-
-			<table class="player">
-				<tbody class="scrolableBody">
-					<tr>
-						<th><wicket:message key="name">
-            Name
-        </wicket:message></th>
-						<th><wicket:message key="surname">
-            Surname
-        </wicket:message></th>
-					</tr>
-					<tr wicket:id="rows">
-						<td><span wicket:id="name">name</span></td>
-						<td><span wicket:id="surname">surname</span></td>
-					</tr>
-				</tbody>
-			</table>
-
-
-			<div>
-				<label class="spinnerLabel"><wicket:message key="group">
-            Group:
-        </wicket:message> </label> <input type="submit" wicket:id="minus" /><input type="text"
-					wicket:id="name" class="spinner" /> <input type="submit"
-					wicket:id="plus" />
-			</div>
-			<div>
-				<input class="tournamentButton" type="submit" wicket:id="submit"
-					value="Registration" />
-			</div>
-		</form>
-	</div>
-	<table class="registratedPlayerTable">
-		<tbody class="scrolableBody">
+	<table wicket:id="container" class="registratedPlayerTable">
+		<tbody>
 			<tr>
 				<th />
 				<th><wicket:message key="name">
@@ -53,31 +19,31 @@
 				<th><wicket:message key="tableName">
             Table name
         </wicket:message></th>
-				<th><wicket:message key="delete">
-            Delete
-        </wicket:message></th>
 			</tr>
 			<tr wicket:id="registeredRows">
 				<td><span wicket:id="number">1.</span></td>
 				<td><span wicket:id="name">name</span></td>
 				<td><span wicket:id="surname">surname</span></td>
 				<td><span wicket:id="tableName">table name</span></td>
-
-				<td><a wicket:id="deletePlayer" title="delete player"
-					class="seasoneButton"><img src="img/delete.png" /></a></td>
 			</tr>
 		</tbody>
 	</table>
-
-	<form wicket:id="createTournamentForm">
-		<div>
-			<span><input class="tournamentButton" type="submit"
-				wicket:id="submit" value="Create tournament" /> </span><input
-				class="tournamentButton" type="submit" wicket:id="back" title="back"
-				value="Back" />
-		</div>
-	</form>
-
+	<div>
+		<form wicket:id="groupForm" class="registration">
+			<div>
+				<label class="spinnerLabel"><wicket:message key="group">
+            Group:
+        </wicket:message> </label> <input type="submit" wicket:id="minus" /><input type="text"
+					wicket:id="name" class="spinner" /><input type="submit"
+					wicket:id="plus" />
+			</div>
+		</form>
+		<form wicket:id="playerForm">
+			<div>
+				<select wicket:id="players"></select>
+			</div>
+		</form>
+	</div>
 </wicket:extend>
 </html>
 

@@ -25,7 +25,7 @@ pojogen-ignore-one-to-many PLAYER ID->PLAY_OFF_GAME;
 pojogen-ignore-one-to-many PLAYER ID->FINAL_STANDING->PLAYER_ID;
 
 pojogen-implements-interfaces java.io.Serializable;
-pojogen-generate-methods equals toString toInit;
+pojogen-generate-methods equals toString toInit isDef;
 
 pojogen-types-for-columns PARTICIPANT SCORE->:org.toursys.repository.model.Score;
 

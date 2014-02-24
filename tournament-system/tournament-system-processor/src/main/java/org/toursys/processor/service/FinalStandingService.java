@@ -58,7 +58,7 @@ public class FinalStandingService extends AbstractService {
     @Transactional
     public void processFinalStandings(Tournament tournament) {
         logger.debug("Process final standings: " + tournament);
-        int playerCount = participantService.getRegisteredParticipant(tournament).size();
+        int playerCount = participantService.getRegistratedParticipant(tournament).size();
         List<FinalStanding> finalStandings = getFinalStandings(tournament);
         for (FinalStanding finalStanding : finalStandings) {
             deleteFinalStanding(finalStanding);

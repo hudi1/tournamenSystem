@@ -68,7 +68,7 @@ public class ParticipantService extends AbstractService {
     // Advanced operations
 
     @Transactional(readOnly = true)
-    public List<Participant> getRegisteredParticipant(Tournament tournament) {
+    public List<Participant> getRegistratedParticipant(Tournament tournament) {
         logger.debug("Get registrated participant in tournament: " + tournament);
         return tournamentAggregationDao.getRegisteredParticipant(tournament);
     }

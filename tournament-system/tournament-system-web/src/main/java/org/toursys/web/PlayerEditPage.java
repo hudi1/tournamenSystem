@@ -8,7 +8,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Player;
@@ -39,8 +38,7 @@ public class PlayerEditPage extends BasePage {
             add(new RequiredTextField<String>("name"));
             add(new RequiredTextField<String>("surname"));
             add(new TextField<String>("club"));
-            add(new TextField<String>("playerDiscriminator").add(StringValidator.maximumLength(3)).add(
-                    new PatternValidator("^((?!NAS).)*$")));
+            add(new TextField<String>("playerDiscriminator").add(StringValidator.maximumLength(3)));
 
             add(new Button("submit", new ResourceModel("submit")) {
 

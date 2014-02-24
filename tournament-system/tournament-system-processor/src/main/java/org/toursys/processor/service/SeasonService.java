@@ -44,6 +44,6 @@ public class SeasonService extends AbstractService {
     @Transactional(readOnly = true)
     public List<Season> getAllSeasons() {
         logger.debug("Get all seasons");
-        return tournamentAggregationDao.getListSeasons(new Season());
+        return tournamentAggregationDao.getListSeasons(new Season()._setInit(Season.Association.tournaments));
     }
 }

@@ -194,9 +194,23 @@ form legend {
 	margin-left: -5px;
 }
 
-form div {
+.block {
+	display: inline-block;
+}
+
+/* Optional negative margin if you can't
+   remove space manually in the html */
+.block {
+	margin-left: -.25em;
+}
+
+/*form div {
 	clear: both;
 	margin-bottom: 5px;
+}*/
+div.wicket-modal {
+	clear: none;
+	margin-bottom: 0px;
 }
 
 form.userform fieldset div label {
@@ -222,6 +236,7 @@ form label.option {
 
 label.spinnerLabel {
 	padding-top: 5px;
+	width: auto;
 }
 
 form input[type="checkbox"] {
@@ -344,26 +359,36 @@ table.seasoneTable {
 	width: 100%;
 }
 
-table.seasoneTable th {
+table.seasoneTable th.left {
 	text-align: center;
-	padding: 3px;
-	border: 1px solid #a6c9e2;
-	background: url(../img/link_servicemore.png) repeat-x;
-	color: #ffffff;
+	border-top: 1px solid #a6c9e2;
 }
 
-table.seasoneTable td {
-	text-align: center;
-	border: 1px solid #a6c9e2;
+table.seasoneTable th.right {
+	text-align: right;
+	border-top: 1px solid #a6c9e2;
 }
 
-table.seasoneTable a:hover {
-	background-color: #1E90FF;
-	color: #FFFFFF;
+table.seasoneTable td.left {
+	text-align: left;
+	border-top: 1px solid #a6c9e2;
+}
+
+table.seasoneTable td.right {
+	text-align: right;
+	border-top: 1px solid #a6c9e2;
+}
+
+table.seasoneTable tr.even {
+	background: #bae5ee
+}
+
+table.seasoneTable tr.odd {
+	
 }
 
 table.registratedPlayerTable {
-	float: right;
+	width: 100%;
 }
 
 table.registratedPlayerTable th {
@@ -372,12 +397,12 @@ table.registratedPlayerTable th {
 	border: 1px solid #a6c9e2;
 	background-color: #0078ae;
 	color: #ffffff;
+	min-width: 10px;
 }
 
 table.registratedPlayerTable td {
 	text-align: center;
 	border: 1px solid #a6c9e2;
-	min-width: 100px;
 	min-height: 30px;
 }
 

@@ -36,10 +36,8 @@ public class WicketApplication extends AuthenticatedWebApplication {
     private void mountPages() {
         mountPage("home", HomePage.class);
         mountPage("statistic", StatisticPage.class);
-        mountPage("seasonEdit", SeasonEditPage.class);
         mountPage("season", SeasonPage.class);
         mountPage("tournament", TournamentPage.class);
-        mountPage("tournamentEdit", TournamentEditPage.class);
         mountPage("registration", RegistrationPage.class);
         mountPage("group", GroupPage.class);
         mountPage("player", PlayerPage.class);
