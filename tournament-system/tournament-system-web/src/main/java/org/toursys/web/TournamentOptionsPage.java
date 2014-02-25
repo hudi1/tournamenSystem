@@ -31,12 +31,12 @@ public class TournamentOptionsPage extends BasePage {
     boolean isTableOptionsOn;
 
     public TournamentOptionsPage() {
-        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     public TournamentOptionsPage(PageParameters parameters) {
         checkPageParameters(parameters);
-        tournament = getTournament(parameters);
+        tournament = getTournament();
         group = getGroup(parameters);
         setTournamentOption(parameters);
         setTableOption(parameters);

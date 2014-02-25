@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -33,7 +34,6 @@ import org.toursys.processor.service.TournamentService;
 import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Season;
-import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.TournamentImpl;
 import org.toursys.repository.model.User;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
@@ -223,19 +223,17 @@ public abstract class BasePage extends WebPage {
 
     }
 
-    protected TournamentImpl getTournament(PageParameters parameters) {
-        Tournament tournamentDb = tournamentService.getTournament(new Tournament()._setId(parameters
-                .get("tournamentid").toInteger()));
-        if (tournamentDb == null) {
-            return null;
-        }
-        return new TournamentImpl(tournamentDb);
+    protected TournamentImpl getTournament() {
+        TournamentImpl tournament = getTournamentSession().getTournament();
+        if (tournament != null)
+            return tournament;
+        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     protected Groups getGroup(PageParameters parameters) {
-        Groups group = groupService.getGroup(new Groups()._setId(parameters.get("groupid").toInteger()));
+        Groups group = groupService.getGroup(new Groups()._setId(parameters.get("gid").toInteger()));
         if (group == null) {
-            group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters))._setName("1"));
+            group = groupService.getGroup(new Groups()._setTournament(getTournament())._setName("1"));
         }
         return group;
     }

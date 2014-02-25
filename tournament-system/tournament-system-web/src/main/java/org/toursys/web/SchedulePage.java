@@ -38,12 +38,12 @@ public class SchedulePage extends BasePage {
     private List<GameImpl> schedule;
 
     public SchedulePage() {
-        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     public SchedulePage(PageParameters parameters) {
         checkPageParameters(parameters);
-        tournament = getTournament(parameters);
+        tournament = getTournament();
         group = getGroup(parameters);
         this.schedule = getSchedule();
         createPage();

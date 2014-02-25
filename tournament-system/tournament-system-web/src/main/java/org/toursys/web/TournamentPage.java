@@ -24,9 +24,9 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
 public class TournamentPage extends BasePage {
@@ -38,8 +38,18 @@ public class TournamentPage extends BasePage {
 
     public TournamentPage() {
         seasons = seasonService.getAllSeasons();
-        selectedSeason = getTournamentSession().getSeason();
+        selectedSeason = selectSeason();
         createPage();
+    }
+
+    private Season selectSeason() {
+        Season season = getTournamentSession().getSeason();
+        if (season == null) {
+            if (!seasons.isEmpty()) {
+                season = seasons.get(0);
+            }
+        }
+        return season;
     }
 
     protected void createPage() {
@@ -143,9 +153,8 @@ public class TournamentPage extends BasePage {
                         private static final long serialVersionUID = 1L;
 
                         public void onClick(AjaxRequestTarget target) {
-                            PageParameters pageParameters = getPageParameters();
-                            pageParameters.add("tournamentId", listItem.getModelObject().getId());
-                            setResponsePage(RegistrationPage.class, pageParameters);
+                            getTournamentSession().setTournament(new TournamentImpl(listItem.getModelObject()));
+                            setResponsePage(RegistrationPage.class);
                         }
 
                     }.add(AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {

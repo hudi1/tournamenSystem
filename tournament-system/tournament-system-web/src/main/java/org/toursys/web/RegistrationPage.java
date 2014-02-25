@@ -3,7 +3,6 @@ package org.toursys.web;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -41,16 +40,15 @@ public class RegistrationPage extends BasePage {
     private final List<Participant> allTournamenPlayers;
 
     public RegistrationPage() {
-        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        this(new PageParameters());
     }
 
     public RegistrationPage(PageParameters parameters) {
         super(parameters);
-        this.user = getTournamentSession().getUser();
-        checkPageParameters(parameters);
         createGroup(parameters);
-        tournament = getTournament(parameters);
-        allTournamenPlayers = participantService.getRegistratedParticipant(tournament);
+        this.user = getTournamentSession().getUser();
+        this.tournament = getTournament();
+        this.allTournamenPlayers = participantService.getRegistratedParticipant(tournament);
         createPage();
     }
 
@@ -204,7 +202,7 @@ public class RegistrationPage extends BasePage {
                     Integer groupName = Integer.parseInt(group.getName());
                     groupName++;
                     group.setName(groupName.toString());
-                    getPageParameters().set("groupid", groupName.toString());
+                    getPageParameters().set("gid", groupName.toString());
                     target.add(groupTextField);
                 }
             });
@@ -220,7 +218,7 @@ public class RegistrationPage extends BasePage {
                         groupName--;
                     }
                     group.setName(groupName.toString());
-                    getPageParameters().set("groupid", groupName.toString());
+                    getPageParameters().set("gid", groupName.toString());
                     target.add(groupTextField);
                 }
             });
@@ -230,15 +228,9 @@ public class RegistrationPage extends BasePage {
         }
     }
 
-    private void checkPageParameters(PageParameters parameters) {
-        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()) {
-            throw new RestartResponseAtInterceptPageException(new SeasonPage());
-        }
-    }
-
     private void createGroup(PageParameters parameters) {
         group = new Groups();
-        group.setName(parameters.get("groupid").isNull() ? "1" : parameters.get("groupid").toString());
+        group.setName(parameters.get("gid").isNull() ? "1" : parameters.get("gid").toString());
     }
 
     @Override

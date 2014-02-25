@@ -34,11 +34,11 @@ public class FinalStandingsPage extends BasePage {
     private TournamentImpl tournament;
 
     public FinalStandingsPage() {
-        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     public FinalStandingsPage(PageParameters parameters) {
-        tournament = getTournament(parameters);
+        tournament = getTournament();
         finalStandings = finalStandingService.getFinalStandings(tournament);
         createPage();
     }

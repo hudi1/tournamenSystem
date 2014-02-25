@@ -41,12 +41,12 @@ public class PlayOffPage extends BasePage {
     private TournamentImpl tournament;
 
     public PlayOffPage() {
-        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     public PlayOffPage(PageParameters parameters) {
         checkPageParameters(parameters);
-        tournament = getTournament(parameters);
+        tournament = getTournament();
         createPage();
     }
 

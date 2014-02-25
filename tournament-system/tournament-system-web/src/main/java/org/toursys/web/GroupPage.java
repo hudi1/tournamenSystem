@@ -53,13 +53,13 @@ public class GroupPage extends BasePage {
     private boolean calculateParticipants;
 
     public GroupPage() {
-        throw new RestartResponseAtInterceptPageException(new SeasonPage());
+        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     public GroupPage(PageParameters parameters) {
         super(parameters);
         checkPageParameters(parameters);
-        tournament = getTournament(parameters);
+        tournament = getTournament();
         group = getGroup(parameters);
         calculateParticipants = getCalculateParticipants(parameters);
         getParticipants();
