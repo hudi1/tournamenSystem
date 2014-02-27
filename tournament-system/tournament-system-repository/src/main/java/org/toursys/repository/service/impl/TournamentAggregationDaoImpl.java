@@ -308,7 +308,7 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Required
-    public void setparticipantDao(ParticipantExtDao participantDao) {
+    public void setParticipantDao(ParticipantExtDao participantDao) {
         this.participantDao = participantDao;
     }
 
