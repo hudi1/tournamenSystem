@@ -42,6 +42,8 @@ public class PlayOffGameService extends AbstractService {
     @Transactional
     public int updatePlayOffGame(PlayOffGame playOffGame) {
         logger.debug("Update playerOff game: " + playOffGame);
+        playOffGame.setNull(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
+                PlayOffGame.Attribute.winner);
         return tournamentAggregationDao.updatePlayOffGame(playOffGame);
     }
 
@@ -63,8 +65,6 @@ public class PlayOffGameService extends AbstractService {
 
     @Transactional
     public int updatePlayOffGameResult(PlayOffGame playOffGame) {
-        logger.debug("Update playerOff game result: " + playOffGame);
-
         if (playOffGame.getResults() != null) {
             String[] splitResults = playOffGame.getResults().split(",");
             int homeWinnerCount = 0;
@@ -80,6 +80,7 @@ public class PlayOffGameService extends AbstractService {
                                 splitResults[i].split(":")[1].length() - 1));
 
                     }
+
                     if (homeScore > awayScore) {
                         homeWinnerCount++;
                     } else if (homeScore < awayScore) {
@@ -96,8 +97,12 @@ public class PlayOffGameService extends AbstractService {
             } else {
                 playOffGame.setWinner(null);
             }
+        } else {
+            playOffGame.setWinner(null);
         }
-        return tournamentAggregationDao.updatePlayOffGame(playOffGame);
+
+        logger.debug("Update playerOff game result: " + playOffGame);
+        return updatePlayOffGame(playOffGame);
     }
 
     @Transactional
@@ -273,6 +278,7 @@ public class PlayOffGameService extends AbstractService {
 
         int nextPosition = nextGame(playerPlayOffCount, position);
         PlayOffGame tempPlayOffGame = getPlayOffGameByPosition(playOffGames, nextPosition);
+
         PlayOffGame tempThirdPlayOffGame = null;
         // tretie miesto vytvarame ak mame tolko hier kolko hracov (ak nie je tretie miesto tak je to minus jedna a
         // zaroven je nasledujuca hra je finale)
@@ -295,7 +301,7 @@ public class PlayOffGameService extends AbstractService {
                         tempThirdPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
                     }
                 }
-            } else if (playOffGame.getWinner().equals(PlayOffGameWinner.HOME)) {
+            } else if (playOffGame.getWinner().equals(PlayOffGameWinner.AWAY)) {
                 finalStandings.add(playOffGame.getHomeParticipant());
                 if (position % 2 == 1) {
                     tempPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
@@ -308,6 +314,8 @@ public class PlayOffGameService extends AbstractService {
                         tempThirdPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
                     }
                 }
+            } else {
+                tempPlayOffGame.setWinner(null);
             }
         } else {
             finalStandings.add(new Participant());

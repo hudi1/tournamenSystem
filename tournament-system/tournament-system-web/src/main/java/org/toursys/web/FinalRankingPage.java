@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,21 +23,18 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.FinalStanding;
-import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
-public class FinalStandingsPage extends BasePage {
+public class FinalRankingPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
     private List<FinalStanding> finalStandings;
-    private TournamentImpl tournament;
 
-    public FinalStandingsPage() {
-        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
+    public FinalRankingPage() {
+        this(new PageParameters());
     }
 
-    public FinalStandingsPage(PageParameters parameters) {
-        tournament = getTournament();
+    public FinalRankingPage(PageParameters parameters) {
         finalStandings = finalStandingService.getFinalStandings(tournament);
         createPage();
     }
@@ -145,9 +141,8 @@ public class FinalStandingsPage extends BasePage {
         }
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("finalStandings");
-    }
+    /*
+     * @Override protected IModel<String> newHeadingModel() { return new ResourceModel("finalStandings"); }
+     */
 
 }

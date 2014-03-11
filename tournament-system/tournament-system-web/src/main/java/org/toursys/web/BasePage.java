@@ -34,6 +34,7 @@ import org.toursys.processor.service.TournamentService;
 import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Season;
+import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.TournamentImpl;
 import org.toursys.repository.model.User;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
@@ -74,8 +75,6 @@ public abstract class BasePage extends WebPage {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private IModel<String> headingModel = new Model<String>();
-
     abstract protected IModel<String> newHeadingModel();
 
     protected FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackPanel");
@@ -89,52 +88,71 @@ public abstract class BasePage extends WebPage {
         addMyComponents();
     }
 
-    public final IModel<String> getHeadingModel() {
-        return headingModel;
-    }
-
     private void addMyComponents() {
-        headingModel = newHeadingModel();
         add(new ExternalLink("logo", Model.of(RequestUtils.toAbsolutePath(urlFor(getApplication().getHomePage(), null)
                 .toString(), urlFor(HomePage.class, null).toString().toString()))));
-        add(new Label("heading", headingModel));
         Component homePage = new BookmarkablePageLink<Void>("homePageMain", HomePage.class).add(new AttributeModifier(
                 "class", new ActiveReplaceModel(this instanceof HomePage)));
-        Component tournamentPage = new BookmarkablePageLink<Void>("tournamentPage", TournamentPage.class)
-                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof TournamentPage)));
-        Component seasonPage = new BookmarkablePageLink<Void>("seasonPage", SeasonPage.class)
-                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof SeasonPage)));
-        Component statisticPage = new BookmarkablePageLink<Void>("statisticPage", StatisticPage.class)
-                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof StatisticPage)));
-        Component playerPage = new BookmarkablePageLink<Void>("playerPage", PlayerPage.class)
-                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayerPage)));
-        Component userPage = new BookmarkablePageLink<Void>("userPage", UserPage.class).add(new AttributeModifier(
-                "class", new ActiveReplaceModel(this instanceof UserPage)));
-        Component logoutPage = new BookmarkablePageLink<Void>("logoutPage", LogoutPage.class);
-        Component loginPage = new BookmarkablePageLink<Void>("loginPage", LoginPage.class).add(new AttributeModifier(
-                "class", new ActiveReplaceModel(this instanceof LoginPage)));
+        Component tournamentPage = new BookmarkablePageLink<Void>("tournamentPage", TournamentPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof TournamentPage))).setVisible(
+                false);
+        Component seasonPage = new BookmarkablePageLink<Void>("seasonPage", SeasonPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof SeasonPage))).setVisible(false);
+        Component statisticPage = new BookmarkablePageLink<Void>("statisticPage", StatisticPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof StatisticPage)))
+                .setVisible(false);
+        Component playerPage = new BookmarkablePageLink<Void>("playerPage", PlayerPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayerPage))).setVisible(false);
+        Component userPage = new BookmarkablePageLink<Void>("userPage", UserPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof UserPage))).setVisible(false);
+        Component logoutPage = new BookmarkablePageLink<Void>("logoutPage", LogoutPage.class).setVisible(false);
+        Component loginPage = new BookmarkablePageLink<Void>("loginPage", LoginPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof LoginPage))).setVisible(false);
+        Component registrationPage = new BookmarkablePageLink<Void>("registrationPage", RegistrationPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof RegistrationPage))).setVisible(
+                false);
+        Component groupPage = new BookmarkablePageLink<Void>("groupPage", GroupPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof GroupPage))).setVisible(false);
+        Component playOffPage = new BookmarkablePageLink<Void>("playOffPage", PlayOffPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayOffPage))).setVisible(false);
+        Component finalRankingPage = new BookmarkablePageLink<Void>("finalRankingPage", FinalRankingPage.class).add(
+                new AttributeModifier("class", new ActiveReplaceModel(this instanceof FinalRankingPage))).setVisible(
+                false);
 
         add(homePage);
         add(seasonPage);
         add(tournamentPage);
         add(statisticPage);
-        add(playerPage);
-        add(userPage);
         add(logoutPage);
         add(loginPage);
-        if (!((TournamentAuthenticatedWebSession) getSession()).isSignedIn()) {
-            tournamentPage.setVisible(false);
-            seasonPage.setVisible(false);
-            statisticPage.setVisible(false);
-            playerPage.setVisible(false);
-            logoutPage.setVisible(false);
-        } else {
-            loginPage.setVisible(false);
-        }
+        add(userPage);
+        add(playerPage);
+        add(registrationPage);
+        add(groupPage);
+        add(playOffPage);
+        add(finalRankingPage);
 
-        if (!((TournamentAuthenticatedWebSession) getSession()).getRoles().contains(Roles.ADMIN)) {
-            userPage.setVisible(false);
+        if (this instanceof TournamentHomePage) {
+            // homePage.setVisible(false);
+            registrationPage.setVisible(true);
+            groupPage.setVisible(true);
+            playOffPage.setVisible(true);
+            finalRankingPage.setVisible(true);
+        } else {
+            if (getTournamentSession().isSignedIn()) {
+                seasonPage.setVisible(true);
+                tournamentPage.setVisible(true);
+                statisticPage.setVisible(true);
+                logoutPage.setVisible(true);
+            } else {
+                loginPage.setVisible(true);
+            }
+
+            if (getTournamentSession().getRoles().contains(Roles.ADMIN)) {
+                userPage.setVisible(true);
+            }
         }
+        // System.out.println();
 
         add(new Link<Void>("goSk") {
 
@@ -165,7 +183,7 @@ public abstract class BasePage extends WebPage {
                 if (getSession() == null)
                     return null;
                 if (getSession() instanceof TournamentAuthenticatedWebSession) {
-                    return ((TournamentAuthenticatedWebSession) getSession()).getUser();
+                    return getTournamentSession().getUser();
                 }
                 return null;
             }
@@ -176,7 +194,7 @@ public abstract class BasePage extends WebPage {
 
             @Override
             public void onClick() {
-                User user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
+                User user = getTournamentSession().getUser();
                 setResponsePage(new UserEditPage(user, false));
             }
 
@@ -193,7 +211,7 @@ public abstract class BasePage extends WebPage {
             @Override
             public String getObject() {
                 if (getSession() instanceof TournamentAuthenticatedWebSession) {
-                    User user = ((TournamentAuthenticatedWebSession) getSession()).getUser();
+                    User user = getTournamentSession().getUser();
                     return user == null ? getString("guest") : user.getUserName();
                 }
                 return null;
@@ -223,17 +241,29 @@ public abstract class BasePage extends WebPage {
 
     }
 
-    protected TournamentImpl getTournament() {
+    protected TournamentImpl getTournament(PageParameters pageParameters) {
         TournamentImpl tournament = getTournamentSession().getTournament();
-        if (tournament != null)
+        if (tournament == null) {
+            if (!pageParameters.get("tid").isNull()) {
+                tournament = new TournamentImpl(tournamentService.getTournament(new Tournament()._setId(pageParameters
+                        .get("tid").toInteger())));
+            }
+        }
+
+        if (tournament != null) {
             return tournament;
+        }
+
         throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
     protected Groups getGroup(PageParameters parameters) {
-        Groups group = groupService.getGroup(new Groups()._setId(parameters.get("gid").toInteger()));
+        Groups group = null;
+        if (!parameters.get("gid").isNull()) {
+            group = groupService.getGroup(new Groups()._setId(parameters.get("gid").toInteger()));
+        }
         if (group == null) {
-            group = groupService.getGroup(new Groups()._setTournament(getTournament())._setName("1"));
+            group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters))._setName("1"));
         }
         return group;
     }
@@ -270,6 +300,7 @@ public abstract class BasePage extends WebPage {
                 }
             }
         }
+        addOrReplace(new Label("heading", newHeadingModel()));
         super.onBeforeRender();
     }
 }

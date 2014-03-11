@@ -1,5 +1,6 @@
 package org.toursys.processor.schedule;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.toursys.repository.model.Game;
@@ -7,7 +8,9 @@ import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 
-public abstract class RoundRobinSchedule {
+public abstract class RoundRobinSchedule implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected List<GameImpl> schedule;
     protected Groups group;
@@ -19,7 +22,6 @@ public abstract class RoundRobinSchedule {
     public List<GameImpl> getSchedule() {
         if (schedule == null) {
             createSchedule();
-            changeTables();
         }
         return schedule;
     }
@@ -40,6 +42,13 @@ public abstract class RoundRobinSchedule {
                 }
             }
         }
+    }
+
+    protected void addEmptyGameToSchedule() {
+        GameImpl gameImpl = new GameImpl();
+        gameImpl.setRound(schedule.size() / group.getNumberOfHockey() + 1);
+        gameImpl.setHockey(schedule.size() % group.getNumberOfHockey() + group.getIndexOfFirstHockey());
+        schedule.add(gameImpl);
     }
 
     protected abstract void createSchedule();

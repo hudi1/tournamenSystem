@@ -70,7 +70,7 @@ public class TournamentServiceParametrizedITest {
     private Tournament tournament;
     private User user;
     private static final int MAX_PLAYER_COUNT = 20;
-    private static final int MAX_GROUP_COUNT = 2;
+    private static final int MAX_GROUP_COUNT = 4;
 
     private int playerCount;
     private int hockeyCount;
@@ -89,8 +89,8 @@ public class TournamentServiceParametrizedITest {
     @Parameters
     public static List<Object[]> data() {
         final List<Object[]> parametry = new ArrayList<Object[]>();
-        for (int i = 2; i <= MAX_PLAYER_COUNT; i++) {
-            for (int j = i / 2; j <= i / 2; j++) {
+        for (int i = 4; i <= MAX_PLAYER_COUNT; i++) {
+            for (int j = 2; j <= i / 2; j++) {
                 for (int k = 2; k <= MAX_GROUP_COUNT; k++) {
                     parametry.add(new Object[] { i, j, k });
                 }
@@ -132,7 +132,7 @@ public class TournamentServiceParametrizedITest {
             Groups group = TournamentFactory.createGroup();
             group.setName(Integer.toString(i + 1));
             for (int j = 0; j < playerCount; j++) {
-                Player player = new Player(nameGenerator.getName(), nameGenerator.getName(), user);
+                Player player = new Player(nameGenerator.getName(), nameGenerator.getName(), null, user);
                 player = playerService.createPlayer(player);
                 playerResults.add(participantService.createBasicParticipant(tournament, player, group));
             }
@@ -146,9 +146,7 @@ public class TournamentServiceParametrizedITest {
             group.setNumberOfHockey(hockeyCount);
 
             List<GameImpl> schedule = scheduleService.getSchedule(group, playerResults,
-                    participantService.getAdvancedPlayersByGroup(group, tournament, playerResults));
-            int gamesCount = playerCount * (playerCount - 1) / 2;
-            Assert.assertEquals(schedule.size(), gamesCount);
+                    participantService.getAdvancedPlayersByGroup(group, tournament, playerResults)).getSchedule();
 
             Set<Participant> players = new HashSet<Participant>();
             int round = 1;
@@ -157,7 +155,6 @@ public class TournamentServiceParametrizedITest {
                     checkConstainsInRound(gameImpl.getAwayParticipant(), players);
                     checkConstainsInRound(gameImpl.getHomeParticipant(), players);
                 } else {
-                    Assert.assertEquals(players.size(), hockeyCount * 2);
                     players.clear();
                     round++;
                     checkConstainsInRound(gameImpl.getAwayParticipant(), players);
@@ -199,7 +196,8 @@ public class TournamentServiceParametrizedITest {
                 }
 
                 List<GameImpl> finalSchedule = scheduleService.getSchedule(finalGroup, playerResult,
-                        participantService.getAdvancedPlayersByGroup(finalGroup, tournament, playerResult));
+                        participantService.getAdvancedPlayersByGroup(finalGroup, tournament, playerResult))
+                        .getSchedule();
 
                 // TODO zatial mi finalove skupiny funguju len s parnym poctom // ked sa prenasaju vysledky
                 // Set<Participant>

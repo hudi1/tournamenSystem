@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -32,34 +32,29 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
-import org.toursys.processor.SamePlayerRankException;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
-import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
-public class GroupPage extends BasePage {
+public class GroupPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
 
-    private TournamentImpl tournament;
     private Groups group;
     private List<Participant> participants;
     private ModalWindow modalWindow;
     private boolean calculateParticipants;
 
     public GroupPage() {
-        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
+        this(new PageParameters());
     }
 
     public GroupPage(PageParameters parameters) {
         super(parameters);
-        checkPageParameters(parameters);
-        tournament = getTournament();
         group = getGroup(parameters);
         calculateParticipants = getCalculateParticipants(parameters);
         getParticipants();
@@ -68,7 +63,7 @@ public class GroupPage extends BasePage {
 
     private boolean getCalculateParticipants(PageParameters parameters) {
         if (parameters.get("update").isNull()) {
-            return false;
+            return true;
         } else {
             return parameters.get("update").toBoolean();
         }
@@ -78,16 +73,17 @@ public class GroupPage extends BasePage {
         if (group != null) {
             this.participants = participantService.getParticipants(new Participant()._setGroup(group));
             gameService.processGames(participants);
-            try {
-                if (calculateParticipants) {
-                    calculateParticipants();
-                } else {
-                    checkSameRankParticipants();
-                }
-            } catch (SamePlayerRankException e) {
-                createModalWindow(e);
+            Set<Participant> samePlayerRankParticipants;
+
+            if (calculateParticipants) {
+                samePlayerRankParticipants = participantService.calculateParticipants(participants, tournament);
+            } else {
+                samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
             }
 
+            if (!samePlayerRankParticipants.isEmpty()) {
+                createModalWindow(samePlayerRankParticipants);
+            }
             if (group.getType().equals(GroupsType.FINAL) && calculateParticipants) {
                 finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
             }
@@ -97,18 +93,7 @@ public class GroupPage extends BasePage {
         }
     }
 
-    private void checkSameRankParticipants() {
-        participantService.checkSameRankParticipants(participants);
-    }
-
-    private void checkPageParameters(PageParameters parameters) {
-        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
-                || parameters.get("groupid").isNull()) {
-            throw new RestartResponseAtInterceptPageException(new SeasonPage());
-        }
-    }
-
-    private void createModalWindow(final SamePlayerRankException e) {
+    private void createModalWindow(final Set<Participant> samePlayerRankParticipants) {
 
         modalWindow = createDefaultModalWindow();
 
@@ -117,7 +102,7 @@ public class GroupPage extends BasePage {
             private static final long serialVersionUID = 1L;
 
             public Page createPage() {
-                return new ComparePage(group, modalWindow, e.getPlayers());
+                return new ComparePage(group, modalWindow, samePlayerRankParticipants);
             }
         });
 
@@ -158,10 +143,6 @@ public class GroupPage extends BasePage {
         }
         add(new GroupForm());
         createGroups();
-    }
-
-    private void calculateParticipants() {
-        participantService.calculateParticipants(participants, tournament);
     }
 
     private void createGroups() {
@@ -338,7 +319,7 @@ public class GroupPage extends BasePage {
 
                         @Override
                         public void onSubmit() {
-                            getPageParameters().set("groupid", group.getId());
+                            getPageParameters().set("gid", group.getId());
                             getPageParameters().set("update", false);
                             setResponsePage(GroupPage.class, getPageParameters());
                         }
@@ -365,6 +346,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    getPageParameters().set("gid", group.getId());
                     setResponsePage(SchedulePage.class, getPageParameters());
                 }
             };
@@ -377,6 +359,7 @@ public class GroupPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
+                    getPageParameters().set("gid", group.getId());
                     getPageParameters().set("showTableOptions", true);
                     getPageParameters().set("showTournamentOptions", false);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
@@ -395,8 +378,8 @@ public class GroupPage extends BasePage {
                         tempFile = PdfFactory.createSheets(
                                 WicketApplication.getFilesPath(),
                                 scheduleService.getSchedule(group, participants,
-                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants)),
-                                group);
+                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants))
+                                        .getSchedule(), group);
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
                         // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
@@ -419,7 +402,8 @@ public class GroupPage extends BasePage {
                         tempFile = PdfFactory.createSchedule(
                                 WicketApplication.getFilesPath(),
                                 scheduleService.getSchedule(group, participants,
-                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants)));
+                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants))
+                                        .getSchedule());
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
                         // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
@@ -431,27 +415,6 @@ public class GroupPage extends BasePage {
             pdfSchedule.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
 
             add(pdfSchedule);
-
-            Button playOff = new Button("playOff") {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    setResponsePage(PlayOffPage.class, getPageParameters());
-                }
-            };
-            add(playOff);
-
-            add(new Button("back", new ResourceModel("back")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    setResponsePage(RegistrationPage.class, getPageParameters());
-                };
-            }.setDefaultFormProcessing(false));
 
             Button finalGroup = new Button("finalGroup", new ResourceModel("finalGroup")) {
 
@@ -521,15 +484,12 @@ public class GroupPage extends BasePage {
                 pdfSchedule.setVisible(false);
                 printGroup.setVisible(false);
                 copyResult.setVisible(false);
-                playOff.setVisible(false);
                 finalGroup.setVisible(false);
             }
         }
     }
-
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("group");
-    }
+    /*
+     * @Override protected IModel<String> newHeadingModel() { return new ResourceModel("group"); }
+     */
 
 }

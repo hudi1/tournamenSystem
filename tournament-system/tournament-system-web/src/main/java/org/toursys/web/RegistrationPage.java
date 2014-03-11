@@ -10,6 +10,7 @@ import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
@@ -27,14 +28,12 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 
 @AuthorizeInstantiation(Roles.USER)
-public class RegistrationPage extends BasePage {
+public class RegistrationPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
-    private Tournament tournament;
     private Groups group;
     private User user;
     private final List<Participant> allTournamenPlayers;
@@ -47,7 +46,6 @@ public class RegistrationPage extends BasePage {
         super(parameters);
         createGroup(parameters);
         this.user = getTournamentSession().getUser();
-        this.tournament = getTournament();
         this.allTournamenPlayers = participantService.getRegistratedParticipant(tournament);
         createPage();
     }
@@ -73,6 +71,16 @@ public class RegistrationPage extends BasePage {
         public PlayerForm(final WebMarkupContainer dataViewContainer) {
             super("playerForm");
             setOutputMarkupId(true);
+
+            add(new Button("playersButton", new ResourceModel("players")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    setResponsePage(PlayerPage.class, getPageParameters());
+                }
+            });
 
             DropDownChoice<Player> playersDropDown = new DropDownChoice<Player>("players", new PropertyModel<Player>(
                     this, "selectedPlayer"), playerService.getPlayers(new Player()._setUser(user)),
@@ -233,9 +241,8 @@ public class RegistrationPage extends BasePage {
         group.setName(parameters.get("gid").isNull() ? "1" : parameters.get("gid").toString());
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("registration");
-    }
+    /*
+     * @Override protected IModel<String> newHeadingModel() { return new ResourceModel("registration"); }
+     */
 
 }

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,13 @@ public class ParticipantService extends AbstractService {
         for (Participant deletedParticipant : participants) {
             count += tournamentAggregationDao.deleteParticipant(deletedParticipant);
         }
+
+        Groups group = participant.getGroup();
+        participants = tournamentAggregationDao.getListParticipants(new Participant()._setGroup(group));
+        if (participants.isEmpty()) {
+            groupService.deleteGroup(group);
+        }
+
         return count;
     }
 
@@ -88,14 +97,21 @@ public class ParticipantService extends AbstractService {
         return null;
     }
 
-    public void calculateParticipants(List<Participant> participants, Tournament tournament) {
+    public Set<Participant> calculateParticipants(List<Participant> participants, Tournament tournament) {
+        long time = System.currentTimeMillis();
         logger.debug("Calculate participants: " + tournament);
+        Set<Participant> samePlayerRankParticipants = new HashSet<Participant>();
         for (Participant participant : participants) {
             calculateParticipant(participant, tournament);
         }
+
         if (participants.size() > 0) {
-            sortParticipant(participants, tournament);
+            samePlayerRankParticipants = sortParticipant(participants, tournament);
         }
+
+        time = System.currentTimeMillis() - time;
+        logger.debug("End: Calculate participants: " + time + " ms");
+        return samePlayerRankParticipants;
     }
 
     private void calculateParticipant(Participant participant, Tournament tournament) {
@@ -136,7 +152,7 @@ public class ParticipantService extends AbstractService {
     }
 
     @Transactional
-    private void sortParticipant(List<Participant> participants, Tournament tournament) {
+    private Set<Participant> sortParticipant(List<Participant> participants, Tournament tournament) {
         logger.debug("Sort participants: " + Arrays.toString(participants.toArray()));
 
         Collections.sort(participants, new BasicComparator());
@@ -204,13 +220,7 @@ public class ParticipantService extends AbstractService {
         }
         Collections.sort(participants, new RankComparator());
 
-        for (Participant participant : advantageComparator.getSameRankPlayers()) {
-            ex.getPlayers().add(participant);
-        }
-
-        if (!ex.getPlayers().isEmpty()) {
-            throw ex;
-        }
+        return advantageComparator.getSameRankPlayers();
     }
 
     // vrati hracov pre rozpis kde sa pocitaju vysledky(postupujuci hraci)
@@ -276,17 +286,15 @@ public class ParticipantService extends AbstractService {
         this.groupService = groupService;
     }
 
-    public void checkSameRankParticipants(List<Participant> participants) {
-        SamePlayerRankException ex = new SamePlayerRankException();
+    public Set<Participant> getSameRankParticipants(List<Participant> participants) {
+        Set<Participant> participantsSet = new HashSet<Participant>();
 
         for (Participant participant : participants) {
             if (participant.getEqualRank() != null) {
-                ex.getPlayers().add(participant);
+                participantsSet.add(participant);
             }
         }
-        if (!ex.getPlayers().isEmpty()) {
-            throw ex;
-        }
+        return participantsSet;
     }
 
 }

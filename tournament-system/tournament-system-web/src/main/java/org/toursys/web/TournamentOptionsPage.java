@@ -35,8 +35,8 @@ public class TournamentOptionsPage extends BasePage {
     }
 
     public TournamentOptionsPage(PageParameters parameters) {
-        checkPageParameters(parameters);
-        tournament = getTournament();
+        // checkPageParameters(parameters);
+        tournament = getTournament(parameters);
         group = getGroup(parameters);
         setTournamentOption(parameters);
         setTableOption(parameters);

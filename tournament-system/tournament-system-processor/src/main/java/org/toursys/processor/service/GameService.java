@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.repository.model.Game;
+import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Participant;
 
 public class GameService extends AbstractService {
@@ -46,15 +47,21 @@ public class GameService extends AbstractService {
     // TODO ked sa budes nudit toto treba nejak vyriesit. nie je to ciste
     // riesenie ale zatim to funguje a nie je to
     // pomale
-    @Transactional
-    public void updateBothGames(Game game) {
-        logger.debug("Update both games: " + game);
+    private void updateBothGames(Game game) {
+        logger.info("Update both games: " + game);
         updateGame(game);
         Game gameDb = getGame(new Game()._setHomeParticipant(game.getAwayParticipant())._setAwayParticipant(
                 game.getHomeParticipant()));
         gameDb.setHomeScore(game.getAwayScore());
         gameDb.setAwayScore(game.getHomeScore());
         updateGame(gameDb);
+    }
+
+    @Transactional
+    public void updateBothGames(List<GameImpl> schedule) {
+        for (GameImpl gameImpl : schedule) {
+            updateBothGames(gameImpl);
+        }
     }
 
     @Transactional
@@ -84,4 +91,5 @@ public class GameService extends AbstractService {
         time = System.currentTimeMillis() - time;
         logger.debug("End: Process games: " + time + " ms");
     }
+
 }

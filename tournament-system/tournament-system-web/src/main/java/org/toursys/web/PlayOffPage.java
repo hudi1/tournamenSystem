@@ -32,21 +32,18 @@ import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
-public class PlayOffPage extends BasePage {
+public class PlayOffPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
-    private TournamentImpl tournament;
 
     public PlayOffPage() {
-        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
+        this(new PageParameters());
     }
 
     public PlayOffPage(PageParameters parameters) {
-        checkPageParameters(parameters);
-        tournament = getTournament();
+        // checkPageParameters(parameters);
         createPage();
     }
 
@@ -121,18 +118,40 @@ public class PlayOffPage extends BasePage {
                             final PlayOffGame playOffGame = listItem.getModelObject();
                             listItem.setModel(new CompoundPropertyModel<PlayOffGame>(playOffGame));
                             Participant participant = playOffGame.getHomeParticipant();
-                            Participant opponentResult = playOffGame.getAwayParticipant();
+                            Participant opponent = playOffGame.getAwayParticipant();
 
-                            listItem.add(new Label(
-                                    "players",
-                                    ((participant != null && participant.getPlayer() != null) ? (participant
-                                            .getPlayer().getName() + " " + participant.getPlayer().getSurname() + " " + participant
-                                            .getPlayer().getPlayerDiscriminator()) : " ")
-                                            + "           :           "
-                                            + ((opponentResult != null && opponentResult.getPlayer() != null) ? (opponentResult
-                                                    .getPlayer().getName() + " " + opponentResult.getPlayer()
-                                                    .getSurname()) : " "
-                                                    + opponentResult.getPlayer().getPlayerDiscriminator())));
+                            String playerName = "";
+                            String playerSurname = "";
+                            String playerDiscriminator = "";
+
+                            String opponentName = "";
+                            String opponentSurname = "";
+                            String opponentDiscriminator = "";
+
+                            if (participant != null && participant.getPlayer() != null) {
+                                if (participant.getPlayer().getName() != null) {
+                                    playerName = participant.getPlayer().getName();
+                                }
+                                if (participant.getPlayer().getSurname() != null) {
+                                    playerSurname = participant.getPlayer().getSurname();
+                                }
+                                playerDiscriminator = participant.getPlayer().getPlayerDiscriminator();
+                            }
+
+                            if (opponent != null && opponent.getPlayer() != null) {
+                                if (opponent.getPlayer().getName() != null) {
+                                    opponentName = opponent.getPlayer().getName();
+                                }
+                                if (opponent.getPlayer().getSurname() != null) {
+                                    opponentSurname = opponent.getPlayer().getSurname();
+                                }
+                                opponentDiscriminator = opponent.getPlayer().getPlayerDiscriminator();
+                            }
+
+                            listItem.add(new Label("player", playerName + " " + playerSurname + " "
+                                    + playerDiscriminator));
+                            listItem.add(new Label("opponent", opponentName + " " + opponentSurname + " "
+                                    + opponentDiscriminator));
 
                             int playerCount = getViewSize() + 1;
                             if (group.getPlayThirdPlace() && getViewSize() > 1) {
@@ -225,7 +244,7 @@ public class PlayOffPage extends BasePage {
                 @Override
                 public void onSubmit() {
                     // tournamentService.createFinalStandings(tournament);
-                    setResponsePage(FinalStandingsPage.class, getPageParameters());
+                    setResponsePage(FinalRankingPage.class, getPageParameters());
                 }
             });
         }

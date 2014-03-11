@@ -19,10 +19,10 @@ public class TournamentFactory {
 
     public static final String USER_NAME = "Tomáš";
     public static final String USER_SURNAME = "Hudec";
-    public static final String USER_USERNAME = "11hudi1test1";
+    public static final String USER_USERNAME = "111hudi1test1";
     public static final String USER_PASSWORD = "travian";
     public static final int USER_PLATNOST = 0;
-    public static final String USER_EMAIL = "11hudi1star@gmail.com";
+    public static final String USER_EMAIL = "111hudi1star@gmail.com";
 
     public static User createUser() {
         return new User(USER_EMAIL, USER_USERNAME, USER_PASSWORD, USER_PLATNOST);
@@ -37,7 +37,7 @@ public class TournamentFactory {
     }
 
     public static Player createPlayer() {
-        return new Player(PLAYER_NAME, PLAYER_SURNAME, null);
+        return new Player(PLAYER_NAME, PLAYER_SURNAME, null, null);
     }
 
     public static Groups createGroup() {

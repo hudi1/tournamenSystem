@@ -1,7 +1,9 @@
 package org.toursys.web;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -41,8 +43,8 @@ public class ComparePage extends WebPage {
     private List<Participant> players;
     private Groups group;
 
-    public ComparePage(Groups group, final ModalWindow window, List<Participant> players) {
-        this.players = players;
+    public ComparePage(Groups group, final ModalWindow window, Set<Participant> players) {
+        this.players = new ArrayList<Participant>(players);
         this.group = group;
         createPage(window);
     }

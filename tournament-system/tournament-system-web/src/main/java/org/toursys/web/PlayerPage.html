@@ -6,57 +6,40 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<div class="naginator" wicket:id="navigator">[dataview navigator]</div>
-	<table class="seasoneTable">
-		<tr>
-			<th><wicket:message key="name">
+	<form wicket:id="playerForm">
+		<div class="naginator" wicket:id="navigator">[dataview
+			navigator]</div>
+		<table class="playersTable">
+			<tr>
+				<th><wicket:message key="name">
             Name
         </wicket:message></th>
-			<th><wicket:message key="surname">
+				<th><wicket:message key="surname">
             Surname
         </wicket:message></th>
-			<th><wicket:message key="club">
+				<th><wicket:message key="club">
             Club
         </wicket:message></th>
-			<th><wicket:message key="edit">
-            Edit
-        </wicket:message></th>
-			<th><wicket:message key="delete">
-            Delete
-        </wicket:message></th>
-		</tr>
-		<tr wicket:id="rows">
-			<td><span wicket:id="name">name</span></td>
-			<td><span wicket:id="surname">surname</span></td>
-			<td><span wicket:id="club">club</span></td>
+				<th></th>
+			</tr>
+			<tr wicket:id="rows">
+				<td><input class="inputLabel" type="text" wicket:id="name" /></td>
+				<td><input class="inputLabel" type="text" wicket:id="surname" /></td>
+				<td><input class="inputLabel" type="text" wicket:id="club" /></td>
+				<td><a wicket:id="deletePlayer"><img src="img/delete.png" /></a></td>
+			</tr>
+		</table>
 
-			<td>
-
-				<form wicket:id="editPlayerForm">
-					<div>
-						<input wicket:id="editPlayer" class="tournamentButton"
-							type="submit" value="edit player" />
-					</div>
-				</form>
-			</td>
-			<td><a wicket:id="deletePlayer" class="tournamentLink"
-				title="delete player"><wicket:message key="deletePlayer">
-            delete player
-        </wicket:message></a></td>
-		</tr>
-	</table>
-
-	<form wicket:id="playerForm">
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="newPlayer"
-				value="new player" /> <a wicket:id="showModalLink"
+				value="New player" /> <a wicket:id="showModalLink"
 				class="tournamentLink" title="delete player"><wicket:message
 					key="showModalLink">
                  Import player
         </wicket:message></a>
 		</div>
+		<div wicket:id="modal"></div>
 	</form>
-	<div wicket:id="modal"></div>
 </wicket:extend>
 </html>
 

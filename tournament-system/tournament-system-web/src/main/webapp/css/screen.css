@@ -17,6 +17,22 @@ a,a:link,a:visited {
 	text-decoration: none;
 }
 
+.inputLabel {
+	background: none;
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.inputLabel:hover {
+	background: #FFF;
+	border: none;
+}
+
+.inputLabel:focus {
+	background-color: #FFF;
+}
+
 .logo {
 	width: 222px;
 	height: 59px;
@@ -329,30 +345,24 @@ table.groupTable tr.even {
 	background-color: #d2eaf2;
 }
 
-table.player {
-	float: left;
+table.playersTable {
+	width: 100%;
 }
 
-table.player tr.even {
-	background-color: #ffebcd;
+table.playersTable tr.even {
+	background-color: #bae5ee
 }
 
-table.player tr.odd {
-	background-color: #fff;
+table.playersTable tr.odd {
+	
 }
 
-table.player td {
-	cursor: pointer;
-	min-width: 100px;
-	min-height: 30px;
-}
-
-table.player th {
-	color: black;
-	padding: 3px;
-	background-color: #c1e4ff;
-	border: 1px solid #0079d6;
+table.playersTable th {
 	text-align: left;
+}
+
+table.playersTable tr:hover {
+	background-color: #F8F0E0;
 }
 
 table.seasoneTable {

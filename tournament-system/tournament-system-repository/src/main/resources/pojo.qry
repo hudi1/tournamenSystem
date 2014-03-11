@@ -26,6 +26,7 @@ package org.toursys.repository.model {
     tournament :: Tournament required index 3
     equals ::: id
     toInit ::: tournament player
+    isDef ::: player
     toString ::: id finalRank
   }
 
@@ -37,6 +38,7 @@ package org.toursys.repository.model {
     awayScore : java.lang.Integer
     equals ::: id
     toInit ::: homeParticipant awayParticipant
+    isDef ::: homeScore awayScore
     toString ::: id homeScore awayScore
   }
 
@@ -53,6 +55,7 @@ package org.toursys.repository.model {
     playOffGames : java.util.List <:PlayOffGame>
     equals ::: id
     toInit ::: playOffGames tournament participants
+    isDef :::
     toString ::: id playThirdPlace indexOfFirstHockey copyResult name numberOfHockey type
   }
 
@@ -70,6 +73,7 @@ package org.toursys.repository.model {
     awayParticipantIdPlayOffGames : java.util.List <:PlayOffGame>
     equals ::: id
     toInit ::: awayParticipantIdPlayOffGames games player group homeParticipantIdPlayOffGames
+    isDef ::: rank temp equalRank
     toString ::: id rank score temp equalRank points
   }
 
@@ -78,11 +82,12 @@ package org.toursys.repository.model {
     name : java.lang.String required
     surname : java.lang.String required
     club : java.lang.String
-    playerDiscriminator : java.lang.String
+    playerDiscriminator : java.lang.String required
     worldRanking : java.lang.Integer
     user :: User required index 3
     equals ::: id
     toInit ::: user
+    isDef ::: club worldRanking
     toString ::: playerDiscriminator id club name surname worldRanking
   }
 
@@ -96,6 +101,7 @@ package org.toursys.repository.model {
     winner :: PlayOffGameWinner
     equals ::: id
     toInit ::: homeParticipant awayParticipant group
+    isDef ::: results winner homeParticipant awayParticipant
     toString ::: position id results winner
   }
 
@@ -106,6 +112,7 @@ package org.toursys.repository.model {
     tournaments : java.util.List <:Tournament>
     equals ::: id
     toInit ::: tournaments user
+    isDef :::
     toString ::: id name
   }
 
@@ -123,6 +130,7 @@ package org.toursys.repository.model {
     finalStandings : java.util.List <:FinalStanding>
     equals ::: id
     toInit ::: season finalStandings groups
+    isDef :::
     toString ::: id playOffLower playOffA winPoints finalPromoting name lowerPromoting minPlayersInGroup
   }
 
@@ -139,6 +147,7 @@ package org.toursys.repository.model {
     seasons : java.util.List <:Season>
     equals ::: id
     toInit ::: seasons players
+    isDef ::: name role surname
     toString ::: id email name platnost role userName surname password
   }
   

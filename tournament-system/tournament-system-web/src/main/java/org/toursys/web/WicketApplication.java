@@ -50,7 +50,8 @@ public class WicketApplication extends AuthenticatedWebApplication {
         mountPage("login", LoginPage.class);
         mountPage("logout", LogoutPage.class);
         mountPage("compare", ComparePage.class);
-        mountPage("finalStandings", FinalStandingsPage.class);
+        mountPage("finalRanking", FinalRankingPage.class);
+        mountPage("tournamentHomePage", TournamentHomePage.class);
     }
 
     @Override
