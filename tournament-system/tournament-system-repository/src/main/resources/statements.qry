@@ -628,7 +628,7 @@ GET_PLAYER_NOT_IN_TOURNAMENT(QRY,inx=Tournament,outx=Player,tab=player=p,tab=par
 				%g.TOURNAMENT_ID = :id 
 		)
 		{& %p.USER_ID = :season.user.id }	
-	}
+	} order by %p.SURNAME
 ;
 
 GET_PARTICIPANT_IN_TOURNAMENT(QRY,inx=Tournament,outx=Participant,tab=player=p,tab=groups=g,tab=participant=r)=

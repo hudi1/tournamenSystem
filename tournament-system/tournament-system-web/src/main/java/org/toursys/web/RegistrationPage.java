@@ -1,30 +1,32 @@
 package org.toursys.web;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteRenderer;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.toursys.processor.components.ModelAutoCompleteTextField;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
@@ -36,7 +38,8 @@ public class RegistrationPage extends TournamentHomePage {
     private static final long serialVersionUID = 1L;
     private Groups group;
     private User user;
-    private final List<Participant> allTournamenPlayers;
+    private final List<Participant> tournamentParticipants;
+    private final List<Player> notRegistratedPlayers;
 
     public RegistrationPage() {
         this(new PageParameters());
@@ -46,32 +49,157 @@ public class RegistrationPage extends TournamentHomePage {
         super(parameters);
         createGroup(parameters);
         this.user = getTournamentSession().getUser();
-        this.allTournamenPlayers = participantService.getRegistratedParticipant(tournament);
+        this.tournamentParticipants = participantService.getRegistratedParticipant(tournament);
+        this.notRegistratedPlayers = playerService.getNotRegisteredPlayers(tournament);
         createPage();
     }
 
     private void createPage() {
-        IDataProvider<Participant> registeredPlayerDataProvider = createRegisteredPlayerDataProvider();
-        DataView<Participant> dataView = createDataview(registeredPlayerDataProvider);
-        dataView.setOutputMarkupId(true);
-        WebMarkupContainer dataViewContainer = new WebMarkupContainer("container");
-        dataViewContainer.setOutputMarkupId(true);
-        dataViewContainer.add(dataView);
 
-        add(dataViewContainer);
+        // dataView.setOutputMarkupId(true);
+        // WebMarkupContainer dataViewContainer = new WebMarkupContainer("container");
+        // dataViewContainer.setOutputMarkupId(true);
+        // dataViewContainer.add(dataView);
+
+        // add(dataViewContainer);
         add(new GroupForm());
-        add(new PlayerForm(dataViewContainer));
+        add(new PlayerForm());
     }
 
     private class PlayerForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
-        private Player selectedPlayer = null;
+        private final Model<Player> playerModel = new Model<Player>(null);
 
-        public PlayerForm(final WebMarkupContainer dataViewContainer) {
+        public PlayerForm() {
             super("playerForm");
-            setOutputMarkupId(true);
 
+            addTournamentparticipantListView();
+            addShowPlayersButton();
+            addAutoCompletePlayers();
+            setDefaultButton(getRegisterPlayersButton());
+        }
+
+        private void registerPlayer() {
+            if (playerModel.getObject() != null) {
+                Player player = playerModel.getObject();
+                notRegistratedPlayers.remove(player);
+                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player, group));
+                playerModel.setObject(null);
+            }
+        }
+
+        private void addAutoCompletePlayers() {
+            AutoCompleteSettings settings = new AutoCompleteSettings();
+            settings.setShowListOnEmptyInput(true);
+            settings.setShowListOnFocusGain(true);
+            settings.setAdjustInputWidth(true);
+            settings.setMaxHeightInPx(200);
+            settings.setCssClassName("allPlayers");
+
+            add(new ModelAutoCompleteTextField<Player>("players", playerModel, null,
+                    new AbstractAutoCompleteRenderer<Player>() {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected void renderChoice(Player player, Response response, String criteria) {
+                            response.write(getTextValue(player));
+                        }
+
+                        @Override
+                        protected String getTextValue(Player player) {
+                            return (player.getName() + " " + player.getSurname() + " " + player
+                                    .getPlayerDiscriminator()).trim();
+                        }
+
+                    }, settings, notRegistratedPlayers) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected boolean add(String prefix, Player player) {
+                    return player.getSurname().toLowerCase().startsWith(prefix.toLowerCase());
+                }
+
+                @Override
+                protected String objectToString(Player player) {
+                    return (player.getName() + " " + player.getSurname() + " " + player.getPlayerDiscriminator())
+                            .trim();
+                }
+
+            }.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    registerPlayer();
+                    target.add(PlayerForm.this);
+                }
+            }));
+        }
+
+        private void addTournamentparticipantListView() {
+            add(new PropertyListView<Participant>("participants", tournamentParticipants) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(final ListItem<Participant> listItem) {
+                    final Participant participant = listItem.getModelObject();
+                    listItem.add(new Label("number", listItem.getIndex() + 1 + "."));
+                    listItem.add(new Label("name", participant.getPlayer().getName()));
+                    listItem.add(new Label("surname", participant.getPlayer().getSurname() + " "
+                            + participant.getPlayer().getPlayerDiscriminator()));
+                    listItem.add(new Label("group", participant.getGroup().getName()));
+                    listItem.add(new AjaxLink<Void>("deleteParticipant") {
+
+                        private static final long serialVersionUID = 1L;
+
+                        public void onClick(AjaxRequestTarget target) {
+                            participantService.deleteParticipant(participant);
+                            tournamentParticipants.remove(participant);
+                            target.add(PlayerForm.this);
+                        }
+
+                        @Override
+                        protected IAjaxCallDecorator getAjaxCallDecorator() {
+                            return new AjaxCallDecorator() {
+
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public CharSequence decorateScript(Component c, CharSequence script) {
+                                    return "if(confirm(" + getString("del.participant") + ")){ " + script
+                                            + "}else{return false;}";
+                                }
+
+                            };
+                        }
+                    }.add(AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public String getObject() {
+                            return getString("deleteParticipant");
+                        }
+                    })));
+
+                    listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public String getObject() {
+                            return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
+                        }
+                    }));
+                }
+
+            });
+        }
+
+        private void addShowPlayersButton() {
             add(new Button("playersButton", new ResourceModel("players")) {
 
                 private static final long serialVersionUID = 1L;
@@ -81,115 +209,19 @@ public class RegistrationPage extends TournamentHomePage {
                     setResponsePage(PlayerPage.class, getPageParameters());
                 }
             });
+        }
 
-            DropDownChoice<Player> playersDropDown = new DropDownChoice<Player>("players", new PropertyModel<Player>(
-                    this, "selectedPlayer"), playerService.getPlayers(new Player()._setUser(user)),
-                    new IChoiceRenderer<Player>() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public Object getDisplayValue(Player player) {
-                            return player.getName() + " " + player.getSurname() + " " + player.getPlayerDiscriminator();
-                        }
-
-                        @Override
-                        public String getIdValue(Player player, int index) {
-                            return player.getId().toString();
-                        }
-                    });
-            playersDropDown.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        private Button getRegisterPlayersButton() {
+            return new Button("registerButton") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-
-                    if (selectedPlayer == null) {
-                        return;
-                    }
-
-                    boolean createParticipant = true;
-
-                    for (Participant participant : allTournamenPlayers) {
-                        if (participant.getPlayer().equals(selectedPlayer)) {
-                            participantService.deleteParticipant(participant);
-                            allTournamenPlayers.remove(participant);
-                            createParticipant = false;
-                            break;
-                        }
-                    }
-
-                    if (createParticipant) {
-                        allTournamenPlayers.add(participantService.createBasicParticipant(tournament, selectedPlayer,
-                                group));
-                    }
-
-                    target.add(PlayerForm.this);
-                    target.add(dataViewContainer);
-                    selectedPlayer = null;
+                public void onSubmit() {
+                    registerPlayer();
                 }
-            });
-            add(playersDropDown);
+            };
         }
-    }
-
-    private DataView<Participant> createDataview(IDataProvider<Participant> registeredPlayerDataProvider) {
-
-        DataView<Participant> registeredDataView = new DataView<Participant>("registeredRows",
-                registeredPlayerDataProvider) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(final Item<Participant> listItem) {
-                final Participant participant = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<Participant>(participant));
-                listItem.add(new Label("name", participant.getPlayer().getName()));
-                listItem.add(new Label("surname", participant.getPlayer().getSurname() + " "
-                        + participant.getPlayer().getPlayerDiscriminator()));
-                listItem.add(new Label("tableName", participant.getGroup().getName()));
-                listItem.add(new Label("number", listItem.getIndex() + 1 + "."));
-            }
-        };
-
-        return registeredDataView;
-    }
-
-    private IDataProvider<Participant> createRegisteredPlayerDataProvider() {
-        IDataProvider<Participant> registeredPlayerDataProvider = new IDataProvider<Participant>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Iterator<Participant> iterator(int first, int count) {
-                return allTournamenPlayers.subList(first, first + count).iterator();
-            }
-
-            @Override
-            public int size() {
-                return allTournamenPlayers.size();
-            }
-
-            @Override
-            public IModel<Participant> model(final Participant object) {
-                return new LoadableDetachableModel<Participant>() {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected Participant load() {
-                        return object;
-                    }
-                };
-            }
-
-            @Override
-            public void detach() {
-            }
-        };
-
-        return registeredPlayerDataProvider;
     }
 
     private class GroupForm extends Form<Groups> {
@@ -240,9 +272,5 @@ public class RegistrationPage extends TournamentHomePage {
         group = new Groups();
         group.setName(parameters.get("gid").isNull() ? "1" : parameters.get("gid").toString());
     }
-
-    /*
-     * @Override protected IModel<String> newHeadingModel() { return new ResourceModel("registration"); }
-     */
 
 }

@@ -6,28 +6,6 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<table wicket:id="container" class="registratedPlayerTable">
-		<tbody>
-			<tr>
-				<th />
-				<th><wicket:message key="name">
-            Name
-        </wicket:message></th>
-				<th><wicket:message key="surname">
-            Surname
-        </wicket:message></th>
-				<th><wicket:message key="tableName">
-            Table name
-        </wicket:message></th>
-			</tr>
-			<tr wicket:id="registeredRows">
-				<td><span wicket:id="number">1.</span></td>
-				<td><span wicket:id="name">name</span></td>
-				<td><span wicket:id="surname">surname</span></td>
-				<td><span wicket:id="tableName">table name</span></td>
-			</tr>
-		</tbody>
-	</table>
 	<div>
 		<form wicket:id="groupForm" class="registration">
 			<div>
@@ -40,12 +18,41 @@
 		</form>
 		<form wicket:id="playerForm">
 			<div>
-				<select wicket:id="players"></select> <span> </span>
+				<!--select wicket:id="players"></select> <span> </span-->
 			</div>
 			<div>
-				<input class="tournamentButton" type="submit" wicket:id="playersButton"
-					value="Players" />
+				<wicket:message key="choosePlayer">
+            Choose player
+        </wicket:message>
+				<input type="text" class="allPlayers" wicket:id="players"></input>
+				<input class="tournamentButton" type="submit"
+					wicket:id="playersButton" value="Player" />
 			</div>
+			<table class="registratedPlayerTable">
+				<tbody>
+					<tr>
+						<th />
+						<th><wicket:message key="name">
+            Name
+        </wicket:message></th>
+						<th><wicket:message key="surname">
+            Surname
+        </wicket:message></th>
+						<th><wicket:message key="tableName">
+            Table name
+        </wicket:message></th>
+						<th></th>
+					</tr>
+					<tr wicket:id="participants">
+						<td><span wicket:id="number">1.</span></td>
+						<td><span wicket:id="name">name</span></td>
+						<td><span wicket:id="surname">surname</span></td>
+						<td><span wicket:id="group">group</span></td>
+						<td><a wicket:id="deleteParticipant"><img
+								src="img/delete.png" /></a></td>
+					</tr>
+				</tbody>
+			</table>
 		</form>
 	</div>
 </wicket:extend>
