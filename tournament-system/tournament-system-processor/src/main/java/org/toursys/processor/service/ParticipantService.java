@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import org.toursys.processor.SamePlayerRankException;
 import org.toursys.processor.comparators.AdvantageComparator;
 import org.toursys.processor.comparators.BasicComparator;
 import org.toursys.processor.comparators.RankComparator;
@@ -51,20 +50,7 @@ public class ParticipantService extends AbstractService {
     @Transactional
     public int deleteParticipant(Participant participant) {
         logger.debug("Delete participant: " + participant);
-        int count = 0;
-        List<Participant> participants = tournamentAggregationDao.getListParticipants(new Participant()._setGroup(
-                participant.getGroup())._setPlayer(participant.getPlayer()));
-        for (Participant deletedParticipant : participants) {
-            count += tournamentAggregationDao.deleteParticipant(deletedParticipant);
-        }
-
-        Groups group = participant.getGroup();
-        participants = tournamentAggregationDao.getListParticipants(new Participant()._setGroup(group));
-        if (participants.isEmpty()) {
-            groupService.deleteGroup(group);
-        }
-
-        return count;
+        return tournamentAggregationDao.deleteParticipant(participant);
     }
 
     @Transactional(readOnly = true)
@@ -75,6 +61,34 @@ public class ParticipantService extends AbstractService {
     }
 
     // Advanced operations
+
+    public static void main(String[] args) {
+        Tournament t1 = new Tournament()._setId(30);
+        Tournament t2 = new Tournament()._setId(30);
+
+        System.out.println(t1.equals(t2));
+    }
+
+    @Transactional
+    public int deletePlayerParticipant(Participant participant, Tournament tournament) {
+        logger.debug("Delete player participant: " + participant + " " + tournament);
+        int count = 0;
+        List<Participant> participants = tournamentAggregationDao.getListParticipants(new Participant()._setPlayer(
+                participant.getPlayer())._setInit(Participant.Association.group));
+
+        for (Participant deletedParticipant : participants) {
+            if (deletedParticipant.getGroup().getTournament().equals(tournament)) {
+                count += deleteParticipant(deletedParticipant);
+                Groups group = deletedParticipant.getGroup();
+                participants = tournamentAggregationDao.getListParticipants(new Participant()._setGroup(group));
+                if (participants.isEmpty()) {
+                    groupService.deleteGroup(group);
+                }
+            }
+        }
+
+        return count;
+    }
 
     @Transactional(readOnly = true)
     public List<Participant> getRegistratedParticipant(Tournament tournament) {
@@ -157,12 +171,8 @@ public class ParticipantService extends AbstractService {
 
         Collections.sort(participants, new BasicComparator());
         AdvantageComparator advantageComparator = new AdvantageComparator();
-        SamePlayerRankException ex = new SamePlayerRankException();
 
         for (int i = 0; i < participants.size(); i++) {
-            if (participants.get(i).getEqualRank() != null) {
-                ex.getPlayers().add(participants.get(i));
-            }
             participants.get(i).setRank(i + 1);
         }
 
@@ -204,6 +214,7 @@ public class ParticipantService extends AbstractService {
                         for (int j = 0; j < temporatyParticipant.size(); j++) {
                             if (participant1.equals(temporatyParticipant.get(j))) {
                                 participant1.setRank(j + 1 + actualRank);
+                                participant1.setEqualRank(temporatyParticipant.get(j).getEqualRank());
                             }
                         }
                     }
@@ -216,10 +227,10 @@ public class ParticipantService extends AbstractService {
 
         for (int i = 0; i < participants.size(); i++) {
             logger.debug("Updating participant: " + participants.get(i));
+            participants.get(i)._setNull(Participant.Attribute.equalRank);
             tournamentAggregationDao.updateParticipant(participants.get(i));
         }
         Collections.sort(participants, new RankComparator());
-
         return advantageComparator.getSameRankPlayers();
     }
 

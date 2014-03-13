@@ -23,14 +23,14 @@ import org.toursys.processor.schedule.RoundRobinSchedule;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
-import org.toursys.repository.model.TournamentImpl;
+import org.toursys.repository.model.Tournament;
 
 @AuthorizeInstantiation(Roles.USER)
 public class SchedulePage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
     private Groups group;
-    private TournamentImpl tournament;
+    private Tournament tournament;
     private RoundRobinSchedule schedule;
 
     public SchedulePage() {

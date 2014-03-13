@@ -10,7 +10,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.toursys.processor.service.UserService;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Season;
-import org.toursys.repository.model.TournamentImpl;
+import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 
 public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
@@ -21,7 +21,7 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
     private Roles roles = new Roles();
     private User user;
     private Season season;
-    private TournamentImpl tournament;
+    private Tournament tournament;
 
     public TournamentAuthenticatedWebSession(Request request) {
         super(request);
@@ -61,11 +61,11 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
         this.season = season;
     }
 
-    public TournamentImpl getTournament() {
+    public Tournament getTournament() {
         return tournament;
     }
 
-    public void setTournament(TournamentImpl tournament) {
+    public void setTournament(Tournament tournament) {
         this.tournament = tournament;
     }
 

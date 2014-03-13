@@ -35,7 +35,6 @@ import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
-import org.toursys.repository.model.TournamentImpl;
 import org.toursys.repository.model.User;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
@@ -241,12 +240,12 @@ public abstract class BasePage extends WebPage {
 
     }
 
-    protected TournamentImpl getTournament(PageParameters pageParameters) {
-        TournamentImpl tournament = getTournamentSession().getTournament();
+    protected Tournament getTournament(PageParameters pageParameters) {
+        Tournament tournament = getTournamentSession().getTournament();
         if (tournament == null) {
             if (!pageParameters.get("tid").isNull()) {
-                tournament = new TournamentImpl(tournamentService.getTournament(new Tournament()._setId(pageParameters
-                        .get("tid").toInteger())));
+                tournament = tournamentService.getTournament(new Tournament()._setId(pageParameters.get("tid")
+                        .toInteger()));
             }
         }
 

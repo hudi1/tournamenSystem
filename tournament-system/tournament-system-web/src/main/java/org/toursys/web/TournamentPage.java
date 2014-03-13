@@ -26,7 +26,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
-import org.toursys.repository.model.TournamentImpl;
 
 @AuthorizeInstantiation(Roles.USER)
 public class TournamentPage extends BasePage {
@@ -153,7 +152,7 @@ public class TournamentPage extends BasePage {
                         private static final long serialVersionUID = 1L;
 
                         public void onClick(AjaxRequestTarget target) {
-                            getTournamentSession().setTournament(new TournamentImpl(listItem.getModelObject()));
+                            getTournamentSession().setTournament(listItem.getModelObject());
                             setResponsePage(RegistrationPage.class);
                         }
 

@@ -77,6 +77,9 @@ public class GroupPage extends TournamentHomePage {
 
             if (calculateParticipants) {
                 samePlayerRankParticipants = participantService.calculateParticipants(participants, tournament);
+                if (samePlayerRankParticipants.isEmpty()) {
+                    samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
+                }
             } else {
                 samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
             }

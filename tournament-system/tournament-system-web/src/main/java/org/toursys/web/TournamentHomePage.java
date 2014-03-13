@@ -3,12 +3,12 @@ package org.toursys.web;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.toursys.repository.model.TournamentImpl;
+import org.toursys.repository.model.Tournament;
 
 public abstract class TournamentHomePage extends BasePage {
 
     private static final long serialVersionUID = 1L;
-    protected TournamentImpl tournament;
+    protected Tournament tournament;
 
     public TournamentHomePage() {
         this(new PageParameters());

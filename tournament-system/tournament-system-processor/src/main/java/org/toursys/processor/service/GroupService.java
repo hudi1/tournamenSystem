@@ -54,23 +54,6 @@ public class GroupService extends AbstractService {
 
     // Advanced operations
 
-    @Transactional
-    public int updateGroupOptions(Tournament tournament, Groups group) {
-        logger.debug("Update group options: " + group);
-        if (group.getCopyResult()) {
-            // TODO nasetovat hracov getParticipantInGroup(new Participant()._setGroup(group));
-            List<Participant> player = group.getParticipants();
-            // TODO co ked ich bude menej postupovat ako je zadane
-            if (tournament.getFinalPromoting() % 2 == 0) {
-                group.setNumberOfHockey(player.size() / 2);
-            } else {
-                List<Groups> groups = getBasicGroups(new Groups()._setTournament(tournament));
-                group.setNumberOfHockey(player.size() / groups.size());
-            }
-        }
-        return updateGroup(group);
-    }
-
     @Transactional(readOnly = true)
     public List<Groups> getBasicGroups(Groups group) {
         logger.debug("Get basic groups: " + group);

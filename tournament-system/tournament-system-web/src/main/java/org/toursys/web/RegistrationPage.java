@@ -30,14 +30,12 @@ import org.toursys.processor.components.ModelAutoCompleteTextField;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.User;
 
 @AuthorizeInstantiation(Roles.USER)
 public class RegistrationPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
     private Groups group;
-    private User user;
     private final List<Participant> tournamentParticipants;
     private final List<Player> notRegistratedPlayers;
 
@@ -48,20 +46,12 @@ public class RegistrationPage extends TournamentHomePage {
     public RegistrationPage(PageParameters parameters) {
         super(parameters);
         createGroup(parameters);
-        this.user = getTournamentSession().getUser();
         this.tournamentParticipants = participantService.getRegistratedParticipant(tournament);
         this.notRegistratedPlayers = playerService.getNotRegisteredPlayers(tournament);
         createPage();
     }
 
     private void createPage() {
-
-        // dataView.setOutputMarkupId(true);
-        // WebMarkupContainer dataViewContainer = new WebMarkupContainer("container");
-        // dataViewContainer.setOutputMarkupId(true);
-        // dataViewContainer.add(dataView);
-
-        // add(dataViewContainer);
         add(new GroupForm());
         add(new PlayerForm());
     }
@@ -74,31 +64,16 @@ public class RegistrationPage extends TournamentHomePage {
         public PlayerForm() {
             super("playerForm");
 
-            addTournamentparticipantListView();
             addShowPlayersButton();
-            addAutoCompletePlayers();
+            ModelAutoCompleteTextField<Player> playersTextField = addAutoCompletePlayers();
+            addTournamentparticipantListView(playersTextField);
             setDefaultButton(getRegisterPlayersButton());
         }
 
-        private void registerPlayer() {
-            if (playerModel.getObject() != null) {
-                Player player = playerModel.getObject();
-                notRegistratedPlayers.remove(player);
-                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player, group));
-                playerModel.setObject(null);
-            }
-        }
+        private ModelAutoCompleteTextField<Player> addAutoCompletePlayers() {
 
-        private void addAutoCompletePlayers() {
-            AutoCompleteSettings settings = new AutoCompleteSettings();
-            settings.setShowListOnEmptyInput(true);
-            settings.setShowListOnFocusGain(true);
-            settings.setAdjustInputWidth(true);
-            settings.setMaxHeightInPx(200);
-            settings.setCssClassName("allPlayers");
-
-            add(new ModelAutoCompleteTextField<Player>("players", playerModel, null,
-                    new AbstractAutoCompleteRenderer<Player>() {
+            ModelAutoCompleteTextField<Player> playersTextField = new ModelAutoCompleteTextField<Player>("players",
+                    playerModel, null, new AbstractAutoCompleteRenderer<Player>() {
 
                         private static final long serialVersionUID = 1L;
 
@@ -113,7 +88,7 @@ public class RegistrationPage extends TournamentHomePage {
                                     .getPlayerDiscriminator()).trim();
                         }
 
-                    }, settings, notRegistratedPlayers) {
+                    }, getCustomSettings(), notRegistratedPlayers) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -128,7 +103,9 @@ public class RegistrationPage extends TournamentHomePage {
                             .trim();
                 }
 
-            }.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            };
+
+            playersTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -137,10 +114,24 @@ public class RegistrationPage extends TournamentHomePage {
                     registerPlayer();
                     target.add(PlayerForm.this);
                 }
-            }));
+            });
+
+            add(playersTextField);
+
+            return playersTextField;
         }
 
-        private void addTournamentparticipantListView() {
+        private AutoCompleteSettings getCustomSettings() {
+            AutoCompleteSettings settings = new AutoCompleteSettings();
+            settings.setShowListOnEmptyInput(true);
+            settings.setShowListOnFocusGain(true);
+            settings.setAdjustInputWidth(true);
+            settings.setMaxHeightInPx(200);
+            settings.setCssClassName("allPlayers");
+            return settings;
+        }
+
+        private void addTournamentparticipantListView(final ModelAutoCompleteTextField<Player> playersTextField) {
             add(new PropertyListView<Participant>("participants", tournamentParticipants) {
 
                 private static final long serialVersionUID = 1L;
@@ -158,8 +149,9 @@ public class RegistrationPage extends TournamentHomePage {
                         private static final long serialVersionUID = 1L;
 
                         public void onClick(AjaxRequestTarget target) {
-                            participantService.deleteParticipant(participant);
+                            participantService.deletePlayerParticipant(participant, tournament);
                             tournamentParticipants.remove(participant);
+                            playersTextField.getAllChoices().add(participant.getPlayer());
                             target.add(PlayerForm.this);
                         }
 
@@ -222,6 +214,15 @@ public class RegistrationPage extends TournamentHomePage {
                 }
             };
         }
+
+        private void registerPlayer() {
+            if (playerModel.getObject() != null) {
+                Player player = playerModel.getObject();
+                notRegistratedPlayers.remove(player);
+                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player, group));
+                playerModel.setObject(null);
+            }
+        }
     }
 
     private class GroupForm extends Form<Groups> {
@@ -230,23 +231,13 @@ public class RegistrationPage extends TournamentHomePage {
 
         public GroupForm() {
             super("groupForm", new CompoundPropertyModel<Groups>(group));
-            setOutputMarkupId(true);
-            final TextField<String> groupTextField = new TextField<String>("name");
-            groupTextField.setOutputMarkupId(true);
-            add(new AjaxButton("plus", Model.of("+")) {
 
-                private static final long serialVersionUID = 1L;
+            TextField<String> groupTextField = getGroupTextField();
+            addMinusButton(groupTextField);
+            addPlusButton(groupTextField);
+        }
 
-                @Override
-                public void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    Integer groupName = Integer.parseInt(group.getName());
-                    groupName++;
-                    group.setName(groupName.toString());
-                    getPageParameters().set("gid", groupName.toString());
-                    target.add(groupTextField);
-                }
-            });
-
+        private void addPlusButton(final TextField<String> groupTextField) {
             add(new AjaxButton("minus", Model.of("-")) {
 
                 private static final long serialVersionUID = 1L;
@@ -262,9 +253,29 @@ public class RegistrationPage extends TournamentHomePage {
                     target.add(groupTextField);
                 }
             });
+        }
 
+        private void addMinusButton(final TextField<String> groupTextField) {
+            add(new AjaxButton("plus", Model.of("+")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    Integer groupName = Integer.parseInt(group.getName());
+                    groupName++;
+                    group.setName(groupName.toString());
+                    getPageParameters().set("gid", groupName.toString());
+                    target.add(groupTextField);
+                }
+            });
+        }
+
+        private TextField<String> getGroupTextField() {
+            final TextField<String> groupTextField = new TextField<String>("name");
+            groupTextField.setOutputMarkupId(true);
             add(groupTextField);
-
+            return groupTextField;
         }
     }
 

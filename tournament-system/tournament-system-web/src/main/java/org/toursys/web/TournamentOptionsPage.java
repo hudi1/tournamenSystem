@@ -1,5 +1,6 @@
 package org.toursys.web;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -11,21 +12,20 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.value.ValueMap;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
-import org.toursys.repository.model.TournamentImpl;
+import org.toursys.repository.model.Tournament;
 
 @AuthorizeInstantiation(Roles.USER)
 public class TournamentOptionsPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
-    private TournamentImpl tournament;
+    private Tournament tournament;
     private Groups group;
     boolean isTournamentOptionsOn;
     boolean isTableOptionsOn;
@@ -80,25 +80,18 @@ public class TournamentOptionsPage extends BasePage {
 
         public GroupOptionsForm(final Groups group) {
             super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
-            setOutputMarkupId(true);
-            RequiredTextField<Integer> hockeyCount = new RequiredTextField<Integer>("hockey",
-                    new PropertyModel<Integer>(group, "numberOfHockey"));
-            add(new RequiredTextField<Integer>("hockeyIndex", new PropertyModel<Integer>(group, "indexOfFirstHockey")));
-            CheckBox checkBox1 = new CheckBox("copyResult", new PropertyModel<Boolean>(group, "copyResult"));
-            CheckBox checkBox2 = new CheckBox("playThirdPlace", new PropertyModel<Boolean>(group, "playThirdPlace"));
+            RequiredTextField<Integer> hockeyCount = new RequiredTextField<Integer>("numberOfHockey");
+            add(new RequiredTextField<Integer>("indexOfFirstHockey"));
+            Component copyResult = new CheckBox("copyResult").setVisible(false);
+            Component playThirdPlace = new CheckBox("playThirdPlace").setVisible(false);
 
-            add(checkBox1);
-            add(checkBox2);
+            add(copyResult);
+            add(playThirdPlace);
             add(hockeyCount);
 
-            if (!group.getType().equals(GroupsType.BASIC)) {
-                checkBox1.setVisible(false);
-            } else {
-                checkBox2.setVisible(false);
-            }
-
             if (group.getType().equals(GroupsType.FINAL)) {
-                hockeyCount.setEnabled(false);
+                copyResult.setVisible(true);
+                playThirdPlace.setVisible(true);
             }
 
             ValueMap map = new ValueMap();
@@ -112,7 +105,7 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    groupService.updateGroupOptions(tournament, group);
+                    groupService.updateGroup(group);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
@@ -130,21 +123,18 @@ public class TournamentOptionsPage extends BasePage {
         }
     }
 
-    private class TournamentOptionsForm extends Form<TournamentImpl> {
+    private class TournamentOptionsForm extends Form<Tournament> {
 
         private static final long serialVersionUID = 1L;
 
-        public TournamentOptionsForm(final TournamentImpl tournament) {
-            super("tournamentOptionsForm", new CompoundPropertyModel<TournamentImpl>(tournament));
-            setOutputMarkupId(true);
-            add(new RequiredTextField<Integer>("promotingA", new PropertyModel<Integer>(tournament, "finalPromoting")));
-            add(new RequiredTextField<Integer>("promotingLower", new PropertyModel<Integer>(tournament,
-                    "lowerPromoting")));
-            add(new RequiredTextField<Integer>("points", new PropertyModel<Integer>(tournament, "winPoints")));
-            add(new RequiredTextField<Integer>("playOffA", new PropertyModel<Integer>(tournament, "playOffA")));
-            add(new RequiredTextField<Integer>("playOffLower", new PropertyModel<Integer>(tournament, "playOffLower")));
-            add(new RequiredTextField<Integer>("minPlayersInGroup", new PropertyModel<Integer>(tournament,
-                    "minPlayersInGroup")));
+        public TournamentOptionsForm(final Tournament tournament) {
+            super("tournamentOptionsForm", new CompoundPropertyModel<Tournament>(tournament));
+            add(new RequiredTextField<Integer>("finalPromoting"));
+            add(new RequiredTextField<Integer>("lowerPromoting"));
+            add(new RequiredTextField<Integer>("winPoints"));
+            add(new RequiredTextField<Integer>("playOffA"));
+            add(new RequiredTextField<Integer>("playOffLower"));
+            add(new RequiredTextField<Integer>("minPlayersInGroup"));
 
             ValueMap map = new ValueMap();
             map.put("tournamentLegend", tournament.getName());
