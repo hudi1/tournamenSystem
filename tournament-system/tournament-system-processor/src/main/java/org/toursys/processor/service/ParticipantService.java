@@ -149,6 +149,10 @@ public class ParticipantService extends AbstractService {
                 }
             }
         }
+
+        if (participant.getPoints() != points) {
+            participant.setEqualRank(null);
+        }
         participant.setPoints(points);
         participant.setScore(new Score(homeScore, awayScore));
         time = System.currentTimeMillis() - time;
