@@ -124,9 +124,6 @@ public class GroupService extends AbstractService {
                 int startIndex = promotingA + ((countLowerGroup - 1) * tournament.getLowerPromoting());
 
                 if (startIndex < promotingLower) {
-                    if (((promotingLower - startIndex) / basicGroups.size()) < tournament.getMinPlayersInGroup()) {
-
-                    }
                     if (createGroups) {
                         finalGroup = new Groups(nextGroups, 1, GroupsType.FINAL, 1, tournament, false, false);
                         logger.trace("Create final group " + finalGroup);
@@ -144,11 +141,12 @@ public class GroupService extends AbstractService {
                     }
                 }
 
+                groupName = nextGroups;
+
                 if (participants.size() == promotingLower) {
                     break;
                 }
                 countLowerGroup++;
-                groupName = nextGroups;
             }
             createGroups = false;
         }
