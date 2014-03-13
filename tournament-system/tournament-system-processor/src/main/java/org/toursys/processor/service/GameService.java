@@ -60,6 +60,9 @@ public class GameService extends AbstractService {
     @Transactional
     public void updateBothGames(List<GameImpl> schedule) {
         for (GameImpl gameImpl : schedule) {
+            if (gameImpl.getId() == null) {
+                continue;
+            }
             updateBothGames(gameImpl);
         }
     }
