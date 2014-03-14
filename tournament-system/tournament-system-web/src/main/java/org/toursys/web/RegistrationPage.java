@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.Response;
@@ -292,6 +293,11 @@ public class RegistrationPage extends TournamentHomePage {
     private void createGroup(PageParameters parameters) {
         group = new Groups();
         group.setName(parameters.get("gid").isNull() ? "1" : parameters.get("gid").toString());
+    }
+
+    @Override
+    protected IModel<String> newHeadingModel() {
+        return Model.of(getString("registration") + " " + tournament.getName());
     }
 
 }
