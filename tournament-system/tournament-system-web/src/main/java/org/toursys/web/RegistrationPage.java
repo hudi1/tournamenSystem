@@ -108,12 +108,22 @@ public class RegistrationPage extends TournamentHomePage {
             playersTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 private static final long serialVersionUID = 1L;
+                private Component component;
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
+                    target.appendJavaScript(("document.getElementById('" + component.getMarkupId() + "').blur();"
+                            + "document.getElementById('" + component.getMarkupId() + "').focus();"));
+
                     registerPlayer();
                     target.add(PlayerForm.this);
                 }
+
+                protected void onBind() {
+                    this.component = getComponent();
+                    component.setOutputMarkupId(true);
+                }
+
             });
 
             add(playersTextField);
