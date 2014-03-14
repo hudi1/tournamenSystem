@@ -1,7 +1,6 @@
 package org.toursys.web;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
@@ -31,11 +30,10 @@ public class TournamentOptionsPage extends BasePage {
     boolean isTableOptionsOn;
 
     public TournamentOptionsPage() {
-        throw new RestartResponseAtInterceptPageException(TournamentPage.class);
+        this(new PageParameters());
     }
 
     public TournamentOptionsPage(PageParameters parameters) {
-        // checkPageParameters(parameters);
         tournament = getTournament(parameters);
         group = getGroup(parameters);
         setTournamentOption(parameters);
@@ -47,13 +45,6 @@ public class TournamentOptionsPage extends BasePage {
         getPageParameters().remove("showTableOptions").remove("showTournamentOptions").remove("update");
     }
 
-    private void checkPageParameters(PageParameters parameters) {
-        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
-                || parameters.get("groupid").isNull()) {
-            throw new RestartResponseAtInterceptPageException(new SeasonPage());
-        }
-    }
-
     private void setTableOption(PageParameters parameters) {
         this.isTableOptionsOn = parameters.get("showTableOptions").toBoolean(true);
     }
@@ -63,15 +54,21 @@ public class TournamentOptionsPage extends BasePage {
     }
 
     protected void createPage() {
-        GroupOptionsForm groupForm = new GroupOptionsForm(group);
-        add(groupForm);
-        groupForm.setVisible(isTableOptionsOn);
+        addGroupForm();
+        addTournamentForm();
+        add(new SelectOptionsForm());
+    }
 
+    private void addTournamentForm() {
         TournamentOptionsForm tournamentForm = new TournamentOptionsForm(tournament);
         add(tournamentForm);
         tournamentForm.setVisible(isTournamentOptionsOn);
+    }
 
-        add(new SelectOptionsForm());
+    private void addGroupForm() {
+        GroupOptionsForm groupForm = new GroupOptionsForm(group);
+        add(groupForm);
+        groupForm.setVisible(isTableOptionsOn);
     }
 
     private class GroupOptionsForm extends Form<Groups> {
@@ -80,25 +77,35 @@ public class TournamentOptionsPage extends BasePage {
 
         public GroupOptionsForm(final Groups group) {
             super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
-            RequiredTextField<Integer> hockeyCount = new RequiredTextField<Integer>("numberOfHockey");
+
+            addGroupTextField();
+            addLegendLabel();
+            addSubmitButton();
+            addBackButton();
+        }
+
+        private void addGroupTextField() {
+            add(new RequiredTextField<Integer>("numberOfHockey"));
             add(new RequiredTextField<Integer>("indexOfFirstHockey"));
             Component copyResult = new CheckBox("copyResult").setVisible(false);
             Component playThirdPlace = new CheckBox("playThirdPlace").setVisible(false);
 
             add(copyResult);
             add(playThirdPlace);
-            add(hockeyCount);
 
             if (group.getType().equals(GroupsType.FINAL)) {
                 copyResult.setVisible(true);
                 playThirdPlace.setVisible(true);
             }
+        }
 
+        private void addLegendLabel() {
             ValueMap map = new ValueMap();
             map.put("tableLegend", group.getName());
-
             add(new Label("tableLegend", new StringResourceModel("tableLegend", new Model<ValueMap>(map))));
+        }
 
+        private void addSubmitButton() {
             add(new Button("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
@@ -109,7 +116,9 @@ public class TournamentOptionsPage extends BasePage {
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
+        }
 
+        private void addBackButton() {
             add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
@@ -129,29 +138,29 @@ public class TournamentOptionsPage extends BasePage {
 
         public TournamentOptionsForm(final Tournament tournament) {
             super("tournamentOptionsForm", new CompoundPropertyModel<Tournament>(tournament));
+
+            addTournamentsTextFields();
+            addLegendLabel();
+            addSubmitButton();
+            addBackButton();
+        }
+
+        private void addTournamentsTextFields() {
             add(new RequiredTextField<Integer>("finalPromoting"));
             add(new RequiredTextField<Integer>("lowerPromoting"));
             add(new RequiredTextField<Integer>("winPoints"));
             add(new RequiredTextField<Integer>("playOffA"));
             add(new RequiredTextField<Integer>("playOffLower"));
             add(new RequiredTextField<Integer>("minPlayersInGroup"));
+        }
 
+        private void addLegendLabel() {
             ValueMap map = new ValueMap();
             map.put("tournamentLegend", tournament.getName());
-
             add(new Label("tournamentLegend", new StringResourceModel("tournamentLegend", new Model<ValueMap>(map))));
+        }
 
-            add(new Button("submit", new ResourceModel("save")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    tournamentService.updateTournament(tournament);
-                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
-                }
-            });
-
+        private void addBackButton() {
             add(new Button("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
@@ -162,6 +171,19 @@ public class TournamentOptionsPage extends BasePage {
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
+        }
+
+        private void addSubmitButton() {
+            add(new Button("submit", new ResourceModel("save")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    tournamentService.updateTournament(tournament);
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
+                }
+            });
         }
     }
 
