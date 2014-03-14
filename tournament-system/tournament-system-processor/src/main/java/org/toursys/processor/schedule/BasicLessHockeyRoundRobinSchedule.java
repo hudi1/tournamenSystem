@@ -13,6 +13,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 
 public class BasicLessHockeyRoundRobinSchedule extends RoundRobinSchedule {
+
     private int playerCount;
     private int roundCount;
     private List<Participant> evenRoundParticipants;

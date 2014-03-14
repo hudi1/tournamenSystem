@@ -378,11 +378,8 @@ public class GroupPage extends TournamentHomePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createSheets(
-                                WicketApplication.getFilesPath(),
-                                scheduleService.getSchedule(group, participants,
-                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants))
-                                        .getSchedule(), group);
+                        tempFile = PdfFactory.createSheets(WicketApplication.getFilesPath(), scheduleService
+                                .getSchedule(tournament, group, participants).getSchedule(), group);
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
                         // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
@@ -402,11 +399,8 @@ public class GroupPage extends TournamentHomePage {
                 public File getObject() {
                     File tempFile;
                     try {
-                        tempFile = PdfFactory.createSchedule(
-                                WicketApplication.getFilesPath(),
-                                scheduleService.getSchedule(group, participants,
-                                        participantService.getAdvancedPlayersByGroup(group, tournament, participants))
-                                        .getSchedule());
+                        tempFile = PdfFactory.createSchedule(WicketApplication.getFilesPath(), scheduleService
+                                .getSchedule(tournament, group, participants).getSchedule());
                     } catch (Exception e) {
                         logger.error("!! GroupPage error: ", e);
                         // TODO osetrit nejakym chybovym hlasenim vo feedback panelu

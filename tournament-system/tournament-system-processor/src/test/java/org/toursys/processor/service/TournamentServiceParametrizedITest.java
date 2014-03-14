@@ -150,8 +150,7 @@ public class TournamentServiceParametrizedITest {
 
             group.setNumberOfHockey(hockeyCount);
 
-            List<GameImpl> schedule = scheduleService.getSchedule(group, playerResults,
-                    participantService.getAdvancedPlayersByGroup(group, tournament, playerResults)).getSchedule();
+            List<GameImpl> schedule = scheduleService.getSchedule(tournament, group, playerResults).getSchedule();
 
             Set<Participant> players = new HashSet<Participant>();
             int round = 1;
@@ -200,8 +199,7 @@ public class TournamentServiceParametrizedITest {
                     finalGroup.setNumberOfHockey(playerResult.size() / groupCount);
                 }
 
-                List<GameImpl> finalSchedule = scheduleService.getSchedule(finalGroup, playerResult,
-                        participantService.getAdvancedPlayersByGroup(finalGroup, tournament, playerResult))
+                List<GameImpl> finalSchedule = scheduleService.getSchedule(tournament, finalGroup, playerResult)
                         .getSchedule();
 
                 // TODO zatial mi finalove skupiny funguju len s parnym poctom // ked sa prenasaju vysledky

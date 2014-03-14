@@ -14,9 +14,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.processor.schedule.RoundRobinSchedule;
@@ -31,40 +29,78 @@ public class SchedulePage extends TournamentHomePage {
     private static final long serialVersionUID = 1L;
     private Groups group;
     private Tournament tournament;
-    private RoundRobinSchedule schedule;
+    private List<GameImpl> scheduleGames;
 
     public SchedulePage() {
         throw new RestartResponseAtInterceptPageException(GroupPage.class);
     }
 
     public SchedulePage(PageParameters parameters) {
-        tournament = getTournament(parameters);
-        group = getGroup(parameters);
-        this.schedule = getSchedule();
+        this.tournament = getTournament(parameters);
+        this.group = getGroup(parameters);
+        this.scheduleGames = getSchedule().getSchedule();
         createPage();
     }
 
     private void createPage() {
-        add(new ScheduleForm(Model.of(schedule)));
+        add(new ScheduleForm());
     }
 
     private RoundRobinSchedule getSchedule() {
-        logger.debug("Creating list to dataList start");
+        logger.debug("Creating schedule start");
         long time = System.currentTimeMillis();
         List<Participant> participants = participantService.getParticipants(new Participant()._setGroup(group));
-        RoundRobinSchedule a = scheduleService.getSchedule(group, participants,
-                participantService.getAdvancedPlayersByGroup(group, tournament, participants));
+        RoundRobinSchedule schedule = scheduleService.getSchedule(tournament, group, participants);
         time = System.currentTimeMillis() - time;
-        logger.debug("List: " + time + " ms");
-        return a;
+        logger.debug("Creating schedule end: " + time + " ms");
+        return schedule;
     }
 
     private class ScheduleForm extends Form<RoundRobinSchedule> {
 
         private static final long serialVersionUID = 1L;
 
+        public ScheduleForm() {
+            super("scheduleForm");
+
+            addScheduleListView();
+            addBackButton();
+            addSaveButton();
+        }
+
+        private void addSaveButton() {
+            add(new Button("save", new ResourceModel("save")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    logger.debug("Submit schedule start ");
+                    long time = System.currentTimeMillis();
+                    gameService.updateBothGames(scheduleGames);
+                    time = System.currentTimeMillis() - time;
+                    logger.debug("Submit schedule end: " + time + " ms");
+
+                    setResponsePage(SchedulePage.class, getPageParameters());
+                };
+            });
+        }
+
+        private void addBackButton() {
+            add(new Button("back", new ResourceModel("back")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSubmit() {
+                    getPageParameters().set("update", true);
+                    setResponsePage(GroupPage.class, getPageParameters());
+                };
+            }.setDefaultFormProcessing(false));
+        }
+
         private void addScheduleListView() {
-            add(new PropertyListView<GameImpl>("schedule") {
+            add(new PropertyListView<GameImpl>("schedule", scheduleGames) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -137,37 +173,6 @@ public class SchedulePage extends TournamentHomePage {
             });
         }
 
-        public ScheduleForm(IModel<RoundRobinSchedule> model) {
-            super("scheduleForm", new CompoundPropertyModel<RoundRobinSchedule>(model));
-
-            addScheduleListView();
-            add(new Button("back", new ResourceModel("back")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    getPageParameters().set("update", true);
-                    setResponsePage(GroupPage.class, getPageParameters());
-                };
-            }.setDefaultFormProcessing(false));
-
-            add(new Button("save", new ResourceModel("save")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    logger.debug("Start submit ");
-                    long time = System.currentTimeMillis();
-                    gameService.updateBothGames(schedule.getSchedule());
-                    time = System.currentTimeMillis() - time;
-                    logger.debug("End submit: " + time + " ms");
-
-                    setResponsePage(SchedulePage.class, getPageParameters());
-                };
-            });
-        }
     }
 
     @Override
