@@ -2,7 +2,6 @@ package org.toursys.web;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -20,8 +19,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.GridView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -32,7 +31,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
-import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
@@ -56,216 +54,23 @@ public class GroupPage extends TournamentHomePage {
     public GroupPage(PageParameters parameters) {
         super(parameters);
         group = getGroup(parameters);
+        // TODO always false and calculate somewhere else
         calculateParticipants = getCalculateParticipants(parameters);
         getParticipants();
         createPage();
     }
 
-    private boolean getCalculateParticipants(PageParameters parameters) {
-        if (parameters.get("update").isNull()) {
-            return true;
-        } else {
-            return parameters.get("update").toBoolean();
-        }
-    }
-
-    private void getParticipants() {
-        if (group != null) {
-            this.participants = participantService.getParticipants(new Participant()._setGroup(group));
-            gameService.processGames(participants);
-            Set<Participant> samePlayerRankParticipants;
-
-            if (calculateParticipants) {
-                samePlayerRankParticipants = participantService.calculateParticipants(participants, tournament);
-                if (samePlayerRankParticipants.isEmpty()) {
-                    samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
-                }
-            } else {
-                samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
-            }
-
-            if (!samePlayerRankParticipants.isEmpty()) {
-                createModalWindow(samePlayerRankParticipants);
-            }
-            if (group.getType().equals(GroupsType.FINAL) && calculateParticipants) {
-                finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
-            }
-
-        } else {
-            participants = new ArrayList<Participant>();
-        }
-    }
-
-    private void createModalWindow(final Set<Participant> samePlayerRankParticipants) {
-
-        modalWindow = createDefaultModalWindow();
-
-        modalWindow.setPageCreator(new ModalWindow.PageCreator() {
-
-            private static final long serialVersionUID = 1L;
-
-            public Page createPage() {
-                return new ComparePage(group, modalWindow, samePlayerRankParticipants);
-            }
-        });
-
-    }
-
-    private ModalWindow createDefaultModalWindow() {
-
-        modalWindow = new ModalWindow("modalWindow");
-        modalWindow.setResizable(false);
-        modalWindow.setCssClassName(ModalWindow.CSS_CLASS_BLUE);
-
-        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
-
-            private static final long serialVersionUID = 1L;
-
-            public void onClose(AjaxRequestTarget target) {
-                getPageParameters().set("update", false);
-                setResponsePage(GroupPage.class, getPageParameters());
-            }
-        });
-
-        modalWindow.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
-
-            private static final long serialVersionUID = 1L;
-
-            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
-                return true;
-            }
-        });
-        return modalWindow;
-    }
-
     protected void createPage() {
+        addModalWindow();
+        add(new GroupForm());
+    }
+
+    private void addModalWindow() {
         if (modalWindow == null) {
             add(new ModalWindow("modalWindow"));
         } else {
             add(modalWindow);
         }
-        add(new GroupForm());
-        createGroups();
-    }
-
-    private void createGroups() {
-
-        IDataProvider<Participant> dataProvider = new IDataProvider<Participant>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Iterator<Participant> iterator(int first, int count) {
-                return participants.subList(first, first + count).iterator();
-            }
-
-            @Override
-            public int size() {
-                return participants.size();
-            }
-
-            @Override
-            public IModel<Participant> model(final Participant object) {
-                return new LoadableDetachableModel<Participant>() {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected Participant load() {
-                        return object;
-                    }
-                };
-            }
-
-            @Override
-            public void detach() {
-            }
-        };
-
-        DataView<Participant> dataView = new DataView<Participant>("rows", dataProvider) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(final Item<Participant> listItem) {
-                final Participant participant = listItem.getModelObject();
-                listItem.setModel(new CompoundPropertyModel<Participant>(participant));
-                listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
-                listItem.add(new Label("name", participant.getPlayer().getName().charAt(0) + "."
-                        + participant.getPlayer().getSurname() + " " + participant.getPlayer().getPlayerDiscriminator()));
-                listItem.add(new Label("score", participant.getScore().toString()));
-                listItem.add(new Label("points", ((Integer) participant.getPoints()).toString()));
-                listItem.add(new Label("rank", (participant.getRank() != null) ? participant.getRank().toString() : " "));
-
-                ListView<Participant> scoreList = new ListView<Participant>("gameList", participants) {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void populateItem(ListItem<Participant> gameItem) {
-                        final Participant participant1 = gameItem.getModelObject();
-
-                        if (participant.equals(participant1)) {
-                            gameItem.add(new Label("game", "X"));
-                        } else {
-                            Game game = null;
-                            for (Game pomGame : participant.getGames()) {
-                                if (pomGame.getAwayParticipant().getId().equals(participant1.getId())) {
-                                    game = pomGame;
-                                    break;
-                                }
-                            }
-
-                            String result = (game.getHomeScore() == null) ? "" : game.getHomeScore() + ":"
-                                    + ((game.getAwayScore() == null) ? "" : game.getAwayScore());
-                            gameItem.add(new Label("game", result));
-                        }
-                    }
-                };
-                listItem.add(scoreList);
-                listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public String getObject() {
-                        return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
-                    }
-                }));
-            }
-        };
-
-        Collections.sort(participants, new RankComparator());
-
-        ListView<Participant> nameList = new ListView<Participant>("nameList", participants) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void populateItem(ListItem<Participant> gameItem) {
-                gameItem.add(new Label("playerName", gameItem.getIndex() + 1 + ""));
-
-            }
-        };
-
-        Label name = new Label("name", new ResourceModel("name"));
-        Label rank = new Label("rank", new ResourceModel("rank"));
-        Label points = new Label("points", new ResourceModel("points"));
-        Label score = new Label("score", new ResourceModel("score"));
-
-        if (group == null) {
-            dataView.setVisible(false);
-            nameList.setVisible(false);
-            name.setVisible(false);
-            points.setVisible(false);
-            score.setVisible(false);
-            rank.setVisible(false);
-        }
-        add(name);
-        add(rank);
-        add(points);
-        add(score);
-        add(nameList);
-        add(dataView);
     }
 
     private class GroupForm extends Form<Void> {
@@ -276,73 +81,12 @@ public class GroupPage extends TournamentHomePage {
         public GroupForm() {
             super("groupForm");
 
-            IDataProvider<Groups> dataProvider = new IDataProvider<Groups>() {
+            addGroupTable();
+            addGroupsButton();
+            addGroupOptionsButton();
+        }
 
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Iterator<Groups> iterator(int first, int count) {
-                    return groups.subList(first, first + count).iterator();
-                }
-
-                @Override
-                public int size() {
-                    return groups.size();
-                }
-
-                @Override
-                public IModel<Groups> model(final Groups object) {
-                    return new LoadableDetachableModel<Groups>() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected Groups load() {
-                            return object;
-                        }
-                    };
-                }
-
-                @Override
-                public void detach() {
-                }
-            };
-
-            GridView<Groups> gridView = new GridView<Groups>("rows", dataProvider) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void populateItem(final Item<Groups> listItem) {
-                    final Groups group = listItem.getModelObject();
-
-                    Button button = new Button("group", Model.of(group.getName())) {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void onSubmit() {
-                            getPageParameters().set("gid", group.getId());
-                            getPageParameters().set("update", false);
-                            setResponsePage(GroupPage.class, getPageParameters());
-                        }
-                    };
-
-                    if (GroupPage.this.group != null && GroupPage.this.group.getName().equals(group.getName())) {
-                        button.add(new AttributeModifier("class", "activeTournamentButton"));
-                    }
-
-                    listItem.add(button);
-                }
-
-                @Override
-                protected void populateEmptyItem(Item<Groups> listItem) {
-                }
-            };
-            gridView.setRows(1);
-            gridView.setColumns(Math.max(1, dataProvider.size()));
-            add(gridView);
-
+        private void addGroupOptionsButton() {
             Button schedule = new Button("schedule", new ResourceModel("schedule")) {
 
                 private static final long serialVersionUID = 1L;
@@ -484,9 +228,241 @@ public class GroupPage extends TournamentHomePage {
                 finalGroup.setVisible(false);
             }
         }
+
+        private void addGroupsButton() {
+            IDataProvider<Groups> dataProvider = new IDataProvider<Groups>() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public Iterator<Groups> iterator(int first, int count) {
+                    return groups.subList(first, first + count).iterator();
+                }
+
+                @Override
+                public int size() {
+                    return groups.size();
+                }
+
+                @Override
+                public IModel<Groups> model(final Groups object) {
+                    return new LoadableDetachableModel<Groups>() {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected Groups load() {
+                            return object;
+                        }
+                    };
+                }
+
+                @Override
+                public void detach() {
+                }
+            };
+
+            GridView<Groups> gridView = new GridView<Groups>("rows", dataProvider) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(final Item<Groups> listItem) {
+                    final Groups group = listItem.getModelObject();
+
+                    Button button = new Button("group", Model.of(group.getName())) {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void onSubmit() {
+                            getPageParameters().set("gid", group.getId());
+                            getPageParameters().set("update", false);
+                            setResponsePage(GroupPage.class, getPageParameters());
+                        }
+                    };
+
+                    if (GroupPage.this.group != null && GroupPage.this.group.getName().equals(group.getName())) {
+                        button.add(new AttributeModifier("class", "activeTournamentButton"));
+                    }
+
+                    listItem.add(button);
+                }
+
+                @Override
+                protected void populateEmptyItem(Item<Groups> listItem) {
+                }
+            };
+            gridView.setRows(1);
+            gridView.setColumns(Math.max(1, dataProvider.size()));
+            add(gridView);
+        }
+
+        private void addParticipantsGroupListView() {
+            add(new PropertyListView<Participant>("participants", participants) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(final ListItem<Participant> listItem) {
+                    final Participant participant = listItem.getModelObject();
+                    listItem.setModel(new CompoundPropertyModel<Participant>(participant));
+                    listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
+                    listItem.add(new Label("name", participant.getPlayer().getName().charAt(0) + "."
+                            + participant.getPlayer().getSurname() + " "
+                            + participant.getPlayer().getPlayerDiscriminator()));
+                    listItem.add(new Label("score", participant.getScore().toString()));
+                    listItem.add(new Label("points", ((Integer) participant.getPoints()).toString()));
+                    listItem.add(new Label("rank", (participant.getRank() != null) ? participant.getRank().toString()
+                            : " "));
+
+                    ListView<Participant> scoreList = new ListView<Participant>("gameList", participants) {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected void populateItem(ListItem<Participant> gameItem) {
+                            final Participant participant1 = gameItem.getModelObject();
+
+                            if (participant.equals(participant1)) {
+                                gameItem.add(new Label("game", "X"));
+                            } else {
+                                Game game = null;
+                                for (Game pomGame : participant.getGames()) {
+                                    if (pomGame.getAwayParticipant().getId().equals(participant1.getId())) {
+                                        game = pomGame;
+                                        break;
+                                    }
+                                }
+
+                                String result = (game.getHomeScore() == null) ? "" : game.getHomeScore() + ":"
+                                        + ((game.getAwayScore() == null) ? "" : game.getAwayScore());
+                                // TODO AJAX EDITABLE LABEL
+                                gameItem.add(new Label("game", result));
+                            }
+                        }
+                    };
+                    listItem.add(scoreList);
+                    listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public String getObject() {
+                            return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
+                        }
+                    }));
+                }
+
+            });
+        }
+
+        private void addGroupHeaderPlayerIndex() {
+            add(new ListView<Participant>("nameList", participants) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(ListItem<Participant> gameItem) {
+                    gameItem.add(new Label("playerName", gameItem.getIndex() + 1 + ""));
+
+                }
+            });
+        }
+
+        private void addGroupTable() {
+            addGroupTableHeader();
+            addParticipantsGroupListView();
+        }
+
+        private void addGroupTableHeader() {
+            addGroupHeaderPlayerIndex();
+            add(new Label("name", new ResourceModel("name")));
+            add(new Label("rank", new ResourceModel("rank")));
+            add(new Label("points", new ResourceModel("points")));
+            add(new Label("score", new ResourceModel("score")));
+        }
     }
-    /*
-     * @Override protected IModel<String> newHeadingModel() { return new ResourceModel("group"); }
-     */
+
+    private boolean getCalculateParticipants(PageParameters parameters) {
+        if (parameters.get("update").isNull()) {
+            return true;
+        } else {
+            return parameters.get("update").toBoolean();
+        }
+    }
+
+    private void getParticipants() {
+        if (group != null) {
+            this.participants = participantService.getParticipants(new Participant()._setGroup(group));
+            gameService.processGames(participants);
+            Set<Participant> samePlayerRankParticipants;
+
+            if (calculateParticipants) {
+                samePlayerRankParticipants = participantService.calculateParticipants(participants, tournament);
+                if (samePlayerRankParticipants.isEmpty()) {
+                    samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
+                }
+            } else {
+                samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
+            }
+
+            if (!samePlayerRankParticipants.isEmpty()) {
+                createModalWindow(samePlayerRankParticipants);
+            }
+            if (group.getType().equals(GroupsType.FINAL) && calculateParticipants) {
+                finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
+            }
+        } else {
+            participants = new ArrayList<Participant>();
+        }
+
+    }
+
+    private void createModalWindow(final Set<Participant> samePlayerRankParticipants) {
+
+        modalWindow = createDefaultModalWindow();
+
+        modalWindow.setPageCreator(new ModalWindow.PageCreator() {
+
+            private static final long serialVersionUID = 1L;
+
+            public Page createPage() {
+                return new ComparePage(group, modalWindow, samePlayerRankParticipants);
+            }
+        });
+
+    }
+
+    private ModalWindow createDefaultModalWindow() {
+
+        modalWindow = new ModalWindow("modalWindow");
+        modalWindow.setResizable(false);
+        modalWindow.setCssClassName(ModalWindow.CSS_CLASS_BLUE);
+
+        modalWindow.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+
+            private static final long serialVersionUID = 1L;
+
+            public void onClose(AjaxRequestTarget target) {
+                getPageParameters().set("update", false);
+                setResponsePage(GroupPage.class, getPageParameters());
+            }
+        });
+
+        modalWindow.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+
+            private static final long serialVersionUID = 1L;
+
+            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                return true;
+            }
+        });
+        return modalWindow;
+    }
+
+    @Override
+    protected IModel<String> newHeadingModel() {
+        return Model.of(getString("group"));
+    }
 
 }
