@@ -29,33 +29,39 @@ public class ImportPlayerPage extends WebPage {
     @SpringBean(name = "playerService")
     protected PlayerService playerService;
     final FeedbackPanel feedBackPanel;
+    final ModalWindow modalWindow;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public ImportPlayerPage(final PageReference modalWindowPage, final ModalWindow modalWindow, final User user) {
         this.user = user;
+        this.feedBackPanel = new FeedbackPanel("feedbackPanel");
+        this.modalWindow = modalWindow;
 
+        createPage();
+    }
+
+    private void createPage() {
         modalWindow.setTitle(getString("setUrl"));
         modalWindow.setResizable(false);
 
-        feedBackPanel = new FeedbackPanel("feedbackPanel");
         add(feedBackPanel.setOutputMarkupId(true));
-        add(new ImportForm(modalWindow));
+        add(new ImportForm());
     }
 
     private class ImportForm extends Form<Void> {
 
         private static final long serialVersionUID = 1L;
 
-        private ImportForm(final ModalWindow modalWindow) {
+        private ImportForm() {
             super("importForm");
 
-            final TextField<String> url = new UrlTextField("url", new Model<String>(), new UrlValidator());
-            url.setOutputMarkupId(true);
-            url.setRequired(true);
+            TextField<String> url = addUrlField();
+            addCancelButton();
+            addImportButton(url);
+        }
 
-            add(url);
-
+        private void addCancelButton() {
             add(new AjaxButton("cancel") {
 
                 private static final long serialVersionUID = 1L;
@@ -65,7 +71,18 @@ public class ImportPlayerPage extends WebPage {
                     modalWindow.close(target);
                 }
             });
+        }
 
+        private TextField<String> addUrlField() {
+            final TextField<String> url = new UrlTextField("url", new Model<String>(), new UrlValidator());
+            url.setOutputMarkupId(true);
+            url.setRequired(true);
+
+            add(url);
+            return url;
+        }
+
+        public void addImportButton(final TextField<String> url) {
             add(new AjaxButton("import") {
 
                 private static final long serialVersionUID = 1L;
@@ -80,11 +97,12 @@ public class ImportPlayerPage extends WebPage {
                         }
                         modalWindow.close(target);
                     } catch (Exception e) {
-                        logger.error("Chyba pri importovani hracov: ", e);
+                        logger.error("Error during importing player: ", e);
                         error(getString("importError"));
                     }
                 }
             });
         }
     }
+
 }
