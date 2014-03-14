@@ -1,7 +1,6 @@
 package org.toursys.web;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -15,12 +14,9 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -60,44 +56,39 @@ public class ComparePage extends WebPage {
         public PlayerForm(final List<Participant> players, final ModalWindow window) {
             super("playerEditForm");
 
-            IDataProvider<Participant> dataProvider = new IDataProvider<Participant>() {
+            addParticipantsListView(players);
+            addCloseButton(window);
+            addResetButton(window);
+        }
+
+        private void addResetButton(final ModalWindow window) {
+            add(new AjaxButton("reset", new ResourceModel("reset")) {
+                private static final long serialVersionUID = 1L;
+
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    groupService.resetEqualRank(group);
+                    window.close(target);
+                }
+            });
+        }
+
+        private void addCloseButton(final ModalWindow window) {
+            add(new AjaxButton("close", new ResourceModel("close")) {
+                private static final long serialVersionUID = 1L;
+
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    window.close(target);
+                }
+            });
+        }
+
+        private void addParticipantsListView(final List<Participant> players) {
+            add(new PropertyListView<Participant>("participants", players) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Iterator<Participant> iterator(int first, int count) {
-                    return players.subList(first, first + count).iterator();
-                }
-
-                @Override
-                public int size() {
-                    return players.size();
-                }
-
-                @Override
-                public IModel<Participant> model(final Participant object) {
-                    return new LoadableDetachableModel<Participant>() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected Participant load() {
-                            return object;
-                        }
-                    };
-                }
-
-                @Override
-                public void detach() {
-                }
-            };
-
-            final DataView<Participant> dataView = new DataView<Participant>("rows", dataProvider) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void populateItem(final Item<Participant> listItem) {
+                protected void populateItem(final ListItem<Participant> listItem) {
                     final Participant participant = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Participant>(participant));
                     String playerName = "";
@@ -121,24 +112,7 @@ public class ComparePage extends WebPage {
                     }).setVisible(participant.getPlayer() != null));
 
                 }
-            };
-            add(dataView);
 
-            add(new AjaxButton("close", new ResourceModel("close")) {
-                private static final long serialVersionUID = 1L;
-
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    window.close(target);
-                }
-            });
-
-            add(new AjaxButton("reset", new ResourceModel("reset")) {
-                private static final long serialVersionUID = 1L;
-
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    groupService.resetEqualRank(group);
-                    window.close(target);
-                }
             });
         }
     }
