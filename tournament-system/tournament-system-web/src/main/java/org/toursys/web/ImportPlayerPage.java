@@ -2,7 +2,6 @@ package org.toursys.web;
 
 import java.util.List;
 
-import org.apache.wicket.PageReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -33,7 +32,7 @@ public class ImportPlayerPage extends WebPage {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ImportPlayerPage(final PageReference modalWindowPage, final ModalWindow modalWindow, final User user) {
+    public ImportPlayerPage(final ModalWindow modalWindow, final User user) {
         this.user = user;
         this.feedBackPanel = new FeedbackPanel("feedbackPanel");
         this.modalWindow = modalWindow;

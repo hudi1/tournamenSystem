@@ -29,6 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
 
@@ -40,6 +41,11 @@ public class PlayerPage extends TournamentHomePage {
     private User user;
 
     public PlayerPage() {
+        this(new PageParameters());
+    }
+
+    public PlayerPage(PageParameters pageParameters) {
+        super(pageParameters);
         this.user = getTournamentSession().getUser();
         createPage();
     }
@@ -117,11 +123,9 @@ public class PlayerPage extends TournamentHomePage {
                         private static final long serialVersionUID = 1L;
 
                         public void onClick(AjaxRequestTarget target) {
-                            // PlayerForm.this.getModelObject().getPlayers().remove(listItem.getModelObject());
-                            // target.add(PlayerForm.this);
+                            PlayerForm.this.getModelObject().getPlayers().remove(listItem.getModelObject());
                             playerService.deletePlayer(listItem.getModelObject());
-                            // TODO do this with ajax
-                            setResponsePage(new PlayerPage());
+                            target.add(PlayerForm.this);
                         }
 
                         @Override
@@ -225,7 +229,7 @@ public class PlayerPage extends TournamentHomePage {
 
                 @Override
                 public void onSubmit() {
-                    setResponsePage(new PlayerEditPage(new Player()._setUser(user)));
+                    setResponsePage(PlayerEditPage.class, getPageParameters());
                 }
             });
         }
@@ -240,7 +244,7 @@ public class PlayerPage extends TournamentHomePage {
                 private static final long serialVersionUID = 1L;
 
                 public Page createPage() {
-                    return new ImportPlayerPage(PlayerPage.this.getPageReference(), modal, user);
+                    return new ImportPlayerPage(modal, user);
                 }
             });
 
