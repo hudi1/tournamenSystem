@@ -62,13 +62,6 @@ public class ParticipantService extends AbstractService {
 
     // Advanced operations
 
-    public static void main(String[] args) {
-        Tournament t1 = new Tournament()._setId(30);
-        Tournament t2 = new Tournament()._setId(30);
-
-        System.out.println(t1.equals(t2));
-    }
-
     @Transactional
     public int deletePlayerParticipant(Participant participant, Tournament tournament) {
         logger.debug("Delete player participant: " + participant + " " + tournament);
@@ -296,11 +289,6 @@ public class ParticipantService extends AbstractService {
         return playerByGroup;
     }
 
-    @Required
-    public void setGroupService(GroupService groupService) {
-        this.groupService = groupService;
-    }
-
     public Set<Participant> getSameRankParticipants(List<Participant> participants) {
         Set<Participant> participantsSet = new HashSet<Participant>();
 
@@ -310,6 +298,11 @@ public class ParticipantService extends AbstractService {
             }
         }
         return participantsSet;
+    }
+
+    @Required
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
 }

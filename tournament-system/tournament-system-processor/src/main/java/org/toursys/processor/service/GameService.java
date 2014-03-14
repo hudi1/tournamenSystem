@@ -75,12 +75,11 @@ public class GameService extends AbstractService {
 
             // TODO zamysliet sa ci je v poriadku ked mazeme vysledky, pridat
             // aspon nejake varovanie
-            if (!participants.get(0).getGames().isEmpty()) {
-                for (Participant participant : participants) {
-                    for (Game game : participant.getGames()) {
-                        deleteGame(game);
-                    }
+            for (Participant participant : participants) {
+                for (Game game : participant.getGames()) {
+                    deleteGame(game);
                 }
+                participant.getGames().clear();
             }
 
             for (Participant participant1 : participants) {

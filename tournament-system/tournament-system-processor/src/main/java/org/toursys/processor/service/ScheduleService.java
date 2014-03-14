@@ -7,6 +7,7 @@ import java.util.List;
 import org.toursys.processor.schedule.AdvancedRoundRobinSchedule;
 import org.toursys.processor.schedule.BasicLessHockeyRoundRobinSchedule;
 import org.toursys.processor.schedule.BasicRoundRobinSchedule;
+import org.toursys.processor.schedule.EmptyRoundRobinSchedule;
 import org.toursys.processor.schedule.RoundRobinSchedule;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
@@ -25,7 +26,9 @@ public class ScheduleService extends AbstractService {
             roundRobinSchedule = new AdvancedRoundRobinSchedule(group, playerResultsByGroup);
         } else {
             logger.trace("Basic schedule");
-            if (participants.size() / 2 <= group.getNumberOfHockey()) {
+            if (participants.size() < 2) {
+                roundRobinSchedule = new EmptyRoundRobinSchedule();
+            } else if (participants.size() / 2 <= group.getNumberOfHockey()) {
                 roundRobinSchedule = new BasicRoundRobinSchedule(group, participants);
             } else {
                 roundRobinSchedule = new BasicLessHockeyRoundRobinSchedule(group, participants);
