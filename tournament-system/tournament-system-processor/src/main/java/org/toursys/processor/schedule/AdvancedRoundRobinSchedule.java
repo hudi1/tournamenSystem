@@ -20,6 +20,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
     private LinkedList<List<Participant>> playerPerBasicGroup;
     private int playerCount;
 
+    // TODO optimalizovat pre menej hokej
     public AdvancedRoundRobinSchedule(final Groups finalGroup, LinkedList<List<Participant>> playerPerBasicGroup) {
         super(finalGroup);
         this.playerPerBasicGroup = playerPerBasicGroup;
@@ -44,7 +45,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
             }
         } else {
             // TODO neparny pocet skupin
-            // createOddGroupRound();
+            createOddGroupRound();
         }
     }
 
@@ -160,10 +161,10 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
         }
 
         public void addNextGames() {
-            for (int i = 0; i < participants2.size(); i++) {
+            for (int i = 0; i < participants1.size(); i++) {
                 addGameToSchedule(participants1.get(i), participants2.get(i));
             }
-            Collections.rotate(participants2, 1);
+            Collections.rotate(participants1, 1);
         }
 
     }
