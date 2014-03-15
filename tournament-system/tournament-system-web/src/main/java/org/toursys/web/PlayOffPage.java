@@ -1,11 +1,9 @@
 package org.toursys.web;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -17,13 +15,11 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -32,6 +28,8 @@ import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
+import org.toursys.repository.model.PlayOffGameWinner;
+import org.toursys.repository.model.Tournament;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayOffPage extends TournamentHomePage {
@@ -43,80 +41,54 @@ public class PlayOffPage extends TournamentHomePage {
     }
 
     public PlayOffPage(PageParameters parameters) {
-        // checkPageParameters(parameters);
+        super(parameters);
         createPage();
     }
 
-    private void checkPageParameters(PageParameters parameters) {
-        if (parameters.get("tournamentid").isNull() || parameters.get("seasonid").isNull()
-                || parameters.get("groupid").isNull()) {
-            throw new RestartResponseAtInterceptPageException(new SeasonPage());
-        }
-    }
-
     protected void createPage() {
-        add(new PlayOffForm());
+        add(new PlayOffForm(Model.of(initPlayOffTournament())));
     }
 
-    private class PlayOffForm extends Form<Void> {
+    private Tournament initPlayOffTournament() {
+        Tournament tournament = new Tournament();
+        tournament.getGroups().addAll(groupService.getFinalGroups(new Groups()._setTournament(this.tournament)));
+        for (Groups group : tournament.getGroups()) {
+            group.getPlayOffGames().addAll(playOffGameService.getPlayOffGames(new PlayOffGame()._setGroup(group)));
+        }
+        return tournament;
+    }
+
+    private class PlayOffForm extends Form<Tournament> {
 
         private static final long serialVersionUID = 1L;
-        private List<Groups> finalGroups;
 
-        public PlayOffForm() {
-            super("playOffForm");
-            finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
+        public PlayOffForm(IModel<Tournament> model) {
+            super("playOffForm", new CompoundPropertyModel<Tournament>(model));
+            addFinalGroupsGameListView();
+            addSubmitButton();
+            addPdfPlayOffButton();
+        }
 
-            final IDataProvider<Groups> groupsProvider = new IDataProvider<Groups>() {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Iterator<Groups> iterator(int first, int count) {
-                    return finalGroups.subList(first, first + count).iterator();
-                }
-
-                @Override
-                public int size() {
-                    return finalGroups.size();
-                }
-
-                @Override
-                public IModel<Groups> model(final Groups object) {
-                    return new LoadableDetachableModel<Groups>() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected Groups load() {
-                            return object;
-                        }
-                    };
-                }
-
-                @Override
-                public void detach() {
-                }
-            };
-
-            final DataView<Groups> groupsDataView = new DataView<Groups>("group", groupsProvider) {
+        private void addFinalGroupsGameListView() {
+            add(new PropertyListView<Groups>("groups") {
 
                 private static final long serialVersionUID = 1L;
-                private List<PlayOffGame> playOffGames;
 
                 @Override
-                protected void populateItem(final Item<Groups> listItem) {
-                    final Groups group = listItem.getModelObject();
-                    playOffGames = playOffGameService.getPlayOffGames(new PlayOffGame()._setGroup(group));
+                protected void populateItem(final ListItem<Groups> listItem) {
+                    addPlayOffGames(listItem);
+                }
 
-                    final ListView<PlayOffGame> dataView = new ListView<PlayOffGame>("rows", playOffGames) {
+                private void addPlayOffGames(final ListItem<Groups> groupListItem) {
+                    groupListItem.add(new Label("name"));
+                    groupListItem.add(new ListView<PlayOffGame>("playOffGames") {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
                         protected void populateItem(final ListItem<PlayOffGame> listItem) {
                             final PlayOffGame playOffGame = listItem.getModelObject();
-                            listItem.setModel(new CompoundPropertyModel<PlayOffGame>(playOffGame));
+
                             Participant participant = playOffGame.getHomeParticipant();
                             Participant opponent = playOffGame.getAwayParticipant();
 
@@ -149,12 +121,26 @@ public class PlayOffPage extends TournamentHomePage {
                             }
 
                             listItem.add(new Label("player", playerName + " " + playerSurname + " "
-                                    + playerDiscriminator));
-                            listItem.add(new Label("opponent", opponentName + " " + opponentSurname + " "
-                                    + opponentDiscriminator));
+                                    + playerDiscriminator).add(new AttributeModifier("style", "font-weight:bold;") {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public boolean isEnabled(Component component) {
+                                    return PlayOffGameWinner.HOME.equals(playOffGame.getWinner());
+                                }
+                            }));
+                            listItem.add(new Label("opponent", " " + opponentName + " " + opponentSurname + " "
+                                    + opponentDiscriminator).add(new AttributeModifier("style", "font-weight:bold;") {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public boolean isEnabled(Component component) {
+                                    return PlayOffGameWinner.AWAY.equals(playOffGame.getWinner());
+                                }
+                            }));
 
                             int playerCount = getViewSize() + 1;
-                            if (group.getPlayThirdPlace() && getViewSize() > 1) {
+                            if (groupListItem.getModelObject().getPlayThirdPlace() && getViewSize() > 1) {
                                 playerCount--;
                             }
 
@@ -173,6 +159,7 @@ public class PlayOffPage extends TournamentHomePage {
                                     } catch (NumberFormatException e) {
                                         error(getString("bad.format.exception"));
                                         target.add(feedbackPanel);
+                                        return;
                                     }
                                 }
                             }));
@@ -185,40 +172,14 @@ public class PlayOffPage extends TournamentHomePage {
                                     return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
                                 }
                             }));
-
                         }
-                    };
-
-                    listItem.add(new Label("name", group.getName()));
-                    listItem.add(dataView);
-
+                    });
                 }
-            };
-
-            add(groupsDataView);
-
-            add(new Button("back", new ResourceModel("back")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    setResponsePage(GroupPage.class, getPageParameters());
-                };
-            }.setDefaultFormProcessing(false));
-
-            add(new Button("save", new ResourceModel("save")) {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    playOffGameService.updateNextRoundPlayOffGames(tournament);
-                    setResponsePage(PlayOffPage.class, getPageParameters());
-                };
             });
+        }
 
-            DownloadLink pdfPlayOff = new DownloadLink("pdfPlayOff", new AbstractReadOnlyModel<File>() {
+        private void addPdfPlayOffButton() {
+            add(new DownloadLink("pdfPlayOff", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -232,20 +193,19 @@ public class PlayOffPage extends TournamentHomePage {
                     }
                     return tempFile;
                 }
-            });
-            pdfPlayOff.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+            }).setCacheDuration(Duration.NONE).setDeleteAfterDownload(true));
+        }
 
-            add(pdfPlayOff);
-
-            add(new Button("finalStandings", new ResourceModel("finalStandings")) {
+        private void addSubmitButton() {
+            add(new Button("save", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onSubmit() {
-                    // tournamentService.createFinalStandings(tournament);
-                    setResponsePage(FinalRankingPage.class, getPageParameters());
-                }
+                    playOffGameService.updateNextRoundPlayOffGames(tournament);
+                    setResponsePage(PlayOffPage.class, getPageParameters());
+                };
             });
         }
     }

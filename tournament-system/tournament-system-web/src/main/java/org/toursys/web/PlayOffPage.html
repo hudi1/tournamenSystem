@@ -7,7 +7,7 @@
 </wicket:head>
 <wicket:extend>
 	<form wicket:id="playOffForm">
-		<div wicket:id="group">
+		<div wicket:id="groups">
 			<table class="dataview">
 				<tr>
 					<th><span wicket:id="name">name</span></th>
@@ -23,24 +23,21 @@
             Result
         </wicket:message></th>
 				</tr>
-				<tr wicket:id="rows">
-					<td><span wicket:id="round" style="font-size: 80%"></span></td>
-					<td><span class="" wicket:id="player"></span> : <span class=""
+				<tr wicket:id="playOffGames">
+					<td style="font-weight: bold;"><span wicket:id="round"></span></td>
+					<td style="width: 300px;"><span wicket:id="player"></span>:<span
 						wicket:id="opponent"></span></td>
 					<td><input wicket:id="results" style="width: 300px;"></input></td>
 				</tr>
 			</table>
 		</div>
 		<div>
-			<input class="tournamentButton" type="submit" wicket:id="back"
-				title="back" value="Back" /><input class="tournamentButton"
-				type="submit" wicket:id="save" title="save" value="Save" /> <span>
-				<a class="tournamentLink" type="submit" wicket:id="pdfPlayOff"><wicket:message
+			<input class="tournamentButton" type="submit" wicket:id="save"
+				title="save" value="Save" /> <span> <a
+				class="tournamentLink" type="submit" wicket:id="pdfPlayOff"><wicket:message
 						key="printPlayOff">
             print play off
         </wicket:message> </a>
-			</span> <span> <input class="tournamentButton" type="submit"
-				wicket:id="finalStandings" value="finalStandings" />
 			</span>
 		</div>
 	</form>

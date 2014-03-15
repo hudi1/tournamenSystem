@@ -93,7 +93,7 @@ public class SchedulePage extends TournamentHomePage {
 
                 @Override
                 public void onSubmit() {
-                    getPageParameters().set("update", true);
+                    getPageParameters().remove("update");
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
@@ -111,19 +111,17 @@ public class SchedulePage extends TournamentHomePage {
                     Participant opponent = game.getAwayParticipant();
                     String playerName = "- ";
                     String opponentName = "-";
-                    boolean winnerPlayer = false;
-                    boolean winnerOpponent = false;
+                    boolean winner = false;
 
                     if (game.getAwayScore() != null && game.getHomeScore() != null) {
                         if (game.getAwayScore() < game.getHomeScore()) {
-                            winnerPlayer = true;
+                            winner = true;
                         } else if (game.getAwayScore() > game.getHomeScore()) {
-                            winnerOpponent = true;
+                            winner = true;
                         }
                     }
 
-                    final boolean winner1 = winnerPlayer;
-                    final boolean winner2 = winnerOpponent;
+                    final boolean gameWinner = winner;
 
                     if (participant != null && participant.getPlayer() != null) {
                         playerName = participant.getPlayer().getName() + " " + participant.getPlayer().getSurname()
@@ -141,7 +139,7 @@ public class SchedulePage extends TournamentHomePage {
 
                                 @Override
                                 public boolean isEnabled(Component component) {
-                                    return winner1;
+                                    return gameWinner;
                                 }
                             }));
 
@@ -151,7 +149,7 @@ public class SchedulePage extends TournamentHomePage {
 
                         @Override
                         public boolean isEnabled(Component component) {
-                            return winner2;
+                            return gameWinner;
                         }
                     }));
 
