@@ -14,6 +14,8 @@ public class TournamentUtil {
 
         int differ = roundsCount - actualRound;
         switch (differ) {
+        case -1:
+            return RoundName._3rd.name();
         case 0:
             return RoundName.FINAL.name();
         case 1:
@@ -38,11 +40,12 @@ public class TournamentUtil {
             return 0;
         }
 
+        int rounds = binlog(playerCount);
+
         if (playerCount == position) {
-            return getRound(playerCount, position - 1);
+            return rounds + 1;
         }
 
-        int rounds = binlog(playerCount);
         int gamesCount = 0;
         for (int i = 1; i <= rounds; i++) {
             gamesCount += playerCount / Math.pow(2, i);

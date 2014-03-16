@@ -139,13 +139,8 @@ public class PlayOffPage extends TournamentHomePage {
                                 }
                             }));
 
-                            int playerCount = getViewSize() + 1;
-                            if (groupListItem.getModelObject().getPlayThirdPlace() && getViewSize() > 1) {
-                                playerCount--;
-                            }
-
-                            listItem.add(new Label("round", new ResourceModel(TournamentUtil.getRoundName(playerCount,
-                                    listItem.getIndex() + 1))));
+                            listItem.add(new Label("round", new ResourceModel(TournamentUtil.getRoundName(
+                                    getViewSize(), listItem.getIndex() + 1))));
 
                             listItem.add(new TextField<String>("results", new PropertyModel<String>(playOffGame,
                                     "results")).add(new AjaxFormComponentUpdatingBehavior("onchange") {
