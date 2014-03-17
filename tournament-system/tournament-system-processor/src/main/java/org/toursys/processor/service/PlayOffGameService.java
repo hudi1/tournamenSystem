@@ -16,7 +16,6 @@ import org.toursys.repository.model.Tournament;
 
 public class PlayOffGameService extends AbstractService {
 
-    private FinalStandingService finalStandingService;
     private ParticipantService participantService;
     private GroupService groupService;
 
@@ -126,6 +125,7 @@ public class PlayOffGameService extends AbstractService {
         logger.debug("End: Process playerOff games: " + time + " ms");
     }
 
+    @Transactional
     public void updateNextRoundPlayOffGames(Tournament tournament) {
         logger.debug("Update next round playOff games: " + tournament);
 
@@ -254,11 +254,6 @@ public class PlayOffGameService extends AbstractService {
 
     public int nextGame(int playerCount, int currentGame) {
         return (playerCount / 2) + (int) Math.ceil((double) currentGame / 2);
-    }
-
-    @Required
-    public void setFinalStandingService(FinalStandingService finalStandingService) {
-        this.finalStandingService = finalStandingService;
     }
 
     @Required

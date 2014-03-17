@@ -1,8 +1,11 @@
 package org.toursys.processor.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +15,8 @@ import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.PlayOffGame;
+import org.toursys.repository.model.PlayOffGameWinner;
 import org.toursys.repository.model.Tournament;
 
 public class FinalStandingService extends AbstractService {
@@ -71,8 +76,7 @@ public class FinalStandingService extends AbstractService {
         }
     }
 
-    @Transactional
-    public void updatePromotingFinalStandings(List<Participant> participants, int round, int playerPlayOffCount,
+    private void updateRoundFinalStandings(List<Participant> participants, int round, int playerPlayOffCount,
             Tournament tournament, int playerGroupCountSuffix) {
         logger.debug("Update promiting final standings" + Arrays.toString(participants.toArray()) + " " + round + " "
                 + playerPlayOffCount + " " + tournament + " " + playerGroupCountSuffix);
@@ -83,6 +87,7 @@ public class FinalStandingService extends AbstractService {
         int maxRound = TournamentUtil.binlog(playerPlayOffCount);
         int actualRank = (int) Math.pow(2, maxRound - (round - 2)) + playerGroupCountSuffix;
         for (Participant participant : participants) {
+            System.out.println(participant.getPlayer());
             FinalStanding finalStanding = getFinalStanding(new FinalStanding()._setFinalRank(actualRank)
                     ._setTournament(tournament));
             if ((finalStanding != null && participant != null)
@@ -141,5 +146,75 @@ public class FinalStandingService extends AbstractService {
     @Required
     public void setParticipantService(ParticipantService participantService) {
         this.participantService = participantService;
+    }
+
+    @Transactional
+    public void updatePromotingFinalStandings(Tournament tournament) {
+        logger.debug("Update final standings: " + tournament);
+
+        int startGroupSufix = 0;
+
+        List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
+        for (Groups group : finalGroups) {
+            List<PlayOffGame> playOffGames = tournamentAggregationDao.getListPlayOffGames(new PlayOffGame()
+                    ._setGroup(group)._setInit(PlayOffGame.Association.awayParticipant)
+                    ._setInit(PlayOffGame.Association.homeParticipant));
+
+            Map<Integer, List<Participant>> losersPerRound = new HashMap<Integer, List<Participant>>();
+            for (int i = 0; i < playOffGames.size() - 4; i++) {
+                Integer round = TournamentUtil.getRound(playOffGames.size(), playOffGames.get(i).getPosition());
+                Participant participant = null;
+                if (PlayOffGameWinner.HOME.equals(playOffGames.get(i).getWinner())) {
+                    participant = playOffGames.get(i).getAwayParticipant();
+                } else if (PlayOffGameWinner.AWAY.equals(playOffGames.get(i).getWinner())) {
+                    participant = playOffGames.get(i).getHomeParticipant();
+                }
+
+                if (participant != null) {
+                    if (!losersPerRound.containsKey(round)) {
+                        losersPerRound.put(round, new ArrayList<Participant>());
+                    }
+                    losersPerRound.get(round).add(participant);
+                }
+            }
+
+            int maxRound = TournamentUtil.binlog(playOffGames.size());
+            for (int i = 0; i < maxRound; i++) {
+                if (losersPerRound.get(i) != null) {
+                    updateRoundFinalStandings(losersPerRound.get(i), i + 1, playOffGames.size(), tournament,
+                            startGroupSufix);
+                }
+            }
+
+            int position = 4 + startGroupSufix;
+            for (int i = playOffGames.size() - 2; i < playOffGames.size(); i++) {
+                FinalStanding firstFinalStanding = getFinalStanding(new FinalStanding()._setFinalRank(position - 1)
+                        ._setTournament(tournament));
+                FinalStanding secondFinalStanding = getFinalStanding(new FinalStanding()._setFinalRank(position)
+                        ._setTournament(tournament));
+
+                if (playOffGames.get(i).getWinner() != null) {
+                    if (playOffGames.get(i).getWinner().equals(PlayOffGameWinner.HOME)) {
+                        firstFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
+                        secondFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
+                    } else if (playOffGames.get(i).getWinner().equals(PlayOffGameWinner.AWAY)) {
+                        firstFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
+                        secondFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
+                    }
+                } else {
+                    firstFinalStanding.setPlayer(null);
+                    secondFinalStanding.setPlayer(null);
+                }
+                updateFinalStanding(firstFinalStanding);
+                updateFinalStanding(secondFinalStanding);
+                position -= 2;
+            }
+
+            if (group.getName().equals("A")) {
+                startGroupSufix += tournament.getPlayOffA();
+            } else {
+                startGroupSufix += tournament.getPlayOffLower();
+            }
+        }
     }
 }

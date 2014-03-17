@@ -35,7 +35,6 @@ public class TournamentUtil {
      * position zacinat od 1
      */
     public static int getRound(int playerCount, int position) {
-        // pri vypisovani kola treba rozlisit prve
         if (position == 0) {
             return 0;
         }

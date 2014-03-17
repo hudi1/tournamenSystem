@@ -32,7 +32,6 @@
         <property name="participantService" ref="participantService"/>
     </bean>
     <bean id="playOffGameService" class="org.toursys.processor.service.PlayOffGameService" parent="abstractService">
-        <property name="finalStandingService" ref="finalStandingService" />
         <property name="groupService" ref="groupService" />
         <property name="participantService" ref="participantService" />
     </bean>

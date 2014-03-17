@@ -199,6 +199,7 @@ public class PlayOffPage extends TournamentHomePage {
                 @Override
                 public void onSubmit() {
                     playOffGameService.updateNextRoundPlayOffGames(tournament);
+                    finalStandingService.updatePromotingFinalStandings(tournament);
                     setResponsePage(PlayOffPage.class, getPageParameters());
                 };
             });
