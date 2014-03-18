@@ -18,7 +18,8 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.markup.html.list.PageableListView;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
@@ -98,12 +99,15 @@ public class TournamentPage extends BasePage {
         }
 
         private void addTournamentListView() {
-            add(new PropertyListView<Tournament>("tournaments") {
+            PageableListView<Tournament> listView;
+            add(listView = new PageableListView<Tournament>("tournaments", getModelObject().getTournaments(),
+                    ITEM_PER_PAGE) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void populateItem(final ListItem<Tournament> listItem) {
+                    listItem.setModel(new CompoundPropertyModel<Tournament>(listItem.getModel()));
                     listItem.add(new AjaxEditableLabel<String>("name") {
 
                         private static final long serialVersionUID = 1L;
@@ -176,6 +180,8 @@ public class TournamentPage extends BasePage {
                 }
 
             });
+            PagingNavigator navigator = new PagingNavigator("navigator", listView);
+            add(navigator);
         }
 
         private void addSeasonDropDownChoice(final IModel<Season> model) {

@@ -87,6 +87,7 @@ public class PlayOffPage extends TournamentHomePage {
 
                         @Override
                         protected void populateItem(final ListItem<PlayOffGame> listItem) {
+
                             final PlayOffGame playOffGame = listItem.getModelObject();
 
                             Participant participant = playOffGame.getHomeParticipant();

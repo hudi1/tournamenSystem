@@ -77,6 +77,8 @@ public abstract class BasePage extends WebPage {
 
     protected FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackPanel");
 
+    protected static final int ITEM_PER_PAGE = 10;
+
     public BasePage() {
         this(null);
     }

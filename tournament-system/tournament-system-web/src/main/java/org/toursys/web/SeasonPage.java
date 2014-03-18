@@ -12,7 +12,8 @@ import org.apache.wicket.authroles.authorization.strategies.role.annotations.Aut
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.markup.html.list.PageableListView;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
@@ -47,12 +48,14 @@ public class SeasonPage extends BasePage {
         }
 
         private void addSeasonListView() {
-            add(new PropertyListView<Season>("seasons") {
+            PageableListView<Season> listView;
+            add(listView = new PageableListView<Season>("seasons", getModelObject().getSeasons(), ITEM_PER_PAGE) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void populateItem(final ListItem<Season> listItem) {
+                    listItem.setModel(new CompoundPropertyModel<Season>(listItem.getModel()));
                     listItem.add(new AjaxEditableLabel<String>("name") {
 
                         private static final long serialVersionUID = 1L;
@@ -107,6 +110,8 @@ public class SeasonPage extends BasePage {
                 }
 
             });
+            PagingNavigator navigator = new PagingNavigator("navigator", listView);
+            add(navigator);
         }
 
         private void addSeasonAddButton() {
