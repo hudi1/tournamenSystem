@@ -168,37 +168,10 @@ public class SchedulePage extends TournamentHomePage {
                         }
                     }));
                 }
-            });
+            }.setReuseItems(true));
         }
 
     }
-
-    @Override
-    protected void onBeforeRender() {
-        logger.debug("Before render start");
-        long time = System.currentTimeMillis();
-        super.onBeforeRender();
-        time = System.currentTimeMillis() - time;
-        logger.debug("Before render: " + time + " ms");
-    };
-
-    @Override
-    protected void onRender() {
-        logger.debug("Render start");
-        long time = System.currentTimeMillis();
-        super.onRender();
-        time = System.currentTimeMillis() - time;
-        logger.debug("Render: " + time + " ms");
-    };
-
-    @Override
-    protected void onAfterRender() {
-        logger.debug("After render start");
-        long time = System.currentTimeMillis();
-        super.onAfterRender();
-        time = System.currentTimeMillis() - time;
-        logger.debug("After render: " + time + " ms");
-    };
 
     @Override
     protected IModel<String> newHeadingModel() {

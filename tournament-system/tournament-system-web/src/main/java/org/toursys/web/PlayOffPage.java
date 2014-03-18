@@ -170,7 +170,7 @@ public class PlayOffPage extends TournamentHomePage {
                         }
                     });
                 }
-            });
+            }.setReuseItems(true));
         }
 
         private void addPdfPlayOffButton() {

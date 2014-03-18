@@ -33,7 +33,6 @@ import org.toursys.processor.service.SeasonService;
 import org.toursys.processor.service.TournamentService;
 import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
@@ -271,17 +270,14 @@ public abstract class BasePage extends WebPage {
         return ((TournamentAuthenticatedWebSession) getSession());
     }
 
-    protected Season getSeason(User user) {
-        if (user.getSeasons().isEmpty()) {
-            return new Season();
-        } else {
-            Integer id = user.getSeasons().get(0).getId();
-            Season season = new Season();
-            season.setId(id);
-            season.setInit(Season.Association.tournaments);
-            return seasonService.getSeason(season);
-        }
-    }
+    @Override
+    protected void onRender() {
+        logger.trace("Render start: " + getClass());
+        long time = System.currentTimeMillis();
+        super.onRender();
+        time = System.currentTimeMillis() - time;
+        logger.trace("Render end: " + time + " ms");
+    };
 
     // automaticke prihlasovanie pri zapametani
     @Override
