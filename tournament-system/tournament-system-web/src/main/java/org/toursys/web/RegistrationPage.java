@@ -27,10 +27,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.toursys.processor.components.ModelAutoCompleteTextField;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
+import org.toursys.web.components.ModelAutoCompleteTextField;
 
 @AuthorizeInstantiation(Roles.USER)
 public class RegistrationPage extends TournamentHomePage {

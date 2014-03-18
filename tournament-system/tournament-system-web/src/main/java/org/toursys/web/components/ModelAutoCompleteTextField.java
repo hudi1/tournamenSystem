@@ -1,4 +1,4 @@
-package org.toursys.processor.components;
+package org.toursys.web.components;
 
 import java.util.ArrayList;
 import java.util.Iterator;

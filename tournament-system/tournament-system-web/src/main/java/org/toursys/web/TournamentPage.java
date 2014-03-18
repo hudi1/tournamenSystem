@@ -10,6 +10,7 @@ import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -18,8 +19,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.PageableListView;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
@@ -27,6 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
+import org.toursys.web.components.PropertyPageableListView;
 
 @AuthorizeInstantiation(Roles.USER)
 public class TournamentPage extends BasePage {
@@ -99,15 +99,13 @@ public class TournamentPage extends BasePage {
         }
 
         private void addTournamentListView() {
-            PageableListView<Tournament> listView;
-            add(listView = new PageableListView<Tournament>("tournaments", getModelObject().getTournaments(),
-                    ITEM_PER_PAGE) {
+            PropertyPageableListView<Tournament> listView;
+            add(listView = new PropertyPageableListView<Tournament>("tournaments", ITEM_PER_PAGE) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void populateItem(final ListItem<Tournament> listItem) {
-                    listItem.setModel(new CompoundPropertyModel<Tournament>(listItem.getModel()));
                     listItem.add(new AjaxEditableLabel<String>("name") {
 
                         private static final long serialVersionUID = 1L;
@@ -123,9 +121,10 @@ public class TournamentPage extends BasePage {
                         private static final long serialVersionUID = 1L;
 
                         public void onClick(AjaxRequestTarget target) {
-                            TournamentForm.this.getModelObject().getTournaments().remove(listItem.getModelObject());
+                            Tournament tournament = listItem.getModelObject();
+                            TournamentForm.this.getModelObject().getTournaments().remove(tournament);
+                            tournamentService.deleteTournament(tournament);
                             target.add(TournamentForm.this);
-                            tournamentService.deleteTournament((listItem.getModelObject()));
                         }
 
                         @Override
@@ -180,7 +179,7 @@ public class TournamentPage extends BasePage {
                 }
 
             });
-            PagingNavigator navigator = new PagingNavigator("navigator", listView);
+            AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
             add(navigator);
         }
 

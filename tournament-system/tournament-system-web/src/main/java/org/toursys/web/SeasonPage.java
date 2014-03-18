@@ -7,13 +7,12 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.PageableListView;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
@@ -21,6 +20,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.User;
+import org.toursys.web.components.PropertyPageableListView;
 
 @AuthorizeInstantiation(Roles.USER)
 public class SeasonPage extends BasePage {
@@ -48,14 +48,13 @@ public class SeasonPage extends BasePage {
         }
 
         private void addSeasonListView() {
-            PageableListView<Season> listView;
-            add(listView = new PageableListView<Season>("seasons", getModelObject().getSeasons(), ITEM_PER_PAGE) {
+            PropertyPageableListView<Season> listView;
+            add(listView = new PropertyPageableListView<Season>("seasons", ITEM_PER_PAGE) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void populateItem(final ListItem<Season> listItem) {
-                    listItem.setModel(new CompoundPropertyModel<Season>(listItem.getModel()));
                     listItem.add(new AjaxEditableLabel<String>("name") {
 
                         private static final long serialVersionUID = 1L;
@@ -71,9 +70,10 @@ public class SeasonPage extends BasePage {
                         private static final long serialVersionUID = 1L;
 
                         public void onClick(AjaxRequestTarget target) {
-                            SeasonForm.this.getModelObject().getSeasons().remove(listItem.getModelObject());
+                            Season season = listItem.getModelObject();
+                            SeasonForm.this.getModelObject().getSeasons().remove(season);
+                            seasonService.deleteSeason(season);
                             target.add(SeasonForm.this);
-                            seasonService.deleteSeason(listItem.getModelObject());
                         }
 
                         @Override
@@ -110,7 +110,7 @@ public class SeasonPage extends BasePage {
                 }
 
             });
-            PagingNavigator navigator = new PagingNavigator("navigator", listView);
+            AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
             add(navigator);
         }
 
