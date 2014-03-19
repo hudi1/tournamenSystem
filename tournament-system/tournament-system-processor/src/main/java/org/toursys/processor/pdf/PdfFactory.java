@@ -496,7 +496,7 @@ public class PdfFactory {
     public static File createFinalStandings(String path, List<FinalStanding> finalStandings) throws Exception {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
-        File file = new File(path + "playOff" + df.format(new Date()) + ".pdf");
+        File file = new File(path + "finalRanking" + df.format(new Date()) + ".pdf");
 
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
@@ -524,4 +524,5 @@ public class PdfFactory {
 
         return file;
     }
+
 }

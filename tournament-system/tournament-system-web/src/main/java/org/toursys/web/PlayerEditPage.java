@@ -15,7 +15,7 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
 
 @AuthorizeInstantiation(Roles.USER)
-public class PlayerEditPage extends BasePage {
+public class PlayerEditPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
     private User user;
