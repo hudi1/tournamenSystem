@@ -141,8 +141,9 @@ public class FinalRankingPage extends TournamentHomePage {
         }
     }
 
-    /*
-     * @Override protected IModel<String> newHeadingModel() { return new ResourceModel("finalStandings"); }
-     */
+    @Override
+    protected IModel<String> newHeadingModel() {
+        return new ResourceModel("finalStandings");
+    }
 
 }
