@@ -64,8 +64,8 @@ public class SchedulePage extends TournamentHomePage {
             super("scheduleForm");
 
             addScheduleListView();
-            addBackButton();
             addSaveButton();
+            addBackButton();
         }
 
         private void addSaveButton() {

@@ -26,6 +26,7 @@ public class GameService extends AbstractService {
     @Transactional
     public int updateGame(Game game) {
         logger.debug("Updating game: " + game);
+        game.setNull(Game.Attribute.homeScore, Game.Attribute.awayScore);
         return tournamentAggregationDao.updateGame(game);
     }
 
