@@ -246,11 +246,18 @@ public abstract class BasePage extends WebPage {
 
     protected Tournament getTournament(PageParameters pageParameters) {
         Tournament tournament = getTournamentSession().getTournament();
+        Integer tournamentId = null;
+
         if (tournament == null) {
             if (!pageParameters.get("tid").isNull()) {
-                tournament = tournamentService.getTournament(new Tournament()._setId(pageParameters.get("tid")
-                        .toInteger()));
+                tournamentId = pageParameters.get("tid").toInteger();
             }
+        } else if (tournament.getWinPoints() == null) {
+            tournamentId = tournament.getId();
+        }
+
+        if (tournamentId != null) {
+            tournament = tournamentService.getTournament(new Tournament()._setId(tournamentId));
         }
 
         if (tournament != null) {

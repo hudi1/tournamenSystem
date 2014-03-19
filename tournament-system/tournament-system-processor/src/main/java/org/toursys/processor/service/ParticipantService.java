@@ -91,13 +91,16 @@ public class ParticipantService extends AbstractService {
 
     @Transactional
     public Participant createBasicParticipant(Tournament tournament, Player player, Groups group) {
-        logger.debug("Creating basic participant, player: " + player + " group: " + group);
+        logger.debug("Creating basic participant, player: " + player + " group: " + group + " tournament:" + tournament);
         if (group.getName() != null) {
-            Groups savedGroup = tournamentAggregationDao.getGroup(group._setTournament(tournament)._setType(
-                    GroupsType.BASIC));
-            if (savedGroup == null) {
-                savedGroup = tournamentAggregationDao.createGroup(group._setCopyResult(false)._setPlayThirdPlace(false)
+            group.setTournament(tournament);
+            List<Groups> savedGroups = groupService.getBasicGroups(group);
+            Groups savedGroup;
+            if (savedGroups.isEmpty()) {
+                savedGroup = groupService.createGroup(group._setCopyResult(false)._setPlayThirdPlace(false)
                         ._setNumberOfHockey(1)._setIndexOfFirstHockey(1));
+            } else {
+                savedGroup = savedGroups.get(0);
             }
             return tournamentAggregationDao.createParticipant(player, savedGroup);
         }
