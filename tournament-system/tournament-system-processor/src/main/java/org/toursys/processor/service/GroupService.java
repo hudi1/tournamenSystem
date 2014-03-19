@@ -63,7 +63,7 @@ public class GroupService extends AbstractService {
 
     @Transactional(readOnly = true)
     public List<Groups> getFinalGroups(Groups group) {
-        logger.debug("Get basic groups: " + group);
+        logger.debug("Get final groups: " + group);
         group.setType(GroupsType.FINAL);
         return getGroups(group);
     }
