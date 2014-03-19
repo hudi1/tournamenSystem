@@ -107,7 +107,10 @@ public class ComparePage extends WebPage {
 
                         @Override
                         protected void onUpdate(AjaxRequestTarget target) {
-                            participantService.updateParticipant(participant);
+                            Participant updatedParticipant = new Participant()._setId(participant.getId())
+                                    ._setEqualRank(participant.getEqualRank())._setGroup(participant.getGroup())
+                                    ._setPlayer(participant.getPlayer())._setNull(Participant.Attribute.equalRank);
+                            participantService.updateParticipant(updatedParticipant);
                         }
                     }).setVisible(participant.getPlayer() != null));
 

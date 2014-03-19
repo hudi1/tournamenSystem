@@ -22,8 +22,14 @@ public class AdvantageComparator implements Comparator<Participant> {
         Integer equalRankO1 = o1.getEqualRank();
         Integer equalRankO2 = o2.getEqualRank();
 
-        o1.setEqualRank(null);
-        o2.setEqualRank(null);
+        if (!sameRankPlayers.contains(o1)) {
+            o1.setEqualRank(null);
+        }
+
+        if (!sameRankPlayers.contains(o2)) {
+            o2.setEqualRank(null);
+        }
+
         if (o1.getPoints() > o2.getPoints()) {
             return -1;
         }
@@ -48,8 +54,14 @@ public class AdvantageComparator implements Comparator<Participant> {
                     o1.setEqualRank(equalRankO1);
                     o2.setEqualRank(equalRankO2);
 
-                    sameRankPlayers.add(o1);
-                    sameRankPlayers.add(o2);
+                    if (o1.getPoints() > 0) {
+                        sameRankPlayers.add(o1);
+                    }
+
+                    if (o2.getPoints() > 0) {
+                        sameRankPlayers.add(o2);
+                    }
+
                     if (o1.getEqualRank() == null || o2.getEqualRank() == null) {
                         if (o1.getEqualRank() == null && o1.getPoints() > 0) {
                             o1.setEqualRank(0);

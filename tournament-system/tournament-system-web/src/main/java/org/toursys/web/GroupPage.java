@@ -447,7 +447,7 @@ public class GroupPage extends TournamentHomePage {
             private static final long serialVersionUID = 1L;
 
             public void onClose(AjaxRequestTarget target) {
-                getPageParameters().set("update", false);
+                getPageParameters().set("update", true);
                 setResponsePage(GroupPage.class, getPageParameters());
             }
         });

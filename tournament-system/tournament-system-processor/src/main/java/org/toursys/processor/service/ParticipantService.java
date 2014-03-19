@@ -112,7 +112,7 @@ public class ParticipantService extends AbstractService {
         logger.debug("Calculate participants: " + tournament);
         Set<Participant> samePlayerRankParticipants = new HashSet<Participant>();
         for (Participant participant : participants) {
-            calculateParticipant(participant, tournament);
+            calculateParticipant(participant, tournament, false);
         }
 
         if (participants.size() > 0) {
@@ -124,7 +124,7 @@ public class ParticipantService extends AbstractService {
         return samePlayerRankParticipants;
     }
 
-    private void calculateParticipant(Participant participant, Tournament tournament) {
+    private void calculateParticipant(Participant participant, Tournament tournament, boolean advancedCalculating) {
         long time = System.currentTimeMillis();
         logger.debug("Calculate participant: " + participant);
         int points = 0;
@@ -146,8 +146,10 @@ public class ParticipantService extends AbstractService {
             }
         }
 
-        if (participant.getPoints() != points) {
-            participant.setEqualRank(null);
+        if (!advancedCalculating) {
+            if (participant.getPoints() != points) {
+                participant.setEqualRank(null);
+            }
         }
         participant.setPoints(points);
         participant.setScore(new Score(homeScore, awayScore));
@@ -205,7 +207,7 @@ public class ParticipantService extends AbstractService {
                         }
                     }
                     for (Participant participant : temporatyParticipant) {
-                        calculateParticipant(participant, tournament);
+                        calculateParticipant(participant, tournament, true);
                     }
 
                     Collections.sort(temporatyParticipant, advantageComparator);
