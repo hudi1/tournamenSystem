@@ -111,17 +111,6 @@ public class SchedulePage extends TournamentHomePage {
                     Participant opponent = game.getAwayParticipant();
                     String playerName = "- ";
                     String opponentName = "-";
-                    boolean winner = false;
-
-                    if (game.getAwayScore() != null && game.getHomeScore() != null) {
-                        if (game.getAwayScore() < game.getHomeScore()) {
-                            winner = true;
-                        } else if (game.getAwayScore() > game.getHomeScore()) {
-                            winner = true;
-                        }
-                    }
-
-                    final boolean gameWinner = winner;
 
                     if (participant != null && participant.getPlayer() != null) {
                         playerName = participant.getPlayer().getName() + " " + participant.getPlayer().getSurname()
@@ -139,7 +128,12 @@ public class SchedulePage extends TournamentHomePage {
 
                                 @Override
                                 public boolean isEnabled(Component component) {
-                                    return gameWinner;
+                                    if (game.getAwayScore() != null && game.getHomeScore() != null) {
+                                        if (game.getAwayScore() < game.getHomeScore()) {
+                                            return true;
+                                        }
+                                    }
+                                    return false;
                                 }
                             }));
 
@@ -149,7 +143,12 @@ public class SchedulePage extends TournamentHomePage {
 
                         @Override
                         public boolean isEnabled(Component component) {
-                            return gameWinner;
+                            if (game.getAwayScore() != null && game.getHomeScore() != null) {
+                                if (game.getAwayScore() > game.getHomeScore()) {
+                                    return true;
+                                }
+                            }
+                            return false;
                         }
                     }));
 
