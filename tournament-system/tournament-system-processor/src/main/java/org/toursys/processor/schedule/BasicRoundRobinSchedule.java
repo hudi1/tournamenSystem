@@ -43,7 +43,7 @@ public class BasicRoundRobinSchedule extends RoundRobinSchedule {
                 addEmptyGame = true;
             }
         } else {
-            roundParticipants.remove((playerCount / 2) + 1);
+            roundParticipants.remove(playerCount / 2);
         }
         return roundParticipants;
     }
