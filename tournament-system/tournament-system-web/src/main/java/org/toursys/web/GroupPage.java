@@ -310,7 +310,7 @@ public class GroupPage extends TournamentHomePage {
                     final Participant participant = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Participant>(participant));
                     listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
-                    listItem.add(new Label("name", participant.getPlayer().getName().charAt(0) + "."
+                    listItem.add(new Label("name", participant.getPlayer().getName().charAt(0) + ". "
                             + participant.getPlayer().getSurname() + " "
                             + participant.getPlayer().getPlayerDiscriminator()));
                     listItem.add(new Label("score", participant.getScore().toString()));
