@@ -108,14 +108,17 @@ public abstract class BasePage extends WebPage {
         Component logoutPage = new BookmarkablePageLink<Void>("logoutPage", LogoutPage.class).setVisible(false);
         Component loginPage = new BookmarkablePageLink<Void>("loginPage", LoginPage.class).add(
                 new AttributeModifier("class", new ActiveReplaceModel(this instanceof LoginPage))).setVisible(false);
-        Component registrationPage = new BookmarkablePageLink<Void>("registrationPage", RegistrationPage.class).add(
+        Component registrationPage = new BookmarkablePageLink<Void>("registrationPage", RegistrationPage.class,
+                getPageParameters()).add(
                 new AttributeModifier("class", new ActiveReplaceModel(this instanceof RegistrationPage))).setVisible(
                 false);
         Component groupPage = new BookmarkablePageLink<Void>("groupPage", GroupPage.class, getPageParameters()).add(
                 new AttributeModifier("class", new ActiveReplaceModel(this instanceof GroupPage))).setVisible(false);
-        Component playOffPage = new BookmarkablePageLink<Void>("playOffPage", PlayOffPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayOffPage))).setVisible(false);
-        Component finalRankingPage = new BookmarkablePageLink<Void>("finalRankingPage", FinalRankingPage.class).add(
+        Component playOffPage = new BookmarkablePageLink<Void>("playOffPage", PlayOffPage.class, getPageParameters())
+                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayOffPage))).setVisible(
+                        false);
+        Component finalRankingPage = new BookmarkablePageLink<Void>("finalRankingPage", FinalRankingPage.class,
+                getPageParameters()).add(
                 new AttributeModifier("class", new ActiveReplaceModel(this instanceof FinalRankingPage))).setVisible(
                 false);
 
