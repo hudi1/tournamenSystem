@@ -81,13 +81,10 @@ public class FinalStandingService extends AbstractService {
         logger.debug("Update promiting final standings" + Arrays.toString(participants.toArray()) + " " + round + " "
                 + playerPlayOffCount + " " + tournament + " " + playerGroupCountSuffix);
         long time = System.currentTimeMillis();
-        participants.removeAll(Collections.singleton(null));
         Collections.sort(participants, new RankComparator());
-        Collections.reverse(participants);
         int maxRound = TournamentUtil.binlog(playerPlayOffCount);
-        int actualRank = (int) Math.pow(2, maxRound - (round - 2)) + playerGroupCountSuffix;
+        int actualRank = (int) Math.pow(2, maxRound - round) + 1 + playerGroupCountSuffix;
         for (Participant participant : participants) {
-            System.out.println(participant.getPlayer());
             FinalStanding finalStanding = getFinalStanding(new FinalStanding()._setFinalRank(actualRank)
                     ._setTournament(tournament));
             if ((finalStanding != null && participant != null)
@@ -95,7 +92,7 @@ public class FinalStandingService extends AbstractService {
                 finalStanding.setPlayer(participant.getPlayer());
                 updateFinalStanding(finalStanding);
             }
-            actualRank--;
+            actualRank++;
         }
         participants.clear();
         time = System.currentTimeMillis() - time;
@@ -153,12 +150,15 @@ public class FinalStandingService extends AbstractService {
         logger.debug("Update final standings: " + tournament);
 
         int startGroupSufix = 0;
+        // (Ked je play off o 16 hracov ale su tam len 4 tak treba odcitat inac v dalsej skupiny nenajde final standing)
+        int startGroupMinusSufix = 0;
 
         List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
         for (Groups group : finalGroups) {
             List<PlayOffGame> playOffGames = tournamentAggregationDao.getListPlayOffGames(new PlayOffGame()
                     ._setGroup(group)._setInit(PlayOffGame.Association.awayParticipant)
                     ._setInit(PlayOffGame.Association.homeParticipant));
+            int startGroupMinusSufixTemp = 0;
 
             Map<Integer, List<Participant>> losersPerRound = new HashMap<Integer, List<Participant>>();
             for (int i = 0; i < playOffGames.size() - 4; i++) {
@@ -176,18 +176,27 @@ public class FinalStandingService extends AbstractService {
                     }
                     losersPerRound.get(round).add(participant);
                 }
-            }
 
-            int maxRound = TournamentUtil.binlog(playOffGames.size());
-            for (int i = 0; i < maxRound; i++) {
-                if (losersPerRound.get(i) != null) {
-                    updateRoundFinalStandings(losersPerRound.get(i), i + 1, playOffGames.size(), tournament,
-                            startGroupSufix);
+                if (round == 1) {
+                    if (playOffGames.get(i).getHomeParticipant() == null) {
+                        startGroupMinusSufixTemp++;
+                    }
+                    if (playOffGames.get(i).getAwayParticipant() == null) {
+                        startGroupMinusSufixTemp++;
+                    }
                 }
             }
 
-            int position = 4 + startGroupSufix;
-            for (int i = playOffGames.size() - 2; i < playOffGames.size(); i++) {
+            int maxRound = TournamentUtil.binlog(playOffGames.size());
+            for (int i = 1; i < maxRound; i++) {
+                if (losersPerRound.get(i) != null) {
+                    updateRoundFinalStandings(losersPerRound.get(i), i, playOffGames.size(), tournament,
+                            startGroupSufix - startGroupMinusSufix);
+                }
+            }
+
+            int position = 4 + startGroupSufix - startGroupMinusSufix;
+            for (int i = playOffGames.size() - 1; i > playOffGames.size() - 3; i--) {
                 FinalStanding firstFinalStanding = getFinalStanding(new FinalStanding()._setFinalRank(position - 1)
                         ._setTournament(tournament));
                 FinalStanding secondFinalStanding = getFinalStanding(new FinalStanding()._setFinalRank(position)
@@ -195,11 +204,27 @@ public class FinalStandingService extends AbstractService {
 
                 if (playOffGames.get(i).getWinner() != null) {
                     if (playOffGames.get(i).getWinner().equals(PlayOffGameWinner.HOME)) {
-                        firstFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
-                        secondFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
+                        if (playOffGames.get(i).getHomeParticipant() != null) {
+                            firstFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
+                        } else {
+                            firstFinalStanding.setPlayer(null);
+                        }
+                        if (playOffGames.get(i).getAwayParticipant() != null) {
+                            secondFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
+                        } else {
+                            secondFinalStanding.setPlayer(null);
+                        }
                     } else if (playOffGames.get(i).getWinner().equals(PlayOffGameWinner.AWAY)) {
-                        firstFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
-                        secondFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
+                        if (playOffGames.get(i).getAwayParticipant() != null) {
+                            firstFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
+                        } else {
+                            firstFinalStanding.setPlayer(null);
+                        }
+                        if (playOffGames.get(i).getHomeParticipant() != null) {
+                            secondFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
+                        } else {
+                            secondFinalStanding.setPlayer(null);
+                        }
                     }
                 } else {
                     firstFinalStanding.setPlayer(null);
@@ -215,6 +240,7 @@ public class FinalStandingService extends AbstractService {
             } else {
                 startGroupSufix += tournament.getPlayOffLower();
             }
+            startGroupMinusSufix += startGroupMinusSufixTemp;
         }
     }
 }
