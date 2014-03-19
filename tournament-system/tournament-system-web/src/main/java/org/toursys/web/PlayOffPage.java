@@ -24,6 +24,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
+import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
@@ -35,6 +36,7 @@ import org.toursys.repository.model.Tournament;
 public class PlayOffPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
+    private Tournament playOffTournament;
 
     public PlayOffPage() {
         this(new PageParameters());
@@ -46,7 +48,8 @@ public class PlayOffPage extends TournamentHomePage {
     }
 
     protected void createPage() {
-        add(new PlayOffForm(Model.of(initPlayOffTournament())));
+        this.playOffTournament = initPlayOffTournament();
+        add(new PlayOffForm(Model.of(playOffTournament)));
     }
 
     private Tournament initPlayOffTournament() {
@@ -182,7 +185,7 @@ public class PlayOffPage extends TournamentHomePage {
                 public File getObject() {
                     File tempFile = null;
                     try {
-                        // tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), plaOffGamesByGroup);
+                        tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), playOffTournament);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);

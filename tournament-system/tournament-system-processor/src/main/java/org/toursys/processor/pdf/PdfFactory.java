@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GameImpl;
@@ -21,6 +22,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Tournament;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -433,7 +435,7 @@ public class PdfFactory {
         return result;
     }
 
-    public static File createPlayOff(String path, Map<Groups, List<PlayOffGame>> playOffGamesByGroup) throws Exception {
+    public static File createPlayOff(String path, Tournament tournament) throws Exception {
 
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
@@ -445,21 +447,21 @@ public class PdfFactory {
         document.newPage();
 
         PdfPTable pdfTable = new PdfPTable(3);
-        // pdfTable.setHeaderRows(1);
         pdfTable.setLockedWidth(true);
         pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
 
-        pdfTable.setTotalWidth(400);
-        pdfTable.setWidths(new float[] { 1f, 9f, 18f });
+        pdfTable.setTotalWidth(800);
+        pdfTable.setWidths(new float[] { 6f, 6f, 18f });
 
-        for (Map.Entry<Groups, List<PlayOffGame>> entry : playOffGamesByGroup.entrySet()) {
-            pdfTable.addCell(createLeftAlignCell(entry.getKey().getName()));
+        for (Groups group : tournament.getGroups()) {
+            pdfTable.addCell(createLeftAlignCell(group.getName()));
             pdfTable.addCell(createEmptyCell());
             pdfTable.addCell(createEmptyCell());
 
-            for (PlayOffGame playOffGame : entry.getValue()) {
+            for (PlayOffGame playOffGame : group.getPlayOffGames()) {
 
-                pdfTable.addCell(createLeftAlignCell(getRound(entry.getValue().size(), playOffGame.getPosition()) + ""));
+                pdfTable.addCell(createLeftAlignCell(TournamentUtil.getRoundName(group.getPlayOffGames().size(),
+                        playOffGame.getPosition())));
 
                 if (playOffGame.getHomeParticipant() != null && playOffGame.getAwayParticipant() != null) {
                     String playersGame = playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + "."
@@ -489,45 +491,6 @@ public class PdfFactory {
         closePdfFile(document, writer);
 
         return file;
-    }
-
-    private static int getRound(int playerCount, int position) {
-        // pri vypisovani kola treba rozlisit prve
-        if (position == 0) {
-            return 0;
-        }
-        int rounds = binlog(playerCount);
-        int gamesCount = 0;
-        for (int i = 1; i <= rounds; i++) {
-            gamesCount += playerCount / Math.pow(2, i);
-            if (gamesCount > (position - 1)) {
-                return i;
-            }
-        }
-        logger.error("playerCount: " + playerCount + " position: " + position);
-        throw new RuntimeException("Invalid position to get round");
-    }
-
-    private static int binlog(int bits) // returns 0 for bits=0
-    {
-        int log = 0;
-        if ((bits & 0xffff0000) != 0) {
-            bits >>>= 16;
-            log = 16;
-        }
-        if (bits >= 256) {
-            bits >>>= 8;
-            log += 8;
-        }
-        if (bits >= 16) {
-            bits >>>= 4;
-            log += 4;
-        }
-        if (bits >= 4) {
-            bits >>>= 2;
-            log += 2;
-        }
-        return log + (bits >>> 1);
     }
 
     public static File createFinalStandings(String path, List<FinalStanding> finalStandings) throws Exception {
