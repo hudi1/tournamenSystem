@@ -51,10 +51,10 @@ public class AdvantageComparator implements Comparator<Participant> {
                     sameRankPlayers.add(o1);
                     sameRankPlayers.add(o2);
                     if (o1.getEqualRank() == null || o2.getEqualRank() == null) {
-                        if (o1.getEqualRank() == null) {
+                        if (o1.getEqualRank() == null && o1.getPoints() > 0) {
                             o1.setEqualRank(0);
                         }
-                        if (o2.getEqualRank() == null) {
+                        if (o2.getEqualRank() == null && o2.getPoints() > 0) {
                             o2.setEqualRank(0);
                         }
 

@@ -2,6 +2,7 @@ package org.toursys.web;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
+import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
@@ -394,6 +396,7 @@ public class GroupPage extends TournamentHomePage {
     private void getParticipants() {
         if (group != null) {
             this.participants = participantService.getParticipants(new Participant()._setGroup(group));
+            Collections.sort(this.participants, new RankComparator());
             gameService.processGames(participants);
             Set<Participant> samePlayerRankParticipants;
 
