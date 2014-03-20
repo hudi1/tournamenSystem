@@ -198,12 +198,23 @@ public class PdfFactory {
             }
 
             pdfTable.addCell(createLeftAlignCell(game.getHockey().toString()));
-            pdfTable.addCell(createLeftAlignCell(game.getHomeParticipant().getPlayer().getName().charAt(0) + "."
-                    + game.getHomeParticipant().getPlayer().getSurname() + " "
-                    + game.getHomeParticipant().getPlayer().getPlayerDiscriminator() + " - "
-                    + game.getAwayParticipant().getPlayer().getName().charAt(0) + " "
-                    + game.getAwayParticipant().getPlayer().getSurname() + " "
-                    + game.getAwayParticipant().getPlayer().getPlayerDiscriminator()));
+
+            String homeParticipant = "";
+            String awayParticipant = "";
+
+            if (game.getHomeParticipant() != null) {
+                homeParticipant = game.getHomeParticipant().getPlayer().getName().charAt(0) + "."
+                        + game.getHomeParticipant().getPlayer().getSurname() + " "
+                        + game.getHomeParticipant().getPlayer().getPlayerDiscriminator();
+            }
+
+            if (game.getAwayParticipant() != null) {
+                awayParticipant = game.getAwayParticipant().getPlayer().getName().charAt(0) + " "
+                        + game.getAwayParticipant().getPlayer().getSurname() + " "
+                        + game.getAwayParticipant().getPlayer().getPlayerDiscriminator();
+            }
+
+            pdfTable.addCell(createLeftAlignCell(homeParticipant + " - " + awayParticipant));
             pdfTable.addCell(createBorderCell("  "));
             pdfTable.addCell(createCell(":"));
             pdfTable.addCell(createBorderCell("  "));
@@ -280,9 +291,14 @@ public class PdfFactory {
                 // hlavicka
                 for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
                     Participant participant = entry.getKey();
-                    pdfTable.addCell(createCell("(" + group.getName() + ") "
-                            + participant.getPlayer().getName().charAt(0) + "." + participant.getPlayer().getSurname()
-                            + " " + participant.getPlayer().getPlayerDiscriminator()));
+                    if (participant != null) {
+                        pdfTable.addCell(createCell("(" + group.getName() + ") "
+                                + participant.getPlayer().getName().charAt(0) + "."
+                                + participant.getPlayer().getSurname() + " "
+                                + participant.getPlayer().getPlayerDiscriminator()));
+                    } else {
+                        pdfTable.addCell(createCell("---"));
+                    }
                 }
 
                 // hokeje
@@ -306,34 +322,44 @@ public class PdfFactory {
 
                     int round = 1;
                     for (GameImpl game : games) {
-                        Player player;
-                        String side;
-                        if (game.getAwayParticipant().equals(participant)) {
-                            player = game.getHomeParticipant().getPlayer();
-                            side = "S";
-                        } else {
-                            player = game.getAwayParticipant().getPlayer();
-                            side = "F";
-                        }
-
-                        while (round != game.getRound()) {
-                            nestedTable.addCell(createCell(round + ")"));
-                            nestedTable.addCell(createCell("-"));
-                            nestedTable.addCell(createLeftAlignCell("-------"));
-
-                            for (int j = 0; j < spaceCount; j++) {
-                                nestedTable.addCell(createEmptyCell());
-                                nestedTable.addCell(createEmptyCell());
-                                nestedTable.addCell(createEmptyCell());
+                        Player player = null;
+                        String side = "";
+                        if (participant != null) {
+                            if (game.getAwayParticipant() != null && game.getAwayParticipant().equals(participant)) {
+                                player = game.getHomeParticipant().getPlayer();
+                                side = "S";
+                            } else if (game.getHomeParticipant() != null
+                                    && game.getHomeParticipant().equals(participant)) {
+                                player = game.getAwayParticipant().getPlayer();
+                                side = "F";
                             }
-                            round++;
                         }
 
-                        nestedTable.addCell(createCell(game.getRound() + ")"));
-                        nestedTable.addCell(createCell(game.getHockey().toString() + side));
-                        nestedTable.addCell(createLeftAlignCell(player.getName().charAt(0) + "." + player.getSurname()
-                                + " " + player.getPlayerDiscriminator()));
+                        if (game.getRound() >= round) {
+                            while (round != game.getRound()) {
+                                nestedTable.addCell(createCell(round + ")"));
+                                nestedTable.addCell(createCell("-"));
+                                nestedTable.addCell(createLeftAlignCell("-------"));
 
+                                for (int j = 0; j < spaceCount; j++) {
+                                    nestedTable.addCell(createEmptyCell());
+                                    nestedTable.addCell(createEmptyCell());
+                                    nestedTable.addCell(createEmptyCell());
+                                }
+                                round++;
+                            }
+                        }
+
+                        if (player != null) {
+                            nestedTable.addCell(createCell(game.getRound() + ")"));
+                            nestedTable.addCell(createCell(game.getHockey().toString() + side));
+                            nestedTable.addCell(createLeftAlignCell(player.getName().charAt(0) + "."
+                                    + player.getSurname() + " " + player.getPlayerDiscriminator()));
+                        } else {
+                            nestedTable.addCell(createCell("-"));
+                            nestedTable.addCell(createCell("-"));
+                            nestedTable.addCell(createCell("---"));
+                        }
                         round++;
 
                         for (int j = 0; j < spaceCount; j++) {
