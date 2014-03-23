@@ -18,7 +18,7 @@ import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
 
 @RunWith(value = Parameterized.class)
-public class BasicRoundScheduleTest {
+public class BasicRoundScheduleTest extends AbstractScheduleTest {
 
     private Groups group;
     private List<Participant> participants;
@@ -71,38 +71,24 @@ public class BasicRoundScheduleTest {
 
         Assert.assertFalse(games.isEmpty());
 
-        /*
-         * for (GameImpl gameImpl : games) { try {
-         * System.out.println(gameImpl.getHomeParticipant().getPlayer().getSurname() + " vs " +
-         * gameImpl.getAwayParticipant().getPlayer().getSurname()); } catch (Exception e) { System.out.println("---"); }
-         * }
-         */
-
         Assert.assertEquals(games.size(), playerCount * hockeyCount);
 
         Assert.assertEquals(games.get(games.size() - 1).getRound().intValue(), ((games.size() / hockeyCount)));
 
-        Set<Participant> players = new HashSet<Participant>();
+        Set<Participant> playersInRound = new HashSet<Participant>();
+        Set<Game> gamesInSchedule = new HashSet<Game>();
+
         int round = 1;
         for (GameImpl gameImpl : games) {
+            checkConstainsInSchedule(gameImpl, gamesInSchedule);
             if (gameImpl.getRound() == round) {
-                checkConstainsInRound(gameImpl.getAwayParticipant(), players);
-                checkConstainsInRound(gameImpl.getHomeParticipant(), players);
+                checkConstainsInRound(gameImpl.getAwayParticipant(), playersInRound);
+                checkConstainsInRound(gameImpl.getHomeParticipant(), playersInRound);
             } else {
-                players.clear();
+                playersInRound.clear();
                 round++;
-                checkConstainsInRound(gameImpl.getAwayParticipant(), players);
-                checkConstainsInRound(gameImpl.getHomeParticipant(), players);
-            }
-        }
-
-    }
-
-    private void checkConstainsInRound(Participant playerResult, Set<Participant> players) {
-        if (playerResult != null) {
-            boolean contains = !players.add(playerResult);
-            if (contains) {
-                Assert.fail("Player: " + playerResult + " is already in this round.");
+                checkConstainsInRound(gameImpl.getAwayParticipant(), playersInRound);
+                checkConstainsInRound(gameImpl.getHomeParticipant(), playersInRound);
             }
         }
     }

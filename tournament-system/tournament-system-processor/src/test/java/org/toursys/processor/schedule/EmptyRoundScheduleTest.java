@@ -21,7 +21,5 @@ public class EmptyRoundScheduleTest {
         List<GameImpl> games = schedule.getSchedule();
 
         Assert.assertTrue(games.isEmpty());
-
     }
-
 }

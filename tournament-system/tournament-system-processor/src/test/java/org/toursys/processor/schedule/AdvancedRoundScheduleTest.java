@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +18,7 @@ import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
 
 @RunWith(value = Parameterized.class)
-public class AdvancedRoundScheduleTest {
+public class AdvancedRoundScheduleTest extends AbstractScheduleTest {
 
     private Groups group;
     private RoundRobinSchedule schedule;
@@ -87,10 +86,12 @@ public class AdvancedRoundScheduleTest {
                 + basicGroupsCount);
 
         List<GameImpl> games = schedule.getSchedule();
+        Set<Game> gamesInSchedule = new HashSet<Game>();
 
         Set<Participant> players = new HashSet<Participant>();
         int round = 1;
         for (GameImpl gameImpl : games) {
+            checkConstainsInSchedule(gameImpl, gamesInSchedule);
             if (gameImpl.getRound() == round) {
                 checkConstainsInRound(gameImpl.getAwayParticipant(), players);
                 checkConstainsInRound(gameImpl.getHomeParticipant(), players);
@@ -99,15 +100,6 @@ public class AdvancedRoundScheduleTest {
                 round++;
                 checkConstainsInRound(gameImpl.getAwayParticipant(), players);
                 checkConstainsInRound(gameImpl.getHomeParticipant(), players);
-            }
-        }
-    }
-
-    private void checkConstainsInRound(Participant playerResult, Set<Participant> players) {
-        if (playerResult != null) {
-            boolean contains = !players.add(playerResult);
-            if (contains) {
-                Assert.fail("Player: " + playerResult + " is already in this round.");
             }
         }
     }

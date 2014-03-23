@@ -18,7 +18,7 @@ import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
 
 @RunWith(value = Parameterized.class)
-public class BasicLessHockeyRoundScheduleTest {
+public class BasicLessHockeyRoundScheduleTest extends AbstractScheduleTest {
 
     private Groups group;
     private List<Participant> participants;
@@ -77,8 +77,11 @@ public class BasicLessHockeyRoundScheduleTest {
         Assert.assertTrue(games.get(games.size() - 1).getRound().intValue() <= ((games.size() / hockeyCount) + 1));
 
         Set<Participant> players = new HashSet<Participant>();
+        Set<Game> gamesInSchedule = new HashSet<Game>();
+
         int round = 1;
         for (GameImpl gameImpl : games) {
+            checkConstainsInSchedule(gameImpl, gamesInSchedule);
             if (gameImpl.getRound() == round) {
                 checkConstainsInRound(gameImpl.getAwayParticipant(), players);
                 checkConstainsInRound(gameImpl.getHomeParticipant(), players);
@@ -87,20 +90,6 @@ public class BasicLessHockeyRoundScheduleTest {
                 round++;
                 checkConstainsInRound(gameImpl.getAwayParticipant(), players);
                 checkConstainsInRound(gameImpl.getHomeParticipant(), players);
-            }
-        }
-
-        // for (GameImpl gameImpl : games) {
-        // System.out.println(gameImpl.getHomeParticipant().getPlayer().getSurname() + " vs "
-        // + gameImpl.getAwayParticipant().getPlayer().getSurname());
-        // }
-    }
-
-    private void checkConstainsInRound(Participant playerResult, Set<Participant> players) {
-        if (playerResult != null) {
-            boolean contains = !players.add(playerResult);
-            if (contains) {
-                Assert.fail("Player: " + playerResult + " is already in this round.");
             }
         }
     }
