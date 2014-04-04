@@ -24,9 +24,13 @@
 				<wicket:message key="choosePlayer">
             Choose player
         </wicket:message>
-				<input type="text" class="allPlayers" wicket:id="players"></input>
-				<input class="tournamentButton" type="submit"
-					wicket:id="playersButton" value="Player" />
+				<input type="text" class="allPlayers" wicket:id="players"></input> <input
+					class="tournamentButton" type="submit" wicket:id="playersButton"
+					value="Player" /> <a wicket:id="showModalLink"
+					class="tournamentLink" title="delete player"><wicket:message
+						key="showModalLink">
+                 Import tournament
+        </wicket:message></a>
 			</div>
 			<table class="registratedPlayerTable">
 				<tbody>
@@ -53,6 +57,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<div wicket:id="modal"></div>
 		</form>
 	</div>
 </wicket:extend>

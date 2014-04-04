@@ -14,23 +14,26 @@ import org.apache.wicket.validation.validator.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.ImportService;
+import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 
-public class ImportPlayerPage extends WebPage {
+public class ImportTournamentPage extends WebPage {
 
     private static final long serialVersionUID = 1L;
     private final User user;
+    private final Tournament tournament;
 
     @SpringBean(name = "importService")
-    private ImportService importService;
+    protected ImportService importService;
 
     final FeedbackPanel feedBackPanel;
     final ModalWindow modalWindow;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ImportPlayerPage(final ModalWindow modalWindow, final User user) {
+    public ImportTournamentPage(final ModalWindow modalWindow, final User user, Tournament tournament) {
         this.user = user;
+        this.tournament = tournament;
         this.feedBackPanel = new FeedbackPanel("feedbackPanel");
         this.modalWindow = modalWindow;
 
@@ -87,7 +90,7 @@ public class ImportPlayerPage extends WebPage {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     target.add(feedBackPanel);
                     try {
-                        importService.importPlayers(url.getInput(), user);
+                        importService.importTournament(url.getInput(), tournament, user);
                         modalWindow.close(target);
                     } catch (Exception e) {
                         logger.error("Error during importing player: ", e);

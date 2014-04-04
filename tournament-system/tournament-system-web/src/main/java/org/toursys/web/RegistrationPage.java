@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
@@ -14,6 +15,7 @@ import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteRenderer;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -64,8 +66,11 @@ public class RegistrationPage extends TournamentHomePage {
 
         public PlayerForm() {
             super("playerForm");
+            ModalWindow modalWindow;
 
             addShowPlayersButton();
+            add(modalWindow = createModalWindow());
+            addModalButton(modalWindow);
             ModelAutoCompleteTextField<Player> playersTextField = addAutoCompletePlayers();
             addTournamentparticipantListView(playersTextField);
             setDefaultButton(getRegisterPlayersButton());
@@ -212,6 +217,43 @@ public class RegistrationPage extends TournamentHomePage {
                     setResponsePage(PlayerPage.class, getPageParameters());
                 }
             });
+        }
+
+        private void addModalButton(final ModalWindow modalWindow) {
+            add(new AjaxLink<Void>("showModalLink") {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    modalWindow.show(target);
+                }
+            });
+        }
+
+        private ModalWindow createModalWindow() {
+            final ModalWindow modal;
+            add(modal = new ModalWindow("modal"));
+            modal.setCookieName("modal-1");
+
+            modal.setPageCreator(new ModalWindow.PageCreator() {
+
+                private static final long serialVersionUID = 1L;
+
+                public Page createPage() {
+                    return new ImportTournamentPage(modal, getTournamentSession().getUser(), tournament);
+                }
+            });
+
+            modal.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+
+                private static final long serialVersionUID = 1L;
+
+                public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                    return true;
+                }
+            });
+            return modal;
         }
 
         private Button getRegisterPlayersButton() {

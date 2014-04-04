@@ -16,6 +16,8 @@ public interface TournamentAggregationDao {
 
     public Game createGame(Participant homePlayer, Participant awayPlayer);
 
+    public Game createGame(Game game);
+
     public int updateGame(Game game);
 
     public int deleteGame(Game game);

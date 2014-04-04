@@ -29,7 +29,7 @@
         <property name="groupService" ref="groupService" />
     </bean>
     <bean id="scheduleService" class="org.toursys.processor.service.ScheduleService" parent="abstractService">
-        <property name="participantService" ref="participantService"/>
+        <property name="participantService" ref="participantService" />
     </bean>
     <bean id="playOffGameService" class="org.toursys.processor.service.PlayOffGameService" parent="abstractService">
         <property name="groupService" ref="groupService" />
@@ -40,4 +40,11 @@
         <property name="groupService" ref="groupService" />
         <property name="participantService" ref="participantService" />
     </bean>
+
+    <bean id="importService" class="org.toursys.processor.service.ImportService" parent="abstractService">
+        <property name="gameService" ref="gameService" />
+        <property name="participantService" ref="participantService" />
+        <property name="playerService" ref="playerService" />
+    </bean>
+
 </beans>

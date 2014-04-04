@@ -94,7 +94,7 @@ public class ParticipantService extends AbstractService {
         logger.debug("Creating basic participant, player: " + player + " group: " + group + " tournament:" + tournament);
         if (group.getName() != null) {
             group.setTournament(tournament);
-            List<Groups> savedGroups = groupService.getBasicGroups(group);
+            List<Groups> savedGroups = groupService.getGroups(group);
             Groups savedGroup;
             if (savedGroups.isEmpty()) {
                 savedGroup = groupService.createGroup(group._setCopyResult(false)._setPlayThirdPlace(false)
@@ -236,7 +236,6 @@ public class ParticipantService extends AbstractService {
         return advantageComparator.getSameRankPlayers();
     }
 
-    // vrati hracov pre rozpis kde sa pocitaju vysledky(postupujuci hraci)
     @Transactional(readOnly = true)
     public LinkedList<List<Participant>> getAdvancedPlayersByGroup(Groups group, Tournament tournament,
             List<Participant> finalParticipants) {

@@ -42,6 +42,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
+    public Game createGame(Game game) {
+        return gameDao.insert(game);
+    }
+
+    @Override
     public int updateGame(Game game) {
         return gameDao.update(game);
     }

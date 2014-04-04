@@ -69,7 +69,6 @@ public class PlayerPage extends TournamentHomePage {
             addPlayerAddButton();
             add(modalWindow = createModalWindow());
             addModalButton(modalWindow);
-
         }
 
         private DataView<Player> createDataview(IDataProvider<Player> playerDataProvider) {

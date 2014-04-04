@@ -17,6 +17,12 @@ public class GameService extends AbstractService {
         return tournamentAggregationDao.createGame(homePlayer, awayPlayer);
     }
 
+    @Transactional
+    public Game createGame(Game game) {
+        logger.debug("Create game: " + game);
+        return tournamentAggregationDao.createGame(game);
+    }
+
     @Transactional(readOnly = true)
     public Game getGame(Game game) {
         logger.debug("Get game: " + game);
