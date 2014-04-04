@@ -20,6 +20,8 @@ pojogen-generate-wrappers;
 pojogen-ignore-one-to-many PLAYER ID->PARTICIPANT->PLAYER_ID;
 
 pojogen-ignore-one-to-many PARTICIPANT ID->GAME->AWAY_PARTICIPANT_ID;
+pojogen-ignore-one-to-many PARTICIPANT ID->PLAY_OFF_GAME->AWAY_PARTICIPANT_ID;
+pojogen-ignore-one-to-many PARTICIPANT ID->PLAY_OFF_GAME->HOME_PARTICIPANT_ID;
 
 pojogen-ignore-one-to-many PLAYER ID->PLAY_OFF_GAME;
 pojogen-ignore-one-to-many PLAYER ID->FINAL_STANDING->PLAYER_ID;

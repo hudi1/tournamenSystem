@@ -68,11 +68,10 @@ package org.toursys.repository.model {
     score : org.toursys.repository.model.Score required
     equalRank : java.lang.Integer
     temp _boolean
-    homeParticipantIdPlayOffGames : java.util.List <:PlayOffGame>
+    playOffGames : java.util.List <:PlayOffGame>
     games : java.util.List <:Game>
-    awayParticipantIdPlayOffGames : java.util.List <:PlayOffGame>
     equals ::: id
-    toInit ::: awayParticipantIdPlayOffGames games player group homeParticipantIdPlayOffGames
+    toInit ::: games playOffGames player group
     isDef ::: rank temp equalRank
     toString ::: id rank score temp equalRank points
   }

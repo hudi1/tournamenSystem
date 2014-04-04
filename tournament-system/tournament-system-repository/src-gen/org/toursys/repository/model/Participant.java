@@ -147,18 +147,18 @@ public class Participant implements Serializable {
     return this;
   }
   
-  private List<PlayOffGame> homeParticipantIdPlayOffGames = new ArrayList<PlayOffGame>();
+  private List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
   
-  public List<PlayOffGame> getHomeParticipantIdPlayOffGames() {
-    return homeParticipantIdPlayOffGames;
+  public List<PlayOffGame> getPlayOffGames() {
+    return playOffGames;
   }
   
-  public void setHomeParticipantIdPlayOffGames(List<PlayOffGame> homeParticipantIdPlayOffGames) {
-    this.homeParticipantIdPlayOffGames = homeParticipantIdPlayOffGames;
+  public void setPlayOffGames(List<PlayOffGame> playOffGames) {
+    this.playOffGames = playOffGames;
   }
   
-  public Participant _setHomeParticipantIdPlayOffGames(List<PlayOffGame> homeParticipantIdPlayOffGames) {
-    this.homeParticipantIdPlayOffGames = homeParticipantIdPlayOffGames;
+  public Participant _setPlayOffGames(List<PlayOffGame> playOffGames) {
+    this.playOffGames = playOffGames;
     return this;
   }
   
@@ -177,21 +177,6 @@ public class Participant implements Serializable {
     return this;
   }
   
-  private List<PlayOffGame> awayParticipantIdPlayOffGames = new ArrayList<PlayOffGame>();
-  
-  public List<PlayOffGame> getAwayParticipantIdPlayOffGames() {
-    return awayParticipantIdPlayOffGames;
-  }
-  
-  public void setAwayParticipantIdPlayOffGames(List<PlayOffGame> awayParticipantIdPlayOffGames) {
-    this.awayParticipantIdPlayOffGames = awayParticipantIdPlayOffGames;
-  }
-  
-  public Participant _setAwayParticipantIdPlayOffGames(List<PlayOffGame> awayParticipantIdPlayOffGames) {
-    this.awayParticipantIdPlayOffGames = awayParticipantIdPlayOffGames;
-    return this;
-  }
-  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -207,7 +192,7 @@ public class Participant implements Serializable {
   }  
   
   public enum Association {
-    awayParticipantIdPlayOffGames, games, player, group, homeParticipantIdPlayOffGames
+    games, playOffGames, player, group
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -372,6 +357,6 @@ public class Participant implements Serializable {
   }
   
   public String toStringFull() {
-    return "Participant [id=" + id + ", points=" + points + ", rank=" + rank + ", group=" + group + ", player=" + player + ", score=" + score + ", equalRank=" + equalRank + ", temp=" + temp + ", homeParticipantIdPlayOffGames=" + homeParticipantIdPlayOffGames + ", games=" + games + ", awayParticipantIdPlayOffGames=" + awayParticipantIdPlayOffGames + "]";
+    return "Participant [id=" + id + ", points=" + points + ", rank=" + rank + ", group=" + group + ", player=" + player + ", score=" + score + ", equalRank=" + equalRank + ", temp=" + temp + ", playOffGames=" + playOffGames + ", games=" + games + "]";
   }
 }
