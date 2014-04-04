@@ -88,7 +88,7 @@ public class PlayersHtmlImportFactory {
                 player.setSurname(nameAndSurname.split(" ")[0]);
                 player.setPlayerDiscriminator("ml.");
             } else if (nameAndSurname.contains("st.")) {
-                nameAndSurname = nameAndSurname.replaceAll("\\st\\.", "");
+                nameAndSurname = nameAndSurname.replaceAll("\\sst\\.", "");
                 player.setName(nameAndSurname.split(" ")[1]);
                 player.setSurname(nameAndSurname.split(" ")[0]);
                 player.setPlayerDiscriminator("st.");
