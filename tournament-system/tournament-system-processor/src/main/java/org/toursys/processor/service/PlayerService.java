@@ -14,7 +14,7 @@ public class PlayerService extends AbstractService {
     public Player createPlayer(Player player) {
         logger.debug("Create player: " + player);
 
-        Player dbPlayer = getPlayer(player);
+        Player dbPlayer = getPlayer(player._setClub(null));
 
         if (dbPlayer == null) {
             return tournamentAggregationDao.createPlayer(player);
