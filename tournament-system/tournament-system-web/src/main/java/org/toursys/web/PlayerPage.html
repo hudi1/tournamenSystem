@@ -7,8 +7,7 @@
 </wicket:head>
 <wicket:extend>
 	<form wicket:id="playerForm">
-		<div class="naginator" wicket:id="navigator">[dataview
-			navigator]</div>
+		<div wicket:id="navigator"></div>
 		<table class="playersTable">
 			<tr>
 				<th><wicket:message key="name">
@@ -22,7 +21,7 @@
         </wicket:message></th>
 				<th></th>
 			</tr>
-			<tr wicket:id="rows">
+			<tr wicket:id="players">
 				<td><input class="inputLabel" type="text" wicket:id="name" /></td>
 				<td><input class="inputLabel" type="text" wicket:id="surname" /></td>
 				<td><input class="inputLabel" type="text" wicket:id="club" /></td>

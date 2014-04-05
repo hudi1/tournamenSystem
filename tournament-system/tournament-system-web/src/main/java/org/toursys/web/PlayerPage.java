@@ -2,8 +2,6 @@ package org.toursys.web;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -13,31 +11,28 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
+import org.toursys.web.components.PropertyPageableListView;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
-    private static final int ITEMS_PER_PAGE = 10;
     private User user;
 
     public PlayerPage() {
@@ -47,11 +42,24 @@ public class PlayerPage extends TournamentHomePage {
     public PlayerPage(PageParameters pageParameters) {
         super(pageParameters);
         this.user = getTournamentSession().getUser();
+
         createPage();
     }
 
     protected void createPage() {
-        add(new PlayerForm(Model.of(user)));
+        add(new PlayerForm(Model.of(getUserWithPlayers())));
+    }
+
+    private User getUserWithPlayers() {
+        User user = new User();
+        user.getPlayers().addAll(playerService.getPlayers(new Player()._setUser(this.user)));
+        Collections.sort(user.getPlayers(), new Comparator<Player>() {
+            @Override
+            public int compare(Player p1, Player p2) {
+                return p1.getSurname().compareTo(p2.getSurname());
+            }
+        });
+        return user;
     }
 
     private class PlayerForm extends Form<User> {
@@ -60,24 +68,22 @@ public class PlayerPage extends TournamentHomePage {
 
         public PlayerForm(Model<User> model) {
             super("playerForm", new CompoundPropertyModel<User>(model));
-            IDataProvider<Player> playerDataProvider = createPlayerProvider();
-            DataView<Player> dataView = createDataview(playerDataProvider);
             ModalWindow modalWindow;
 
-            add(dataView);
-            add(new PagingNavigator("navigator", dataView));
+            addPlayerListView();
             addPlayerAddButton();
             add(modalWindow = createModalWindow());
             addModalButton(modalWindow);
         }
 
-        private DataView<Player> createDataview(IDataProvider<Player> playerDataProvider) {
-            final DataView<Player> dataView = new DataView<Player>("rows", playerDataProvider, ITEMS_PER_PAGE) {
+        private void addPlayerListView() {
+            PropertyPageableListView<Player> listView;
+            add(listView = new PropertyPageableListView<Player>("players", ITEM_PER_PAGE) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(final Item<Player> listItem) {
+                protected void populateItem(final ListItem<Player> listItem) {
                     final Player player = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Player>(player));
                     listItem.add(new TextField<String>("name").add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -159,54 +165,10 @@ public class PlayerPage extends TournamentHomePage {
                         }
                     }));
                 }
-            };
 
-            return dataView;
-        }
-
-        private IDataProvider<Player> createPlayerProvider() {
-
-            IDataProvider<Player> playerDataProvider = new IDataProvider<Player>() {
-
-                private static final long serialVersionUID = 1L;
-                private List<Player> players = playerService.getPlayers(new Player()._setUser(user));
-
-                @Override
-                public Iterator<Player> iterator(int first, int count) {
-                    List<Player> allPlayers = players;
-                    Collections.sort(allPlayers, new Comparator<Player>() {
-                        @Override
-                        public int compare(Player p1, Player p2) {
-                            return p1.getSurname().compareTo(p2.getSurname());
-                        }
-                    });
-                    return allPlayers.subList(first, first + count).iterator();
-                }
-
-                @Override
-                public int size() {
-                    return players.size();
-                }
-
-                @Override
-                public IModel<Player> model(final Player object) {
-                    return new LoadableDetachableModel<Player>() {
-
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected Player load() {
-                            return object;
-                        }
-                    };
-                }
-
-                @Override
-                public void detach() {
-                }
-            };
-
-            return playerDataProvider;
+            });
+            AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
+            add(navigator);
         }
 
         private void addModalButton(final ModalWindow modalWindow) {
@@ -253,6 +215,15 @@ public class PlayerPage extends TournamentHomePage {
 
                 public boolean onCloseButtonClicked(AjaxRequestTarget target) {
                     return true;
+                }
+            });
+
+            modal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+
+                private static final long serialVersionUID = 10094L;
+
+                public void onClose(AjaxRequestTarget target) {
+                    setResponsePage(PlayerPage.class, getPageParameters());
                 }
             });
             return modal;
