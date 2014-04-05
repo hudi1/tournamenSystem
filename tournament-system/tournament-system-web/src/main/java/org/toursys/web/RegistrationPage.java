@@ -253,6 +253,15 @@ public class RegistrationPage extends TournamentHomePage {
                     return true;
                 }
             });
+
+            modal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+
+                private static final long serialVersionUID = 10094L;
+
+                public void onClose(AjaxRequestTarget target) {
+                    setResponsePage(RegistrationPage.class, getPageParameters());
+                }
+            });
             return modal;
         }
 
