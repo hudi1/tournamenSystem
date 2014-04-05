@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.ImportService;
 import org.toursys.repository.model.User;
+import org.toursys.web.mask.MaskIndicatingAjaxButton;
 
 public class ImportPlayerPage extends WebPage {
 
@@ -24,8 +25,8 @@ public class ImportPlayerPage extends WebPage {
     @SpringBean(name = "importService")
     private ImportService importService;
 
-    final FeedbackPanel feedBackPanel;
-    final ModalWindow modalWindow;
+    private final FeedbackPanel feedBackPanel;
+    private final ModalWindow modalWindow;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -33,7 +34,6 @@ public class ImportPlayerPage extends WebPage {
         this.user = user;
         this.feedBackPanel = new FeedbackPanel("feedbackPanel");
         this.modalWindow = modalWindow;
-
         createPage();
     }
 
@@ -79,7 +79,7 @@ public class ImportPlayerPage extends WebPage {
         }
 
         public void addImportButton(final TextField<String> url) {
-            add(new AjaxButton("import") {
+            add(new MaskIndicatingAjaxButton("import") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -91,8 +91,13 @@ public class ImportPlayerPage extends WebPage {
                         modalWindow.close(target);
                     } catch (Exception e) {
                         logger.error("Error during importing player: ", e);
-                        error(getString("importError"));
+                        error(ImportPlayerPage.this.getString("importError"));
                     }
+                }
+
+                @Override
+                public String maskText() {
+                    return ImportPlayerPage.this.getString("maskText");
                 }
             });
         }

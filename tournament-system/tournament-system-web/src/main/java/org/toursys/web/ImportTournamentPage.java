@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.toursys.processor.service.ImportService;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
+import org.toursys.web.mask.MaskIndicatingAjaxButton;
 
 public class ImportTournamentPage extends WebPage {
 
@@ -82,7 +83,7 @@ public class ImportTournamentPage extends WebPage {
         }
 
         public void addImportButton(final TextField<String> url) {
-            add(new AjaxButton("import") {
+            add(new MaskIndicatingAjaxButton("import") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -94,8 +95,13 @@ public class ImportTournamentPage extends WebPage {
                         modalWindow.close(target);
                     } catch (Exception e) {
                         logger.error("Error during importing player: ", e);
-                        error(getString("importError"));
+                        error(ImportTournamentPage.this.getString("importError"));
                     }
+                }
+
+                @Override
+                public String maskText() {
+                    return ImportTournamentPage.this.getString("maskText");
                 }
             });
         }
