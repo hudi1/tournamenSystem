@@ -13,6 +13,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Score;
 
 public class TournamentHtmlImportFactory {
     // http://trefik.cz/stiga/turnaje2014/kladno/kriz.htm
@@ -80,6 +81,15 @@ public class TournamentHtmlImportFactory {
             for (Element rowElement : tableRows) {
                 Participant homeParticipant = participantIterator.next();
                 Elements columns = rowElement.select("td");
+
+                String rank = columns.get(columns.size() - 1).ownText();
+                String points = columns.get(columns.size() - 2).ownText();
+                String score = columns.get(columns.size() - 4).ownText();
+
+                homeParticipant.setPoints(Integer.parseInt(points));
+                homeParticipant.setRank(Integer.parseInt(rank.replace(".", "")));
+                homeParticipant.setScore(new Score(Integer.parseInt(score.split(":")[0]), Integer.parseInt(score
+                        .split(":")[1])));
 
                 for (int i = 2; i < columns.size() - 4; i++) {
                     String result = columns.get(i).ownText();

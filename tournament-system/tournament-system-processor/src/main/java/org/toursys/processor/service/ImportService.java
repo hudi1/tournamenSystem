@@ -56,6 +56,7 @@ public class ImportService extends AbstractService {
         TournamentHtmlImportFactory.createImportedGames(url, savedParticipants);
 
         for (Participant participant : savedParticipants) {
+            participantService.updateParticipant(participant);
             for (Game game : participant.getGames()) {
                 gameService.createGame(game);
             }
