@@ -18,7 +18,7 @@ public class Tournament implements Serializable {
   public Tournament() {
   }
   
-  public Tournament(String name, Season season, Integer finalPromoting, Integer lowerPromoting, Integer winPoints, Integer playOffA, Integer playOffLower, Integer minPlayersInGroup) {
+  public Tournament(String name, Season season, Integer finalPromoting, Integer lowerPromoting, Integer winPoints, Integer playOffA, Integer playOffLower, Integer minPlayersInGroup, TournamentSortType sortType) {
     this.name = name;
     this.season = season;
     this.finalPromoting = finalPromoting;
@@ -27,6 +27,7 @@ public class Tournament implements Serializable {
     this.playOffA = playOffA;
     this.playOffLower = playOffLower;
     this.minPlayersInGroup = minPlayersInGroup;
+    this.sortType = sortType;
   }
   
   private Integer id;
@@ -161,6 +162,21 @@ public class Tournament implements Serializable {
   
   public Tournament _setMinPlayersInGroup(Integer minPlayersInGroup) {
     this.minPlayersInGroup = minPlayersInGroup;
+    return this;
+  }
+  
+  private TournamentSortType sortType;
+  
+  public TournamentSortType getSortType() {
+    return sortType;
+  }
+  
+  public void setSortType(TournamentSortType sortType) {
+    this.sortType = sortType;
+  }
+  
+  public Tournament _setSortType(TournamentSortType sortType) {
+    this.sortType = sortType;
     return this;
   }
   
@@ -369,10 +385,10 @@ public class Tournament implements Serializable {
   
   @Override
   public String toString() {
-    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
+    return "Tournament [id=" + id + ", playOffLower=" + playOffLower + ", playOffA=" + playOffA + ", winPoints=" + winPoints + ", finalPromoting=" + finalPromoting + ", name=" + name + ", sortType=" + sortType + ", lowerPromoting=" + lowerPromoting + ", minPlayersInGroup=" + minPlayersInGroup + "]";
   }
   
   public String toStringFull() {
-    return "Tournament [id=" + id + ", name=" + name + ", season=" + season + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffA=" + playOffA + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", groups=" + groups + ", finalStandings=" + finalStandings + "]";
+    return "Tournament [id=" + id + ", name=" + name + ", season=" + season + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffA=" + playOffA + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", sortType=" + sortType + ", groups=" + groups + ", finalStandings=" + finalStandings + "]";
   }
 }

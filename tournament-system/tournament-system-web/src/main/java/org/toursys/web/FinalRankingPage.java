@@ -49,7 +49,6 @@ public class FinalRankingPage extends TournamentHomePage {
 
         public FinalStandingsForm() {
             super("finalStandingsForm");
-            setOutputMarkupId(true);
 
             IDataProvider<FinalStanding> playerDataProvider = new IDataProvider<FinalStanding>() {
 

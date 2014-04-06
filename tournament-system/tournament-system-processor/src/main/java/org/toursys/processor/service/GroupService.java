@@ -177,7 +177,7 @@ public class GroupService extends AbstractService {
         List<Groups> finalGroupss = getFinalGroups(new Groups()._setTournament(tournament));
 
         for (Groups finalGroups : finalGroupss) {
-            if (finalGroups.getCopyResult()) { // TODO otestovat !!!!
+            if (finalGroups.getCopyResult()) {
                 List<Participant> finalParticipants = participantService.getParticipants(new Participant()
                         ._setGroup(finalGroups));
                 for (Groups basicGroups : basicGroupss) {
@@ -204,6 +204,9 @@ public class GroupService extends AbstractService {
                             }
                         }
                     }
+                    List<Participant> savedParticipants = participantService.getParticipants(new Participant()
+                            ._setGroup(finalGroups));
+                    participantService.sortParticipants(savedParticipants, tournament);
                 }
             }
         }

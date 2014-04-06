@@ -22,6 +22,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.toursys.processor.TournamentPageParameter;
 import org.toursys.processor.service.FinalStandingService;
 import org.toursys.processor.service.GameService;
 import org.toursys.processor.service.GroupService;
@@ -37,7 +38,7 @@ import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
-public abstract class BasePage extends WebPage {
+public abstract class BasePage extends WebPage implements TournamentPageParameter {
 
     private static final long serialVersionUID = 1L;
 
@@ -89,6 +90,12 @@ public abstract class BasePage extends WebPage {
     }
 
     private void addMyComponents() {
+
+        PageParameters groupPageParameter = new PageParameters(getPageParameters());
+        if (this instanceof SchedulePage) {
+            groupPageParameter.set(UPDATE, true);
+        }
+
         add(new ExternalLink("logo", Model.of(RequestUtils.toAbsolutePath(urlFor(getApplication().getHomePage(), null)
                 .toString(), urlFor(HomePage.class, null).toString().toString()))));
         Component homePage = new BookmarkablePageLink<Void>("homePageMain", HomePage.class).add(new AttributeModifier(
@@ -112,7 +119,7 @@ public abstract class BasePage extends WebPage {
                 getPageParameters()).add(
                 new AttributeModifier("class", new ActiveReplaceModel(this instanceof RegistrationPage))).setVisible(
                 false);
-        Component groupPage = new BookmarkablePageLink<Void>("groupPage", GroupPage.class, getPageParameters()).add(
+        Component groupPage = new BookmarkablePageLink<Void>("groupPage", GroupPage.class, groupPageParameter).add(
                 new AttributeModifier("class", new ActiveReplaceModel(this instanceof GroupPage))).setVisible(false);
         Component playOffPage = new BookmarkablePageLink<Void>("playOffPage", PlayOffPage.class, getPageParameters())
                 .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayOffPage))).setVisible(
@@ -141,6 +148,7 @@ public abstract class BasePage extends WebPage {
             groupPage.setVisible(true);
             playOffPage.setVisible(true);
             finalRankingPage.setVisible(true);
+            logoutPage.setVisible(true);
         } else {
             if (getTournamentSession().isSignedIn()) {
                 seasonPage.setVisible(true);
@@ -249,8 +257,8 @@ public abstract class BasePage extends WebPage {
         Integer tournamentId = null;
 
         if (tournament == null) {
-            if (!pageParameters.get("tid").isNull()) {
-                tournamentId = pageParameters.get("tid").toInteger();
+            if (!pageParameters.get(TID).isNull()) {
+                tournamentId = pageParameters.get(TID).toInteger();
             }
         } else if (tournament.getWinPoints() == null) {
             tournamentId = tournament.getId();
@@ -269,8 +277,8 @@ public abstract class BasePage extends WebPage {
 
     protected Groups getGroup(PageParameters parameters) {
         Groups group = null;
-        if (!parameters.get("gid").isNull()) {
-            group = groupService.getGroup(new Groups()._setId(parameters.get("gid").toInteger()));
+        if (!parameters.get(GID).isNull()) {
+            group = groupService.getGroup(new Groups()._setId(parameters.get(GID).toInteger()));
         }
         if (group == null) {
             group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters))._setName("1"));

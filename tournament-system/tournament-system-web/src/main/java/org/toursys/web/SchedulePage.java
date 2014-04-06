@@ -93,7 +93,7 @@ public class SchedulePage extends TournamentHomePage {
 
                 @Override
                 public void onSubmit() {
-                    getPageParameters().remove("update");
+                    getPageParameters().set(UPDATE, true);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));

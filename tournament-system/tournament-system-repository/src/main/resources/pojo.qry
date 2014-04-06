@@ -115,6 +115,14 @@ package org.toursys.repository.model {
     toString ::: id name
   }
 
+
+
+  final enum TournamentSortType serializable 1  {
+    value : java.lang.String
+    SK ::: "SK"
+    CZ ::: "CZ"
+  }
+
   final pojo Tournament serializable 1 {
     id : java.lang.Integer primaryKey index 1
     name : java.lang.String required
@@ -125,12 +133,13 @@ package org.toursys.repository.model {
     playOffA : java.lang.Integer required
     playOffLower : java.lang.Integer required
     minPlayersInGroup : java.lang.Integer required
+    sortType :: TournamentSortType required
     groups : java.util.List <:Groups>
     finalStandings : java.util.List <:FinalStanding>
     equals ::: id
     toInit ::: season finalStandings groups
     isDef :::
-    toString ::: id playOffLower playOffA winPoints finalPromoting name lowerPromoting minPlayersInGroup
+    toString ::: id playOffLower playOffA winPoints finalPromoting name sortType lowerPromoting minPlayersInGroup
   }
 
   final pojo User serializable 1 {

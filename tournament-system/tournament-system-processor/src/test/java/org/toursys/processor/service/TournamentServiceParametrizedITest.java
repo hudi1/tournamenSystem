@@ -21,6 +21,7 @@ import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
@@ -68,8 +69,8 @@ public class TournamentServiceParametrizedITest {
 
     private Tournament tournament;
     private User user;
-    private static final int MAX_PLAYER_COUNT = 4;
-    private static final int MAX_GROUP_COUNT = 1;
+    private static final int MAX_PLAYER_COUNT = 20;
+    private static final int MAX_GROUP_COUNT = 4;
 
     private int playerCount;
     private int hockeyCount;
@@ -136,13 +137,6 @@ public class TournamentServiceParametrizedITest {
             }
             gameService.processGames(playerResults);
 
-            Player player = new Player(nameGenerator.getName(), nameGenerator.getName(), null, user);
-            player = playerService.createPlayer(player);
-            playerResults.add(participantService.createBasicParticipant(tournament, player, group));
-
-            gameService.processGames(playerResults);
-            playerCount++;
-
             for (Participant playerResult : playerResults) {
                 Assert.assertFalse(playerResult.getGames().isEmpty());
                 Assert.assertEquals(playerResult.getGames().size(), playerCount - 1);
@@ -177,6 +171,7 @@ public class TournamentServiceParametrizedITest {
                 previousParticipant = playerResult;
             }
         } // TODO ak pocet min hracov v skupine je vacsi ako pocet hracov v A // skupine tak vyhodi vyjimku
+
         groupService.createFinalGroup(tournament);
         finalStandingService.processFinalStandings(tournament);
 
@@ -223,21 +218,22 @@ public class TournamentServiceParametrizedITest {
             }
 
             // playOff
-            /*
-             * finalGroup.setPlayThirdPlace(random.nextBoolean()); playOffGameService.processPlayOffGames(tournament);
-             * List<PlayOffGame> playOffGames = playOffGameService .getPlayOffGames(new
-             * PlayOffGame()._setGroup(finalGroup));
-             * 
-             * if (finalGroup.getName().equals("A")) { int gamesCount = tournament.getPlayOffA();
-             * System.out.println("qqqqqqqqqq" + gamesCount);
-             * 
-             * if (!finalGroup.getPlayThirdPlace()) { System.out.println("xxxxxxxxxxxxx"); gamesCount--; }
-             * Assert.assertEquals(gamesCount, playOffGames.size()); } else { int gamesCount =
-             * tournament.getPlayOffLower(); if (!finalGroup.getPlayThirdPlace()) { System.out.println("zzzzzzzzzzz");
-             * gamesCount--; } Assert.assertEquals(gamesCount, playOffGames.size()); }
-             * 
-             * // tournamentService.getPlayOffGames(tournament, finalGroup);
-             */
+
+            finalGroup.setPlayThirdPlace(random.nextBoolean());
+            playOffGameService.processPlayOffGames(tournament);
+            List<PlayOffGame> playOffGames = playOffGameService
+                    .getPlayOffGames(new PlayOffGame()._setGroup(finalGroup));
+
+            if (finalGroup.getName().equals("A")) {
+                int gamesCount = tournament.getPlayOffA();
+                Assert.assertEquals(gamesCount, playOffGames.size());
+            } else {
+                int gamesCount = tournament.getPlayOffLower();
+                Assert.assertEquals(gamesCount, playOffGames.size());
+            }
+
+            // tournamentService.getPlayOffGames(tournament, finalGroup);
+
         }
 
     }

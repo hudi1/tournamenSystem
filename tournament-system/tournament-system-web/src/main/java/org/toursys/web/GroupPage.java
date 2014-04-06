@@ -2,7 +2,6 @@ package org.toursys.web;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +31,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
-import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
@@ -47,7 +45,7 @@ public class GroupPage extends TournamentHomePage {
     private Groups group;
     private List<Participant> participants;
     private ModalWindow modalWindow;
-    private boolean calculateParticipants;
+    private boolean sortParticipants;
 
     public GroupPage() {
         this(new PageParameters());
@@ -55,16 +53,19 @@ public class GroupPage extends TournamentHomePage {
 
     public GroupPage(PageParameters parameters) {
         super(parameters);
-        group = getGroup(parameters);
-        // TODO always false and calculate somewhere else
-        calculateParticipants = getCalculateParticipants(parameters);
-        getParticipants();
+
+        prepareData(parameters);
+        clearPageParameters();
         createPage();
     }
 
     protected void createPage() {
         addModalWindow();
         add(new GroupForm());
+    }
+
+    private void clearPageParameters() {
+        getPageParameters().remove(UPDATE);
     }
 
     private void addModalWindow() {
@@ -95,7 +96,7 @@ public class GroupPage extends TournamentHomePage {
 
                 @Override
                 public void onSubmit() {
-                    getPageParameters().set("gid", group.getId());
+                    getPageParameters().set(GID, group.getId());
                     setResponsePage(SchedulePage.class, getPageParameters());
                 }
             };
@@ -108,9 +109,9 @@ public class GroupPage extends TournamentHomePage {
 
                 @Override
                 public void onSubmit() {
-                    getPageParameters().set("gid", group.getId());
-                    getPageParameters().set("showTableOptions", true);
-                    getPageParameters().set("showTournamentOptions", false);
+                    getPageParameters().set(GID, group.getId());
+                    getPageParameters().set(SHOW_TABLE_OPTIONS, true);
+                    getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, false);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             };
@@ -168,7 +169,6 @@ public class GroupPage extends TournamentHomePage {
                     groupService.createFinalGroup(tournament);
                     finalStandingService.processFinalStandings(tournament);
                     playOffGameService.processPlayOffGames(tournament);
-                    getPageParameters().set("update", false);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -182,7 +182,6 @@ public class GroupPage extends TournamentHomePage {
                 @Override
                 public void onSubmit() {
                     groupService.copyResult(tournament);
-                    getPageParameters().set("update", false);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -278,8 +277,7 @@ public class GroupPage extends TournamentHomePage {
 
                         @Override
                         public void onSubmit() {
-                            getPageParameters().set("gid", group.getId());
-                            getPageParameters().set("update", false);
+                            getPageParameters().set(GID, group.getId());
                             setResponsePage(GroupPage.class, getPageParameters());
                         }
                     };
@@ -385,40 +383,50 @@ public class GroupPage extends TournamentHomePage {
         }
     }
 
-    private boolean getCalculateParticipants(PageParameters parameters) {
-        if (parameters.get("update").isNull()) {
-            return true;
+    private boolean getSortParticipants(PageParameters parameters) {
+        if (parameters.get(UPDATE).isNull()) {
+            return false;
         } else {
-            return parameters.get("update").toBoolean();
+            return parameters.get(UPDATE).toBoolean();
         }
     }
 
-    private void getParticipants() {
+    private void prepareData(PageParameters parameters) {
+        group = getGroup(parameters);
+        sortParticipants = getSortParticipants(parameters);
+
         if (group != null) {
-            this.participants = participantService.getParticipants(new Participant()._setGroup(group));
-            Collections.sort(this.participants, new RankComparator());
-            gameService.processGames(participants);
-            Set<Participant> samePlayerRankParticipants;
-
-            if (calculateParticipants) {
-                samePlayerRankParticipants = participantService.calculateParticipants(participants, tournament);
-                if (samePlayerRankParticipants.isEmpty()) {
-                    samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
-                }
-            } else {
-                samePlayerRankParticipants = participantService.getSameRankParticipants(participants);
-            }
-
-            if (!samePlayerRankParticipants.isEmpty()) {
-                createModalWindow(samePlayerRankParticipants);
-            }
-            if (group.getType().equals(GroupsType.FINAL) && calculateParticipants) {
-                finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
-            }
+            this.participants = getParticipants();
+            setUpGoldGoalModalWindow();
+            updateFinalStanding();
         } else {
             participants = new ArrayList<Participant>();
         }
 
+    }
+
+    private void updateFinalStanding() {
+        if (group.getType().equals(GroupsType.FINAL) && sortParticipants) {
+            finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
+        }
+    }
+
+    private void setUpGoldGoalModalWindow() {
+        Set<Participant> goldGoalParticipants = participantService.getGoldGoalParticipants(participants);
+
+        if (!goldGoalParticipants.isEmpty()) {
+            createModalWindow(goldGoalParticipants);
+        }
+    }
+
+    private List<Participant> getParticipants() {
+        List<Participant> participants = participantService.getSortedParticipants(new Participant()._setGroup(group));
+        gameService.processGames(participants);
+
+        if (sortParticipants) {
+            participantService.sortParticipants(participants, tournament);
+        }
+        return participants;
     }
 
     private void createModalWindow(final Set<Participant> samePlayerRankParticipants) {
@@ -447,7 +455,6 @@ public class GroupPage extends TournamentHomePage {
             private static final long serialVersionUID = 1L;
 
             public void onClose(AjaxRequestTarget target) {
-                getPageParameters().set("update", true);
                 setResponsePage(GroupPage.class, getPageParameters());
             }
         });

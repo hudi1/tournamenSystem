@@ -1,7 +1,6 @@
 package org.toursys.processor.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -11,15 +10,13 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import org.toursys.processor.comparators.AdvantageComparator;
-import org.toursys.processor.comparators.BasicComparator;
 import org.toursys.processor.comparators.RankComparator;
-import org.toursys.repository.model.Game;
+import org.toursys.processor.sorter.SkTournamentSorter;
+import org.toursys.processor.sorter.TournamentSorter;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.Score;
 import org.toursys.repository.model.Tournament;
 
 public class ParticipantService extends AbstractService {
@@ -107,133 +104,21 @@ public class ParticipantService extends AbstractService {
         return null;
     }
 
-    public Set<Participant> calculateParticipants(List<Participant> participants, Tournament tournament) {
+    @Transactional
+    public void sortParticipants(List<Participant> participants, Tournament tournament) {
         long time = System.currentTimeMillis();
-        logger.debug("Calculate participants: " + tournament);
-        Set<Participant> samePlayerRankParticipants = new HashSet<Participant>();
-        for (Participant participant : participants) {
-            calculateParticipant(participant, tournament, false);
-        }
+        logger.debug("Sort participants: " + tournament);
 
-        if (participants.size() > 0) {
-            samePlayerRankParticipants = sortParticipant(participants, tournament);
+        // TODO CZ
+        TournamentSorter sorter = new SkTournamentSorter(tournament);
+        sorter.sort(participants);
+
+        for (Participant participant : participants) {
+            updateParticipant(participant._setNull(Participant.Attribute.equalRank));
         }
 
         time = System.currentTimeMillis() - time;
         logger.debug("End: Calculate participants: " + time + " ms");
-        return samePlayerRankParticipants;
-    }
-
-    private void calculateParticipant(Participant participant, Tournament tournament, boolean advancedCalculating) {
-        long time = System.currentTimeMillis();
-        logger.debug("Calculate participant: " + participant);
-        int points = 0;
-        Integer homeScore = 0;
-        Integer awayScore = 0;
-        for (Game game : participant.getGames()) {
-            // TODO zistit preco ked participant nema ziadnu hru tak tam
-            // nacitava jednu z id 0 ???
-            if (game.getId() != 0) {
-                if (game.getHomeScore() != null && game.getAwayScore() != null) {
-                    if (game.getHomeScore() > game.getAwayScore()) {
-                        points += tournament.getWinPoints();
-                    } else if (game.getHomeScore().equals(game.getAwayScore())) {
-                        points += 1;
-                    }
-                    homeScore += game.getHomeScore();
-                    awayScore += game.getAwayScore();
-                }
-            }
-        }
-
-        if (!advancedCalculating) {
-            if (participant.getPoints() != points) {
-                participant.setEqualRank(null);
-            }
-        }
-        participant.setPoints(points);
-        participant.setScore(new Score(homeScore, awayScore));
-        time = System.currentTimeMillis() - time;
-        logger.debug("End: Calculate participant: " + time + " ms");
-    }
-
-    private Participant cloneParticipant(Participant participant) {
-        logger.debug("Clone participant: " + participant);
-        Participant clone = new Participant();
-        clone._setGroup(participant.getGroup())._setId(participant.getId())._setPlayer(participant.getPlayer())
-                ._setPoints(participant.getPoints())._setRank(participant.getRank())._setScore(participant.getScore())
-                ._setEqualRank(participant.getEqualRank());
-        clone.getGames().addAll(participant.getGames());
-        return clone;
-    }
-
-    @Transactional
-    private Set<Participant> sortParticipant(List<Participant> participants, Tournament tournament) {
-        logger.debug("Sort participants: " + Arrays.toString(participants.toArray()));
-
-        Collections.sort(participants, new BasicComparator());
-        AdvantageComparator advantageComparator = new AdvantageComparator();
-
-        for (int i = 0; i < participants.size(); i++) {
-            participants.get(i).setRank(i + 1);
-        }
-
-        List<Participant> temporatyParticipant = new ArrayList<Participant>();
-
-        temporatyParticipant.add(cloneParticipant(participants.get(0)));
-        int actualRank = 0;
-        for (int i = 0; i < participants.size() - 1; i++) {
-            if (participants.get(i).getPoints() == participants.get(i + 1).getPoints()) {
-                temporatyParticipant.add(cloneParticipant(participants.get(i + 1)));
-
-            }
-            if (participants.get(i).getPoints() != participants.get(i + 1).getPoints()
-                    || (i == participants.size() - 2)) {
-                if (temporatyParticipant.size() > 2) {
-                    for (Participant participant : temporatyParticipant) {
-                        boolean delGame = true;
-                        List<Game> g1 = new ArrayList<Game>(participant.getGames());
-                        for (Game game : g1) {
-                            for (Participant participant2 : temporatyParticipant) {
-                                if (participant2.equals(game.getAwayParticipant())) {
-                                    delGame = false;
-                                    break;
-                                }
-                            }
-                            if (delGame) {
-                                participant.getGames().remove(game);
-                            }
-                            delGame = true;
-                        }
-                    }
-                    for (Participant participant : temporatyParticipant) {
-                        calculateParticipant(participant, tournament, true);
-                    }
-
-                    Collections.sort(temporatyParticipant, advantageComparator);
-
-                    for (Participant participant1 : participants) {
-                        for (int j = 0; j < temporatyParticipant.size(); j++) {
-                            if (participant1.equals(temporatyParticipant.get(j))) {
-                                participant1.setRank(j + 1 + actualRank);
-                                participant1.setEqualRank(temporatyParticipant.get(j).getEqualRank());
-                            }
-                        }
-                    }
-                }
-                temporatyParticipant.clear();
-                temporatyParticipant.add(cloneParticipant(participants.get(i + 1)));
-                actualRank = i + 1;
-            }
-        }
-
-        for (int i = 0; i < participants.size(); i++) {
-            logger.debug("Updating participant: " + participants.get(i));
-            participants.get(i)._setNull(Participant.Attribute.equalRank);
-            tournamentAggregationDao.updateParticipant(participants.get(i));
-        }
-        Collections.sort(participants, new RankComparator());
-        return advantageComparator.getSameRankPlayers();
     }
 
     @Transactional(readOnly = true)
@@ -293,7 +178,7 @@ public class ParticipantService extends AbstractService {
         return playerByGroup;
     }
 
-    public Set<Participant> getSameRankParticipants(List<Participant> participants) {
+    public Set<Participant> getGoldGoalParticipants(List<Participant> participants) {
         Set<Participant> participantsSet = new HashSet<Participant>();
 
         for (Participant participant : participants) {
@@ -304,9 +189,14 @@ public class ParticipantService extends AbstractService {
         return participantsSet;
     }
 
+    public List<Participant> getSortedParticipants(Participant participant) {
+        List<Participant> participants = getParticipants(participant);
+        Collections.sort(participants, new RankComparator());
+        return participants;
+    }
+
     @Required
     public void setGroupService(GroupService groupService) {
         this.groupService = groupService;
     }
-
 }

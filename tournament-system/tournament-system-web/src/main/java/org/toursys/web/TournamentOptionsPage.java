@@ -42,15 +42,15 @@ public class TournamentOptionsPage extends BasePage {
     }
 
     private void clearPageParameters() {
-        getPageParameters().remove("showTableOptions").remove("showTournamentOptions").remove("update");
+        getPageParameters().remove(SHOW_TABLE_OPTIONS).remove(SHOW_TOURNAMENT_OPTIONS).remove(UPDATE);
     }
 
     private void setTableOption(PageParameters parameters) {
-        this.isTableOptionsOn = parameters.get("showTableOptions").toBoolean(true);
+        this.isTableOptionsOn = parameters.get(SHOW_TABLE_OPTIONS).toBoolean(true);
     }
 
     private void setTournamentOption(PageParameters parameters) {
-        this.isTournamentOptionsOn = parameters.get("showTournamentOptions").toBoolean(false);
+        this.isTournamentOptionsOn = parameters.get(SHOW_TOURNAMENT_OPTIONS).toBoolean(false);
     }
 
     protected void createPage() {
@@ -201,8 +201,8 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    getPageParameters().set("showTableOptions", true);
-                    getPageParameters().set("showTournamentOptions", false);
+                    getPageParameters().set(SHOW_TABLE_OPTIONS, true);
+                    getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, false);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
@@ -213,8 +213,8 @@ public class TournamentOptionsPage extends BasePage {
 
                 @Override
                 public void onSubmit() {
-                    getPageParameters().set("showTableOptions", false);
-                    getPageParameters().set("showTournamentOptions", true);
+                    getPageParameters().set(SHOW_TABLE_OPTIONS, false);
+                    getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, true);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });

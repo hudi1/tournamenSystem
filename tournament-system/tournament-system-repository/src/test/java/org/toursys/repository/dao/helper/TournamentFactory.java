@@ -5,6 +5,7 @@ import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.TournamentSortType;
 import org.toursys.repository.model.User;
 
 public class TournamentFactory {
@@ -15,7 +16,7 @@ public class TournamentFactory {
 
     public static final String PLAYER_NAME = "Tomáš";
     public static final String PLAYER_CLUB = "THC Blue Dragon";
-    public static final String PLAYER_SURNAME = "Hudec";
+    public static final String PLAYER_SURNAME = "Hudec1";
 
     public static final String USER_NAME = "Tomáš";
     public static final String USER_SURNAME = "Hudec";
@@ -29,7 +30,7 @@ public class TournamentFactory {
     }
 
     public static Tournament createTournament() {
-        return new Tournament(TOURNAMENT_NAME, null, 6, 5, 2, 16, 8, 0);
+        return new Tournament(TOURNAMENT_NAME, null, 6, 5, 2, 16, 8, 0, TournamentSortType.SK);
     }
 
     public static Season createSeason() {

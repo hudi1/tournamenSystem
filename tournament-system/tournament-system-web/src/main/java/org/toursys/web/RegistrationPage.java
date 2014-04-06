@@ -30,6 +30,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
 import org.toursys.web.components.ModelAutoCompleteTextField;
@@ -281,7 +282,8 @@ public class RegistrationPage extends TournamentHomePage {
             if (playerModel.getObject() != null) {
                 Player player = playerModel.getObject();
                 notRegistratedPlayers.remove(player);
-                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player, group));
+                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player,
+                        group._setType(GroupsType.BASIC)));
                 playerModel.setObject(null);
             }
         }
@@ -311,7 +313,7 @@ public class RegistrationPage extends TournamentHomePage {
                         groupName--;
                     }
                     group.setName(groupName.toString());
-                    getPageParameters().set("gid", groupName.toString());
+                    getPageParameters().set(GID, groupName.toString());
                     target.add(groupTextField);
                 }
             });
@@ -327,7 +329,7 @@ public class RegistrationPage extends TournamentHomePage {
                     Integer groupName = Integer.parseInt(group.getName());
                     groupName++;
                     group.setName(groupName.toString());
-                    getPageParameters().set("gid", groupName.toString());
+                    getPageParameters().set(GID, groupName.toString());
                     target.add(groupTextField);
                 }
             });
