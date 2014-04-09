@@ -11,7 +11,6 @@ metagen-table-sequence PLAYER SEQ_PLAYER;
 metagen-table-sequence PARTICIPANT SEQ_PARTICIPANT;
 metagen-table-sequence SEASON SEQ_SEASON;
 metagen-table-sequence TOURNAMENT SEQ_TOURNAMENT;
-metagen-table-sequence PLAY_OFF_GAME SEQ_PLAY_OFF_GAME;
 metagen-table-sequence PLAY_OFF_RESULT SEQ_PLAY_OFF_RESULT;
 metagen-table-sequence USER SEQ_USER;
 
@@ -20,8 +19,6 @@ pojogen-generate-wrappers;
 pojogen-ignore-one-to-many PLAYER ID->PARTICIPANT->PLAYER_ID;
 
 pojogen-ignore-one-to-many PARTICIPANT ID->GAME->AWAY_PARTICIPANT_ID;
-pojogen-ignore-one-to-many PARTICIPANT ID->PLAY_OFF_GAME->AWAY_PARTICIPANT_ID;
-pojogen-ignore-one-to-many PARTICIPANT ID->PLAY_OFF_GAME->HOME_PARTICIPANT_ID;
 
 pojogen-ignore-one-to-many PLAYER ID->PLAY_OFF_GAME;
 pojogen-ignore-one-to-many PLAYER ID->FINAL_STANDING->PLAYER_ID;
@@ -30,14 +27,20 @@ pojogen-implements-interfaces java.io.Serializable;
 pojogen-generate-methods equals toString toInit isDef;
 
 pojogen-types-for-columns PARTICIPANT SCORE->:org.toursys.repository.model.Score;
+pojogen-types-for-columns GAME RESULT->:org.toursys.repository.model.Results;
 
 pojogen-make-it-final;
 
 metagen-column-meta-type PARTICIPANT SCORE->score;
+metagen-column-meta-type GAME RESULT->result;
 
 pojogen-rename-columns GROUPS_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
 
+pojogen-rename-columns GROUPS_PLAY_OFF_TYPE F->FINAL L->LOWER;
+
 pojogen-create-columns PARTICIPANT TEMP->_boolean;
+
+pojogen-inherit-many-to-one PLAY_OFF_GAME GAME_ID->GAME->ID;
 
 table finalStanding FINAL_STANDING;
 table game GAME;

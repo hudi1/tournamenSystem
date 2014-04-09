@@ -53,7 +53,6 @@ public class UserEditPage extends BasePage {
 
         public UserForm(final UserImpl user) {
             super("userEditForm", new CompoundPropertyModel<User>(user));
-            setOutputMarkupId(true);
 
             // TODO dynamicka validacia policka nie len po submite
 

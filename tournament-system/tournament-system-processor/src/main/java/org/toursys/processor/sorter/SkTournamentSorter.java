@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.comparators.SkParticipantComparator;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Participant;
@@ -89,5 +90,6 @@ public class SkTournamentSorter extends TournamentSorter {
                 actualRank = i + 1;
             }
         }
+        Collections.sort(participants, new RankComparator());
     }
 }

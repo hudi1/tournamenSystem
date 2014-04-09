@@ -1,4 +1,6 @@
 package org.toursys.repository.model;
+  
+import org.toursys.repository.model.Results;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -14,11 +16,6 @@ public class Game implements Serializable {
   public static final int ORDER_BY_AWAY_PARTICIPANT = 3;
 	
   public Game() {
-  }
-  
-  public Game(Participant homeParticipant, Participant awayParticipant) {
-    this.homeParticipant = homeParticipant;
-    this.awayParticipant = awayParticipant;
   }
   
   private Integer id;
@@ -66,33 +63,33 @@ public class Game implements Serializable {
     return this;
   }
   
-  private Integer homeScore;
+  private GameStatus status;
   
-  public Integer getHomeScore() {
-    return homeScore;
+  public GameStatus getStatus() {
+    return status;
   }
   
-  public void setHomeScore(Integer homeScore) {
-    this.homeScore = homeScore;
+  public void setStatus(GameStatus status) {
+    this.status = status;
   }
   
-  public Game _setHomeScore(Integer homeScore) {
-    this.homeScore = homeScore;
+  public Game _setStatus(GameStatus status) {
+    this.status = status;
     return this;
   }
   
-  private Integer awayScore;
+  private Results result;
   
-  public Integer getAwayScore() {
-    return awayScore;
+  public Results getResult() {
+    return result;
   }
   
-  public void setAwayScore(Integer awayScore) {
-    this.awayScore = awayScore;
+  public void setResult(Results result) {
+    this.result = result;
   }
   
-  public Game _setAwayScore(Integer awayScore) {
-    this.awayScore = awayScore;
+  public Game _setResult(Results result) {
+    this.result = result;
     return this;
   }
   
@@ -175,7 +172,7 @@ public class Game implements Serializable {
   }
   
   public enum Attribute {
-    homeScore, awayScore
+    result, status, homeParticipant, awayParticipant
   }
   
   private Set<String> nullValues = new HashSet<String>();
@@ -272,10 +269,10 @@ public class Game implements Serializable {
   
   @Override
   public String toString() {
-    return "Game [id=" + id + ", homeScore=" + homeScore + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", result=" + result + ", status=" + status + "]";
   }
   
   public String toStringFull() {
-    return "Game [id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", homeScore=" + homeScore + ", awayScore=" + awayScore + "]";
+    return "Game [id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", status=" + status + ", result=" + result + "]";
   }
 }

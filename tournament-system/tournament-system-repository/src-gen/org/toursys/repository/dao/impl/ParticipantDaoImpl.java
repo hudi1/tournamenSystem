@@ -17,6 +17,7 @@ import org.sqlproc.engine.SqlSession;
 import org.sqlproc.engine.SqlSessionFactory;
 import org.sqlproc.engine.impl.SqlStandardControl;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.PlayOffGame;
 
 public class ParticipantDaoImpl implements ParticipantDao {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -63,7 +64,7 @@ public class ParticipantDaoImpl implements ParticipantDao {
       logger.trace("get get: " + participant + " " + sqlControl);
     }
     SqlCrudEngine sqlGetEngineParticipant = sqlEngineFactory.getCheckedCrudEngine("GET_PARTICIPANT");
-    //sqlControl = getMoreResultClasses(participant, sqlControl);
+    sqlControl = getMoreResultClasses(participant, sqlControl);
     Participant participantGot = sqlGetEngineParticipant.get(sqlSession, Participant.class, participant, sqlControl);
     if (logger.isTraceEnabled()) {
       logger.trace("get participant result: " + participantGot);
@@ -127,7 +128,7 @@ public class ParticipantDaoImpl implements ParticipantDao {
       logger.trace("list participant: " + participant + " " + sqlControl);
     }
     SqlQueryEngine sqlEngineParticipant = sqlEngineFactory.getCheckedQueryEngine("SELECT_PARTICIPANT");
-    //sqlControl = getMoreResultClasses(participant, sqlControl);
+    sqlControl = getMoreResultClasses(participant, sqlControl);
     List<Participant> participantList = sqlEngineParticipant.query(sqlSession, Participant.class, participant, sqlControl);
     if (logger.isTraceEnabled()) {
       logger.trace("list participant size: " + ((participantList != null) ? participantList.size() : "null"));
@@ -149,7 +150,7 @@ public class ParticipantDaoImpl implements ParticipantDao {
       logger.trace("count participant: " + participant + " " + sqlControl);
     }
     SqlQueryEngine sqlEngineParticipant = sqlEngineFactory.getCheckedQueryEngine("SELECT_PARTICIPANT");
-    //sqlControl = getMoreResultClasses(participant, sqlControl);
+    sqlControl = getMoreResultClasses(participant, sqlControl);
     int count = sqlEngineParticipant.queryCount(sqlSession, participant, sqlControl);
     if (logger.isTraceEnabled()) {
       logger.trace("count: " + count);
@@ -164,5 +165,21 @@ public class ParticipantDaoImpl implements ParticipantDao {
   }
   public int count(Participant participant) {
     return count(participant, null);
+  }
+  
+  SqlControl getMoreResultClasses(Participant participant, SqlControl sqlControl) {
+    if (sqlControl != null && sqlControl.getMoreResultClasses() != null)
+      return sqlControl;
+    Map<String, Class<?>> moreResultClasses = null;
+    if (participant != null && participant.toInit(Participant.Association.games.name())) {
+      if (moreResultClasses == null)
+        moreResultClasses = new HashMap<String, Class<?>>();
+      moreResultClasses.put("playOffGame", PlayOffGame.class);
+    }
+    if (moreResultClasses != null) {
+      sqlControl = new SqlStandardControl(sqlControl);
+      ((SqlStandardControl) sqlControl).setMoreResultClasses(moreResultClasses);
+    }
+    return sqlControl;
   }
 }

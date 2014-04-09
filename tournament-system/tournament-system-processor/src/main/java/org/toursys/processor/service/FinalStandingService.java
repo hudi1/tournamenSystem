@@ -13,10 +13,10 @@ import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.util.GroupsName;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.FinalStanding;
+import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffGameWinner;
 import org.toursys.repository.model.Tournament;
 
 public class FinalStandingService extends AbstractService {
@@ -115,10 +115,15 @@ public class FinalStandingService extends AbstractService {
             previousParticipantCount = previousParticipant.size();
         }
         int playOffCountPlayer = 0;
-        if (group.getName().equals("A")) {
-            playOffCountPlayer = tournament.getPlayOffA();
-        } else {
+        switch (group.getPlayOffType()) {
+        case FINAL:
+            playOffCountPlayer = tournament.getPlayOffFinal();
+            break;
+        case LOWER:
             playOffCountPlayer = tournament.getPlayOffLower();
+            break;
+        default:
+            break;
         }
 
         for (int i = participants.size(); i > playOffCountPlayer; i--) {
@@ -164,9 +169,9 @@ public class FinalStandingService extends AbstractService {
             for (int i = 0; i < playOffGames.size() - 4; i++) {
                 Integer round = TournamentUtil.getRound(playOffGames.size(), playOffGames.get(i).getPosition());
                 Participant participant = null;
-                if (PlayOffGameWinner.HOME.equals(playOffGames.get(i).getWinner())) {
+                if (GameStatus.WIN.equals(playOffGames.get(i).getStatus())) {
                     participant = playOffGames.get(i).getAwayParticipant();
-                } else if (PlayOffGameWinner.AWAY.equals(playOffGames.get(i).getWinner())) {
+                } else if (GameStatus.LOSE.equals(playOffGames.get(i).getStatus())) {
                     participant = playOffGames.get(i).getHomeParticipant();
                 }
 
@@ -202,8 +207,8 @@ public class FinalStandingService extends AbstractService {
                 FinalStanding secondFinalStanding = getFinalStanding(new FinalStanding()._setFinalRank(position)
                         ._setTournament(tournament));
 
-                if (playOffGames.get(i).getWinner() != null) {
-                    if (playOffGames.get(i).getWinner().equals(PlayOffGameWinner.HOME)) {
+                if (playOffGames.get(i).getStatus() != null && !GameStatus.DRAW.equals(playOffGames.get(i).getStatus())) {
+                    if (playOffGames.get(i).getStatus().equals(GameStatus.WIN)) {
                         if (playOffGames.get(i).getHomeParticipant() != null) {
                             firstFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
                         } else {
@@ -214,7 +219,7 @@ public class FinalStandingService extends AbstractService {
                         } else {
                             secondFinalStanding.setPlayer(null);
                         }
-                    } else if (playOffGames.get(i).getWinner().equals(PlayOffGameWinner.AWAY)) {
+                    } else if (playOffGames.get(i).getStatus().equals(GameStatus.LOSE)) {
                         if (playOffGames.get(i).getAwayParticipant() != null) {
                             firstFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
                         } else {
@@ -235,10 +240,15 @@ public class FinalStandingService extends AbstractService {
                 position -= 2;
             }
 
-            if (group.getName().equals("A")) {
-                startGroupSufix += tournament.getPlayOffA();
-            } else {
+            switch (group.getPlayOffType()) {
+            case FINAL:
+                startGroupSufix += tournament.getPlayOffFinal();
+                break;
+            case LOWER:
                 startGroupSufix += tournament.getPlayOffLower();
+                break;
+            default:
+                break;
             }
             startGroupMinusSufix += startGroupMinusSufixTemp;
         }

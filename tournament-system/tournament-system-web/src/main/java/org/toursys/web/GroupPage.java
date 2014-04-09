@@ -182,6 +182,7 @@ public class GroupPage extends TournamentHomePage {
                 @Override
                 public void onSubmit() {
                     groupService.copyResult(tournament);
+                    finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -328,15 +329,16 @@ public class GroupPage extends TournamentHomePage {
                                 gameItem.add(new Label("game", "X"));
                             } else {
                                 Game game = null;
+                                String result = "";
                                 for (Game pomGame : participant.getGames()) {
                                     if (pomGame.getAwayParticipant().getId().equals(participant1.getId())) {
                                         game = pomGame;
                                         break;
                                     }
                                 }
-
-                                String result = (game.getHomeScore() == null) ? "" : game.getHomeScore() + ":"
-                                        + ((game.getAwayScore() == null) ? "" : game.getAwayScore());
+                                if (game.getResult() != null) {
+                                    result = game.getResult().toString(" + ");
+                                }
                                 // TODO AJAX EDITABLE LABEL
                                 gameItem.add(new Label("game", result));
                             }

@@ -32,7 +32,7 @@ public class GameService extends AbstractService {
     @Transactional
     public int updateGame(Game game) {
         logger.debug("Updating game: " + game);
-        game.setNull(Game.Attribute.homeScore, Game.Attribute.awayScore);
+        game.setNull(Game.Attribute.result, Game.Attribute.status);
         return tournamentAggregationDao.updateGame(game);
     }
 
@@ -59,15 +59,14 @@ public class GameService extends AbstractService {
         updateGame(game);
         Game gameDb = getGame(new Game()._setHomeParticipant(game.getAwayParticipant())._setAwayParticipant(
                 game.getHomeParticipant()));
-        gameDb.setHomeScore(game.getAwayScore());
-        gameDb.setAwayScore(game.getHomeScore());
+        gameDb.setResult(game.getResult().revert());
         updateGame(gameDb);
     }
 
     @Transactional
     public void updateBothGames(List<GameImpl> schedule) {
         for (GameImpl gameImpl : schedule) {
-            if (gameImpl.getId() == null) {
+            if (gameImpl.getId() == null || gameImpl.getResult() == null) {
                 continue;
             }
             updateBothGames(gameImpl);

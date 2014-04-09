@@ -23,14 +23,16 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffGameWinner;
+import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
+import org.toursys.web.converter.ResultConverter;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayOffPage extends TournamentHomePage {
@@ -130,7 +132,24 @@ public class PlayOffPage extends TournamentHomePage {
 
                                 @Override
                                 public boolean isEnabled(Component component) {
-                                    return PlayOffGameWinner.HOME.equals(playOffGame.getWinner());
+                                    int homeWinnerCount = 0;
+                                    int awayWinnerCount = 0;
+
+                                    if (playOffGame == null || playOffGame.getResult() == null) {
+                                        return false;
+                                    }
+
+                                    for (Result result : playOffGame.getResult().getResults()) {
+                                        if (result.getLeftSide() > result.getRightSide()) {
+                                            homeWinnerCount++;
+                                        } else if (result.getLeftSide() < result.getRightSide()) {
+                                            awayWinnerCount++;
+                                        }
+                                    }
+                                    if (homeWinnerCount > awayWinnerCount) {
+                                        return true;
+                                    }
+                                    return false;
                                 }
                             }));
                             listItem.add(new Label("opponent", " " + opponentName + " " + opponentSurname + " "
@@ -139,27 +158,46 @@ public class PlayOffPage extends TournamentHomePage {
 
                                 @Override
                                 public boolean isEnabled(Component component) {
-                                    return PlayOffGameWinner.AWAY.equals(playOffGame.getWinner());
+                                    int homeWinnerCount = 0;
+                                    int awayWinnerCount = 0;
+
+                                    if (playOffGame == null || playOffGame.getResult() == null) {
+                                        return false;
+                                    }
+
+                                    for (Result result : playOffGame.getResult().getResults()) {
+                                        if (result.getLeftSide() > result.getRightSide()) {
+                                            homeWinnerCount++;
+                                        } else if (result.getLeftSide() < result.getRightSide()) {
+                                            awayWinnerCount++;
+                                        }
+                                    }
+                                    if (homeWinnerCount < awayWinnerCount) {
+                                        return true;
+                                    }
+                                    return false;
                                 }
                             }));
 
                             listItem.add(new Label("round", new ResourceModel(TournamentUtil.getRoundName(
                                     getViewSize(), listItem.getIndex() + 1))));
 
-                            listItem.add(new TextField<String>("results", new PropertyModel<String>(playOffGame,
-                                    "results")).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                            listItem.add(new TextField<Result>("result", new PropertyModel<Result>(playOffGame,
+                                    "result")) {
+
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public final <Results> IConverter<Results> getConverter(Class<Results> type) {
+                                    return (IConverter<Results>) ResultConverter.getInstance();
+                                }
+                            }.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                                 private static final long serialVersionUID = 1L;
 
                                 @Override
                                 protected void onUpdate(AjaxRequestTarget target) {
-                                    try {
-                                        playOffGameService.updatePlayOffGameResult(playOffGame);
-                                    } catch (NumberFormatException e) {
-                                        error(getString("bad.format.exception"));
-                                        target.add(feedbackPanel);
-                                        return;
-                                    }
+                                    playOffGameService.updatePlayOffGameResult(playOffGame);
                                 }
                             }));
 

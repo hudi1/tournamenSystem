@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.util.PositionCounter;
+import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
-import org.toursys.repository.model.PlayOffGameWinner;
+import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
 
 public class PlayOffGameService extends AbstractService {
@@ -37,7 +38,7 @@ public class PlayOffGameService extends AbstractService {
     public int updatePlayOffGame(PlayOffGame playOffGame) {
         logger.debug("Update playerOff game: " + playOffGame);
         playOffGame.setNull(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
-                PlayOffGame.Attribute.winner);
+                PlayOffGame.Attribute.result, PlayOffGame.Attribute.status);
         return tournamentAggregationDao.updatePlayOffGame(playOffGame);
     }
 
@@ -59,38 +60,27 @@ public class PlayOffGameService extends AbstractService {
 
     @Transactional
     public int updatePlayOffGameResult(PlayOffGame playOffGame) {
-        if (playOffGame.getResults() != null) {
-            String[] splitResults = playOffGame.getResults().split(",");
+        if (playOffGame.getResult() != null) {
+
             int homeWinnerCount = 0;
             int awayWinnerCount = 0;
-            for (int i = 0; i < splitResults.length; i++) {
-                if (splitResults[i].contains(":")) {
-                    int homeScore = Integer.parseInt(splitResults[i].split(":")[0]);
-                    int awayScore;
-                    try {
-                        awayScore = Integer.parseInt(splitResults[i].split(":")[1]);
-                    } catch (NumberFormatException e) {
-                        awayScore = Integer.parseInt(splitResults[i].split(":")[1].substring(0,
-                                splitResults[i].split(":")[1].length() - 1));
-                    }
-
-                    if (homeScore > awayScore) {
-                        homeWinnerCount++;
-                    } else if (homeScore < awayScore) {
-                        awayWinnerCount++;
-                    }
+            for (Result result : playOffGame.getResult().getResults()) {
+                if (result.getLeftSide() > result.getRightSide()) {
+                    homeWinnerCount++;
+                } else if (result.getLeftSide() < result.getRightSide()) {
+                    awayWinnerCount++;
                 }
             }
 
             if (homeWinnerCount > awayWinnerCount) {
-                playOffGame.setWinner(PlayOffGameWinner.HOME);
+                playOffGame.setStatus(GameStatus.WIN);
             } else if (homeWinnerCount < awayWinnerCount) {
-                playOffGame.setWinner(PlayOffGameWinner.AWAY);
+                playOffGame.setStatus(GameStatus.LOSE);
             } else {
-                playOffGame.setWinner(null);
+                playOffGame.setStatus(null);
             }
         } else {
-            playOffGame.setWinner(null);
+            playOffGame.setStatus(null);
         }
 
         logger.debug("Update playerOff game result: " + playOffGame);
@@ -144,14 +134,18 @@ public class PlayOffGameService extends AbstractService {
     }
 
     private int getPlayOffPlayerCount(Groups group, Tournament tournament) {
-        int playOffPlayerCount;
+        int playOffPlayerCount = 0;
 
-        if (group.getName().equals("A")) {
-            playOffPlayerCount = tournament.getPlayOffA();
-        } else {
-            playOffPlayerCount = tournament.getPlayOffLower();
+        switch (group.getPlayOffType()) {
+        case FINAL:
+            playOffPlayerCount += tournament.getPlayOffFinal();
+            break;
+        case LOWER:
+            playOffPlayerCount += tournament.getPlayOffLower();
+            break;
+        default:
+            break;
         }
-
         return playOffPlayerCount;
     }
 
@@ -194,8 +188,8 @@ public class PlayOffGameService extends AbstractService {
             tempThirdPlayOffGame = getPlayOffGameByPosition(playOffGames, nextPosition + 1);
         }
 
-        if (playOffGame.getWinner() != null) {
-            if (playOffGame.getWinner().equals(PlayOffGameWinner.HOME)) {
+        if (playOffGame.getStatus() != null) {
+            if (playOffGame.getStatus().equals(GameStatus.WIN)) {
                 if (position % 2 == 1) {
                     tempPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
                     if (isThirdPlace) {
@@ -207,7 +201,7 @@ public class PlayOffGameService extends AbstractService {
                         tempThirdPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
                     }
                 }
-            } else if (playOffGame.getWinner().equals(PlayOffGameWinner.AWAY)) {
+            } else if (playOffGame.getStatus().equals(GameStatus.LOSE)) {
                 if (position % 2 == 1) {
                     tempPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
                     if (isThirdPlace) {
@@ -220,7 +214,7 @@ public class PlayOffGameService extends AbstractService {
                     }
                 }
             } else {
-                tempPlayOffGame.setWinner(null);
+                tempPlayOffGame.setStatus(null);
             }
         } else {
             if (position % 2 == 1) {

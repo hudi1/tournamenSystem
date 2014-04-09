@@ -6,13 +6,11 @@ import java.util.HashSet;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.MethodUtils;
 
-public class PlayOffGame implements Serializable {
+public class PlayOffGame extends Game implements Serializable {
   
   private static final long serialVersionUID = 1L;
-  public static final int ORDER_BY_ID = 1;
-  public static final int ORDER_BY_HOME_PARTICIPANT = 4;
-  public static final int ORDER_BY_AWAY_PARTICIPANT = 3;
   public static final int ORDER_BY_GROUP = 2;
+  public static final int ORDER_BY_POSITION = 3;
 	
   public PlayOffGame() {
   }
@@ -20,51 +18,6 @@ public class PlayOffGame implements Serializable {
   public PlayOffGame(Groups group, Integer position) {
     this.group = group;
     this.position = position;
-  }
-  
-  private Integer id;
-  
-  public Integer getId() {
-    return id;
-  }
-  
-  public void setId(Integer id) {
-    this.id = id;
-  }
-  
-  public PlayOffGame _setId(Integer id) {
-    this.id = id;
-    return this;
-  }
-  
-  private Participant homeParticipant;
-  
-  public Participant getHomeParticipant() {
-    return homeParticipant;
-  }
-  
-  public void setHomeParticipant(Participant homeParticipant) {
-    this.homeParticipant = homeParticipant;
-  }
-  
-  public PlayOffGame _setHomeParticipant(Participant homeParticipant) {
-    this.homeParticipant = homeParticipant;
-    return this;
-  }
-  
-  private Participant awayParticipant;
-  
-  public Participant getAwayParticipant() {
-    return awayParticipant;
-  }
-  
-  public void setAwayParticipant(Participant awayParticipant) {
-    this.awayParticipant = awayParticipant;
-  }
-  
-  public PlayOffGame _setAwayParticipant(Participant awayParticipant) {
-    this.awayParticipant = awayParticipant;
-    return this;
   }
   
   private Groups group;
@@ -96,50 +49,6 @@ public class PlayOffGame implements Serializable {
     this.position = position;
     return this;
   }
-  
-  private String results;
-  
-  public String getResults() {
-    return results;
-  }
-  
-  public void setResults(String results) {
-    this.results = results;
-  }
-  
-  public PlayOffGame _setResults(String results) {
-    this.results = results;
-    return this;
-  }
-  
-  private PlayOffGameWinner winner;
-  
-  public PlayOffGameWinner getWinner() {
-    return winner;
-  }
-  
-  public void setWinner(PlayOffGameWinner winner) {
-    this.winner = winner;
-  }
-  
-  public PlayOffGame _setWinner(PlayOffGameWinner winner) {
-    this.winner = winner;
-    return this;
-  }
-  
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    PlayOffGame other = (PlayOffGame) obj;
-    if (id == null || !id.equals(other.id))
-      return false;
-    return true;
-  }  
   
   public enum Association {
     homeParticipant, awayParticipant, group
@@ -206,7 +115,7 @@ public class PlayOffGame implements Serializable {
   }
   
   public enum Attribute {
-    results, winner, homeParticipant, awayParticipant
+    result, status, homeParticipant, awayParticipant
   }
   
   private Set<String> nullValues = new HashSet<String>();
@@ -303,10 +212,10 @@ public class PlayOffGame implements Serializable {
   
   @Override
   public String toString() {
-    return "PlayOffGame [position=" + position + ", id=" + id + ", results=" + results + ", winner=" + winner + "]";
+    return "PlayOffGame [position=" + position + super.toString() + "]";
   }
   
   public String toStringFull() {
-    return "PlayOffGame [id=" + id + ", homeParticipant=" + homeParticipant + ", awayParticipant=" + awayParticipant + ", group=" + group + ", position=" + position + ", results=" + results + ", winner=" + winner + "]";
+    return "PlayOffGame [group=" + group + ", position=" + position + super.toString() + "]";
   }
 }

@@ -19,10 +19,11 @@ public class User implements Serializable {
   public User() {
   }
   
-  public User(String email, String userName, String password, Integer platnost) {
+  public User(String email, String userName, String password, UserRole role, Integer platnost) {
     this.email = email;
     this.userName = userName;
     this.password = password;
+    this.role = role;
     this.platnost = platnost;
   }
   
@@ -255,7 +256,7 @@ public class User implements Serializable {
   }
   
   public enum Attribute {
-    name, role, surname
+    name, surname
   }
   
   private Set<String> nullValues = new HashSet<String>();

@@ -42,7 +42,11 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
       logger.trace("insert playOffGame: " + playOffGame + " " + sqlControl);
     }
     SqlCrudEngine sqlInsertPlayOffGame = sqlEngineFactory.getCheckedCrudEngine("INSERT_PLAY_OFF_GAME");
-    int count = sqlInsertPlayOffGame.insert(sqlSession, playOffGame, sqlControl);
+    SqlCrudEngine sqlInsertGame = sqlEngineFactory.getCheckedCrudEngine("INSERT_GAME");
+    int count = sqlInsertGame.insert(sqlSession, playOffGame, sqlControl);
+    if (count > 0) {
+      sqlInsertPlayOffGame.insert(sqlSession, playOffGame, sqlControl);
+    }
     if (logger.isTraceEnabled()) {
       logger.trace("insert playOffGame result: " + count + " " + playOffGame);
     }
@@ -85,7 +89,11 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
       logger.trace("update playOffGame: " + playOffGame + " " + sqlControl);
     }
     SqlCrudEngine sqlUpdateEnginePlayOffGame = sqlEngineFactory.getCheckedCrudEngine("UPDATE_PLAY_OFF_GAME");
+    SqlCrudEngine sqlUpdateGame = sqlEngineFactory.getCheckedCrudEngine("UPDATE_GAME");
     int count = sqlUpdateEnginePlayOffGame.update(sqlSession, playOffGame, sqlControl);
+    if (count > 0) {
+    	sqlUpdateGame.update(sqlSession, playOffGame, sqlControl);
+    }
     if (logger.isTraceEnabled()) {
       logger.trace("update playOffGame result count: " + count);
     }
@@ -106,7 +114,11 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
       logger.trace("delete playOffGame: " + playOffGame + " " + sqlControl);
     }
     SqlCrudEngine sqlDeleteEnginePlayOffGame = sqlEngineFactory.getCheckedCrudEngine("DELETE_PLAY_OFF_GAME");
+    SqlCrudEngine sqlDeleteGame = sqlEngineFactory.getCheckedCrudEngine("DELETE_GAME");
     int count = sqlDeleteEnginePlayOffGame.delete(sqlSession, playOffGame, sqlControl);
+    if (count > 0) {
+    	sqlDeleteGame.delete(sqlSession, playOffGame, sqlControl);
+    }
     if (logger.isTraceEnabled()) {
       logger.trace("delete playOffGame result count: " + count);
     }

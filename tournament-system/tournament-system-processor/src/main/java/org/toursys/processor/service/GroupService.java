@@ -11,6 +11,7 @@ import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.util.GroupsName;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Tournament;
@@ -91,16 +92,18 @@ public class GroupService extends AbstractService {
         for (Groups group : basicGroups) {
             List<Participant> participants = participantService.getParticipants(new Participant()._setGroup(group));
             Collections.sort(participants, new RankComparator());
-            int promotingA = Math.min(participants.size(), tournament.getFinalPromoting());
+            int promotingFinal = Math.min(participants.size(), tournament.getFinalPromoting());
             groupName = groupsName.getFirst();
             if (createGroups) {
                 int hockeyCount;
-                if (promotingA % 2 == 0) {
-                    hockeyCount = (promotingA * basicGroups.size()) / 2;
+                if (promotingFinal % 2 == 0) {
+                    hockeyCount = (promotingFinal * basicGroups.size()) / 2;
                 } else {
-                    hockeyCount = promotingA;
+                    hockeyCount = promotingFinal;
                 }
-                finalGroup = new Groups(groupName, hockeyCount, GroupsType.FINAL, 1, tournament, true, false);
+                finalGroup = new Groups()._setName(groupName)._setPlayOffType(GroupsPlayOffType.FINAL)
+                        ._setNumberOfHockey(hockeyCount)._setTournament(tournament)._setType(GroupsType.FINAL)
+                        ._setCopyResult(true);
                 logger.trace("Create final group " + finalGroup);
                 finalGroup = createGroup(finalGroup);
                 groupByName.put(groupName, finalGroup);
@@ -109,7 +112,7 @@ public class GroupService extends AbstractService {
                 logger.trace("Get final group " + finalGroup);
             }
 
-            for (int i = 0; i < promotingA; i++) {
+            for (int i = 0; i < promotingFinal; i++) {
                 Participant participant = participantService.createParticipant(participants.get(i).getPlayer(),
                         finalGroup);
                 finalGroup.getParticipants().add(participant);
@@ -121,11 +124,12 @@ public class GroupService extends AbstractService {
                 String nextGroups = groupsName.getNext(groupName);
                 int promotingLower = Math.min(participants.size(), tournament.getFinalPromoting() + countLowerGroup
                         * tournament.getLowerPromoting());
-                int startIndex = promotingA + ((countLowerGroup - 1) * tournament.getLowerPromoting());
+                int startIndex = promotingFinal + ((countLowerGroup - 1) * tournament.getLowerPromoting());
 
                 if (startIndex < promotingLower) {
                     if (createGroups) {
-                        finalGroup = new Groups(nextGroups, 1, GroupsType.FINAL, 1, tournament, false, false);
+                        finalGroup = new Groups()._setName(nextGroups)._setTournament(tournament)
+                                ._setType(GroupsType.FINAL);
                         logger.trace("Create final group " + finalGroup);
                         finalGroup = createGroup(finalGroup);
                         groupByName.put(nextGroups, finalGroup);
@@ -194,8 +198,7 @@ public class GroupService extends AbstractService {
                                     for (Game basicGame : basicGames) {
                                         if (finalGame.getAwayParticipant().getPlayer().getId()
                                                 .equals(basicGame.getAwayParticipant().getPlayer().getId())) {
-                                            finalGame.setAwayScore(basicGame.getAwayScore());
-                                            finalGame.setHomeScore(basicGame.getHomeScore());
+                                            finalGame.setResult(basicGame.getResult());
                                             gameService.updateGame(finalGame);
                                             break;
                                         }

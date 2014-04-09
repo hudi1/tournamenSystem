@@ -67,6 +67,7 @@
         <property name="customTypes">
             <list>
                 <bean class="org.toursys.repository.type.ScoreType"></bean>
+                <bean class="org.toursys.repository.type.ResultType"></bean>
             </list>
         </property>
         <property name="filter" value="MYSQL" />

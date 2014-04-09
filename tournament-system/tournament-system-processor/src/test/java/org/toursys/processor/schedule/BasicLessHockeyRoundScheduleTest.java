@@ -43,7 +43,8 @@ public class BasicLessHockeyRoundScheduleTest extends AbstractScheduleTest {
 
         for (Participant participant1 : participants) {
             for (Participant participant2 : participants) {
-                participant1.getGames().add(new Game(participant1, participant2));
+                participant1.getGames().add(
+                        new Game()._setHomeParticipant(participant1)._setAwayParticipant(participant2));
             }
         }
 

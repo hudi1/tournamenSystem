@@ -9,8 +9,8 @@ public class Score implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private int leftSide;
-    private int rightSide;
+    protected int leftSide;
+    protected int rightSide;
 
     public Score(int leftSide, int rightSide) {
         this.leftSide = leftSide;

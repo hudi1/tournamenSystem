@@ -13,6 +13,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Results;
 import org.toursys.repository.model.Score;
 
 public class TournamentHtmlImportFactory {
@@ -101,24 +102,7 @@ public class TournamentHtmlImportFactory {
                     game.setHomeParticipant(homeParticipant);
                     game.setAwayParticipant(tournamentParticipants.get(i - 2 + groupPlayerPrefix));
                     homeParticipant.getGames().add(game);
-
-                    if (result.contains(":")) {
-                        if (result.contains("K")) {
-                            result = result.replace("K", "").trim();
-                        }
-
-                        if (result.contains("+")) {
-                            result = result.split("\\+")[0].trim();
-                        }
-
-                        String[] split = result.split(":");
-                        game.setHomeScore(Integer.parseInt(split[0]));
-                        game.setAwayScore(Integer.parseInt(split[1]));
-
-                        if (game.getAwayScore() == null || game.getHomeScore() == null) {
-                            throw new RuntimeException(game.toString());
-                        }
-                    }
+                    game.setResult(new Results(result));
                 }
             }
             groupPlayerPrefix += tableRows.size();
@@ -130,15 +114,4 @@ public class TournamentHtmlImportFactory {
         return str.matches("-?\\d+(\\.\\d+)?");
     }
 
-    public static void main(String[] args) throws Exception {
-        List<Participant> a = createImportedParticipants("http://trefik.cz/stiga/turnaje2014/kladno/");
-
-        for (Participant participant : a) {
-            for (Game game : participant.getGames()) {
-                System.out.println(game.getAwayParticipant().getPlayer() + " vs "
-                        + game.getHomeParticipant().getPlayer());
-            }
-            System.out.println();
-        }
-    }
 }

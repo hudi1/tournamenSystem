@@ -67,6 +67,11 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.toursys</groupId>
             <artifactId>tournament-system-repository</artifactId>
             <version>${project.version}</version>

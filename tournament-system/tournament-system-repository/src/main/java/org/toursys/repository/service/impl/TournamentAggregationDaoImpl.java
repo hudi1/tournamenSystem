@@ -3,6 +3,8 @@ package org.toursys.repository.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.sqlproc.engine.SqlOrder;
+import org.sqlproc.engine.impl.SqlStandardControl;
 import org.toursys.repository.dao.FinalStandingDao;
 import org.toursys.repository.dao.GameDao;
 import org.toursys.repository.dao.GroupsDao;
@@ -37,8 +39,8 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     private FinalStandingDao finalStandingDao;
 
     @Override
-    public Game createGame(Participant homePlayer, Participant awayPlayer) {
-        return gameDao.insert(new Game(homePlayer, awayPlayer));
+    public Game createGame(Participant homeParticipant, Participant awayParticipant) {
+        return gameDao.insert(new Game()._setHomeParticipant(homeParticipant)._setAwayParticipant(awayParticipant));
     }
 
     @Override
@@ -88,7 +90,9 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
 
     @Override
     public List<Groups> getListGroups(Groups group) {
-        return groupsDao.list(group);
+        SqlStandardControl sqlControl = new SqlStandardControl();
+        sqlControl.setOrder(SqlOrder.getAscOrder(4));
+        return groupsDao.list(group, sqlControl);
     }
 
     @Override
@@ -202,9 +206,12 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
-    public PlayOffGame createPlayOffGame(Participant homePlayer, Participant awayPlayer, Groups group, int position) {
-        return playOffGameDao.insert(new PlayOffGame(group, position)._setAwayParticipant(awayPlayer)
-                ._setHomeParticipant(homePlayer));
+    public PlayOffGame createPlayOffGame(Participant homeParticipant, Participant awayParticipant, Groups group,
+            int position) {
+        PlayOffGame playOffGame = new PlayOffGame(group, position);
+        playOffGame.setHomeParticipant(homeParticipant);
+        playOffGame.setAwayParticipant(awayParticipant);
+        return playOffGameDao.insert(playOffGame);
     }
 
     @Override
@@ -224,7 +231,9 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
 
     @Override
     public List<PlayOffGame> getListPlayOffGames(PlayOffGame playOffGame) {
-        return playOffGameDao.list(playOffGame);
+        SqlStandardControl sqlControl = new SqlStandardControl();
+        sqlControl.setOrder(SqlOrder.getAscOrder(3));
+        return playOffGameDao.list(playOffGame, sqlControl);
     }
 
     @Override
@@ -249,7 +258,9 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
 
     @Override
     public List<FinalStanding> getListFinalStandings(FinalStanding finalStanding) {
-        return finalStandingDao.list(finalStanding);
+        SqlStandardControl sqlControl = new SqlStandardControl();
+        sqlControl.setOrder(SqlOrder.getAscOrder(5));
+        return finalStandingDao.list(finalStanding, sqlControl);
     }
 
     @Override

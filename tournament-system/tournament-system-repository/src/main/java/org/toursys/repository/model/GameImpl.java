@@ -6,15 +6,16 @@ public class GameImpl extends Game {
 
     private Integer hockey;
     private Integer round;
+    private String test;
+    private Integer homeScore;
 
     public GameImpl() {
     }
 
     public GameImpl(Game game) {
         super.setAwayParticipant(game.getAwayParticipant());
-        super.setAwayScore(game.getAwayScore());
         super.setHomeParticipant(game.getHomeParticipant());
-        super.setHomeScore(game.getHomeScore());
+        super.setResult(game.getResult());
         super.setId(game.getId());
     }
 
@@ -32,6 +33,22 @@ public class GameImpl extends Game {
 
     public void setRound(Integer round) {
         this.round = round;
+    }
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
+    }
+
+    public Integer getHomeScore() {
+        return homeScore;
+    }
+
+    public void setHomeScore(Integer homeScore) {
+        this.homeScore = homeScore;
     }
 
 }

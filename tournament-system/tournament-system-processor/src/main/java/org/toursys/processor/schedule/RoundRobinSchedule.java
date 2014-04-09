@@ -49,4 +49,9 @@ public abstract class RoundRobinSchedule {
     }
 
     protected abstract void createSchedule();
+
+    public Groups getGroup() {
+        return group;
+    }
+
 }

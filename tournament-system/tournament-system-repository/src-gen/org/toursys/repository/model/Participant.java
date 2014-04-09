@@ -147,21 +147,6 @@ public class Participant implements Serializable {
     return this;
   }
   
-  private List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
-  
-  public List<PlayOffGame> getPlayOffGames() {
-    return playOffGames;
-  }
-  
-  public void setPlayOffGames(List<PlayOffGame> playOffGames) {
-    this.playOffGames = playOffGames;
-  }
-  
-  public Participant _setPlayOffGames(List<PlayOffGame> playOffGames) {
-    this.playOffGames = playOffGames;
-    return this;
-  }
-  
   private List<Game> games = new ArrayList<Game>();
   
   public List<Game> getGames() {
@@ -192,7 +177,7 @@ public class Participant implements Serializable {
   }  
   
   public enum Association {
-    games, playOffGames, player, group
+    games, player, group
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -357,6 +342,6 @@ public class Participant implements Serializable {
   }
   
   public String toStringFull() {
-    return "Participant [id=" + id + ", points=" + points + ", rank=" + rank + ", group=" + group + ", player=" + player + ", score=" + score + ", equalRank=" + equalRank + ", temp=" + temp + ", playOffGames=" + playOffGames + ", games=" + games + "]";
+    return "Participant [id=" + id + ", points=" + points + ", rank=" + rank + ", group=" + group + ", player=" + player + ", score=" + score + ", equalRank=" + equalRank + ", temp=" + temp + ", games=" + games + "]";
   }
 }

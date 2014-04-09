@@ -23,6 +23,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Results;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
@@ -161,8 +162,7 @@ public class TournamentServiceParametrizedITest {
             }
 
             for (GameImpl game : schedule) {
-                game.setHomeScore(getRandomScore());
-                game.setHomeScore(getRandomScore());
+                game.setResult(new Results(getRandomScore() + ":" + getRandomScore()));
             }
 
             Participant previousParticipant = playerResults.get(0);
@@ -224,13 +224,19 @@ public class TournamentServiceParametrizedITest {
             List<PlayOffGame> playOffGames = playOffGameService
                     .getPlayOffGames(new PlayOffGame()._setGroup(finalGroup));
 
-            if (finalGroup.getName().equals("A")) {
-                int gamesCount = tournament.getPlayOffA();
-                Assert.assertEquals(gamesCount, playOffGames.size());
-            } else {
-                int gamesCount = tournament.getPlayOffLower();
-                Assert.assertEquals(gamesCount, playOffGames.size());
+            int gamesCount = 0;
+
+            switch (finalGroup.getPlayOffType()) {
+            case FINAL:
+                gamesCount = tournament.getPlayOffFinal();
+                break;
+            case LOWER:
+                gamesCount = tournament.getPlayOffLower();
+                break;
+            default:
+                break;
             }
+            Assert.assertEquals(gamesCount, playOffGames.size());
 
             // tournamentService.getPlayOffGames(tournament, finalGroup);
 

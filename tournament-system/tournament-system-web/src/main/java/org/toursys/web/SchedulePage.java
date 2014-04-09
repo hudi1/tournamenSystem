@@ -17,11 +17,14 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.convert.IConverter;
 import org.toursys.processor.schedule.RoundRobinSchedule;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
+import org.toursys.web.converter.ResultConverter;
 
 @AuthorizeInstantiation(Roles.USER)
 public class SchedulePage extends TournamentHomePage {
@@ -128,10 +131,22 @@ public class SchedulePage extends TournamentHomePage {
 
                                 @Override
                                 public boolean isEnabled(Component component) {
-                                    if (game.getAwayScore() != null && game.getHomeScore() != null) {
-                                        if (game.getAwayScore() < game.getHomeScore()) {
-                                            return true;
+                                    int homeWinnerCount = 0;
+                                    int awayWinnerCount = 0;
+
+                                    if (game == null || game.getResult() == null) {
+                                        return false;
+                                    }
+
+                                    for (Result result : game.getResult().getResults()) {
+                                        if (result.getLeftSide() > result.getRightSide()) {
+                                            homeWinnerCount++;
+                                        } else if (result.getLeftSide() < result.getRightSide()) {
+                                            awayWinnerCount++;
                                         }
+                                    }
+                                    if (homeWinnerCount > awayWinnerCount) {
+                                        return true;
                                     }
                                     return false;
                                 }
@@ -143,17 +158,35 @@ public class SchedulePage extends TournamentHomePage {
 
                         @Override
                         public boolean isEnabled(Component component) {
-                            if (game.getAwayScore() != null && game.getHomeScore() != null) {
-                                if (game.getAwayScore() > game.getHomeScore()) {
-                                    return true;
+                            int homeWinnerCount = 0;
+                            int awayWinnerCount = 0;
+
+                            if (game == null || game.getResult() == null) {
+                                return false;
+                            }
+
+                            for (Result result : game.getResult().getResults()) {
+                                if (result.getLeftSide() < result.getRightSide()) {
+                                    homeWinnerCount++;
+                                } else if (result.getLeftSide() < result.getRightSide()) {
+                                    awayWinnerCount++;
                                 }
+                            }
+                            if (homeWinnerCount > awayWinnerCount) {
+                                return true;
                             }
                             return false;
                         }
                     }));
 
-                    listItem.add(new TextField<String>("homeScore"));
-                    listItem.add(new TextField<String>("awayScore"));
+                    listItem.add(new TextField<Result>("result") {
+
+                        @Override
+                        public final <Results> IConverter<Results> getConverter(Class<Results> type) {
+                            return (IConverter<Results>) ResultConverter.getInstance();
+                        }
+
+                    });
 
                     listItem.add(new Label("round"));
                     listItem.add(new Label("hockey"));

@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.Result;
 
 public class SkParticipantComparator implements Comparator<Participant> {
 
@@ -32,13 +33,24 @@ public class SkParticipantComparator implements Comparator<Participant> {
         if (!ignoreCommonGame) {
             Game playerGame = findGame(participant1, participant2);
 
-            if (playerGame == null || playerGame.getHomeScore() != null || playerGame.getAwayScore() != null) {
+            if (playerGame == null || playerGame.getResult() == null) {
                 return 0;
             }
-            if (playerGame.getHomeScore() > playerGame.getAwayScore()) {
+
+            int homeWinnerCount = 0;
+            int awayWinnerCount = 0;
+            for (Result result : playerGame.getResult().getResults()) {
+                if (result.getLeftSide() > result.getRightSide()) {
+                    homeWinnerCount++;
+                } else if (result.getLeftSide() < result.getRightSide()) {
+                    awayWinnerCount++;
+                }
+            }
+
+            if (homeWinnerCount > awayWinnerCount) {
                 return -1;
             }
-            if (playerGame.getHomeScore() < playerGame.getAwayScore()) {
+            if (homeWinnerCount < awayWinnerCount) {
                 return 1;
             }
         }
@@ -62,25 +74,26 @@ public class SkParticipantComparator implements Comparator<Participant> {
         if (participant1.getScore().getLeftSide() < participant2.getScore().getLeftSide()) {
             return 1;
         }
-        int winnerCount1 = 0;
-        int winnerCount2 = 0;
+        int homeWinnerCount1 = 0;
+        int homeWinnerCount2 = 0;
+
         for (Game game : participant1.getGames()) {
-            if (game.getHomeScore() != null && game.getAwayParticipant() != null) {
-                if (game.getHomeScore() > game.getAwayScore()) {
-                    winnerCount1++;
+            for (Result result : game.getResult().getResults()) {
+                if (result.getLeftSide() > result.getRightSide()) {
+                    homeWinnerCount1++;
                 }
             }
         }
         for (Game game : participant2.getGames()) {
-            if (game.getHomeScore() != null && game.getAwayScore() != null) {
-                if (game.getHomeScore() > game.getAwayScore()) {
-                    winnerCount2++;
+            for (Result result : game.getResult().getResults()) {
+                if (result.getLeftSide() > result.getRightSide()) {
+                    homeWinnerCount2++;
                 }
             }
         }
-        if (winnerCount1 > winnerCount2) {
+        if (homeWinnerCount1 > homeWinnerCount2) {
             return -1;
-        } else if (winnerCount1 < winnerCount2) {
+        } else if (homeWinnerCount1 < homeWinnerCount2) {
             return 1;
         }
 

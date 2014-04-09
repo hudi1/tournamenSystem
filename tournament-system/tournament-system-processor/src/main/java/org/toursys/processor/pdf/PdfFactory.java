@@ -22,6 +22,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Results;
 import org.toursys.repository.model.Tournament;
 
 import com.itextpdf.text.Document;
@@ -91,12 +92,12 @@ public class PdfFactory {
                         }
                     }
 
-                    if (game == null) {
+                    if (game == null || game.getResult() == null) {
                         pdfTable.addCell(createEmptyCell());
                     } else {
-                        String result = (game.getHomeScore() == null) ? "" : game.getHomeScore() + ":"
-                                + ((game.getAwayScore() == null) ? "" : game.getAwayScore());
-                        pdfTable.addCell(createCenterAlignBorderCell(result));
+                        if (game.getResult() != null) {
+                            pdfTable.addCell(createCenterAlignBorderCell(game.getResult().toString()));
+                        }
                     }
                 }
             }
@@ -499,10 +500,10 @@ public class PdfFactory {
 
                     pdfTable.addCell(createLeftAlignCell(playersGame));
 
-                    String results = playOffGame.getResults();
+                    Results results = playOffGame.getResult();
 
-                    if (!results.isEmpty()) {
-                        pdfTable.addCell(createLeftAlignCell(results));
+                    if (results != null) {
+                        pdfTable.addCell(createLeftAlignCell(results.toString()));
                     } else {
                         pdfTable.addCell(createEmptyCell());
                     }

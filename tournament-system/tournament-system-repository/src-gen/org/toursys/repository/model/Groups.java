@@ -13,12 +13,13 @@ public class Groups implements Serializable {
   
   private static final long serialVersionUID = 1L;
   public static final int ORDER_BY_ID = 1;
+  public static final int ORDER_BY_NAME = 4;
   public static final int ORDER_BY_TOURNAMENT = 3;
 	
   public Groups() {
   }
   
-  public Groups(String name, Integer numberOfHockey, GroupsType type, Integer indexOfFirstHockey, Tournament tournament, Boolean copyResult, Boolean playThirdPlace) {
+  public Groups(String name, Integer numberOfHockey, GroupsType type, Integer indexOfFirstHockey, Tournament tournament, Boolean copyResult, Boolean playThirdPlace, Boolean playOff, GroupsPlayOffType playOffType) {
     this.name = name;
     this.numberOfHockey = numberOfHockey;
     this.type = type;
@@ -26,6 +27,8 @@ public class Groups implements Serializable {
     this.tournament = tournament;
     this.copyResult = copyResult;
     this.playThirdPlace = playThirdPlace;
+    this.playOff = playOff;
+    this.playOffType = playOffType;
   }
   
   private Integer id;
@@ -145,6 +148,36 @@ public class Groups implements Serializable {
   
   public Groups _setPlayThirdPlace(Boolean playThirdPlace) {
     this.playThirdPlace = playThirdPlace;
+    return this;
+  }
+  
+  private Boolean playOff;
+  
+  public Boolean getPlayOff() {
+    return playOff;
+  }
+  
+  public void setPlayOff(Boolean playOff) {
+    this.playOff = playOff;
+  }
+  
+  public Groups _setPlayOff(Boolean playOff) {
+    this.playOff = playOff;
+    return this;
+  }
+  
+  private GroupsPlayOffType playOffType;
+  
+  public GroupsPlayOffType getPlayOffType() {
+    return playOffType;
+  }
+  
+  public void setPlayOffType(GroupsPlayOffType playOffType) {
+    this.playOffType = playOffType;
+  }
+  
+  public Groups _setPlayOffType(GroupsPlayOffType playOffType) {
+    this.playOffType = playOffType;
     return this;
   }
   
@@ -353,10 +386,10 @@ public class Groups implements Serializable {
   
   @Override
   public String toString() {
-    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + "]";
+    return "Groups [id=" + id + ", playThirdPlace=" + playThirdPlace + ", indexOfFirstHockey=" + indexOfFirstHockey + ", copyResult=" + copyResult + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + ", playOffType=" + playOffType + ", playOff=" + playOff + "]";
   }
   
   public String toStringFull() {
-    return "Groups [id=" + id + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + ", indexOfFirstHockey=" + indexOfFirstHockey + ", tournament=" + tournament + ", copyResult=" + copyResult + ", playThirdPlace=" + playThirdPlace + ", participants=" + participants + ", playOffGames=" + playOffGames + "]";
+    return "Groups [id=" + id + ", name=" + name + ", numberOfHockey=" + numberOfHockey + ", type=" + type + ", indexOfFirstHockey=" + indexOfFirstHockey + ", tournament=" + tournament + ", copyResult=" + copyResult + ", playThirdPlace=" + playThirdPlace + ", playOff=" + playOff + ", playOffType=" + playOffType + ", participants=" + participants + ", playOffGames=" + playOffGames + "]";
   }
 }

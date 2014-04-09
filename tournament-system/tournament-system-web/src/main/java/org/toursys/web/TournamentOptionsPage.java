@@ -149,7 +149,7 @@ public class TournamentOptionsPage extends BasePage {
             add(new RequiredTextField<Integer>("finalPromoting"));
             add(new RequiredTextField<Integer>("lowerPromoting"));
             add(new RequiredTextField<Integer>("winPoints"));
-            add(new RequiredTextField<Integer>("playOffA"));
+            add(new RequiredTextField<Integer>("playOffFinal"));
             add(new RequiredTextField<Integer>("playOffLower"));
             add(new RequiredTextField<Integer>("minPlayersInGroup"));
         }

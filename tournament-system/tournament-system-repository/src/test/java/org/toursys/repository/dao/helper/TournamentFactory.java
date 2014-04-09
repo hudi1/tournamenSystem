@@ -1,12 +1,14 @@
 package org.toursys.repository.dao.helper;
 
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.TournamentSortType;
 import org.toursys.repository.model.User;
+import org.toursys.repository.model.UserRole;
 
 public class TournamentFactory {
 
@@ -26,7 +28,7 @@ public class TournamentFactory {
     public static final String USER_EMAIL = "111hudi1star@gmail.com";
 
     public static User createUser() {
-        return new User(USER_EMAIL, USER_USERNAME, USER_PASSWORD, USER_PLATNOST);
+        return new User(USER_EMAIL, USER_USERNAME, USER_PASSWORD, UserRole.USER, USER_PLATNOST);
     }
 
     public static Tournament createTournament() {
@@ -42,7 +44,6 @@ public class TournamentFactory {
     }
 
     public static Groups createGroup() {
-        return new Groups(GROUP_NAME, 5, GroupsType.BASIC, 1, null, true, true);
+        return new Groups(GROUP_NAME, 5, GroupsType.BASIC, 1, null, true, true, true, GroupsPlayOffType.LOWER);
     }
-
 }
