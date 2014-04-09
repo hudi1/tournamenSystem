@@ -1,12 +1,10 @@
 package org.toursys.processor.service;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import org.toursys.processor.comparators.RankComparator;
 import org.toursys.processor.util.PositionCounter;
 import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
@@ -96,8 +94,7 @@ public class PlayOffGameService extends AbstractService {
 
         for (Groups group : finalGroups) {
 
-            List<Participant> players = participantService.getParticipants(new Participant()._setGroup(group));
-            Collections.sort(players, new RankComparator());
+            List<Participant> players = participantService.getSortedParticipants(new Participant()._setGroup(group));
 
             int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 

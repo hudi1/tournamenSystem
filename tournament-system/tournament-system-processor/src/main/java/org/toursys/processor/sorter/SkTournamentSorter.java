@@ -29,6 +29,10 @@ public class SkTournamentSorter extends TournamentSorter {
     @Override
     public void sort(List<Participant> participants) {
 
+        if (participants.isEmpty()) {
+            return;
+        }
+
         for (Participant participant : participants) {
             calculateParticipant(participant);
         }

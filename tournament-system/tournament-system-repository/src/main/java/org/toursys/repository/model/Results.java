@@ -16,6 +16,9 @@ public class Results implements Serializable {
     private static final String DELITEMER_COMMA = ",";
     private static final String DELITEMER_REG_EXP = "\\" + DELITEMER_PLUS + "|" + DELITEMER_COMMA;
 
+    public Results() {
+    }
+
     public Results(String results) {
         for (String result : results.split(DELITEMER_REG_EXP)) {
             this.results.add(new Result(result));

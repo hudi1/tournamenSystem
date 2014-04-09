@@ -49,7 +49,7 @@ public class ResultType extends SqlInternalType {
         }
 
         if (resultValue == null) {
-            BeanUtils.simpleInvokeMethod(m, resultInstance, null);
+            BeanUtils.simpleInvokeMethod(m, resultInstance, new Results());
             return;
         }
 

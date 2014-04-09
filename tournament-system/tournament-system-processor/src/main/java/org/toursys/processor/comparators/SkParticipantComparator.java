@@ -78,6 +78,9 @@ public class SkParticipantComparator implements Comparator<Participant> {
         int homeWinnerCount2 = 0;
 
         for (Game game : participant1.getGames()) {
+            if (game.getResult() == null) {
+                continue;
+            }
             for (Result result : game.getResult().getResults()) {
                 if (result.getLeftSide() > result.getRightSide()) {
                     homeWinnerCount1++;
@@ -85,6 +88,9 @@ public class SkParticipantComparator implements Comparator<Participant> {
             }
         }
         for (Game game : participant2.getGames()) {
+            if (game.getResult() == null) {
+                continue;
+            }
             for (Result result : game.getResult().getResults()) {
                 if (result.getLeftSide() > result.getRightSide()) {
                     homeWinnerCount2++;
