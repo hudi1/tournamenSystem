@@ -33,7 +33,7 @@ public abstract class TournamentSorter {
                     for (Result result : game.getResult().getResults()) {
                         if (result.getLeftSide() > result.getRightSide()) {
                             points += tournament.getWinPoints();
-                        } else if (result.getLeftSide() > result.getRightSide()) {
+                        } else if (result.getLeftSide() == result.getRightSide()) {
                             points += 1;
                         }
 
