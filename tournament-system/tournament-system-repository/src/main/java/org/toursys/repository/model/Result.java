@@ -64,4 +64,20 @@ public class Result extends Score implements Serializable {
         return builder.toString();
     }
 
+    public boolean isOvertime() {
+        return overtime;
+    }
+
+    public void setOvertime(boolean overtime) {
+        this.overtime = overtime;
+    }
+
+    public boolean isContumacy() {
+        return contumacy;
+    }
+
+    public void setContumacy(boolean contumacy) {
+        this.contumacy = contumacy;
+    }
+
 }

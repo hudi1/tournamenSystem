@@ -22,6 +22,7 @@ import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Score;
 import org.toursys.repository.model.Season;
+import org.toursys.repository.model.StatisticForm;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 import org.toursys.repository.service.TournamentAggregationDao;
@@ -126,6 +127,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
     }
 
     @Override
+    public List<Player> getPlayersGames(StatisticForm statisticForm) {
+        return playerDao.listPlayersGames(statisticForm);
+    }
+
+    @Override
     public Participant createParticipant(Player player, Groups group) {
         return participantDao.insert(new Participant(0, group, player, new Score(0, 0)));
     }
@@ -211,6 +217,11 @@ public class TournamentAggregationDaoImpl implements TournamentAggregationDao {
         PlayOffGame playOffGame = new PlayOffGame(group, position);
         playOffGame.setHomeParticipant(homeParticipant);
         playOffGame.setAwayParticipant(awayParticipant);
+        return playOffGameDao.insert(playOffGame);
+    }
+
+    @Override
+    public PlayOffGame createPlayOffGame(PlayOffGame playOffGame) {
         return playOffGameDao.insert(playOffGame);
     }
 

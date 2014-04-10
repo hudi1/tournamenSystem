@@ -45,6 +45,8 @@
         <property name="gameService" ref="gameService" />
         <property name="participantService" ref="participantService" />
         <property name="playerService" ref="playerService" />
+        <property name="finalStandingService" ref="finalStandingService" />
+        <property name="playOffGameService" ref="playOffGameService" />
     </bean>
 
 </beans>

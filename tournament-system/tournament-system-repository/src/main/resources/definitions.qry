@@ -16,7 +16,9 @@ metagen-table-sequence USER SEQ_USER;
 
 pojogen-generate-wrappers;
 
-pojogen-ignore-one-to-many PLAYER ID->PARTICIPANT->PLAYER_ID;
+//pojogen-ignore-one-to-many PLAYER ID->PARTICIPANT->PLAYER_ID;
+
+pojo StatisticForm org.toursys.repository.model.StatisticForm;
 
 pojogen-ignore-one-to-many PARTICIPANT ID->GAME->AWAY_PARTICIPANT_ID;
 

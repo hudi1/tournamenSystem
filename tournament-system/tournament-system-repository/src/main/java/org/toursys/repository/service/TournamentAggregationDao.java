@@ -9,6 +9,7 @@ import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Season;
+import org.toursys.repository.model.StatisticForm;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 
@@ -109,5 +110,9 @@ public interface TournamentAggregationDao {
     public FinalStanding getFinalStanding(FinalStanding finalStanding);
 
     public List<FinalStanding> getListFinalStandings(FinalStanding finalStanding);
+
+    public PlayOffGame createPlayOffGame(PlayOffGame playOffGame);
+
+    public List<Player> getPlayersGames(StatisticForm statisticForm);
 
 }

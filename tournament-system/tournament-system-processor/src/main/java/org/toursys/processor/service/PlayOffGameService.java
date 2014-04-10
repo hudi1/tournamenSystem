@@ -26,6 +26,12 @@ public class PlayOffGameService extends AbstractService {
         return tournamentAggregationDao.createPlayOffGame(homePlayer, awayPlayer, group, position);
     }
 
+    @Transactional
+    public PlayOffGame createPlayOffGame(PlayOffGame playOffGame) {
+        logger.debug("Create playerOff game: " + playOffGame.toStringFull());
+        return tournamentAggregationDao.createPlayOffGame(playOffGame);
+    }
+
     @Transactional(readOnly = true)
     public PlayOffGame getPlayOffGame(PlayOffGame playOffGame) {
         logger.debug("Get playerOff game: " + playOffGame);

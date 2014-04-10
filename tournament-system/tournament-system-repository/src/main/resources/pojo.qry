@@ -98,8 +98,9 @@ package org.toursys.repository.model {
     playerDiscriminator : java.lang.String required
     worldRanking : java.lang.Integer
     user :: User required index 3
+    participants : java.util.List <:Participant>
     equals ::: id
-    toInit ::: user
+    toInit ::: participants user
     isDef ::: club worldRanking
     toString ::: playerDiscriminator id club name surname worldRanking
   }

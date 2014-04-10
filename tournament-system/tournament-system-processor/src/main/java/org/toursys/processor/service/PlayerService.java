@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.StatisticForm;
 import org.toursys.repository.model.Tournament;
 
 public class PlayerService extends AbstractService {
@@ -55,6 +56,12 @@ public class PlayerService extends AbstractService {
     public List<Player> getNotRegisteredPlayers(Tournament tournament) {
         logger.debug("Get not registered player: " + tournament);
         return tournamentAggregationDao.getNotRegisteredPlayers(tournament);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Player> getPlayersGames(StatisticForm statisticForm) {
+        logger.debug("Get players games: " + statisticForm);
+        return tournamentAggregationDao.getPlayersGames(statisticForm);
     }
 
 }

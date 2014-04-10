@@ -79,23 +79,9 @@ public class PlayersHtmlImportFactory {
             String nameAndSurname = tableRows.get(i).select("td").get(1).ownText();
             String club = tableRows.get(i).select("td").get(2).ownText();
 
-            Player player = new Player();
-            player.setUser(user);
+            Player player = TournamentHtmlImportFactory.parsePlayer(nameAndSurname);
             player.setClub(club.replace("*", "").trim());
-            if (nameAndSurname.contains("ml.")) {
-                nameAndSurname = nameAndSurname.replaceAll("\\sml\\.", "");
-                player.setName(nameAndSurname.split(" ")[1]);
-                player.setSurname(nameAndSurname.split(" ")[0]);
-                player.setPlayerDiscriminator("ml.");
-            } else if (nameAndSurname.contains("st.")) {
-                nameAndSurname = nameAndSurname.replaceAll("\\sst\\.", "");
-                player.setName(nameAndSurname.split(" ")[1]);
-                player.setSurname(nameAndSurname.split(" ")[0]);
-                player.setPlayerDiscriminator("st.");
-            } else {
-                player.setName(nameAndSurname.split(" ")[1]);
-                player.setSurname(nameAndSurname.split(" ")[0]);
-            }
+            player.setUser(user);
             players.add(player);
         }
         return players;

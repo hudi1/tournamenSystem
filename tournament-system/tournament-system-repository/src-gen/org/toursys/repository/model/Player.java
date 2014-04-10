@@ -1,6 +1,9 @@
 package org.toursys.repository.model;
+  
+import java.util.List;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.lang.reflect.InvocationTargetException;
@@ -127,6 +130,21 @@ public class Player implements Serializable {
     return this;
   }
   
+  private List<Participant> participants = new ArrayList<Participant>();
+  
+  public List<Participant> getParticipants() {
+    return participants;
+  }
+  
+  public void setParticipants(List<Participant> participants) {
+    this.participants = participants;
+  }
+  
+  public Player _setParticipants(List<Participant> participants) {
+    this.participants = participants;
+    return this;
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -142,7 +160,7 @@ public class Player implements Serializable {
   }  
   
   public enum Association {
-    user
+    participants, user
   }
   
   private Set<String> initAssociations = new HashSet<String>();
@@ -307,6 +325,6 @@ public class Player implements Serializable {
   }
   
   public String toStringFull() {
-    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", user=" + user + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", user=" + user + ", participants=" + participants + "]";
   }
 }

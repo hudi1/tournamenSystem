@@ -3,11 +3,14 @@ package org.toursys.processor.service;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.processor.html.PlayersHtmlImportFactory;
 import org.toursys.processor.html.TournamentHtmlImportFactory;
+import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
@@ -17,6 +20,8 @@ public class ImportService extends AbstractService {
     private PlayerService playerService;
     private ParticipantService participantService;
     private GameService gameService;
+    private PlayOffGameService playOffGameService;
+    private FinalStandingService finalStandingService;
 
     @Transactional
     public void importTournament(String url, Tournament tournament, User user) throws Exception {
@@ -61,6 +66,18 @@ public class ImportService extends AbstractService {
                 gameService.createGame(game);
             }
         }
+
+        List<PlayOffGame> playOffGames = TournamentHtmlImportFactory.createPlayOffGames(url, savedParticipants);
+        for (PlayOffGame playOffGame : playOffGames) {
+            playOffGameService.createPlayOffGame(playOffGame);
+        }
+
+        List<FinalStanding> finalStandings = TournamentHtmlImportFactory.createFinalStandings(url, savedParticipants);
+        for (FinalStanding finalStanding : finalStandings) {
+            finalStanding.setTournament(tournament);
+            finalStandingService.createFinalStanding(finalStanding);
+        }
+
     }
 
     @Transactional
@@ -71,28 +88,29 @@ public class ImportService extends AbstractService {
         }
     }
 
-    public PlayerService getPlayerService() {
-        return playerService;
-    }
-
+    @Required
     public void setPlayerService(PlayerService playerService) {
         this.playerService = playerService;
     }
 
-    public ParticipantService getParticipantService() {
-        return participantService;
-    }
-
+    @Required
     public void setParticipantService(ParticipantService participantService) {
         this.participantService = participantService;
     }
 
-    public GameService getGameService() {
-        return gameService;
-    }
-
+    @Required
     public void setGameService(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    @Required
+    public void setPlayOffGameService(PlayOffGameService playOffGameService) {
+        this.playOffGameService = playOffGameService;
+    }
+
+    @Required
+    public void setFinalStandingService(FinalStandingService finalStandingService) {
+        this.finalStandingService = finalStandingService;
     }
 
 }

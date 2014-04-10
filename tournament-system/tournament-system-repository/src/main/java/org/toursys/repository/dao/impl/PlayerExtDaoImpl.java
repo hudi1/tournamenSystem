@@ -7,6 +7,7 @@ import org.sqlproc.engine.SqlQueryEngine;
 import org.sqlproc.engine.SqlSessionFactory;
 import org.toursys.repository.dao.PlayerExtDao;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.StatisticForm;
 import org.toursys.repository.model.Tournament;
 
 public class PlayerExtDaoImpl extends PlayerDaoImpl implements PlayerExtDao {
@@ -25,6 +26,19 @@ public class PlayerExtDaoImpl extends PlayerDaoImpl implements PlayerExtDao {
         }
         SqlQueryEngine sqlEnginePlayer = sqlEngineFactory.getCheckedQueryEngine("GET_PLAYER_NOT_IN_TOURNAMENT");
         List<Player> playerList = sqlEnginePlayer.query(sqlSessionFactory.getSqlSession(), Player.class, tournament);
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("list player size: " + ((playerList != null) ? playerList.size() : "null"));
+        }
+        return playerList;
+    }
+
+    public List<Player> listPlayersGames(StatisticForm statisticForm) {
+        if (logger.isTraceEnabled()) {
+            logger.trace("list players games: " + statisticForm);
+        }
+        SqlQueryEngine sqlEnginePlayer = sqlEngineFactory.getCheckedQueryEngine("SELECT_PLAYER_GAME");
+        List<Player> playerList = sqlEnginePlayer.query(sqlSessionFactory.getSqlSession(), Player.class, statisticForm);
 
         if (logger.isTraceEnabled()) {
             logger.trace("list player size: " + ((playerList != null) ? playerList.size() : "null"));
