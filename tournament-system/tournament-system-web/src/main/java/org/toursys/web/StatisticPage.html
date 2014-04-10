@@ -6,6 +6,37 @@
 	<title>Examples - Public Page</title>
 </wicket:head>
 <wicket:extend>
-	<img wicket:id="work" src="work.png" />
+	<form wicket:id="statisticForm">
+		<div class="content">
+			<ul id="parametry">
+				<li><select wicket:id="tournament">
+				</select></li>
+				<li><select wicket:id="season">
+				</select></li>
+			</ul>
+		</div>
+
+		<div>
+			<table class="seasoneTable">
+				<tr>
+					<th>Name</th>
+					<th>Score</th>
+					<th>ZeroCount</th>
+					<th>TenPlusCount</th>
+					<th>Matches</th>
+				</tr>
+				<tr wicket:id="players">
+					<td><span wicket:id="surname" /> <span
+						wicket:id="playerDiscriminator" /> <span wicket:id="name" /></td>
+					<td><span wicket:id="score" /></td>
+					<td><span wicket:id="zeroCount" /></td>
+					<td><span wicket:id="tenPlusCount" /></td>
+					<td><span wicket:id="matches" /></td>
+				</tr>
+			</table>
+			<br /> <input wicket:id="showPlayers" class="tournamentButton"
+				type="submit" value="Show players" />
+		</div>
+	</form>
 </wicket:extend>
 </html>

@@ -1,15 +1,23 @@
 package org.toursys.repository.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.sqlproc.engine.annotation.Pojo;
 
 @Pojo
-public class StatisticForm {
+public class StatisticForm implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private User user;
     private Tournament tournament;
     private Season season;
     private Player player;
     private Groups group;
+
+    private List<Player> players = new ArrayList<Player>();
 
     public User getUser() {
         return user;
@@ -73,6 +81,19 @@ public class StatisticForm {
 
     public StatisticForm _setGroup(Groups group) {
         this.group = group;
+        return this;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public StatisticForm _setPlayers(List<Player> players) {
+        this.players = players;
         return this;
     }
 
