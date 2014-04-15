@@ -17,18 +17,6 @@ public class RankComparator implements Comparator<Participant> {
         if (o1.getRank() < o2.getRank()) {
             return -1;
         }
-
-        if (o1.getEqualRank() == null || o2.getEqualRank() == null)
-            return 0;
-
-        if (o1.getEqualRank() > o2.getEqualRank()) {
-            return 1;
-        }
-
-        if (o1.getEqualRank() < o2.getEqualRank()) {
-            return -1;
-        }
-
         return 0;
     }
 }

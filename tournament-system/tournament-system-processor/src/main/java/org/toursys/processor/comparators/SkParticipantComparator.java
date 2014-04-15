@@ -8,17 +8,7 @@ import org.toursys.repository.model.Result;
 
 public class SkParticipantComparator implements Comparator<Participant> {
 
-    private final boolean ignoreCommonGame;
-    private final boolean commonSort;
-
     public SkParticipantComparator() {
-        this.ignoreCommonGame = false;
-        this.commonSort = false;
-    }
-
-    public SkParticipantComparator(boolean ignoreCommonGame, boolean commonSort) {
-        this.ignoreCommonGame = ignoreCommonGame;
-        this.commonSort = commonSort;
     }
 
     public int compare(Participant participant1, Participant participant2) {
@@ -30,29 +20,27 @@ public class SkParticipantComparator implements Comparator<Participant> {
             return 1;
         }
 
-        if (!ignoreCommonGame) {
-            Game playerGame = findGame(participant1, participant2);
+        Game playerGame = findGame(participant1, participant2);
 
-            if (playerGame == null || playerGame.getResult() == null) {
-                return 0;
-            }
+        if (playerGame == null || playerGame.getResult() == null) {
+            return 0;
+        }
 
-            int homeWinnerCount = 0;
-            int awayWinnerCount = 0;
-            for (Result result : playerGame.getResult().getResults()) {
-                if (result.getLeftSide() > result.getRightSide()) {
-                    homeWinnerCount++;
-                } else if (result.getLeftSide() < result.getRightSide()) {
-                    awayWinnerCount++;
-                }
+        int homeWinnerCount = 0;
+        int awayWinnerCount = 0;
+        for (Result result : playerGame.getResult().getResults()) {
+            if (result.getLeftSide() > result.getRightSide()) {
+                homeWinnerCount++;
+            } else if (result.getLeftSide() < result.getRightSide()) {
+                awayWinnerCount++;
             }
+        }
 
-            if (homeWinnerCount > awayWinnerCount) {
-                return -1;
-            }
-            if (homeWinnerCount < awayWinnerCount) {
-                return 1;
-            }
+        if (homeWinnerCount > awayWinnerCount) {
+            return -1;
+        }
+        if (homeWinnerCount < awayWinnerCount) {
+            return 1;
         }
 
         if ((participant1.getScore().getLeftSide() - participant1.getScore().getRightSide()) > (participant2.getScore()
@@ -62,10 +50,6 @@ public class SkParticipantComparator implements Comparator<Participant> {
         if ((participant1.getScore().getLeftSide() - participant1.getScore().getRightSide()) < (participant2.getScore()
                 .getLeftSide() - participant2.getScore().getRightSide())) {
             return 1;
-        }
-
-        if (commonSort) {
-            return 0;
         }
 
         if (participant1.getScore().getLeftSide() > participant2.getScore().getLeftSide()) {

@@ -217,16 +217,6 @@ public class GroupService extends AbstractService {
         logger.debug("End: Copy result: " + time + " ms");
     }
 
-    @Transactional
-    public void resetEqualRank(Groups group) {
-        logger.debug("Reset equal rank in group: " + group);
-        List<Participant> players = participantService.getParticipants(new Participant()._setGroup(group));
-        for (Participant participant : players) {
-            participant.setEqualRank(null);
-            participantService.updateParticipant(participant);
-        }
-    }
-
     @Required
     public void setParticipantService(ParticipantService participantService) {
         this.participantService = participantService;

@@ -1,7 +1,6 @@
 package org.toursys.web;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
@@ -57,20 +56,7 @@ public class ImportTournamentPage extends WebPage {
             super("importForm");
 
             TextField<String> url = addUrlField();
-            addCancelButton();
             addImportButton(url);
-        }
-
-        private void addCancelButton() {
-            add(new AjaxButton("cancel") {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    modalWindow.close(target);
-                }
-            });
         }
 
         private TextField<String> addUrlField() {

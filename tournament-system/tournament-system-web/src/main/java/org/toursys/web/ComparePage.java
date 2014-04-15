@@ -58,18 +58,6 @@ public class ComparePage extends WebPage {
 
             addParticipantsListView(players);
             addCloseButton(window);
-            addResetButton(window);
-        }
-
-        private void addResetButton(final ModalWindow window) {
-            add(new AjaxButton("reset", new ResourceModel("reset")) {
-                private static final long serialVersionUID = 1L;
-
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    groupService.resetEqualRank(group);
-                    window.close(target);
-                }
-            });
         }
 
         private void addCloseButton(final ModalWindow window) {
@@ -100,19 +88,18 @@ public class ComparePage extends WebPage {
 
                     listItem.add(new Label("player", playerName));
 
-                    listItem.add(new TextField<Integer>("equalRank", new PropertyModel<Integer>(participant,
-                            "equalRank")).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    listItem.add(new TextField<Integer>("rank", new PropertyModel<Integer>(participant, "rank")).add(
+                            new AjaxFormComponentUpdatingBehavior("onchange") {
 
-                        private static final long serialVersionUID = 1L;
+                                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        protected void onUpdate(AjaxRequestTarget target) {
-                            Participant updatedParticipant = new Participant()._setId(participant.getId())
-                                    ._setEqualRank(participant.getEqualRank())._setGroup(participant.getGroup())
-                                    ._setPlayer(participant.getPlayer())._setNull(Participant.Attribute.equalRank);
-                            participantService.updateParticipant(updatedParticipant);
-                        }
-                    }).setVisible(participant.getPlayer() != null));
+                                @Override
+                                protected void onUpdate(AjaxRequestTarget target) {
+                                    Participant updatedParticipant = new Participant()._setId(participant.getId())
+                                            ._setRank(participant.getRank());
+                                    participantService.updateParticipant(updatedParticipant);
+                                }
+                            }).setVisible(participant.getPlayer() != null));
 
                 }
 

@@ -50,7 +50,9 @@ public class TournamentHtmlImportFactory {
                 participant.setPlayer(player);
                 participant.setGroup(group);
 
+                // new get(2)
                 String playerName = rowElement.select("td").get(1).ownText();
+                System.out.println("Parsing player: " + playerName);
 
                 if (playerName.contains("Chylík")) {
                     player.setPlayerDiscriminator("ml.");
