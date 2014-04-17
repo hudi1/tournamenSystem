@@ -23,35 +23,25 @@ public class SkTournamentSorter extends TournamentSorter {
     // e) počet strelených gólov celkom,
     // f) počet vyhraných zápasov,
     // g) hra o „zlatý gól“.
+    // (2) Prednosť má vždy vyššie uvedené kritérium, ktoré možno použiť.
+    // (3) Pri vzájomnej rovnosti bodov najmenej troch hráčov sa výsledky ich vzájomných zápasov
+    // zapíšu do osobitnej tabuľky a poradie sa určí podľa kritérií uvedených v bode 1. // Len na prvej urovni
     @Override
     public void sort(List<Participant> participants) {
-        sortParticipants(participants, false);
+        sortParticipants(participants);
         setRanks(participants);
     }
 
-    private void sortParticipants(List<Participant> participants, boolean innerSort) {
+    private void sortParticipants(List<Participant> participants) {
         logger.debug("Start Sort participants: " + Arrays.toString(participants.toArray()));
 
         if (participants.isEmpty()) {
             return;
         }
 
-        if (!innerSort) {
-            logger.debug("Basic sort");
-            calculateParticipants(participants);
-            Collections.sort(participants, new SkParticipantComparator());
-        } else {
-            logger.debug("Inner sort");
-            calculateInnerParticipantsPoint(participants);
-            Collections.sort(participants, new SkParticipantComparator());
-            calculateParticipants(participants);
-        }
+        calculateParticipants(participants);
+        Collections.sort(participants, new SkParticipantComparator());
 
-        doInnerSort(participants);
-    }
-
-    private void doInnerSort(List<Participant> participants) {
-        logger.debug("Inner sort: " + Arrays.toString(participants.toArray()));
         List<Participant> temporatyParticipant = new ArrayList<Participant>();
         temporatyParticipant.add(participants.get(0));
 
@@ -63,14 +53,15 @@ public class SkTournamentSorter extends TournamentSorter {
             if (participants.get(i).getPoints() != participants.get(i + 1).getPoints()
                     || (i == participants.size() - 2)) {
                 if (temporatyParticipant.size() > 2) {
-                    if (temporatyParticipant.size() != participants.size()) {
-                        sortParticipants(temporatyParticipant, true);
-                    }
+                    calculateInnerParticipantsPoint(temporatyParticipant);
+                    Collections.sort(temporatyParticipant, new SkParticipantComparator());
+                    calculateParticipants(temporatyParticipant);
                 }
                 temporatyParticipant.clear();
                 temporatyParticipant.add(participants.get(i + 1));
             }
         }
+        logger.debug("End Sort participants: " + Arrays.toString(participants.toArray()));
     }
 
     private void setRanks(List<Participant> participants) {
