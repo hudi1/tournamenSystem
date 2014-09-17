@@ -1,5 +1,7 @@
 package org.toursys.repository.dao;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +9,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import org.toursys.repository.model.Season;
+import org.toursys.repository.model.Game;
+import org.toursys.repository.model.GroupsType;
+import org.toursys.repository.model.Participant;
+import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Result;
+import org.toursys.repository.model.Score;
+import org.toursys.repository.model.StatisticForm;
+import org.toursys.repository.model.Tournament;
 import org.toursys.repository.service.TournamentAggregationDao;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -24,7 +33,31 @@ public class TournamentAggregationITest {
     @Test
     public void tournamentTest() {
 
-        tournamentAggregationDao.getSeason(new Season()._setName("xxx"));
+        List<Player> a = tournamentAggregationDao.getPlayersGames(new StatisticForm()._setTournament(new Tournament()
+                ._setId(148)));
+
+        System.out.println(a.size());
+
+        for (Player p : a) {
+            System.out.print(p);
+            int leftSide = 0;
+            int rightSide = 0;
+            for (Participant pp : p.getParticipants()) {
+                // System.out.println(pp);
+                for (Game game : pp.getGames()) {
+                    System.out.println(game.getResult());
+                    for (Result result : game.getResult().getResults()) {
+                        if (GroupsType.FINAL.equals(pp.getGroup().getType()) && result.isContumacy()) {
+                            continue;
+                        }
+                        leftSide += result.getLeftSide();
+                        rightSide += result.getRightSide();
+                    }
+                }
+            }
+            Score score = new Score(leftSide, rightSide);
+            System.out.println(score);
+        }
 
         return;
         /*
