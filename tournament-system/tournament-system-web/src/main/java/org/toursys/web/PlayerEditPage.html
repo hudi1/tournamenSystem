@@ -10,29 +10,19 @@
 	<form wicket:id="playerEditForm">
 		<fieldset>
 			<legend>
-				<wicket:message key="player">
-            Player:
-        </wicket:message>
+				<span wicket:id="player"> Player </span>
 			</legend>
 			<div>
-				<label wicket:for="name"><wicket:message key="name">
-            Name:
-        </wicket:message></label><input type="text" wicket:id="name" />
+				<label wicket:for="nameInput"> <span wicket:id="name">Name:
+				</span></label><input type="text" wicket:id="nameInput" />
 			</div>
 			<div>
-				<label wicket:for="surname"><wicket:message key="surname">
-            Surname:
-        </wicket:message></label><input type="text" wicket:id="surname" />
+				<label wicket:for="surnameInput"> <span wicket:id="surname">Surname:</span>
+				</label><input type="text" wicket:id="surnameInput" />
 			</div>
 			<div>
-				<label wicket:for="club"><wicket:message key="club">
-            Club:
-        </wicket:message></label><input type="text" wicket:id="club" />
-			</div>
-			<div>
-				<!--label wicket:for="playerDiscriminator"><wicket:message key="discriminator">
-            Discriminator:
-        </wicket:message></label><input type="text" wicket:id="playerDiscriminator" /-->
+				<label wicket:for="clubInput"> <span wicket:id="club">Club:</span>
+				</label><input type="text" wicket:id="clubInput" />
 			</div>
 		</fieldset>
 

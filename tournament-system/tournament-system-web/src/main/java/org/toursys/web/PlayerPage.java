@@ -15,9 +15,11 @@ import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -25,9 +27,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
 import org.toursys.web.components.PropertyPageableListView;
+import org.toursys.web.link.AjaxModelLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends TournamentHomePage {
@@ -70,8 +74,12 @@ public class PlayerPage extends TournamentHomePage {
             super("playerForm", new CompoundPropertyModel<User>(model));
             ModalWindow modalWindow;
 
+            add(new Label("name", new ResourceModel("name")));
+            add(new Label("surname", new ResourceModel("surname")));
+            add(new Label("club", new ResourceModel("club")));
+
             addPlayerListView();
-            addPlayerAddButton();
+            addNewPlayerButton();
             add(modalWindow = createModalWindow());
             addModalButton(modalWindow);
         }
@@ -147,14 +155,15 @@ public class PlayerPage extends TournamentHomePage {
 
                             };
                         }
-                    }.add(AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
-                        private static final long serialVersionUID = 1L;
+                    }.add(new Image("img", new SharedResourceReference("delete"))).add(
+                            AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public String getObject() {
-                            return getString("deletePlayer");
-                        }
-                    })));
+                                @Override
+                                public String getObject() {
+                                    return getString("deletePlayer");
+                                }
+                            })));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
@@ -172,7 +181,7 @@ public class PlayerPage extends TournamentHomePage {
         }
 
         private void addModalButton(final ModalWindow modalWindow) {
-            add(new AjaxLink<Void>("showModalLink") {
+            add(new AjaxModelLink<Void>("showModalLink") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -183,7 +192,7 @@ public class PlayerPage extends TournamentHomePage {
             });
         }
 
-        private void addPlayerAddButton() {
+        private void addNewPlayerButton() {
             add(new Button("newPlayer", new ResourceModel("newPlayer")) {
 
                 private static final long serialVersionUID = 1L;

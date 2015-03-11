@@ -1,9 +1,10 @@
 package org.toursys.web;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.PasswordTextField;
@@ -11,9 +12,11 @@ import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.settings.ISecuritySettings;
+import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.User;
 import org.toursys.repository.model.UserRole;
 
@@ -140,7 +143,12 @@ public class TournamentSignInPanel extends Panel {
      * @return True if signin was successful
      */
     private boolean signIn(String username, String password) {
-        return AuthenticatedWebSession.get().signIn(username, password);
+        try {
+            return AuthenticatedWebSession.get().signIn(username, password);
+        } catch (SqlProcessorException e) {
+            onSignInError();
+            return false;
+        }
     }
 
     /**
@@ -148,6 +156,13 @@ public class TournamentSignInPanel extends Panel {
      */
     protected void onSignInFailed() {
         error(getString("signInFailed"));
+    }
+
+    /**
+     * Called when sign in error
+     */
+    protected void onSignInError() {
+        error(getString("sql.db.exception"));
     }
 
     /**
@@ -168,15 +183,24 @@ public class TournamentSignInPanel extends Panel {
 
             setModel(new CompoundPropertyModel<TournamentSignInPanel>(TournamentSignInPanel.this));
 
-            add(new TextField<String>("username").setRequired(true));
-            add(new PasswordTextField("password").setRequired(true));
+            add(new Label("username", new ResourceModel("username")));
+            add(new TextField<String>("usernameInput",
+                    new PropertyModel<String>(TournamentSignInPanel.this, "username")).setRequired(true));
 
-            WebMarkupContainer rememberMeRow = new WebMarkupContainer("rememberMeRow");
-            add(rememberMeRow);
+            add(new Label("password", new ResourceModel("password")));
+            add(new PasswordTextField("passwordInput",
+                    new PropertyModel<String>(TournamentSignInPanel.this, "password")).setRequired(true));
 
-            rememberMeRow.add(new CheckBox("rememberMe"));
+            Component rememberMeLabel = new Label("rememberMe", new ResourceModel("rememberMe")).setVisible(false);
+            Component copyResultInput = new CheckBox("rememberMeInput", new PropertyModel<Boolean>(
+                    TournamentSignInPanel.this, "rememberMe")).setVisible(false);
+            add(rememberMeLabel);
+            add(copyResultInput);
 
-            rememberMeRow.setVisible(includeRememberMe);
+            if (includeRememberMe) {
+                rememberMeLabel.setVisible(true);
+                copyResultInput.setVisible(true);
+            }
 
             add(new Button("register", new ResourceModel("register")) {
 
@@ -187,6 +211,8 @@ public class TournamentSignInPanel extends Panel {
                     setResponsePage(new UserEditPage(new User()._setPlatnost(0)._setRole(UserRole.USER), false, true));
                 }
             }.setDefaultFormProcessing(false));
+
+            add(new Button("reset", new ResourceModel("reset")).setDefaultFormProcessing(false));
 
             add(new Button("signIn", new ResourceModel("signIn")) {
 
@@ -210,7 +236,6 @@ public class TournamentSignInPanel extends Panel {
                     }
                 }
             });
-
         }
     }
 }

@@ -13,18 +13,12 @@
 					<th><span wicket:id="name">name</span></th>
 				</tr>
 				<tr>
-					<th><wicket:message key="round">
-            Round
-        </wicket:message></th>
-					<th><wicket:message key="player">
-            Player
-        </wicket:message></th>
-					<th><wicket:message key="result">
-            Result
-        </wicket:message></th>
+					<th><span wicket:id="round">Round</span></th>
+					<th><span wicket:id="player">Player</span></th>
+					<th><span wicket:id="result">Result</span></th>
 				</tr>
 				<tr wicket:id="playOffGames">
-					<td style="font-weight: bold;"><span wicket:id="round"></span></td>
+					<td style="font-weight: bold;"><span wicket:id="roundName"></span></td>
 					<td style="width: 300px;"><span wicket:id="player"></span>:<span
 						wicket:id="opponent"></span></td>
 					<td><input wicket:id="result" style="width: 300px;"></input></td>
@@ -34,10 +28,8 @@
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="save"
 				title="save" value="Save" /> <span> <a
-				class="tournamentLink" type="submit" wicket:id="pdfPlayOff"><wicket:message
-						key="printPlayOff">
-            print play off
-        </wicket:message> </a>
+				class="tournamentLink" type="submit" wicket:id="printPlayOff">
+					print play off </a>
 			</span>
 		</div>
 	</form>

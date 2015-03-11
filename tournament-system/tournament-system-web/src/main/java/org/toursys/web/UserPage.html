@@ -6,30 +6,20 @@
 	<title>Tournament System</title>
 </wicket:head>
 <wicket:extend>
-	<div class="naginator" wicket:id="navigator">[dataview navigator]</div>
-	<table class="usereTable">
-		<tr>
-			<th><wicket:message key="name">
-            Name
-        </wicket:message></th>
-			<th><wicket:message key="edit">
-            Edit
-        </wicket:message></th>
-		</tr>
-		<tr wicket:id="rows">
-			<td><span wicket:id="userName">name</span></td>
-			<td>
-				<form wicket:id="editUserForm">
-					<div>
-						<input wicket:id="editUser" class="tournamentButton" type="submit"
-							value="edit user" />
-					</div>
-				</form>
-			</td>
-		</tr>
-	</table>
-
 	<form wicket:id="userForm">
+		<div wicket:id="navigator"></div>
+		<table class="usereTable">
+			<tr>
+				<th><span wicket:id="name">Name</span></th>
+				<th></th>
+			</tr>
+			<tr wicket:id="users">
+				<td><span wicket:id="userName">name</span></td>
+				<td><a wicket:id="enterUser"><img
+						wicket:id="imgEnter" /></a></td>
+			</tr>
+		</table>
+
 		<div>
 			<input wicket:id="newUser" class="tournamentButton" type="submit"
 				value="new user" />

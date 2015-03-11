@@ -2,7 +2,6 @@ package org.toursys.web;
 
 import java.util.Locale;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.RestartResponseException;
@@ -10,13 +9,13 @@ import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.RequestUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -36,6 +35,7 @@ import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
+import org.toursys.web.link.BookmarkableModelPageLink;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 public abstract class BasePage extends WebPage implements TournamentPageParameter {
@@ -98,36 +98,28 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
 
         add(new ExternalLink("logo", Model.of(RequestUtils.toAbsolutePath(urlFor(getApplication().getHomePage(), null)
                 .toString(), urlFor(HomePage.class, null).toString().toString()))));
-        Component homePage = new BookmarkablePageLink<Void>("homePageMain", HomePage.class).add(new AttributeModifier(
-                "class", new ActiveReplaceModel(this instanceof HomePage)));
-        Component tournamentPage = new BookmarkablePageLink<Void>("tournamentPage", TournamentPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof TournamentPage))).setVisible(
-                false);
-        Component seasonPage = new BookmarkablePageLink<Void>("seasonPage", SeasonPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof SeasonPage))).setVisible(false);
-        Component statisticPage = new BookmarkablePageLink<Void>("statisticPage", StatisticPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof StatisticPage)))
-                .setVisible(false);
-        Component playerPage = new BookmarkablePageLink<Void>("playerPage", PlayerPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayerPage))).setVisible(false);
-        Component userPage = new BookmarkablePageLink<Void>("userPage", UserPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof UserPage))).setVisible(false);
-        Component logoutPage = new BookmarkablePageLink<Void>("logoutPage", LogoutPage.class).setVisible(false);
-        Component loginPage = new BookmarkablePageLink<Void>("loginPage", LoginPage.class).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof LoginPage))).setVisible(false);
-        Component registrationPage = new BookmarkablePageLink<Void>("registrationPage", RegistrationPage.class,
-                getPageParameters()).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof RegistrationPage))).setVisible(
-                false);
-        Component groupPage = new BookmarkablePageLink<Void>("groupPage", GroupPage.class, groupPageParameter).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof GroupPage))).setVisible(false);
-        Component playOffPage = new BookmarkablePageLink<Void>("playOffPage", PlayOffPage.class, getPageParameters())
-                .add(new AttributeModifier("class", new ActiveReplaceModel(this instanceof PlayOffPage))).setVisible(
-                        false);
-        Component finalRankingPage = new BookmarkablePageLink<Void>("finalRankingPage", FinalRankingPage.class,
-                getPageParameters()).add(
-                new AttributeModifier("class", new ActiveReplaceModel(this instanceof FinalRankingPage))).setVisible(
-                false);
+
+        Component homePage = new BookmarkableModelPageLink<Void>("homePage", HomePage.class, this instanceof HomePage);
+        Component tournamentPage = new BookmarkableModelPageLink<Void>("tournamentPage", TournamentPage.class,
+                this instanceof HomePage);
+        Component seasonPage = new BookmarkableModelPageLink<Void>("seasonPage", SeasonPage.class,
+                this instanceof SeasonPage);
+        Component statisticPage = new BookmarkableModelPageLink<Void>("statisticPage", StatisticPage.class,
+                this instanceof StatisticPage);
+        Component playerPage = new BookmarkableModelPageLink<Void>("playerPage", PlayerPage.class,
+                this instanceof PlayerPage);
+        Component userPage = new BookmarkableModelPageLink<Void>("userPage", UserPage.class, this instanceof UserPage);
+        Component logoutPage = new BookmarkableModelPageLink<Void>("logoutPage", LogoutPage.class);
+        Component loginPage = new BookmarkableModelPageLink<Void>("loginPage", LoginPage.class,
+                this instanceof LoginPage);
+        Component registrationPage = new BookmarkableModelPageLink<Void>("registrationPage", RegistrationPage.class,
+                this instanceof RegistrationPage);
+        Component groupPage = new BookmarkableModelPageLink<Void>("groupPage", GroupPage.class,
+                groupPageParameter, this instanceof RegistrationPage);
+        Component playOffPage = new BookmarkableModelPageLink<Void>("playOffPage", PlayOffPage.class,
+                getPageParameters(), this instanceof PlayOffPage);
+        Component finalRankingPage = new BookmarkableModelPageLink<Void>("finalRankingPage", FinalRankingPage.class,
+                this instanceof FinalRankingPage);
 
         add(homePage);
         add(seasonPage);
@@ -142,8 +134,9 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
         add(playOffPage);
         add(finalRankingPage);
 
+        homePage.setVisible(true);
+
         if (this instanceof TournamentHomePage) {
-            // homePage.setVisible(false);
             registrationPage.setVisible(true);
             groupPage.setVisible(true);
             playOffPage.setVisible(true);
@@ -163,8 +156,8 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
                 userPage.setVisible(true);
             }
         }
-        // System.out.println();
 
+        add(new Label("language", new ResourceModel("language")));
         add(new Link<Void>("goSk") {
 
             private static final long serialVersionUID = 1L;
@@ -185,6 +178,7 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
             }
         });
 
+        add(new Label("user", new ResourceModel("user")));
         Link<User> userProfileLink = new Link<User>("userProfile", new AbstractReadOnlyModel<User>() {
 
             private static final long serialVersionUID = 1L;
@@ -232,23 +226,6 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
         add(userProfileLink);
 
         add(feedbackPanel.setOutputMarkupId(true));
-
-    }
-
-    private class ActiveReplaceModel extends AbstractReadOnlyModel<String> {
-
-        private static final long serialVersionUID = 1L;
-
-        private boolean active;
-
-        public ActiveReplaceModel(boolean active) {
-            this.active = active;
-        }
-
-        @Override
-        public String getObject() {
-            return active ? "active" : "";
-        }
 
     }
 

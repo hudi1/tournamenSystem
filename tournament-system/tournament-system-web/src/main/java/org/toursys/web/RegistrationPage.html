@@ -9,51 +9,36 @@
 	<div>
 		<form wicket:id="groupForm" class="registration">
 			<div>
-				<label class="spinnerLabel"><wicket:message key="group">
-            Group:
-        </wicket:message> </label> <input type="submit" wicket:id="minus" /><input type="text"
-					wicket:id="name" class="spinner" /><input type="submit"
-					wicket:id="plus" />
+				<label class="spinnerLabel"><span wicket:id="group">
+						Group: </span> </label> <input type="submit" wicket:id="minus" /><input
+					type="text" wicket:id="name" class="spinner" /><input
+					type="submit" wicket:id="plus" />
 			</div>
 		</form>
 		<form wicket:id="playerForm">
 			<div>
-				<!--select wicket:id="players"></select> <span> </span-->
-			</div>
-			<div>
-				<wicket:message key="choosePlayer">
-            Choose player
-        </wicket:message>
-				<input type="text" class="allPlayers" wicket:id="players"></input> <input
+				<span wicket:id="choosePlayer"> Choose player: </span> <input
+					type="text" class="allPlayers" wicket:id="players"></input> <input
 					class="tournamentButton" type="submit" wicket:id="playersButton"
 					value="Player" /> <a wicket:id="showModalLink"
-					class="tournamentLink" title="delete player"><wicket:message
-						key="showModalLink">
-                 Import tournament
-        </wicket:message></a>
+					class="tournamentLink" title="Import tournament"> Import
+					tournament </a>
 			</div>
 			<table class="registratedPlayerTable">
 				<tbody>
 					<tr>
 						<th />
-						<th><wicket:message key="name">
-            Name
-        </wicket:message></th>
-						<th><wicket:message key="surname">
-            Surname
-        </wicket:message></th>
-						<th><wicket:message key="tableName">
-            Table name
-        </wicket:message></th>
-						<th></th>
+						<th><span wicket:id="name">name</span></th>
+						<th><span wicket:id="surname">Surname</span></th>
+						<th><span wicket:id="tableName">Table name</span></th>
+						<th />
 					</tr>
 					<tr wicket:id="participants">
 						<td><span wicket:id="number">1.</span></td>
 						<td><span wicket:id="name">name</span></td>
 						<td><span wicket:id="surname">surname</span></td>
 						<td><span wicket:id="group">group</span></td>
-						<td><a wicket:id="deleteParticipant"><img
-								src="img/delete.png" /></a></td>
+						<td><a wicket:id="deleteParticipant"><img wicket:id="img" /></a></td>
 					</tr>
 				</tbody>
 			</table>

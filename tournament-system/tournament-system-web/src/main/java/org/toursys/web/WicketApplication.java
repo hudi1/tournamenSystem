@@ -11,10 +11,12 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.toursys.web.finder.CustomResourceStreamLocator;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.toursys.web.finder.SpringStringResourceLoader;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
 public class WicketApplication extends AuthenticatedWebApplication {
@@ -54,6 +56,14 @@ public class WicketApplication extends AuthenticatedWebApplication {
         mountPage("tournamentHomePage", TournamentHomePage.class);
     }
 
+    private void mountResource() {
+        mountResource(getFilesPath() + "img/delete.png", new SharedResourceReference("delete"));
+        mountResource(getFilesPath() + "img/enter.png", new SharedResourceReference("enter"));
+
+        // getSharedResources().add("delete", new ContextRelativeResource("img/delete.png"));
+        // getSharedResources().add("enter", new ContextRelativeResource("img/enter.png"));
+    }
+
     @Override
     protected void init() {
         if (!isInitialized) {
@@ -63,6 +73,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
             Injector.get().inject(this);
             initConfiguration();
             mountPages();
+            mountResource();
             getMarkupSettings().setStripWicketTags(true);
             getMarkupSettings().setCompressWhitespace(true);
             getMarkupSettings().setDefaultAfterDisabledLink("");
@@ -78,7 +89,11 @@ public class WicketApplication extends AuthenticatedWebApplication {
                     // return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(e)));
                 }
             });
-            getResourceSettings().setResourceStreamLocator(new CustomResourceStreamLocator());
+            // getResourceSettings().setResourceStreamLocator(new CustomResourceStreamLocator());
+            // load i18n messages
+            getResourceSettings().getStringResourceLoaders().add(
+                    new SpringStringResourceLoader(WebApplicationContextUtils
+                            .getWebApplicationContext(getServletContext())));
         }
     }
 

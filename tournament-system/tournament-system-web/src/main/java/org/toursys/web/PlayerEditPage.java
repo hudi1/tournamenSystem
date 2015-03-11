@@ -2,12 +2,14 @@ package org.toursys.web;
 
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.sqlproc.engine.SqlProcessorException;
@@ -42,8 +44,8 @@ public class PlayerEditPage extends TournamentHomePage {
         public PlayerForm(final Player player) {
             super("playerEditForm", new CompoundPropertyModel<Player>(player));
 
-            addPlayerTextFields();
-            addSubmitButton(player);
+            addPlayerTextFields(player);
+            addSaveButton(player);
             addBackButton();
         }
 
@@ -59,8 +61,8 @@ public class PlayerEditPage extends TournamentHomePage {
             }.setDefaultFormProcessing(false));
         }
 
-        private void addSubmitButton(final Player player) {
-            add(new Button("submit", new ResourceModel("submit")) {
+        private void addSaveButton(final Player player) {
+            add(new Button("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -87,10 +89,14 @@ public class PlayerEditPage extends TournamentHomePage {
             });
         }
 
-        private void addPlayerTextFields() {
-            add(new RequiredTextField<String>("name"));
-            add(new RequiredTextField<String>("surname"));
-            add(new TextField<String>("club"));
+        private void addPlayerTextFields(final Player player) {
+            add(new Label("player", new ResourceModel("player")));
+            add(new Label("name", new ResourceModel("name")));
+            add(new RequiredTextField<String>("nameInput", new PropertyModel<String>(player, "name")));
+            add(new Label("surname", new ResourceModel("surname")));
+            add(new RequiredTextField<String>("surnameInput", new PropertyModel<String>(player, "surname")));
+            add(new Label("club", new ResourceModel("club")));
+            add(new TextField<String>("clubInput", new PropertyModel<String>(player, "club")));
         }
     }
 

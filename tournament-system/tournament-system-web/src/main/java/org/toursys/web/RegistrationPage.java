@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -29,11 +30,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
 import org.toursys.web.components.ModelAutoCompleteTextField;
+import org.toursys.web.link.AjaxModelLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class RegistrationPage extends TournamentHomePage {
@@ -67,6 +70,11 @@ public class RegistrationPage extends TournamentHomePage {
 
         public PlayerForm() {
             super("playerForm");
+            add(new Label("choosePlayer", new ResourceModel("choosePlayer")));
+            add(new Label("name", new ResourceModel("name")));
+            add(new Label("surname", new ResourceModel("surname")));
+            add(new Label("tableName", new ResourceModel("tableName")));
+
             ModalWindow modalWindow;
 
             addShowPlayersButton();
@@ -186,14 +194,15 @@ public class RegistrationPage extends TournamentHomePage {
 
                             };
                         }
-                    }.add(AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
-                        private static final long serialVersionUID = 1L;
+                    }.add(new Image("img", new SharedResourceReference("delete"))).add(
+                            AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public String getObject() {
-                            return getString("deleteParticipant");
-                        }
-                    })));
+                                @Override
+                                public String getObject() {
+                                    return getString("deleteParticipant");
+                                }
+                            })));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
@@ -221,7 +230,7 @@ public class RegistrationPage extends TournamentHomePage {
         }
 
         private void addModalButton(final ModalWindow modalWindow) {
-            add(new AjaxLink<Void>("showModalLink") {
+            add(new AjaxModelLink<Void>("showModalLink") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -295,6 +304,7 @@ public class RegistrationPage extends TournamentHomePage {
 
         public GroupForm() {
             super("groupForm", new CompoundPropertyModel<Groups>(group));
+            add(new Label("group", new ResourceModel("group")));
 
             TextField<String> groupTextField = getGroupTextField();
             addMinusButton(groupTextField);

@@ -12,12 +12,14 @@ import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.User;
 import org.toursys.web.components.PropertyPageableListView;
@@ -90,14 +92,15 @@ public class SeasonPage extends BasePage {
 
                             };
                         }
-                    }.add(AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
-                        private static final long serialVersionUID = 1L;
+                    }.add(new Image("img", new SharedResourceReference("delete"))).add(
+                            AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public String getObject() {
-                            return getString("deleteSeason");
-                        }
-                    })));
+                                @Override
+                                public String getObject() {
+                                    return getString("deleteSeason");
+                                }
+                            })));
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;

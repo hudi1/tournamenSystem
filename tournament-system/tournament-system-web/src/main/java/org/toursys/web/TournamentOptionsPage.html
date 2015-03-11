@@ -10,26 +10,25 @@
 		<fieldset>
 			<legend wicket:id="tableLegend"></legend>
 			<div>
-				<label class="option"><wicket:message key="hockeyNumber">
-            Number of hockey per basic group: 
-        </wicket:message></label> <br /> <input type="text" wicket:id="numberOfHockey" />
+				<label class="option" wicket:for="numberOfHockeyInput"> <span
+					wicket:id="numberOfHockey">Count of hockey:
+				</span></label><input type="text" wicket:id="numberOfHockeyInput" />
 			</div>
 			<div>
-				<label class="option"><wicket:message key="startHockey">
-           Start hockey: 
-        </wicket:message></label> <br /> <input type="text" wicket:id="indexOfFirstHockey" />
+				<label class="option" wicket:for="indexOfFirstHockeyInput">
+					<span wicket:id="indexOfFirstHockey"> Start hockey: </span>
+				</label><input type="text" wicket:id="indexOfFirstHockeyInput" />
 			</div>
 			<div>
-				<input type="checkbox" wicket:id="copyResult"> <wicket:message
-						key="copyResult">
-					</wicket:message></input>
+				<label class="option" wicket:for="copyResultInput"> <span
+					wicket:id="copyResult"> CopyResult: </span>
+				</label><input type="checkbox" wicket:id="copyResultInput" />
 			</div>
 			<div>
-				<input type="checkbox" wicket:id="playThirdPlace"> <wicket:message
-						key="playThirdPlace">
-					</wicket:message></input>
+				<label class="option" wicket:for="playThirdPlaceInput"> <span
+					wicket:id="playThirdPlace"> Play for third place: </span>
+				</label><input type="checkbox" wicket:id="playThirdPlaceInput" />
 			</div>
-
 		</fieldset>
 
 		<div>
@@ -44,36 +43,37 @@
 		<fieldset>
 			<legend wicket:id="tournamentLegend"></legend>
 			<div>
-				<label class="option"><wicket:message key="win">
-          Points for win
-        </wicket:message> </label><br /> <input type="text" wicket:id="winPoints" />
+				<label class="option" wicket:for="winPointsInput"> <span
+					wicket:id="winPoints">Points for win: </span></label><input type="text"
+					wicket:id="winPointsInput" />
 			</div>
 			<div>
-				<label class="option"><wicket:message key="promotingA">
-          Promoting to A group
-        </wicket:message> </label><br /> <input type="text" wicket:id="finalPromoting" />
-			</div>
-
-			<div>
-				<label class="option"><wicket:message key="promotingLower">
-          Promoting to lower groups
-        </wicket:message> </label><br /> <input type="text" wicket:id="lowerPromoting" />
+				<label class="option" wicket:for="finalPromotingInput"> <span
+					wicket:id="finalPromoting">Promoting to final groups: </span></label><input
+					type="text" wicket:id="finalPromotingInput" />
 			</div>
 			<div>
-				<label class="option"><wicket:message key="playOffA">
-					</wicket:message> </label><br /> <input type="text" wicket:id="playOffFinal" />
+				<label class="option" wicket:for="lowerPromotingInput"> <span
+					wicket:id="lowerPromoting">Promoting to lower groups: </span></label><input
+					type="text" wicket:id="lowerPromotingInput" />
 			</div>
 			<div>
-				<label class="option"><wicket:message key="playOffLower">
-					</wicket:message> </label><br /> <input type="text" wicket:id="playOffLower" />
+				<label class="option" wicket:for="playOffFinalInput"> <span
+					wicket:id="playOffFinal">Count of advancing player from
+						final groups to play off: </span></label><input type="text"
+					wicket:id="playOffFinalInput" />
 			</div>
 			<div>
-				<label class="option"><wicket:message
-						key="minPlayersInGroup">
-           Min player in group 
-        </wicket:message></label><br /> <input type="text" wicket:id="minPlayersInGroup" />
+				<label class="option" wicket:for="playOffLowerInput"> <span
+					wicket:id="playOffLower">Count of advancing player from
+						lower groups to play off: </span></label><input type="text"
+					wicket:id="playOffLowerInput" />
 			</div>
-
+			<div>
+				<label class="option" wicket:for="minPlayersInGroupInput"> <span
+					wicket:id="minPlayersInGroup">Min player in group: </span></label><input
+					type="text" wicket:id="minPlayersInGroupInput" />
+			</div>
 		</fieldset>
 
 		<div>

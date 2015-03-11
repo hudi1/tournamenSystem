@@ -137,7 +137,6 @@
                                     <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
                                         <include>log4j.properties</include>
-                                        <include>logging.properties</include>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -180,13 +179,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>7.6.0.v20120127</version>
-    </dependency>
-
 
         <!-- Wicket -->
         <dependency>

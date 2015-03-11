@@ -247,7 +247,7 @@ form label {
 }
 
 form label.option {
-	width: auto;
+	width: 285px;
 }
 
 label.spinnerLabel {

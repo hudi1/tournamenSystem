@@ -36,6 +36,7 @@ import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
+import org.toursys.web.link.DownloadModelLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class GroupPage extends TournamentHomePage {
@@ -118,7 +119,7 @@ public class GroupPage extends TournamentHomePage {
 
             add(options);
 
-            DownloadLink sheets = new DownloadLink("sheets", new AbstractReadOnlyModel<File>() {
+            DownloadLink sheets = new DownloadModelLink("sheets", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -139,7 +140,7 @@ public class GroupPage extends TournamentHomePage {
 
             add(sheets);
 
-            DownloadLink pdfSchedule = new DownloadLink("pdfSchedule", new AbstractReadOnlyModel<File>() {
+            DownloadLink printSchedule = new DownloadModelLink("printSchedule", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -156,9 +157,9 @@ public class GroupPage extends TournamentHomePage {
                     return tempFile;
                 }
             });
-            pdfSchedule.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+            printSchedule.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
 
-            add(pdfSchedule);
+            add(printSchedule);
 
             Button finalGroup = new Button("finalGroup", new ResourceModel("finalGroup")) {
 
@@ -188,7 +189,7 @@ public class GroupPage extends TournamentHomePage {
             };
             add(copyResult);
 
-            DownloadLink printGroup = new DownloadLink("pdfTable", new AbstractReadOnlyModel<File>() {
+            DownloadLink printGroup = new DownloadModelLink("printGroup", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -224,7 +225,7 @@ public class GroupPage extends TournamentHomePage {
                 options.setVisible(false);
                 schedule.setVisible(false);
                 sheets.setVisible(false);
-                pdfSchedule.setVisible(false);
+                printSchedule.setVisible(false);
                 printGroup.setVisible(false);
                 copyResult.setVisible(false);
                 finalGroup.setVisible(false);
@@ -474,7 +475,7 @@ public class GroupPage extends TournamentHomePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of(getString("group"));
+        return Model.of(getString("groupOverview"));
     }
 
 }

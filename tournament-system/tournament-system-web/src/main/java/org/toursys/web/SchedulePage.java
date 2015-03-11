@@ -66,6 +66,11 @@ public class SchedulePage extends TournamentHomePage {
         public ScheduleForm() {
             super("scheduleForm");
 
+            add(new Label("round", new ResourceModel("round")));
+            add(new Label("hockey", new ResourceModel("hockey")));
+            add(new Label("player", new ResourceModel("player")));
+            add(new Label("result", new ResourceModel("result")));
+
             addScheduleListView();
             addSaveButton();
             addBackButton();

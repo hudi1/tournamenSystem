@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -20,7 +21,7 @@ import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Tournament;
 
 @AuthorizeInstantiation(Roles.USER)
-public class TournamentOptionsPage extends BasePage {
+public class TournamentOptionsPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
 
@@ -78,24 +79,40 @@ public class TournamentOptionsPage extends BasePage {
         public GroupOptionsForm(final Groups group) {
             super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
 
-            addGroupTextField();
+            addGroupTextField(group);
             addLegendLabel();
             addSubmitButton();
             addBackButton();
         }
 
-        private void addGroupTextField() {
-            add(new RequiredTextField<Integer>("numberOfHockey"));
-            add(new RequiredTextField<Integer>("indexOfFirstHockey"));
-            Component copyResult = new CheckBox("copyResult").setVisible(false);
-            Component playThirdPlace = new CheckBox("playThirdPlace").setVisible(false);
+        private void addGroupTextField(final Groups group) {
+            add(new Label("numberOfHockey", new ResourceModel("numberOfHockey")));
+            add(new RequiredTextField<Integer>("numberOfHockeyInput", new PropertyModel<Integer>(group,
+                    "numberOfHockey")));
+
+            add(new Label("indexOfFirstHockey", new ResourceModel("indexOfFirstHockey")));
+            add(new RequiredTextField<Integer>("indexOfFirstHockeyInput", new PropertyModel<Integer>(group,
+                    "indexOfFirstHockey")));
+
+            Component copyResult = new Label("copyResult", new ResourceModel("copyResult")).setVisible(false);
+            Component copyResultInput = new CheckBox("copyResultInput", new PropertyModel<Boolean>(group,
+                    "indexOfFirstHockey")).setVisible(false);
+
+            Component playThirdPlace = new Label("playThirdPlace", new ResourceModel("playThirdPlace"))
+                    .setVisible(false);
+            Component playThirdPlaceInput = new CheckBox("playThirdPlaceInput", new PropertyModel<Boolean>(group,
+                    "playThirdPlace")).setVisible(false);
 
             add(copyResult);
+            add(copyResultInput);
             add(playThirdPlace);
+            add(playThirdPlaceInput);
 
             if (group.getType().equals(GroupsType.FINAL)) {
                 copyResult.setVisible(true);
+                copyResultInput.setVisible(true);
                 playThirdPlace.setVisible(true);
+                playThirdPlaceInput.setVisible(true);
             }
         }
 
@@ -139,19 +156,35 @@ public class TournamentOptionsPage extends BasePage {
         public TournamentOptionsForm(final Tournament tournament) {
             super("tournamentOptionsForm", new CompoundPropertyModel<Tournament>(tournament));
 
-            addTournamentsTextFields();
+            addTournamentsTextFields(tournament);
             addLegendLabel();
             addSubmitButton();
             addBackButton();
         }
 
-        private void addTournamentsTextFields() {
-            add(new RequiredTextField<Integer>("finalPromoting"));
-            add(new RequiredTextField<Integer>("lowerPromoting"));
-            add(new RequiredTextField<Integer>("winPoints"));
-            add(new RequiredTextField<Integer>("playOffFinal"));
-            add(new RequiredTextField<Integer>("playOffLower"));
-            add(new RequiredTextField<Integer>("minPlayersInGroup"));
+        private void addTournamentsTextFields(final Tournament tournament) {
+            add(new Label("finalPromoting", new ResourceModel("finalPromoting")));
+            add(new RequiredTextField<Integer>("finalPromotingInput", new PropertyModel<Integer>(tournament,
+                    "finalPromoting")));
+
+            add(new Label("lowerPromoting", new ResourceModel("lowerPromoting")));
+            add(new RequiredTextField<Integer>("lowerPromotingInput", new PropertyModel<Integer>(tournament,
+                    "lowerPromoting")));
+
+            add(new Label("winPoints", new ResourceModel("winPoints")));
+            add(new RequiredTextField<Integer>("winPointsInput", new PropertyModel<Integer>(tournament, "winPoints")));
+
+            add(new Label("playOffFinal", new ResourceModel("playOffFinal")));
+            add(new RequiredTextField<Integer>("playOffFinalInput", new PropertyModel<Integer>(tournament,
+                    "playOffFinal")));
+
+            add(new Label("playOffLower", new ResourceModel("playOffLower")));
+            add(new RequiredTextField<Integer>("playOffLowerInput", new PropertyModel<Integer>(tournament,
+                    "playOffFinal")));
+
+            add(new Label("minPlayersInGroup", new ResourceModel("minPlayersInGroup")));
+            add(new RequiredTextField<Integer>("minPlayersInGroupInput", new PropertyModel<Integer>(tournament,
+                    "minPlayersInGroup")));
         }
 
         private void addLegendLabel() {

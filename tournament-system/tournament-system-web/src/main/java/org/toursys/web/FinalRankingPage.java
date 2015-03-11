@@ -23,6 +23,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.FinalStanding;
+import org.toursys.web.link.DownloadModelLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class FinalRankingPage extends TournamentHomePage {
@@ -119,21 +120,23 @@ public class FinalRankingPage extends TournamentHomePage {
                 };
             }.setDefaultFormProcessing(false));
 
-            DownloadLink finalStandingsLink = new DownloadLink("finalStandings", new AbstractReadOnlyModel<File>() {
-                private static final long serialVersionUID = 1L;
+            DownloadLink finalStandingsLink = new DownloadModelLink("finalStandings",
+                    new AbstractReadOnlyModel<File>() {
+                        private static final long serialVersionUID = 1L;
 
-                @Override
-                public File getObject() {
-                    File tempFile;
-                    try {
-                        tempFile = PdfFactory.createFinalStandings(WicketApplication.getFilesPath(), finalStandings);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                    return tempFile;
-                }
-            });
+                        @Override
+                        public File getObject() {
+                            File tempFile;
+                            try {
+                                tempFile = PdfFactory.createFinalStandings(WicketApplication.getFilesPath(),
+                                        finalStandings);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                throw new RuntimeException(e);
+                            }
+                            return tempFile;
+                        }
+                    });
             finalStandingsLink.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
 
             add(finalStandingsLink);

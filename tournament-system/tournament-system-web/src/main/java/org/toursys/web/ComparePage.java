@@ -37,11 +37,9 @@ public class ComparePage extends WebPage {
     protected GroupService groupService;
 
     private List<Participant> players;
-    private Groups group;
 
     public ComparePage(Groups group, final ModalWindow window, Set<Participant> players) {
         this.players = new ArrayList<Participant>(players);
-        this.group = group;
         createPage(window);
     }
 
@@ -61,7 +59,7 @@ public class ComparePage extends WebPage {
         }
 
         private void addCloseButton(final ModalWindow window) {
-            add(new AjaxButton("close", new ResourceModel("close")) {
+            add(new AjaxButton("close", new ResourceModel("saveClose")) {
                 private static final long serialVersionUID = 1L;
 
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {

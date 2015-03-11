@@ -77,13 +77,13 @@ public class ImportPlayerPage extends WebPage {
                         modalWindow.close(target);
                     } catch (Exception e) {
                         logger.error("Error during importing player: ", e);
-                        error(ImportPlayerPage.this.getString("importError"));
+                        error(getString("importError"));
                     }
                 }
 
                 @Override
                 public String maskText() {
-                    return ImportPlayerPage.this.getString("maskText");
+                    return getString("maskText");
                 }
             });
         }

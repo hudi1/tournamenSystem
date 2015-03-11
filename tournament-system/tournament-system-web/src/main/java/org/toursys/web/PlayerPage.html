@@ -10,32 +10,23 @@
 		<div wicket:id="navigator"></div>
 		<table class="playersTable">
 			<tr>
-				<th><wicket:message key="name">
-            Name
-        </wicket:message></th>
-				<th><wicket:message key="surname">
-            Surname
-        </wicket:message></th>
-				<th><wicket:message key="club">
-            Club
-        </wicket:message></th>
+				<th><span wicket:id="name">name</span></th>
+				<th><span wicket:id="surname">Surname</span></th>
+				<th><span wicket:id="club">Club</span></th>
 				<th></th>
 			</tr>
 			<tr wicket:id="players">
 				<td><input class="inputLabel" type="text" wicket:id="name" /></td>
 				<td><input class="inputLabel" type="text" wicket:id="surname" /></td>
 				<td><input class="inputLabel" type="text" wicket:id="club" /></td>
-				<td><a wicket:id="deletePlayer"><img src="img/delete.png" /></a></td>
+				<td><a wicket:id="deletePlayer"><img wicket:id="img"/></a></td>
 			</tr>
 		</table>
 
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="newPlayer"
 				value="New player" /> <a wicket:id="showModalLink"
-				class="tournamentLink" title="delete player"><wicket:message
-					key="showModalLink">
-                 Import player
-        </wicket:message></a>
+				class="tournamentLink" title="Import player"> Import player </a>
 		</div>
 		<div wicket:id="modal"></div>
 	</form>

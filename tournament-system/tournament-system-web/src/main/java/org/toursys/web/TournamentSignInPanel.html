@@ -2,32 +2,30 @@
 <body>
 	<wicket:panel>
 		<form wicket:id="signInForm">
-			<table>
-				<tr>
-					<td align="right"><wicket:message key="username">
-            Username
-        </wicket:message></td>
-					<td><input wicket:id="username" type="text" /></td>
-				</tr>
-				<tr>
-					<td align="right"><wicket:message key="password">
-            Password	
-        </wicket:message></td>
-					<td><input wicket:id="password" type="password" /></td>
-				</tr>
-				<tr wicket:id="rememberMeRow">
-					<td></td>
-					<td><input wicket:id="rememberMe" type="checkbox" /> Remember
-						Me</td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><input class="tournamentButton" type="submit"
-						wicket:id="signIn" value="Sign In" /> <input class="tournamentButton"
-						type="reset" value="Reset" /> <input class="tournamentButton"
-						type="submit" wicket:id="register" value="Register" /></td>
-				</tr>
-			</table>
+			<fieldset>
+				<div>
+					<label wicket:for="usernameInput"> <span
+						wicket:id="username">Username: </span></label><input type="text"
+						wicket:id="usernameInput" />
+				</div>
+				<div>
+					<label wicket:for="passwordInput"> <span
+						wicket:id="password">Password: </span></label><input type="password"
+						wicket:id="passwordInput" />
+				</div>
+				<div>
+					<label wicket:for="rememberMeInput"> <span
+						wicket:id="rememberMe">Remember Me</span></label><input type="checkbox"
+						wicket:id="rememberMeInput" />
+				</div>
+			</fieldset>
+
+			<div>
+				<input class="tournamentButton" type="submit" wicket:id="signIn"
+					value="Sign In" /> <input class="tournamentButton" type="reset"
+					wicket:id="reset" value="Reset" /> <input class="tournamentButton"
+					type="submit" wicket:id="register" value="Register" />
+			</div>
 		</form>
 	</wicket:panel>
 </body>

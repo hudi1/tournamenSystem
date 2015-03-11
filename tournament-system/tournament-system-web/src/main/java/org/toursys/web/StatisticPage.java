@@ -1,8 +1,5 @@
 package org.toursys.web;
 
-import java.util.Locale;
-
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -106,7 +103,7 @@ public class StatisticPage extends BasePage {
 
                 @Override
                 public String maskText() {
-                    return StatisticPage.this.getString("maskText");
+                    return getString("maskText");
                 }
 
             });
@@ -166,13 +163,6 @@ public class StatisticPage extends BasePage {
                 }
             });
         }
-    }
-
-    private String getLocaleImagePath(String path) {
-        Locale locale = Session.get().getLocale();
-        String[] splitPath = path.split("\\.");
-        String finalPath = splitPath[0] + "_" + locale.getLanguage() + "." + splitPath[1];
-        return finalPath;
     }
 
     @Override

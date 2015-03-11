@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PropertyListView;
@@ -33,6 +32,7 @@ import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
 import org.toursys.web.converter.ResultConverter;
+import org.toursys.web.link.DownloadModelLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayOffPage extends TournamentHomePage {
@@ -69,9 +69,18 @@ public class PlayOffPage extends TournamentHomePage {
 
         public PlayOffForm(IModel<Tournament> model) {
             super("playOffForm", new CompoundPropertyModel<Tournament>(model));
-            addFinalGroupsGameListView();
+            addPlayOffTable();
             addSubmitButton();
             addPdfPlayOffButton();
+        }
+
+        private void addPlayOffTable() {
+            addPlayOffTableHeader();
+            addFinalGroupsGameListView();
+        }
+
+        private void addPlayOffTableHeader() {
+
         }
 
         private void addFinalGroupsGameListView() {
@@ -85,14 +94,16 @@ public class PlayOffPage extends TournamentHomePage {
                 }
 
                 private void addPlayOffGames(final ListItem<Groups> groupListItem) {
-                    groupListItem.add(new Label("name"));
+                    groupListItem.add(new Label("name", groupListItem.getModelObject().getName()));
+                    groupListItem.add(new Label("round", new ResourceModel("round")));
+                    groupListItem.add(new Label("player", new ResourceModel("player")));
+                    groupListItem.add(new Label("result", new ResourceModel("result")));
                     groupListItem.add(new ListView<PlayOffGame>("playOffGames") {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
                         protected void populateItem(final ListItem<PlayOffGame> listItem) {
-
                             final PlayOffGame playOffGame = listItem.getModelObject();
 
                             Participant participant = playOffGame.getHomeParticipant();
@@ -179,7 +190,7 @@ public class PlayOffPage extends TournamentHomePage {
                                 }
                             }));
 
-                            listItem.add(new Label("round", new ResourceModel(TournamentUtil.getRoundName(
+                            listItem.add(new Label("roundName", new ResourceModel(TournamentUtil.getRoundName(
                                     getViewSize(), listItem.getIndex() + 1))));
 
                             listItem.add(new TextField<Result>("result", new PropertyModel<Result>(playOffGame,
@@ -216,7 +227,7 @@ public class PlayOffPage extends TournamentHomePage {
         }
 
         private void addPdfPlayOffButton() {
-            add(new DownloadLink("pdfPlayOff", new AbstractReadOnlyModel<File>() {
+            add(new DownloadModelLink("printPlayOff", new AbstractReadOnlyModel<File>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -225,6 +236,7 @@ public class PlayOffPage extends TournamentHomePage {
                     try {
                         tempFile = PdfFactory.createPlayOff(WicketApplication.getFilesPath(), playOffTournament);
                     } catch (Exception e) {
+                        // TODO zobrazit chybu vo feedbacku
                         e.printStackTrace();
                         throw new RuntimeException(e);
                     }

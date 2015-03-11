@@ -10,46 +10,39 @@
 	<form class="userform" wicket:id="userEditForm">
 		<fieldset>
 			<legend>
-				<wicket:message key="user">
-            User
-        </wicket:message>
+				<span wicket:id="user"> User </span>
 			</legend>
 			<div>
-				<label wicket:for="name"><wicket:message key="name">
-            Name
-        </wicket:message></label>: <input type="text" wicket:id="name" />
+				<label wicket:for="nameInput"> <span wicket:id="name">Name</span></label>:<input
+					type="text" wicket:id="nameInput" />
 			</div>
 			<div>
-				<label wicket:for="surname"><wicket:message key="surname">
-            Surname
-        </wicket:message></label>: <input type="text" wicket:id="surname" />
+				<label wicket:for="surnameInput"> <span wicket:id="surname">Surname</span>
+				</label>:<input type="text" wicket:id="surnameInput" />
 			</div>
 			<div>
-				<label wicket:id="userNameLabel" />: <input type="text"
-					wicket:id="userName" />
+				<label wicket:for="emailInput"> <span wicket:id="email">Email</span>
+				</label>:<input type="email" autocomplete="off" wicket:id="emailInput" />
 			</div>
 			<div>
-				<label wicket:for="email"><wicket:message key="email">
-            Email
-        </wicket:message></label>: <input type="email" autocomplete="off" wicket:id="email" />
+				<label wicket:for="passwordInput"> <span
+					wicket:id="password">Password</span>
+				</label>:<input type="password" wicket:id="passwordInput" />
 			</div>
 			<div>
-				<label wicket:for="password"><wicket:message key="password">
-            Password
-        </wicket:message></label>: <input type="password" wicket:id="password" />
+				<label wicket:for="confirmPasswordInput"> <span
+					wicket:id="confirmPassword">Confirm Password</span>
+				</label>:<input type="password" wicket:id="confirmPasswordInput" />
 			</div>
 			<div>
-				<label wicket:for="confirmPassword"><wicket:message
-						key="confirmPassword">
-            Confirm Password
-        </wicket:message></label>: <input type="password" wicket:id="confirmPassword" />
+				<label wicket:for="validityInput"> <span
+					wicket:id="validity">Validity</span>
+				</label>:<input type="text" wicket:id="validityInput" />
 			</div>
 			<div>
-				<label wicket:id="platnostLabel" /> <input type="text"
-					wicket:id="platnost" />
-			</div>
-			<div>
-				<label wicket:id="roleLabel" /><input type="text" wicket:id="role" />
+				<label wicket:for="authorizationInput"> <span
+					wicket:id="authorization">Authorization</span>
+				</label>:<select wicket:id="authorizationInput" />
 			</div>
 		</fieldset>
 
@@ -58,7 +51,6 @@
 				value="Save" /> <input class="tournamentButton" type="submit"
 				wicket:id="back" title="back" value="Back" />
 		</div>
-
 	</form>
 
 </wicket:extend>
