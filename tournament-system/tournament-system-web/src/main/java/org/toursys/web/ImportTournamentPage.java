@@ -75,7 +75,7 @@ public class ImportTournamentPage extends WebPage {
 
                 @Override
                 protected void submit(AjaxRequestTarget target, Form<?> form) {
-                    // TODO test if it is nesessary target.add(feedBackPanel);
+                    target.add(feedBackPanel);
                     importService.importTournament(url.getInput(), tournament, user);
                     modalWindow.close(target);
                 }

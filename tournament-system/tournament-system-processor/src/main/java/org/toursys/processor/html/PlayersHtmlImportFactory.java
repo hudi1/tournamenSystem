@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.toursys.processor.PdfTournamentException;
+import org.toursys.processor.ImportTournamentException;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
 
@@ -47,7 +47,7 @@ public class PlayersHtmlImportFactory {
             }
         } catch (Exception e) {
             logger.error("Error during importing players", e);
-            throw new PdfTournamentException(e.getMessage());
+            throw new ImportTournamentException(e.getMessage());
         }
         return players;
     }

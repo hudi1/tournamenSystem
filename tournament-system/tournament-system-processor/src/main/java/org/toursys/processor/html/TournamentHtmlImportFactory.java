@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.toursys.processor.PdfTournamentException;
+import org.toursys.processor.ImportTournamentException;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
@@ -83,7 +83,7 @@ public class TournamentHtmlImportFactory {
             }
         } catch (Exception e) {
             logger.error("Error during creating imported participants", e);
-            throw new PdfTournamentException(e.getMessage());
+            throw new ImportTournamentException(e.getMessage());
         }
         return tournamentParticipants;
     }
@@ -130,7 +130,7 @@ public class TournamentHtmlImportFactory {
             }
         } catch (Exception e) {
             logger.error("Error during creating imported games", e);
-            throw new PdfTournamentException(e.getMessage());
+            throw new ImportTournamentException(e.getMessage());
         }
     }
 
@@ -235,7 +235,7 @@ public class TournamentHtmlImportFactory {
             }
         } catch (Exception e) {
             logger.error("Error during creating play off games", e);
-            throw new PdfTournamentException(e.getMessage());
+            throw new ImportTournamentException(e.getMessage());
         }
         return playOffGames;
     }
@@ -275,7 +275,7 @@ public class TournamentHtmlImportFactory {
             }
         } catch (Exception e) {
             logger.error("Error during creating play off games", e);
-            throw new PdfTournamentException(e.getMessage());
+            throw new ImportTournamentException(e.getMessage());
         }
         return finalStandings;
     }
