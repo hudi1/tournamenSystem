@@ -10,20 +10,17 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -31,7 +28,8 @@ import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
 import org.toursys.web.components.PropertyPageableListView;
-import org.toursys.web.link.AjaxModelLink;
+import org.toursys.web.components.TournamentButton;
+import org.toursys.web.link.TournamentAjaxLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends TournamentHomePage {
@@ -104,22 +102,22 @@ public class PlayerPage extends TournamentHomePage {
                         }
                     }));
 
-                    listItem.add(new TextField<String>("surname")
-                            .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    listItem.add(new TextField<String>("surname", Model.of(player.getSurname() + " "
+                            + player.getPlayerDiscriminator())).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
-                                private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-                                @Override
-                                protected void onUpdate(AjaxRequestTarget target) {
-                                    Player player = listItem.getModelObject();
-                                    if (player.getSurname().contains(" ")) {
-                                        player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
-                                                Math.min(player.getSurname().split(" ")[1].length(), 3)));
-                                        player.setSurname(player.getSurname().split(" ")[0]);
-                                    }
-                                    playerService.updatePlayer(player);
-                                }
-                            }));
+                        @Override
+                        protected void onUpdate(AjaxRequestTarget target) {
+                            Player player = listItem.getModelObject();
+                            if (player.getSurname().contains(" ")) {
+                                player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
+                                        Math.min(player.getSurname().split(" ")[1].length(), 3)));
+                                player.setSurname(player.getSurname().split(" ")[0]);
+                            }
+                            playerService.updatePlayer(player);
+                        }
+                    }));
 
                     listItem.add(new TextField<String>("club").add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
@@ -131,11 +129,11 @@ public class PlayerPage extends TournamentHomePage {
                         }
                     }));
 
-                    listItem.add(new AjaxLink<Void>("deletePlayer") {
+                    listItem.add(new TournamentAjaxLink("deletePlayer") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onClick(AjaxRequestTarget target) {
+                        public void click(AjaxRequestTarget target) {
                             PlayerForm.this.getModelObject().getPlayers().remove(listItem.getModelObject());
                             playerService.deletePlayer(listItem.getModelObject());
                             target.add(PlayerForm.this);
@@ -149,8 +147,7 @@ public class PlayerPage extends TournamentHomePage {
 
                                 @Override
                                 public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(confirm(" + getString("del.player") + ")){ " + script
-                                            + "}else{return false;}";
+                                    return "if(!confirm('" + getString("del.player") + "')) return false;" + script;
                                 }
 
                             };
@@ -181,24 +178,24 @@ public class PlayerPage extends TournamentHomePage {
         }
 
         private void addModalButton(final ModalWindow modalWindow) {
-            add(new AjaxModelLink<Void>("showModalLink") {
+            add(new TournamentAjaxLink("showModalLink") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void click(AjaxRequestTarget target) {
                     modalWindow.show(target);
                 }
             });
         }
 
         private void addNewPlayerButton() {
-            add(new Button("newPlayer", new ResourceModel("newPlayer")) {
+            add(new TournamentButton("newPlayer", new ResourceModel("newPlayer")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(PlayerEditPage.class, getPageParameters());
                 }
             });
@@ -239,8 +236,4 @@ public class PlayerPage extends TournamentHomePage {
         }
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("playerList");
-    }
 }

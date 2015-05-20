@@ -3,18 +3,16 @@ package org.toursys.web;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.User;
+import org.toursys.web.components.TournamentButton;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerEditPage extends TournamentHomePage {
@@ -50,40 +48,35 @@ public class PlayerEditPage extends TournamentHomePage {
         }
 
         private void addBackButton() {
-            add(new Button("back", new ResourceModel("back")) {
+            add(new TournamentButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(PlayerPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
         }
 
         private void addSaveButton(final Player player) {
-            add(new Button("submit", new ResourceModel("save")) {
+            add(new TournamentButton("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    try {
-                        if (player.getSurname().contains(" ")) {
-                            player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
-                                    Math.min(player.getSurname().split(" ")[1].length(), 3)));
-                            player.setSurname(player.getSurname().split(" ")[0]);
-                        }
-                        if (player.getId() != null) {
-                            playerService.updatePlayer(player);
-                        } else {
-                            playerService.createPlayer(player);
-                        }
-                    } catch (SqlProcessorException e) {
-                        logger.error("Error edit player: ", e);
-                        error(getString("sql.db.exception"));
-                        return;
+                public void submit() {
+                    if (player.getSurname().contains(" ")) {
+                        player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
+                                Math.min(player.getSurname().split(" ")[1].length(), 3)));
+                        player.setSurname(player.getSurname().split(" ")[0]);
                     }
+                    if (player.getId() != null) {
+                        playerService.updatePlayer(player);
+                    } else {
+                        playerService.createPlayer(player);
+                    }
+
                     setResponsePage(PlayerPage.class, getPageParameters());
                 }
             });
@@ -98,11 +91,6 @@ public class PlayerEditPage extends TournamentHomePage {
             add(new Label("club", new ResourceModel("club")));
             add(new TextField<String>("clubInput", new PropertyModel<String>(player, "club")));
         }
-    }
-
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("editPlayer");
     }
 
 }

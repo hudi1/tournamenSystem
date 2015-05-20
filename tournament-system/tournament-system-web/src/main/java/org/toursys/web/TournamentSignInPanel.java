@@ -5,7 +5,6 @@ import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
@@ -19,6 +18,7 @@ import org.apache.wicket.settings.ISecuritySettings;
 import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.User;
 import org.toursys.repository.model.UserRole;
+import org.toursys.web.components.TournamentButton;
 
 /**
  * Reusable user sign in panel with username and password as well as support for persistence of the both. When the
@@ -33,6 +33,7 @@ import org.toursys.repository.model.UserRole;
  * @author Jonathan Locke
  * @author Juergen Donnerstag
  * @author Eelco Hillenius
+ * @author Tomas Hudec
  */
 public class TournamentSignInPanel extends Panel {
     private static final long serialVersionUID = 1L;
@@ -202,24 +203,32 @@ public class TournamentSignInPanel extends Panel {
                 copyResultInput.setVisible(true);
             }
 
-            add(new Button("register", new ResourceModel("register")) {
+            add(new TournamentButton("register", new ResourceModel("register")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(new UserEditPage(new User()._setPlatnost(0)._setRole(UserRole.USER), false, true));
                 }
             }.setDefaultFormProcessing(false));
 
-            add(new Button("reset", new ResourceModel("reset")).setDefaultFormProcessing(false));
-
-            add(new Button("signIn", new ResourceModel("signIn")) {
+            add(new TournamentButton("reset", new ResourceModel("reset")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
+
+                }
+            }.setDefaultFormProcessing(false));
+
+            add(new TournamentButton("signIn", new ResourceModel("signIn")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void submit() {
                     IAuthenticationStrategy strategy = getApplication().getSecuritySettings()
                             .getAuthenticationStrategy();
 

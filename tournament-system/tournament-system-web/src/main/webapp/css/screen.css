@@ -241,7 +241,7 @@ form.compareForm label {
 
 form label {
 	text-align: right;
-	width: 115px;
+	width: 150px;
 	float: left;
 	margin-right: 5px;
 }
@@ -528,4 +528,13 @@ div.allPlayers ul li.selected {
 	background-color: #FFFF00;
 	padding: 2px;
 	margin: 0;
+}
+
+.overview {
+	text-align: center;
+}
+
+.overview a {
+	text-decoration: underline;
+	color: #00F;
 }

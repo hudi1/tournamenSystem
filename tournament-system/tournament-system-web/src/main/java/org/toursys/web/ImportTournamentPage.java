@@ -74,15 +74,10 @@ public class ImportTournamentPage extends WebPage {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.add(feedBackPanel);
-                    try {
-                        importService.importTournament(url.getInput(), tournament, user);
-                        modalWindow.close(target);
-                    } catch (Exception e) {
-                        logger.error("Error during importing player: ", e);
-                        error(ImportTournamentPage.this.getString("importError"));
-                    }
+                protected void submit(AjaxRequestTarget target, Form<?> form) {
+                    // TODO test if it is nesessary target.add(feedBackPanel);
+                    importService.importTournament(url.getInput(), tournament, user);
+                    modalWindow.close(target);
                 }
 
                 @Override

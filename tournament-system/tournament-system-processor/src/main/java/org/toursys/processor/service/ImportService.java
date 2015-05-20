@@ -24,7 +24,7 @@ public class ImportService extends AbstractService {
     private FinalStandingService finalStandingService;
 
     @Transactional
-    public void importTournament(String url, Tournament tournament, User user) throws Exception {
+    public void importTournament(String url, Tournament tournament, User user) {
 
         importPlayers(url + "index.htm", user);
 
@@ -81,7 +81,7 @@ public class ImportService extends AbstractService {
     }
 
     @Transactional
-    public void importPlayers(String url, User user) throws Exception {
+    public void importPlayers(String url, User user) {
         List<Player> players = PlayersHtmlImportFactory.createdImportedPlayers(url, user);
         for (Player player : players) {
             playerService.createPlayer(player);

@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sqlproc.engine.SqlQuery;
+import org.sqlproc.engine.SqlRuntimeContext;
 import org.sqlproc.engine.SqlRuntimeException;
 import org.sqlproc.engine.impl.BeanUtils;
 import org.sqlproc.engine.type.SqlInternalType;
@@ -35,8 +36,8 @@ public class ScoreType extends SqlInternalType {
     }
 
     @Override
-    public void setResult(Object resultInstance, String attributeName, Object resultValue, boolean ingoreError)
-            throws SqlRuntimeException {
+    public void setResult(SqlRuntimeContext runtimeCtxCtx, Object resultInstance, String attributeName,
+            Object resultValue, boolean ingoreError) throws SqlRuntimeException {
         Method m = BeanUtils.getSetter(resultInstance, attributeName, Score.class);
         if (m == null) {
             if (ingoreError) {
@@ -81,8 +82,8 @@ public class ScoreType extends SqlInternalType {
     }
 
     @Override
-    public void setParameter(SqlQuery query, String paramName, Object inputValue, Class<?> inputType,
-            boolean ingoreError) throws SqlRuntimeException {
+    public void setParameter(SqlRuntimeContext runtimeCtxCtx, SqlQuery query, String paramName, Object inputValue,
+            Class<?> inputType, boolean ingoreError) throws SqlRuntimeException {
         if (inputValue == null) {
             query.setParameter(paramName, inputValue, Types.VARCHAR);
         } else {

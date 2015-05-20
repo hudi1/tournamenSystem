@@ -4,15 +4,14 @@ import java.util.Arrays;
 
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.EmailTextField;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
+import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
@@ -20,7 +19,9 @@ import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.User;
 import org.toursys.repository.model.UserImpl;
 import org.toursys.repository.model.UserRole;
+import org.toursys.web.components.TournamentButton;
 import org.toursys.web.validator.ExistingEmailValidator;
+import org.toursys.web.validator.UsernameValidator;
 
 public class UserEditPage extends BasePage {
 
@@ -61,6 +62,7 @@ public class UserEditPage extends BasePage {
             addLegend();
             addName(user);
             addSurname(user);
+            addUsername(user);
             addPassword(user);
             addEmail(user);
             addValidity(user);
@@ -70,36 +72,30 @@ public class UserEditPage extends BasePage {
         }
 
         private void addBackButton() {
-            add(new Button("back", new ResourceModel("back")) {
+            add(new TournamentButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(new UserPage());
                 }
             }.setDefaultFormProcessing(false));
         }
 
         private void addSaveButton(final User user) {
-            add(new Button("submit", new ResourceModel("save")) {
+            add(new TournamentButton("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    try {
-                        if (user.getId() != null) {
-                            userService.updateUser(user);
-                            setResponsePage(new UserPage());
-                        } else {
-                            userService.createUser(user);
-                            setResponsePage(new HomePage());
-                        }
-                    } catch (SqlProcessorException e) {
-                        logger.error("Error edit user: ", e);
-                        error(getString("sql.db.exception"));
-                        return;
+                public void submit() {
+                    if (user.getId() != null) {
+                        userService.updateUser(user);
+                        setResponsePage(new UserPage());
+                    } else {
+                        userService.createUser(user);
+                        setResponsePage(new HomePage());
                     }
                 }
             });
@@ -107,9 +103,9 @@ public class UserEditPage extends BasePage {
 
         private void addAuthorization(User user) {
             final Label authorization = new Label("authorization", new ResourceModel("authorization"));
-            final DropDownChoice<String> authorizationInput = new DropDownChoice<String>("authorizationInput",
-                    new PropertyModel<String>(user, "role"), Arrays.asList(new String[] { UserRole.ADMIN.getValue(),
-                            UserRole.USER.getValue() }));
+            final DropDownChoice<UserRole> authorizationInput = new DropDownChoice<UserRole>("authorizationInput",
+                    new PropertyModel<UserRole>(user, "role"), Arrays.asList(new UserRole[] { UserRole.ADMIN,
+                            UserRole.USER }));
             add(authorization);
             add(authorizationInput);
 
@@ -168,10 +164,20 @@ public class UserEditPage extends BasePage {
         private void addLegend() {
             add(new Label("user", new ResourceModel("user")));
         }
+
+        private void addUsername(User user) {
+            RequiredTextField<String> usernameInput;
+            Label username;
+            add(username = new Label("username", new ResourceModel("username")));
+            add(usernameInput = new RequiredTextField<String>("usernameInput", new PropertyModel<String>(user,
+                    "userName")));
+            usernameInput.add(new UsernameValidator());
+
+            if (!showUsername) {
+                username.setVisible(false);
+                usernameInput.setVisible(false);
+            }
+        }
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("editUser");
-    }
 }

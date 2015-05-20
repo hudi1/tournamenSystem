@@ -11,6 +11,7 @@ package org.toursys.repository.model {
     value : java.lang.String
     FINAL ::: "F"
     LOWER ::: "L"
+    CROSS ::: "C"
   }
 
   final enum GroupsType serializable 1  {
@@ -135,12 +136,13 @@ package org.toursys.repository.model {
     playOffLower : java.lang.Integer required
     minPlayersInGroup : java.lang.Integer required
     sortType :: TournamentSortType required
+    publish : java.lang.Boolean required
     groups : java.util.List <:Groups>
     finalStandings : java.util.List <:FinalStanding>
     equals ::: id
     toInit ::: season finalStandings groups
     isDef :::
-    toString ::: id playOffLower winPoints finalPromoting name sortType lowerPromoting minPlayersInGroup playOffFinal
+    toString ::: id playOffLower winPoints finalPromoting name sortType lowerPromoting minPlayersInGroup publish playOffFinal
   }
 
   final pojo User serializable 1 {

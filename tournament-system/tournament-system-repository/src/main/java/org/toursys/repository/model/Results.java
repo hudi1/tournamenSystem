@@ -48,6 +48,7 @@ public class Results implements Serializable {
         for (int i = 0; i < results.size(); i++) {
             if (i > 0) {
                 builder.append(delimeter);
+                builder.append(" ");
             }
             builder.append(results.get(i).toString());
         }

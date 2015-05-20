@@ -32,7 +32,7 @@ public class TournamentFactory {
     }
 
     public static Tournament createTournament() {
-        return new Tournament(TOURNAMENT_NAME, null, 6, 5, 2, 16, 8, 0, TournamentSortType.SK);
+        return new Tournament(TOURNAMENT_NAME, null, 6, 5, 2, 16, 8, 0, TournamentSortType.SK, false);
     }
 
     public static Season createSeason() {

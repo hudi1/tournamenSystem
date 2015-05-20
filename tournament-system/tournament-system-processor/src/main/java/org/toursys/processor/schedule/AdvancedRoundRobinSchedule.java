@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.TournamentException;
 import org.toursys.processor.service.TournamentService;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
@@ -34,7 +33,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
         }
 
         // TODO vyhodit a osetrit aby k tomu nemohlo nastat
-        checkPlayerCount();
+        // checkPlayerCount();
 
         int groupCount = playerPerBasicGroup.size();
 
@@ -49,14 +48,12 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
         }
     }
 
-    private void checkPlayerCount() {
-        for (int i = 0; i < playerPerBasicGroup.size() - 1; i++) {
-            if (playerPerBasicGroup.get(i).size() != playerPerBasicGroup.get(i + 1).size()) {
-                throw new TournamentException("Count of players in groups where is counted previous result is not same");
-            }
-        }
-        playerCount = playerPerBasicGroup.get(0).size();
-    }
+    /*
+     * private void checkPlayerCount() { for (int i = 0; i < playerPerBasicGroup.size() - 1; i++) { if
+     * (playerPerBasicGroup.get(i).size() != playerPerBasicGroup.get(i + 1).size()) { throw new
+     * TournamentException("Count of players in groups where is counted previous result is not same"); } } playerCount =
+     * playerPerBasicGroup.get(0).size(); }
+     */
 
     private void createEvenGroupRound() {
         List<Round> rounds = new ArrayList<Round>();

@@ -22,6 +22,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.toursys.web.components.TournamentAjaxButton;
 
 /**
  * A variant of the {@link AjaxButton} that displays a busy indicator while the ajax request is in progress.
@@ -29,7 +30,7 @@ import org.apache.wicket.model.IModel;
  * @author evan
  * 
  */
-public abstract class MaskIndicatingAjaxButton extends AjaxButton implements IAjaxIndicatorAware {
+public abstract class MaskIndicatingAjaxButton extends TournamentAjaxButton implements IAjaxIndicatorAware {
 
     /**
      * 

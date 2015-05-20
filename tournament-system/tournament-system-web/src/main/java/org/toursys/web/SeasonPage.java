@@ -5,12 +5,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -23,6 +20,9 @@ import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.User;
 import org.toursys.web.components.PropertyPageableListView;
+import org.toursys.web.components.TournamentAjaxButton;
+import org.toursys.web.components.TournamentAjaxEditableLabel;
+import org.toursys.web.link.TournamentAjaxLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class SeasonPage extends BasePage {
@@ -57,21 +57,20 @@ public class SeasonPage extends BasePage {
 
                 @Override
                 protected void populateItem(final ListItem<Season> listItem) {
-                    listItem.add(new AjaxEditableLabel<String>("name") {
+                    listItem.add(new TournamentAjaxEditableLabel("name") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onSubmit(AjaxRequestTarget target) {
-                            super.onSubmit(target);
+                        public void submit(AjaxRequestTarget target) {
                             seasonService.updateSeason(listItem.getModelObject());
                         };
 
                     });
-                    listItem.add(new AjaxLink<Void>("deleteSeason") {
+                    listItem.add(new TournamentAjaxLink("deleteSeason") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onClick(AjaxRequestTarget target) {
+                        public void click(AjaxRequestTarget target) {
                             Season season = listItem.getModelObject();
                             SeasonForm.this.getModelObject().getSeasons().remove(season);
                             seasonService.deleteSeason(season);
@@ -86,8 +85,7 @@ public class SeasonPage extends BasePage {
 
                                 @Override
                                 public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(confirm(" + getString("del.season") + ")){ " + script
-                                            + "}else{return false;}";
+                                    return "if(!confirm('" + getString("del.season") + "')) return false;" + script;
                                 }
 
                             };
@@ -118,11 +116,12 @@ public class SeasonPage extends BasePage {
         }
 
         private void addSeasonAddButton() {
-            add(new AjaxButton("addSeason", new ResourceModel("addSeason")) {
+            add(new TournamentAjaxButton("addSeason", new ResourceModel("addSeason")) {
 
                 private static final long serialVersionUID = 1L;
 
-                public void onClick(AjaxRequestTarget target) {
+                @Override
+                public void submit(AjaxRequestTarget target, Form<?> form) {
                     Season season = new Season();
                     season.setUser(user);
                     season.setName(getString("enterName"));
@@ -130,22 +129,8 @@ public class SeasonPage extends BasePage {
                     target.add(SeasonForm.this);
                 }
 
-                @Override
-                protected void onError(AjaxRequestTarget target, Form<?> form) {
-                    onClick(target);
-                }
-
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    onClick(target);
-                }
-
             });
         }
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("selectSeason");
-    }
 }

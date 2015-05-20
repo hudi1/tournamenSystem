@@ -1,9 +1,8 @@
 package org.toursys.web.link;
 
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.ResourceModel;
 
-public abstract class AjaxModelLink<T> extends AjaxLink<T> {
+public abstract class AjaxModelLink<T> extends TournamentAjaxLink {
 
     private static final long serialVersionUID = 1L;
 

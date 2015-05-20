@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -30,13 +30,15 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
+import org.toursys.web.components.TournamentAjaxButton;
+import org.toursys.web.components.TournamentButton;
 import org.toursys.web.link.DownloadModelLink;
+import org.toursys.web.model.TournamentFileReadOnlyModel;
 
 @AuthorizeInstantiation(Roles.USER)
 public class GroupPage extends TournamentHomePage {
@@ -91,82 +93,75 @@ public class GroupPage extends TournamentHomePage {
         }
 
         private void addGroupOptionsButton() {
-            Button schedule = new Button("schedule", new ResourceModel("schedule")) {
+            addScheduleButton();
+            addOptionsButton();
+            addSheetsButton();
+            addPrintScheduleButton();
+            addFinalGroupButton();
+            addCopyResultButton();
+            addPrintGroupButton();
+            addEqualRankButton();
+        }
+
+        private Button addEqualRankButton() {
+            Button equalRankButton = new TournamentAjaxButton("editEqualRank", new ResourceModel("editEqualRank")) {
 
                 private static final long serialVersionUID = 1L;
 
-                @Override
-                public void onSubmit() {
-                    getPageParameters().set(GID, group.getId());
-                    setResponsePage(SchedulePage.class, getPageParameters());
+                protected void submit(AjaxRequestTarget target, Form<?> form) {
+                    modalWindow.show(target);
                 }
             };
 
-            add(schedule);
+            add(equalRankButton);
+            equalRankButton.setVisible(modalWindow != null);
+            return equalRankButton;
+        }
 
-            Button options = new Button("options", new ResourceModel("options")) {
+        private DownloadLink addPrintGroupButton() {
+            DownloadLink printGroup = new DownloadModelLink("printGroup", new TournamentFileReadOnlyModel() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public File getTournamentObject() {
+                    return PdfFactory.createTable(WicketApplication.getFilesPath(), participants, group);
+                }
+
+                @Override
+                public Component getFormComponent() {
+                    return GroupForm.this;
+                }
+            });
+
+            add(printGroup);
+            printGroup.setVisible(group != null);
+            return printGroup;
+        }
+
+        private Button addCopyResultButton() {
+            Button copyResult = new TournamentButton("copyResult", new ResourceModel("copyResult")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    getPageParameters().set(GID, group.getId());
-                    getPageParameters().set(SHOW_TABLE_OPTIONS, true);
-                    getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, false);
-                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
+                public void submit() {
+                    groupService.copyResult(tournament);
+                    finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
+                    setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
+            add(copyResult);
+            copyResult.setVisible(group != null);
+            return copyResult;
+        }
 
-            add(options);
-
-            DownloadLink sheets = new DownloadModelLink("sheets", new AbstractReadOnlyModel<File>() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public File getObject() {
-                    File tempFile;
-                    try {
-                        tempFile = PdfFactory.createSheets(WicketApplication.getFilesPath(), scheduleService
-                                .getSchedule(tournament, group, participants).getSchedule(), group);
-                    } catch (Exception e) {
-                        logger.error("!! GroupPage error: ", e);
-                        // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
-                        throw new RuntimeException(e);
-                    }
-                    return tempFile;
-                }
-            });
-            sheets.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
-
-            add(sheets);
-
-            DownloadLink printSchedule = new DownloadModelLink("printSchedule", new AbstractReadOnlyModel<File>() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public File getObject() {
-                    File tempFile;
-                    try {
-                        tempFile = PdfFactory.createSchedule(WicketApplication.getFilesPath(), scheduleService
-                                .getSchedule(tournament, group, participants).getSchedule());
-                    } catch (Exception e) {
-                        logger.error("!! GroupPage error: ", e);
-                        // TODO osetrit nejakym chybovym hlasenim vo feedback panelu
-                        throw new RuntimeException(e);
-                    }
-                    return tempFile;
-                }
-            });
-            printSchedule.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
-
-            add(printSchedule);
-
-            Button finalGroup = new Button("finalGroup", new ResourceModel("finalGroup")) {
+        private Button addFinalGroupButton() {
+            Button finalGroup = new TournamentButton("finalGroup", new ResourceModel("finalGroup")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     groupService.createFinalGroup(tournament);
                     finalStandingService.processFinalStandings(tournament);
                     playOffGameService.processPlayOffGames(tournament);
@@ -175,61 +170,85 @@ public class GroupPage extends TournamentHomePage {
             };
 
             add(finalGroup);
+            finalGroup.setVisible(group != null);
+            return finalGroup;
+        }
 
-            Button copyResult = new Button("copyResult", new ResourceModel("copyResult")) {
-
+        private DownloadLink addPrintScheduleButton() {
+            DownloadLink printSchedule = new DownloadModelLink("printSchedule", new TournamentFileReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
-                    groupService.copyResult(tournament);
-                    finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
-                    setResponsePage(GroupPage.class, getPageParameters());
+                public File getTournamentObject() {
+                    return PdfFactory.createSchedule(WicketApplication.getFilesPath(),
+                            scheduleService.getSchedule(tournament, group, participants).getSchedule());
                 }
-            };
-            add(copyResult);
 
-            DownloadLink printGroup = new DownloadModelLink("printGroup", new AbstractReadOnlyModel<File>() {
+                @Override
+                public Component getFormComponent() {
+                    return GroupForm.this;
+                }
+
+            });
+
+            add(printSchedule);
+            printSchedule.setVisible(group != null);
+            return printSchedule;
+        }
+
+        private DownloadLink addSheetsButton() {
+            DownloadLink sheets = new DownloadModelLink("sheets", new TournamentFileReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public File getObject() {
-                    File tempFile;
-                    try {
-                        tempFile = PdfFactory.createTable(WicketApplication.getFilesPath(), participants, group);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                    return tempFile;
+                public File getTournamentObject() {
+                    return PdfFactory.createSheets(WicketApplication.getFilesPath(),
+                            scheduleService.getSchedule(tournament, group, participants).getSchedule(), group);
+                }
+
+                @Override
+                public Component getFormComponent() {
+                    return GroupForm.this;
                 }
             });
-            printGroup.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+            add(sheets);
+            sheets.setVisible(group != null);
+            return sheets;
+        }
 
-            add(printGroup);
-
-            Button equalRankButton = new AjaxButton("editEqualRank", new ResourceModel("editEqualRank")) {
+        private Button addScheduleButton() {
+            Button schedule = new TournamentButton("schedule", new ResourceModel("schedule")) {
 
                 private static final long serialVersionUID = 1L;
 
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    modalWindow.show(target);
+                @Override
+                public void submit() {
+                    getPageParameters().set(GID, group.getId());
+                    setResponsePage(SchedulePage.class, getPageParameters());
+                }
+            };
+            add(schedule);
+            schedule.setVisible(group != null);
+            return schedule;
+        }
+
+        private Button addOptionsButton() {
+            Button options = new TournamentButton("options", new ResourceModel("options")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void submit() {
+                    getPageParameters().set(GID, group.getId());
+                    getPageParameters().set(SHOW_TABLE_OPTIONS, true);
+                    getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, false);
+                    setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             };
 
-            add(equalRankButton);
-
-            equalRankButton.setVisible(modalWindow != null);
-
-            if (group == null) {
-                options.setVisible(false);
-                schedule.setVisible(false);
-                sheets.setVisible(false);
-                printSchedule.setVisible(false);
-                printGroup.setVisible(false);
-                copyResult.setVisible(false);
-                finalGroup.setVisible(false);
-            }
+            add(options);
+            options.setVisible(group != null);
+            return options;
         }
 
         private void addGroupsButton() {
@@ -273,12 +292,12 @@ public class GroupPage extends TournamentHomePage {
                 protected void populateItem(final Item<Groups> listItem) {
                     final Groups group = listItem.getModelObject();
 
-                    Button button = new Button("group", Model.of(group.getName())) {
+                    Button button = new TournamentButton("group", Model.of(group.getName())) {
 
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        public void onSubmit() {
+                        public void submit() {
                             getPageParameters().set(GID, group.getId());
                             setResponsePage(GroupPage.class, getPageParameters());
                         }
@@ -471,11 +490,6 @@ public class GroupPage extends TournamentHomePage {
             }
         });
         return modalWindow;
-    }
-
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return Model.of(getString("groupOverview"));
     }
 
 }

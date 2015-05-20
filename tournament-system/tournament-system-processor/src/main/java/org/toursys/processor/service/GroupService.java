@@ -26,7 +26,9 @@ public class GroupService extends AbstractService {
     @Transactional
     public Groups createGroup(Groups group) {
         logger.debug("Create group: " + group);
-        return tournamentAggregationDao.createGroup(group);
+        tournamentAggregationDao.createGroup(group);
+        logger.debug("Created group: " + group);
+        return group;
     }
 
     @Transactional(readOnly = true)
@@ -81,6 +83,7 @@ public class GroupService extends AbstractService {
                 deleteGroup(finalGroup);
             }
         }
+        finalGroups.clear();
 
         boolean createGroups = true;
         Map<String, Groups> groupByName = new HashMap<String, Groups>();
@@ -106,6 +109,7 @@ public class GroupService extends AbstractService {
                         ._setCopyResult(true);
                 logger.trace("Create final group " + finalGroup);
                 finalGroup = createGroup(finalGroup);
+                finalGroups.add(finalGroup);
                 groupByName.put(groupName, finalGroup);
             } else {
                 finalGroup = groupByName.get(groupName);
@@ -129,9 +133,10 @@ public class GroupService extends AbstractService {
                 if (startIndex < promotingLower) {
                     if (createGroups) {
                         finalGroup = new Groups()._setName(nextGroups)._setTournament(tournament)
-                                ._setType(GroupsType.FINAL);
+                                ._setPlayOffType(GroupsPlayOffType.LOWER)._setType(GroupsType.FINAL);
                         logger.trace("Create final group " + finalGroup);
                         finalGroup = createGroup(finalGroup);
+                        finalGroups.add(finalGroup);
                         groupByName.put(nextGroups, finalGroup);
                     } else {
                         finalGroup = groupByName.get(nextGroups);
@@ -167,6 +172,11 @@ public class GroupService extends AbstractService {
             logger.trace("deleting final group " + finalGroup);
             deleteGroup(finalGroup);
             groupByName.remove(finalGroup);
+        }
+
+        for (Groups group : finalGroups) {
+            getFinalGroups(group);
+            gameService.processGames(participantService.getParticipants(new Participant()._setGroup(group)));
         }
 
         time = System.currentTimeMillis() - time;

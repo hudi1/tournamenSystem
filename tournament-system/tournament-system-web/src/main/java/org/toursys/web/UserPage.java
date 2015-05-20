@@ -2,22 +2,21 @@ package org.toursys.web;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.User;
 import org.toursys.web.components.PropertyPageableListView;
+import org.toursys.web.components.TournamentButton;
+import org.toursys.web.link.TournamentAjaxLink;
 
 @AuthorizeInstantiation(Roles.ADMIN)
 public class UserPage extends BasePage {
@@ -43,12 +42,6 @@ public class UserPage extends BasePage {
             add(new Label("name", new ResourceModel("name")));
             addUserListView();
             addNewUserButton();
-
-            /*
-             * IDataProvider<User> userDataProvider = createUserProvider(); DataView<User> dataView =
-             * createDataview(userDataProvider); add(dataView); add(new PagingNavigator("navigator", dataView));
-             */
-
         }
 
         private void addUserListView() {
@@ -62,11 +55,11 @@ public class UserPage extends BasePage {
                     final User user = item.getModelObject();
                     item.setModel(new CompoundPropertyModel<User>(user));
                     item.add(new Label("userName"));
-                    item.add(new AjaxLink<Void>("enterUser") {
+                    item.add(new TournamentAjaxLink("enterUser") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onClick(AjaxRequestTarget target) {
+                        public void click(AjaxRequestTarget target) {
                             setResponsePage(new UserEditPage(user));
                         }
 
@@ -87,21 +80,16 @@ public class UserPage extends BasePage {
         }
 
         private void addNewUserButton() {
-            add(new Button("newUser", new ResourceModel("newUser")) {
+            add(new TournamentButton("newUser", new ResourceModel("newUser")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(new UserEditPage(new User()));
                 }
             });
         }
-    }
-
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("selectUser");
     }
 
 }

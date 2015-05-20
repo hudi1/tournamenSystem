@@ -1,15 +1,17 @@
 package org.toursys.web;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -17,8 +19,10 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.value.ValueMap;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Tournament;
+import org.toursys.web.components.TournamentButton;
 
 @AuthorizeInstantiation(Roles.USER)
 public class TournamentOptionsPage extends TournamentHomePage {
@@ -29,6 +33,9 @@ public class TournamentOptionsPage extends TournamentHomePage {
     private Groups group;
     boolean isTournamentOptionsOn;
     boolean isTableOptionsOn;
+
+    private final List<GroupsPlayOffType> groupPlayOffType = Arrays.asList(new GroupsPlayOffType[] {
+            GroupsPlayOffType.CROSS, GroupsPlayOffType.FINAL, GroupsPlayOffType.LOWER });
 
     public TournamentOptionsPage() {
         this(new PageParameters());
@@ -67,7 +74,7 @@ public class TournamentOptionsPage extends TournamentHomePage {
     }
 
     private void addGroupForm() {
-        GroupOptionsForm groupForm = new GroupOptionsForm(group);
+        GroupOptionsForm groupForm = new GroupOptionsForm();
         add(groupForm);
         groupForm.setVisible(isTableOptionsOn);
     }
@@ -76,16 +83,16 @@ public class TournamentOptionsPage extends TournamentHomePage {
 
         private static final long serialVersionUID = 1L;
 
-        public GroupOptionsForm(final Groups group) {
+        public GroupOptionsForm() {
             super("tableOptionsForm", new CompoundPropertyModel<Groups>(group));
 
-            addGroupTextField(group);
+            addGroupTextField();
             addLegendLabel();
             addSubmitButton();
             addBackButton();
         }
 
-        private void addGroupTextField(final Groups group) {
+        private void addGroupTextField() {
             add(new Label("numberOfHockey", new ResourceModel("numberOfHockey")));
             add(new RequiredTextField<Integer>("numberOfHockeyInput", new PropertyModel<Integer>(group,
                     "numberOfHockey")));
@@ -95,24 +102,33 @@ public class TournamentOptionsPage extends TournamentHomePage {
                     "indexOfFirstHockey")));
 
             Component copyResult = new Label("copyResult", new ResourceModel("copyResult")).setVisible(false);
-            Component copyResultInput = new CheckBox("copyResultInput", new PropertyModel<Boolean>(group,
-                    "indexOfFirstHockey")).setVisible(false);
+            Component copyResultInput = new CheckBox("copyResultInput", new PropertyModel<Boolean>(group, "copyResult"))
+                    .setVisible(false);
 
             Component playThirdPlace = new Label("playThirdPlace", new ResourceModel("playThirdPlace"))
                     .setVisible(false);
             Component playThirdPlaceInput = new CheckBox("playThirdPlaceInput", new PropertyModel<Boolean>(group,
                     "playThirdPlace")).setVisible(false);
 
+            Component groupsPlayOffType = new Label("groupsPlayOffType", new ResourceModel("groupsPlayOffType"))
+                    .setVisible(false);
+            Component groupsPlayOffTypeInput = new DropDownChoice<GroupsPlayOffType>("groupsPlayOffTypeInput",
+                    new PropertyModel<GroupsPlayOffType>(group, "playOffType"), groupPlayOffType).setVisible(false);
+
             add(copyResult);
             add(copyResultInput);
             add(playThirdPlace);
             add(playThirdPlaceInput);
+            add(groupsPlayOffType);
+            add(groupsPlayOffTypeInput);
 
             if (group.getType().equals(GroupsType.FINAL)) {
                 copyResult.setVisible(true);
                 copyResultInput.setVisible(true);
                 playThirdPlace.setVisible(true);
                 playThirdPlaceInput.setVisible(true);
+                groupsPlayOffType.setVisible(true);
+                groupsPlayOffTypeInput.setVisible(true);
             }
         }
 
@@ -123,12 +139,12 @@ public class TournamentOptionsPage extends TournamentHomePage {
         }
 
         private void addSubmitButton() {
-            add(new Button("submit", new ResourceModel("save")) {
+            add(new TournamentButton("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     groupService.updateGroup(group);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
@@ -136,12 +152,12 @@ public class TournamentOptionsPage extends TournamentHomePage {
         }
 
         private void addBackButton() {
-            add(new Button("back", new ResourceModel("back")) {
+            add(new TournamentButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     clearPageParameters();
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
@@ -180,7 +196,7 @@ public class TournamentOptionsPage extends TournamentHomePage {
 
             add(new Label("playOffLower", new ResourceModel("playOffLower")));
             add(new RequiredTextField<Integer>("playOffLowerInput", new PropertyModel<Integer>(tournament,
-                    "playOffFinal")));
+                    "playOffLower")));
 
             add(new Label("minPlayersInGroup", new ResourceModel("minPlayersInGroup")));
             add(new RequiredTextField<Integer>("minPlayersInGroupInput", new PropertyModel<Integer>(tournament,
@@ -194,12 +210,12 @@ public class TournamentOptionsPage extends TournamentHomePage {
         }
 
         private void addBackButton() {
-            add(new Button("back", new ResourceModel("back")) {
+            add(new TournamentButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     clearPageParameters();
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
@@ -207,12 +223,12 @@ public class TournamentOptionsPage extends TournamentHomePage {
         }
 
         private void addSubmitButton() {
-            add(new Button("submit", new ResourceModel("save")) {
+            add(new TournamentButton("submit", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     tournamentService.updateTournament(tournament);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
@@ -228,24 +244,24 @@ public class TournamentOptionsPage extends TournamentHomePage {
             super("selectOptionsForm");
             setOutputMarkupId(true);
 
-            add(new Button("group", new ResourceModel("group")) {
+            add(new TournamentButton("group", new ResourceModel("group")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     getPageParameters().set(SHOW_TABLE_OPTIONS, true);
                     getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, false);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
                 }
             });
 
-            add(new Button("tournament", new ResourceModel("tournament")) {
+            add(new TournamentButton("tournament", new ResourceModel("tournament")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     getPageParameters().set(SHOW_TABLE_OPTIONS, false);
                     getPageParameters().set(SHOW_TOURNAMENT_OPTIONS, true);
                     setResponsePage(TournamentOptionsPage.class, getPageParameters());
@@ -254,8 +270,4 @@ public class TournamentOptionsPage extends TournamentHomePage {
         }
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("tournamentOptions");
-    }
 }

@@ -8,22 +8,22 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.convert.IConverter;
 import org.toursys.processor.schedule.RoundRobinSchedule;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
+import org.toursys.web.components.TournamentButton;
 import org.toursys.web.converter.ResultConverter;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -77,30 +77,41 @@ public class SchedulePage extends TournamentHomePage {
         }
 
         private void addSaveButton() {
-            add(new Button("save", new ResourceModel("save")) {
+            add(new TournamentButton("save", new ResourceModel("save")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     logger.debug("Submit schedule start ");
                     long time = System.currentTimeMillis();
                     gameService.updateBothGames(scheduleGames);
                     time = System.currentTimeMillis() - time;
-                    logger.debug("Submit schedule end: " + time + " ms");
+                    sortParticipants();
 
+                    if (GroupsType.FINAL.equals(group.getType())) {
+                        playOffGameService.updatePlayOffGames(tournament, group);
+                    }
+                    logger.debug("Submit schedule end: " + time + " ms");
                     setResponsePage(SchedulePage.class, getPageParameters());
                 };
             });
         }
 
+        private void sortParticipants() {
+            List<Participant> participants = participantService.getSortedParticipants(new Participant()
+                    ._setGroup(group));
+
+            participantService.sortParticipants(participants, tournament);
+        }
+
         private void addBackButton() {
-            add(new Button("back", new ResourceModel("back")) {
+            add(new TournamentButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     getPageParameters().set(UPDATE, true);
                     setResponsePage(GroupPage.class, getPageParameters());
                 };
@@ -208,11 +219,6 @@ public class SchedulePage extends TournamentHomePage {
             }.setReuseItems(true));
         }
 
-    }
-
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("schedule");
     }
 
 }

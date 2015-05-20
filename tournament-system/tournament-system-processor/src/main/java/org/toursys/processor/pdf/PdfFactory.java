@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.wicket.util.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.toursys.processor.PdfTournamentException;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
@@ -45,73 +47,82 @@ public class PdfFactory {
     private static final int LISTS_TABLE_WIDTH = 134;
     private static final Logger logger = LoggerFactory.getLogger(PdfFactory.class);
 
-    public static File createTable(String path, List<Participant> players, Groups group) throws Exception {
+    public static File createTable(String path, List<Participant> players, Groups group) {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
-        File file = new File(path + "group" + df.format(new Date()) + ".pdf");
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+        File file = null;
+        try {
+            file = new File(path + "group" + df.format(new Date()) + ".pdf");
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
-        document.open();
-        document.setPageSize(PageSize.A4.rotate());
-        document.newPage();
+            document.open();
+            document.setPageSize(PageSize.A4.rotate());
+            document.newPage();
 
-        PdfPTable pdfTable = new PdfPTable(players.size() + 4);
-        pdfTable.setHeaderRows(1);
-        pdfTable.setLockedWidth(true);
-        float[] widths = new float[players.size() + 4];
-        widths[0] = 6f;
-        for (int i = 1; i < widths.length; i++) {
-            widths[i] = 2f;
-        }
-        pdfTable.setTotalWidth(800);
-        pdfTable.setWidths(widths);
+            PdfPTable pdfTable = new PdfPTable(players.size() + 4);
+            pdfTable.setHeaderRows(1);
+            pdfTable.setLockedWidth(true);
+            float[] widths = new float[players.size() + 4];
+            widths[0] = 6f;
+            for (int i = 1; i < widths.length; i++) {
+                widths[i] = 2f;
+            }
+            pdfTable.setTotalWidth(800);
+            pdfTable.setWidths(widths);
 
-        pdfTable.addCell(createCenterAlignBorderCell("name"));
-        for (Participant participant : players) {
-            // TODO index miesto inicialok
-            pdfTable.addCell(createCenterAlignBorderCell(participant.getPlayer().getName().charAt(0) + "."
-                    + participant.getPlayer().getSurname().charAt(0) + "."));
-        }
-        pdfTable.addCell(createCenterAlignBorderCell("score"));
-        pdfTable.addCell(createCenterAlignBorderCell("points"));
-        pdfTable.addCell(createCenterAlignBorderCell("rank"));
+            pdfTable.addCell(createCenterAlignBorderCell("name"));
+            for (Participant participant : players) {
+                // TODO index miesto inicialok
+                pdfTable.addCell(createCenterAlignBorderCell(participant.getPlayer().getName().charAt(0) + "."
+                        + participant.getPlayer().getSurname().charAt(0) + "."));
+            }
+            pdfTable.addCell(createCenterAlignBorderCell("score"));
+            pdfTable.addCell(createCenterAlignBorderCell("points"));
+            pdfTable.addCell(createCenterAlignBorderCell("rank"));
 
-        for (Participant participant1 : players) {
-            pdfTable.addCell(createCenterAlignBorderCell(participant1.getPlayer().getName().charAt(0) + "."
-                    + participant1.getPlayer().getSurname() + " " + participant1.getPlayer().getPlayerDiscriminator()));
+            for (Participant participant1 : players) {
+                pdfTable.addCell(createCenterAlignBorderCell(participant1.getPlayer().getName().charAt(0) + "."
+                        + participant1.getPlayer().getSurname() + " "
+                        + participant1.getPlayer().getPlayerDiscriminator()));
 
-            for (Participant participant2 : players) {
-                if (participant1.equals(participant2)) {
-                    pdfTable.addCell(createCenterAlignBorderCell("X"));
-                } else {
-                    Game game = null;
-                    for (Game pomGame : participant1.getGames()) {
-                        if (pomGame.getAwayParticipant().getId().equals(participant2.getId())) {
-                            game = pomGame;
-                            break;
-                        }
-                    }
-
-                    if (game == null || game.getResult() == null) {
-                        pdfTable.addCell(createEmptyCell());
+                for (Participant participant2 : players) {
+                    if (participant1.equals(participant2)) {
+                        pdfTable.addCell(createCenterAlignBorderCell("X"));
                     } else {
-                        if (game.getResult() != null) {
-                            pdfTable.addCell(createCenterAlignBorderCell(game.getResult().toString()));
+                        Game game = null;
+                        for (Game pomGame : participant1.getGames()) {
+                            if (pomGame.getAwayParticipant().getId().equals(participant2.getId())) {
+                                game = pomGame;
+                                break;
+                            }
+                        }
+
+                        if (game == null || game.getResult() == null) {
+                            pdfTable.addCell(createEmptyCell());
+                        } else {
+                            if (game.getResult() != null) {
+                                pdfTable.addCell(createCenterAlignBorderCell(game.getResult().toString()));
+                            }
                         }
                     }
                 }
+                pdfTable.addCell(createCenterAlignBorderCell(participant1.getScore().toString()));
+                pdfTable.addCell(createCenterAlignBorderCell(((Integer) participant1.getPoints()).toString()));
+                pdfTable.addCell(createCenterAlignBorderCell(participant1.getRank().toString()));
             }
-            pdfTable.addCell(createCenterAlignBorderCell(participant1.getScore().toString()));
-            pdfTable.addCell(createCenterAlignBorderCell(((Integer) participant1.getPoints()).toString()));
-            pdfTable.addCell(createCenterAlignBorderCell(participant1.getRank().toString()));
+
+            document.add(new Paragraph("Group: " + group.getName()));
+            document.add(new Paragraph(""));
+            document.add(pdfTable);
+
+            closePdfFile(document, writer);
+        } catch (Exception e) {
+            if (file != null) {
+                Files.remove(file);
+            }
+            logger.error("Error during creating table", e);
+            throw new PdfTournamentException(e.getMessage());
         }
-
-        document.add(new Paragraph("Group: " + group.getName()));
-        document.add(new Paragraph(""));
-        document.add(pdfTable);
-
-        closePdfFile(document, writer);
-
         return file;
     }
 
@@ -124,33 +135,41 @@ public class PdfFactory {
         document.close();
     }
 
-    public static File createSchedule(String path, List<GameImpl> schedule) throws Exception {
+    public static File createSchedule(String path, List<GameImpl> schedule) {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
-        File file = new File(path + "schedule" + df.format(new Date()) + ".pdf");
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+        File file = null;
+        try {
+            file = new File(path + "schedule" + df.format(new Date()) + ".pdf");
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
-        document.open();
-        document.setPageSize(PageSize.A4.rotate());
-        document.newPage();
+            document.open();
+            document.setPageSize(PageSize.A4.rotate());
+            document.newPage();
 
-        PdfContentByte canvas = writer.getDirectContent();
-        ColumnText column = new ColumnText(canvas);
-        float[][] x = { { 5, 190 }, { 190, 375 }, { 375, 560 }, { 560, 745 } };
+            PdfContentByte canvas = writer.getDirectContent();
+            ColumnText column = new ColumnText(canvas);
+            float[][] x = { { 5, 190 }, { 190, 375 }, { 375, 560 }, { 560, 745 } };
 
-        column.addElement(createTable(schedule));
-        int count = 0;
-        int status = ColumnText.START_COLUMN;
-        while (ColumnText.hasMoreText(status)) {
-            column.setSimpleColumn(x[count][0], 5, x[count][1], 590);
-            status = column.go();
-            if (++count > 3) {
-                count = 0;
-                document.newPage();
+            column.addElement(createTable(schedule));
+            int count = 0;
+            int status = ColumnText.START_COLUMN;
+            while (ColumnText.hasMoreText(status)) {
+                column.setSimpleColumn(x[count][0], 5, x[count][1], 590);
+                status = column.go();
+                if (++count > 3) {
+                    count = 0;
+                    document.newPage();
+                }
             }
+            closePdfFile(document, writer);
+        } catch (Exception e) {
+            if (file != null) {
+                Files.remove(file);
+            }
+            logger.error("Error during creating schedule", e);
+            throw new PdfTournamentException(e.getMessage());
         }
-        closePdfFile(document, writer);
-
         return file;
     }
 
@@ -232,154 +251,162 @@ public class PdfFactory {
         return pdfTable;
     }
 
-    public static File createSheets(String path, List<GameImpl> schedule, Groups group) throws Exception {
+    public static File createSheets(String path, List<GameImpl> schedule, Groups group) {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
-        File file = new File(path + "sheets" + df.format(new Date()) + ".pdf");
+        File file = null;
+        try {
+            file = new File(path + "sheets" + df.format(new Date()) + ".pdf");
 
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
-        document.open();
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+            document.open();
 
-        LinkedHashMap<Participant, List<GameImpl>> wholeSheets = new LinkedHashMap<Participant, List<GameImpl>>();
-        if (!schedule.isEmpty()) {
-            int maxRound = schedule.get(schedule.size() - 1).getRound();
-            int spaceCount = 0;
-            if (maxRound > 15) {
-                spaceCount = 0;
-            } else if (maxRound > 10) {
-                spaceCount = 1;
-            } else if (maxRound > 5) {
-                spaceCount = 2;
-            } else {
-                spaceCount = 4;
-            }
-
-            for (GameImpl game : schedule) {
-                if (wholeSheets.get(game.getAwayParticipant()) == null) {
-                    wholeSheets.put(game.getAwayParticipant(), new ArrayList<GameImpl>());
-                }
-                if (wholeSheets.get(game.getHomeParticipant()) == null) {
-                    wholeSheets.put(game.getHomeParticipant(), new ArrayList<GameImpl>());
+            LinkedHashMap<Participant, List<GameImpl>> wholeSheets = new LinkedHashMap<Participant, List<GameImpl>>();
+            if (!schedule.isEmpty()) {
+                int maxRound = schedule.get(schedule.size() - 1).getRound();
+                int spaceCount = 0;
+                if (maxRound > 15) {
+                    spaceCount = 0;
+                } else if (maxRound > 10) {
+                    spaceCount = 1;
+                } else if (maxRound > 5) {
+                    spaceCount = 2;
+                } else {
+                    spaceCount = 4;
                 }
 
-                wholeSheets.get(game.getAwayParticipant()).add(game);
-                wholeSheets.get(game.getHomeParticipant()).add(game);
-            }
-
-            for (int i = 0; i <= wholeSheets.size() / PLAYERS_PER_PAGE; i++) {
-                int toIndex = i * PLAYERS_PER_PAGE + PLAYERS_PER_PAGE - 1;
-                if (i == wholeSheets.size()) {
-                    toIndex = i * PLAYERS_PER_PAGE + wholeSheets.size() % PLAYERS_PER_PAGE;
-                }
-                Map<Participant, List<GameImpl>> sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
-
-                if (sheets.size() == 0) {
-                    break;
-                }
-
-                PdfPTable pdfTable = new PdfPTable(sheets.size());
-                pdfTable.setHeaderRows(1);
-
-                pdfTable.setTotalWidth(LISTS_TABLE_WIDTH * sheets.size());
-                pdfTable.setLockedWidth(true);
-                pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
-
-                document.setPageSize(PageSize.A4.rotate());
-                document.newPage();
-
-                Set<Entry<Participant, List<GameImpl>>> entrySet = sheets.entrySet();
-
-                // hlavicka
-                for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
-                    Participant participant = entry.getKey();
-                    if (participant != null) {
-                        pdfTable.addCell(createCell("(" + group.getName() + ") "
-                                + participant.getPlayer().getName().charAt(0) + "."
-                                + participant.getPlayer().getSurname() + " "
-                                + participant.getPlayer().getPlayerDiscriminator()));
-                    } else {
-                        pdfTable.addCell(createCell("---"));
+                for (GameImpl game : schedule) {
+                    if (wholeSheets.get(game.getAwayParticipant()) == null) {
+                        wholeSheets.put(game.getAwayParticipant(), new ArrayList<GameImpl>());
                     }
+                    if (wholeSheets.get(game.getHomeParticipant()) == null) {
+                        wholeSheets.put(game.getHomeParticipant(), new ArrayList<GameImpl>());
+                    }
+
+                    wholeSheets.get(game.getAwayParticipant()).add(game);
+                    wholeSheets.get(game.getHomeParticipant()).add(game);
                 }
 
-                // hokeje
-                for (int j = 0; j < sheets.size(); j++) {
-                    PdfPCell cell = new PdfPCell(new Phrase("                H", new Font(Font.FontFamily.TIMES_ROMAN,
-                            10)));
-                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cell.setBorder(Rectangle.NO_BORDER);
-                    pdfTable.addCell(cell);
-                }
+                for (int i = 0; i <= wholeSheets.size() / PLAYERS_PER_PAGE; i++) {
+                    int toIndex = i * PLAYERS_PER_PAGE + PLAYERS_PER_PAGE - 1;
+                    if (i == wholeSheets.size()) {
+                        toIndex = i * PLAYERS_PER_PAGE + wholeSheets.size() % PLAYERS_PER_PAGE;
+                    }
+                    Map<Participant, List<GameImpl>> sheets = subMap(wholeSheets, i * PLAYERS_PER_PAGE, toIndex);
 
-                for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
-                    Participant participant = entry.getKey();
-                    List<GameImpl> games = entry.getValue();
+                    if (sheets.size() == 0) {
+                        break;
+                    }
 
-                    PdfPTable nestedTable = new PdfPTable(3);
-                    nestedTable.setHeaderRows(0);
-                    nestedTable.setTotalWidth(LISTS_TABLE_WIDTH);
-                    nestedTable.setLockedWidth(true);
-                    nestedTable.setWidths(new float[] { 4f, 4f, 10f });
+                    PdfPTable pdfTable = new PdfPTable(sheets.size());
+                    pdfTable.setHeaderRows(1);
 
-                    int round = 1;
-                    for (GameImpl game : games) {
-                        Player player = null;
-                        String side = "";
+                    pdfTable.setTotalWidth(LISTS_TABLE_WIDTH * sheets.size());
+                    pdfTable.setLockedWidth(true);
+                    pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+                    document.setPageSize(PageSize.A4.rotate());
+                    document.newPage();
+
+                    Set<Entry<Participant, List<GameImpl>>> entrySet = sheets.entrySet();
+
+                    // hlavicka
+                    for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
+                        Participant participant = entry.getKey();
                         if (participant != null) {
-                            if (game.getAwayParticipant() != null && game.getAwayParticipant().equals(participant)) {
-                                player = game.getHomeParticipant().getPlayer();
-                                side = "S";
-                            } else if (game.getHomeParticipant() != null
-                                    && game.getHomeParticipant().equals(participant)) {
-                                player = game.getAwayParticipant().getPlayer();
-                                side = "F";
-                            }
-                        }
-
-                        if (game.getRound() >= round) {
-                            while (round != game.getRound()) {
-                                nestedTable.addCell(createCell(round + ")"));
-                                nestedTable.addCell(createCell("-"));
-                                nestedTable.addCell(createLeftAlignCell("-------"));
-
-                                for (int j = 0; j < spaceCount; j++) {
-                                    nestedTable.addCell(createEmptyCell());
-                                    nestedTable.addCell(createEmptyCell());
-                                    nestedTable.addCell(createEmptyCell());
-                                }
-                                round++;
-                            }
-                        }
-
-                        if (player != null) {
-                            nestedTable.addCell(createCell(game.getRound() + ")"));
-                            nestedTable.addCell(createCell(game.getHockey().toString() + side));
-                            nestedTable.addCell(createLeftAlignCell(player.getName().charAt(0) + "."
-                                    + player.getSurname() + " " + player.getPlayerDiscriminator()));
+                            pdfTable.addCell(createCell("(" + group.getName() + ") "
+                                    + participant.getPlayer().getName().charAt(0) + "."
+                                    + participant.getPlayer().getSurname() + " "
+                                    + participant.getPlayer().getPlayerDiscriminator()));
                         } else {
-                            nestedTable.addCell(createCell("-"));
-                            nestedTable.addCell(createCell("-"));
-                            nestedTable.addCell(createCell("---"));
-                        }
-                        round++;
-
-                        for (int j = 0; j < spaceCount; j++) {
-                            nestedTable.addCell(createEmptyCell());
-                            nestedTable.addCell(createEmptyCell());
-                            nestedTable.addCell(createEmptyCell());
+                            pdfTable.addCell(createCell("---"));
                         }
                     }
-                    PdfPCell cell = createEmptyCell();
-                    cell.addElement(nestedTable);
-                    pdfTable.addCell(cell);
+
+                    // hokeje
+                    for (int j = 0; j < sheets.size(); j++) {
+                        PdfPCell cell = new PdfPCell(new Phrase("                H", new Font(
+                                Font.FontFamily.TIMES_ROMAN, 10)));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setBorder(Rectangle.NO_BORDER);
+                        pdfTable.addCell(cell);
+                    }
+
+                    for (Map.Entry<Participant, List<GameImpl>> entry : entrySet) {
+                        Participant participant = entry.getKey();
+                        List<GameImpl> games = entry.getValue();
+
+                        PdfPTable nestedTable = new PdfPTable(3);
+                        nestedTable.setHeaderRows(0);
+                        nestedTable.setTotalWidth(LISTS_TABLE_WIDTH);
+                        nestedTable.setLockedWidth(true);
+                        nestedTable.setWidths(new float[] { 4f, 4f, 10f });
+
+                        int round = 1;
+                        for (GameImpl game : games) {
+                            Player player = null;
+                            String side = "";
+                            if (participant != null) {
+                                if (game.getAwayParticipant() != null && game.getAwayParticipant().equals(participant)) {
+                                    player = game.getHomeParticipant().getPlayer();
+                                    side = "S";
+                                } else if (game.getHomeParticipant() != null
+                                        && game.getHomeParticipant().equals(participant)) {
+                                    player = game.getAwayParticipant().getPlayer();
+                                    side = "F";
+                                }
+                            }
+
+                            if (game.getRound() >= round) {
+                                while (round != game.getRound()) {
+                                    nestedTable.addCell(createCell(round + ")"));
+                                    nestedTable.addCell(createCell("-"));
+                                    nestedTable.addCell(createLeftAlignCell("-------"));
+
+                                    for (int j = 0; j < spaceCount; j++) {
+                                        nestedTable.addCell(createEmptyCell());
+                                        nestedTable.addCell(createEmptyCell());
+                                        nestedTable.addCell(createEmptyCell());
+                                    }
+                                    round++;
+                                }
+                            }
+
+                            if (player != null) {
+                                nestedTable.addCell(createCell(game.getRound() + ")"));
+                                nestedTable.addCell(createCell(game.getHockey().toString() + side));
+                                nestedTable.addCell(createLeftAlignCell(player.getName().charAt(0) + "."
+                                        + player.getSurname() + " " + player.getPlayerDiscriminator()));
+                            } else {
+                                nestedTable.addCell(createCell("-"));
+                                nestedTable.addCell(createCell("-"));
+                                nestedTable.addCell(createCell("---"));
+                            }
+                            round++;
+
+                            for (int j = 0; j < spaceCount; j++) {
+                                nestedTable.addCell(createEmptyCell());
+                                nestedTable.addCell(createEmptyCell());
+                                nestedTable.addCell(createEmptyCell());
+                            }
+                        }
+                        PdfPCell cell = createEmptyCell();
+                        cell.addElement(nestedTable);
+                        pdfTable.addCell(cell);
+                    }
+                    document.add(pdfTable);
+
                 }
-                document.add(pdfTable);
-
             }
+
+            closePdfFile(document, writer);
+        } catch (Exception e) {
+            if (file != null) {
+                Files.remove(file);
+            }
+            logger.error("Error during creating sheets", e);
+            throw new PdfTournamentException(e.getMessage());
         }
-
-        closePdfFile(document, writer);
-
         return file;
     }
 
@@ -462,94 +489,115 @@ public class PdfFactory {
         return result;
     }
 
-    public static File createPlayOff(String path, Tournament tournament) throws Exception {
+    public static File createPlayOff(String path, Tournament tournament) {
 
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
-        File file = new File(path + "playOff" + df.format(new Date()) + ".pdf");
+        File file = null;
+        try {
+            file = new File(path + "playOff" + df.format(new Date()) + ".pdf");
 
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
-        document.open();
-        document.newPage();
+            document.open();
+            document.newPage();
 
-        PdfPTable pdfTable = new PdfPTable(3);
-        pdfTable.setLockedWidth(true);
-        pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+            PdfPTable pdfTable = new PdfPTable(3);
+            pdfTable.setLockedWidth(true);
+            pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
 
-        pdfTable.setTotalWidth(800);
-        pdfTable.setWidths(new float[] { 6f, 6f, 18f });
+            pdfTable.setTotalWidth(800);
+            pdfTable.setWidths(new float[] { 6f, 6f, 18f });
 
-        for (Groups group : tournament.getGroups()) {
-            pdfTable.addCell(createLeftAlignCell(group.getName()));
-            pdfTable.addCell(createEmptyCell());
-            pdfTable.addCell(createEmptyCell());
+            for (Groups group : tournament.getGroups()) {
+                pdfTable.addCell(createLeftAlignCell(group.getName()));
+                pdfTable.addCell(createEmptyCell());
+                pdfTable.addCell(createEmptyCell());
 
-            for (PlayOffGame playOffGame : group.getPlayOffGames()) {
+                for (PlayOffGame playOffGame : group.getPlayOffGames()) {
 
-                pdfTable.addCell(createLeftAlignCell(TournamentUtil.getRoundName(group.getPlayOffGames().size(),
-                        playOffGame.getPosition())));
+                    pdfTable.addCell(createLeftAlignCell(TournamentUtil.getRoundName(tournament, group,
+                            playOffGame.getPosition())));
 
-                if (playOffGame.getHomeParticipant() != null && playOffGame.getAwayParticipant() != null) {
-                    String playersGame = playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + "."
-                            + playOffGame.getHomeParticipant().getPlayer().getSurname() + " "
-                            + playOffGame.getHomeParticipant().getPlayer().getPlayerDiscriminator() + " : "
-                            + playOffGame.getAwayParticipant().getPlayer().getName().charAt(0) + "."
-                            + playOffGame.getAwayParticipant().getPlayer().getSurname() + " "
-                            + playOffGame.getAwayParticipant().getPlayer().getPlayerDiscriminator();
+                    if (playOffGame.getHomeParticipant() != null && playOffGame.getAwayParticipant() != null) {
+                        String playersGame = playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + "."
+                                + playOffGame.getHomeParticipant().getPlayer().getSurname() + " "
+                                + playOffGame.getHomeParticipant().getPlayer().getPlayerDiscriminator() + " : "
+                                + playOffGame.getAwayParticipant().getPlayer().getName().charAt(0) + "."
+                                + playOffGame.getAwayParticipant().getPlayer().getSurname() + " "
+                                + playOffGame.getAwayParticipant().getPlayer().getPlayerDiscriminator();
 
-                    pdfTable.addCell(createLeftAlignCell(playersGame));
+                        pdfTable.addCell(createLeftAlignCell(playersGame));
 
-                    Results results = playOffGame.getResult();
+                        Results results = playOffGame.getResult();
 
-                    if (results != null) {
-                        pdfTable.addCell(createLeftAlignCell(results.toString()));
+                        if (results != null) {
+                            pdfTable.addCell(createLeftAlignCell(results.toString()));
+                        } else {
+                            pdfTable.addCell(createEmptyCell());
+                        }
                     } else {
                         pdfTable.addCell(createEmptyCell());
+                        pdfTable.addCell(createEmptyCell());
                     }
-                } else {
-                    pdfTable.addCell(createEmptyCell());
-                    pdfTable.addCell(createEmptyCell());
                 }
             }
+            document.add(pdfTable);
+
+            closePdfFile(document, writer);
+        } catch (Exception e) {
+            if (file != null) {
+                Files.remove(file);
+            }
+            logger.error("Error during creating play off", e);
+            throw new PdfTournamentException(e.getMessage());
         }
-        document.add(pdfTable);
-
-        closePdfFile(document, writer);
-
         return file;
     }
 
-    public static File createFinalStandings(String path, List<FinalStanding> finalStandings) throws Exception {
+    public static File createFinalStandings(String path, List<FinalStanding> finalStandings) {
         Document document = new Document();
         DateFormat df = new SimpleDateFormat("dd-MM-yyyyHH-mm-ss");
-        File file = new File(path + "finalRanking" + df.format(new Date()) + ".pdf");
+        File file = null;
+        try {
 
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+            file.getAbsoluteFile();
 
-        document.open();
-        document.newPage();
+            file = new File(path + "finalRanking" + df.format(new Date()) + ".pdf");
 
-        PdfPTable pdfTable = new PdfPTable(3);
-        pdfTable.setLockedWidth(true);
-        pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
 
-        pdfTable.setTotalWidth(400);
-        pdfTable.setWidths(new float[] { 2f, 5f, 5f });
+            document.open();
+            document.newPage();
 
-        for (FinalStanding finalStanding : finalStandings) {
-            pdfTable.addCell(createLeftAlignCell(finalStanding.getFinalRank() + "."));
-            pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getSurname() != null) ? finalStanding
-                    .getPlayer().getSurname() + " " + finalStanding.getPlayer().getPlayerDiscriminator() : ""));
-            pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getName() != null) ? finalStanding
-                    .getPlayer().getName() : " " + finalStanding.getPlayer().getPlayerDiscriminator()));
+            PdfPTable pdfTable = new PdfPTable(3);
+            pdfTable.setLockedWidth(true);
+            pdfTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+            pdfTable.setTotalWidth(400);
+            pdfTable.setWidths(new float[] { 2f, 5f, 5f });
+
+            for (FinalStanding finalStanding : finalStandings) {
+                pdfTable.addCell(createLeftAlignCell(finalStanding.getFinalRank() + "."));
+                if (finalStanding.getPlayer() == null) {
+                    continue;
+                }
+                pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getSurname() != null) ? finalStanding
+                        .getPlayer().getSurname() + " " + finalStanding.getPlayer().getPlayerDiscriminator() : ""));
+                pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getName() != null) ? finalStanding
+                        .getPlayer().getName() : " " + finalStanding.getPlayer().getPlayerDiscriminator()));
+            }
+
+            document.add(pdfTable);
+
+            closePdfFile(document, writer);
+        } catch (Exception e) {
+            if (file != null) {
+                Files.remove(file);
+            }
+            logger.error("Error during creating final standings", e);
+            throw new PdfTournamentException(e.getMessage());
         }
-
-        document.add(pdfTable);
-
-        closePdfFile(document, writer);
-
         return file;
     }
-
 }

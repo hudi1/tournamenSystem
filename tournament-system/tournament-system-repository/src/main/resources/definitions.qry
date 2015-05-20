@@ -38,12 +38,11 @@ metagen-column-meta-type GAME RESULT->result;
 
 pojogen-rename-columns GROUPS_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
 
-pojogen-rename-columns GROUPS_PLAY_OFF_TYPE F->FINAL L->LOWER;
+pojogen-rename-columns GROUPS_PLAY_OFF_TYPE F->FINAL L->LOWER C->CROSS;
 
 pojogen-create-columns PARTICIPANT TEMP->_boolean;
 
 pojogen-inherit-many-to-one PLAY_OFF_GAME GAME_ID->GAME->ID;
-
 table finalStanding FINAL_STANDING;
 table game GAME;
 table groups GROUPS;
@@ -53,3 +52,4 @@ table player PLAYER;
 table season SEASON;
 table tournament TOURNAMENT;
 table user USER;
+

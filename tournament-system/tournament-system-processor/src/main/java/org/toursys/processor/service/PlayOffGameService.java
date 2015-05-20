@@ -1,13 +1,17 @@
 package org.toursys.processor.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
+import org.toursys.processor.BadOptionsTournamentException;
 import org.toursys.processor.util.PositionCounter;
 import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Result;
@@ -97,11 +101,24 @@ public class PlayOffGameService extends AbstractService {
         logger.debug("Process playerOff games: " + tournament);
 
         List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
+        int groupIndex = 0;
 
         for (Groups group : finalGroups) {
-
-            List<Participant> players = participantService.getSortedParticipants(new Participant()._setGroup(group));
-
+            List<Participant> players = new ArrayList<Participant>();
+            if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
+                groupIndex++;
+                List<Participant> tempPart = participantService.getSortedParticipants(new Participant()
+                        ._setGroup(group));
+                if (groupIndex % 2 == 0) {
+                    Collections.reverse(tempPart);
+                }
+                players.addAll(tempPart);
+                if (finalGroups.size() != groupIndex) {
+                    continue;
+                }
+            } else {
+                players = participantService.getSortedParticipants(new Participant()._setGroup(group));
+            }
             int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
             while (players.size() < playOffPlayerCount) {
@@ -119,11 +136,57 @@ public class PlayOffGameService extends AbstractService {
     }
 
     @Transactional
+    public void updatePlayOffGames(Tournament tournament, Groups group) {
+        long time = System.currentTimeMillis();
+        logger.debug("Update playerOff games: " + group);
+
+        List<Participant> players = participantService.getSortedParticipants(new Participant()._setGroup(group));
+
+        int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
+
+        while (players.size() < playOffPlayerCount) {
+            players.add(new Participant());
+        }
+
+        LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
+
+        List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
+        updatePlayOffGames(playOffPlayer, finalgames, group);
+
+        time = System.currentTimeMillis() - time;
+        logger.debug("End: Update playerOff games: " + time + " ms");
+    }
+
+    private void updatePlayOffGames(LinkedList<Participant> playOffPlayer, List<PlayOffGame> finalgames, Groups group) {
+        if (finalgames.size() != playOffPlayer.size()) {
+            throw new RuntimeException("Size of players is not same as playOffGames." + finalgames.size() + " vs "
+                    + playOffPlayer.size());
+        }
+
+        for (PlayOffGame playOffGame : finalgames) {
+            if (!playOffPlayer.isEmpty()) {
+                playOffGame.setHomeParticipant(playOffPlayer.removeFirst());
+                playOffGame.setAwayParticipant(playOffPlayer.removeLast());
+            } else {
+                playOffGame.setHomeParticipant(null);
+                playOffGame.setAwayParticipant(null);
+                playOffGame.setResult(null);
+                playOffGame.setStatus(null);
+            }
+            updatePlayOffGame(playOffGame);
+        }
+    }
+
+    @Transactional
     public void updateNextRoundPlayOffGames(Tournament tournament) {
         logger.debug("Update next round playOff games: " + tournament);
 
         List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
         for (Groups group : finalGroups) {
+
+            if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
+                continue;
+            }
 
             int playerPlayOffCount = getPlayOffPlayerCount(group, tournament);
             List<PlayOffGame> playOffGames = getPlayOffGames(new PlayOffGame()._setGroup(group));
@@ -145,6 +208,12 @@ public class PlayOffGameService extends AbstractService {
             break;
         case LOWER:
             playOffPlayerCount += tournament.getPlayOffLower();
+            break;
+        case CROSS:
+            if (tournament.getPlayOffFinal() != tournament.getPlayOffLower()) {
+                throw new BadOptionsTournamentException();
+            }
+            playOffPlayerCount += tournament.getPlayOffFinal();
             break;
         default:
             break;

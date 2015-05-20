@@ -70,15 +70,10 @@ public class ImportPlayerPage extends WebPage {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.add(feedBackPanel);
-                    try {
-                        importService.importPlayers(url.getInput(), user);
-                        modalWindow.close(target);
-                    } catch (Exception e) {
-                        logger.error("Error during importing player: ", e);
-                        error(getString("importError"));
-                    }
+                protected void submit(AjaxRequestTarget target, Form<?> form) {
+                    // TODO test if it is nesessary target.add(feedBackPanel);
+                    importService.importPlayers(url.getInput(), user);
+                    modalWindow.close(target);
                 }
 
                 @Override

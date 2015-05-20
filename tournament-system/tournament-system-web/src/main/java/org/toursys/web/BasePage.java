@@ -2,6 +2,7 @@ package org.toursys.web;
 
 import java.util.Locale;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.RestartResponseException;
@@ -74,7 +75,9 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    abstract protected IModel<String> newHeadingModel();
+    protected IModel<String> newHeadingModel() {
+        return new ResourceModel(this.getClass().getSimpleName());
+    }
 
     protected FeedbackPanel feedbackPanel = new FeedbackPanel("feedbackPanel");
 
@@ -114,12 +117,14 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
                 this instanceof LoginPage);
         Component registrationPage = new BookmarkableModelPageLink<Void>("registrationPage", RegistrationPage.class,
                 this instanceof RegistrationPage);
-        Component groupPage = new BookmarkableModelPageLink<Void>("groupPage", GroupPage.class,
-                groupPageParameter, this instanceof RegistrationPage);
+        Component groupPage = new BookmarkableModelPageLink<Void>("groupPage", GroupPage.class, groupPageParameter,
+                this instanceof RegistrationPage);
         Component playOffPage = new BookmarkableModelPageLink<Void>("playOffPage", PlayOffPage.class,
                 getPageParameters(), this instanceof PlayOffPage);
-        Component finalRankingPage = new BookmarkableModelPageLink<Void>("finalRankingPage", FinalRankingPage.class,
-                this instanceof FinalRankingPage);
+        Component finalRankingPage = new BookmarkableModelPageLink<Void>("finalRankingPage", FinalStandingsPage.class,
+                this instanceof FinalStandingsPage);
+        Component publicTournamentPage = new BookmarkableModelPageLink<Void>("publicTournamentPage",
+                PublicTournamentPage.class, groupPageParameter, this instanceof PublicTournamentPage);
 
         add(homePage);
         add(seasonPage);
@@ -133,6 +138,7 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
         add(groupPage);
         add(playOffPage);
         add(finalRankingPage);
+        add(publicTournamentPage);
 
         homePage.setVisible(true);
 
@@ -143,6 +149,7 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
             finalRankingPage.setVisible(true);
             logoutPage.setVisible(true);
         } else {
+            publicTournamentPage.setVisible(true);
             if (getTournamentSession().isSignedIn()) {
                 seasonPage.setVisible(true);
                 tournamentPage.setVisible(true);
@@ -230,8 +237,16 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
     }
 
     protected Tournament getTournament(PageParameters pageParameters) {
-        Tournament tournament = getTournamentSession().getTournament();
+        return getTournament(pageParameters, false);
+    }
+
+    protected Tournament getTournament(PageParameters pageParameters, boolean ignoreSession) {
+        Tournament tournament = null;
         Integer tournamentId = null;
+
+        if (!ignoreSession) {
+            tournament = getTournamentSession().getTournament();
+        }
 
         if (tournament == null) {
             if (!pageParameters.get(TID).isNull()) {
@@ -246,6 +261,11 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
         }
 
         if (tournament != null) {
+            if (this instanceof TournamentOverviewPage) {
+                if (BooleanUtils.isNotTrue(tournament.getPublish())) {
+                    throw new RestartResponseAtInterceptPageException(PublicTournamentPage.class);
+                }
+            }
             return tournament;
         }
 
@@ -253,12 +273,17 @@ public abstract class BasePage extends WebPage implements TournamentPageParamete
     }
 
     protected Groups getGroup(PageParameters parameters) {
+        return getGroup(parameters, false);
+    }
+
+    protected Groups getGroup(PageParameters parameters, boolean ignoreSession) {
         Groups group = null;
         if (!parameters.get(GID).isNull()) {
             group = groupService.getGroup(new Groups()._setId(parameters.get(GID).toInteger()));
         }
         if (group == null) {
-            group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters))._setName("1"));
+            group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters, ignoreSession))
+                    ._setName("1"));
         }
         return group;
     }

@@ -5,12 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -20,22 +19,23 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.time.Duration;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.FinalStanding;
+import org.toursys.web.components.TournamentButton;
 import org.toursys.web.link.DownloadModelLink;
+import org.toursys.web.model.TournamentFileReadOnlyModel;
 
 @AuthorizeInstantiation(Roles.USER)
-public class FinalRankingPage extends TournamentHomePage {
+public class FinalStandingsPage extends TournamentHomePage {
 
     private static final long serialVersionUID = 1L;
     private List<FinalStanding> finalStandings;
 
-    public FinalRankingPage() {
+    public FinalStandingsPage() {
         this(new PageParameters());
     }
 
-    public FinalRankingPage(PageParameters parameters) {
+    public FinalStandingsPage(PageParameters parameters) {
         finalStandings = finalStandingService.getFinalStandings(tournament);
         createPage();
     }
@@ -83,7 +83,7 @@ public class FinalRankingPage extends TournamentHomePage {
                 }
             };
 
-            DataView<FinalStanding> dataView = new DataView<FinalStanding>("rows", playerDataProvider) {
+            final DataView<FinalStanding> dataView = new DataView<FinalStanding>("rows", playerDataProvider) {
 
                 private static final long serialVersionUID = 1L;
 
@@ -110,42 +110,30 @@ public class FinalRankingPage extends TournamentHomePage {
             };
             add(dataView);
 
-            add(new Button("back", new ResourceModel("back")) {
+            add(new TournamentButton("back", new ResourceModel("back")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(PlayOffPage.class, getPageParameters());
                 };
             }.setDefaultFormProcessing(false));
 
-            DownloadLink finalStandingsLink = new DownloadModelLink("finalStandings",
-                    new AbstractReadOnlyModel<File>() {
-                        private static final long serialVersionUID = 1L;
+            add(new DownloadModelLink("finalStandings", new TournamentFileReadOnlyModel() {
+                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public File getObject() {
-                            File tempFile;
-                            try {
-                                tempFile = PdfFactory.createFinalStandings(WicketApplication.getFilesPath(),
-                                        finalStandings);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e);
-                            }
-                            return tempFile;
-                        }
-                    });
-            finalStandingsLink.setCacheDuration(Duration.NONE).setDeleteAfterDownload(true);
+                @Override
+                public Component getFormComponent() {
+                    return FinalStandingsForm.this;
+                }
 
-            add(finalStandingsLink);
+                @Override
+                public File getTournamentObject() {
+                    return PdfFactory.createFinalStandings(WicketApplication.getFilesPath(), finalStandings);
+                }
+            }));
         }
-    }
-
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("finalStandings");
     }
 
 }

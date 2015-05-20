@@ -1,6 +1,6 @@
 package org.toursys.processor;
 
-public class TournamentException extends RuntimeException {
+public abstract class TournamentException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,5 +19,12 @@ public class TournamentException extends RuntimeException {
     public TournamentException(Throwable cause) {
         super(cause);
     }
+
+    /**
+     * Returns the code of the exception as passed on to the frontend.
+     * 
+     * @return
+     */
+    abstract public String getCode();
 
 }

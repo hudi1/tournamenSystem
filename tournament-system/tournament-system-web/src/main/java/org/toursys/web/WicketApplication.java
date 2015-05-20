@@ -11,7 +11,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.SharedResourceReference;
+import org.apache.wicket.request.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,25 +43,24 @@ public class WicketApplication extends AuthenticatedWebApplication {
         mountPage("registration", RegistrationPage.class);
         mountPage("group", GroupPage.class);
         mountPage("player", PlayerPage.class);
-        mountPage("playerEdit", PlayerEditPage.class);
+        mountPage("playerInfo", PlayerEditPage.class);
         mountPage("schedule", SchedulePage.class);
         mountPage("options", TournamentOptionsPage.class);
         mountPage("playOff", PlayOffPage.class);
         mountPage("user", UserPage.class);
-        mountPage("userEdit", UserEditPage.class);
+        mountPage("userInfo", UserEditPage.class);
         mountPage("login", LoginPage.class);
         mountPage("logout", LogoutPage.class);
         mountPage("compare", ComparePage.class);
-        mountPage("finalRanking", FinalRankingPage.class);
-        mountPage("tournamentHomePage", TournamentHomePage.class);
+        mountPage("finalStandings", FinalStandingsPage.class);
+        mountPage("tournamentHome", TournamentHomePage.class);
+        mountPage("publicTournament", PublicTournamentPage.class);
+        mountPage("tournamentOverview", TournamentOverviewPage.class);
     }
 
     private void mountResource() {
-        mountResource(getFilesPath() + "img/delete.png", new SharedResourceReference("delete"));
-        mountResource(getFilesPath() + "img/enter.png", new SharedResourceReference("enter"));
-
-        // getSharedResources().add("delete", new ContextRelativeResource("img/delete.png"));
-        // getSharedResources().add("enter", new ContextRelativeResource("img/enter.png"));
+        getSharedResources().add("delete", new ContextRelativeResource("img/delete.png"));
+        getSharedResources().add("enter", new ContextRelativeResource("img/enter.png"));
     }
 
     @Override
@@ -89,12 +88,14 @@ public class WicketApplication extends AuthenticatedWebApplication {
                     // return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(e)));
                 }
             });
-            // getResourceSettings().setResourceStreamLocator(new CustomResourceStreamLocator());
-            // load i18n messages
-            getResourceSettings().getStringResourceLoaders().add(
-                    new SpringStringResourceLoader(WebApplicationContextUtils
-                            .getWebApplicationContext(getServletContext())));
+            loadI18nMessages();
         }
+    }
+
+    private void loadI18nMessages() {
+        getResourceSettings().getStringResourceLoaders()
+                .add(new SpringStringResourceLoader(WebApplicationContextUtils
+                        .getWebApplicationContext(getServletContext())));
     }
 
     private void initConfiguration() {
@@ -123,4 +124,5 @@ public class WicketApplication extends AuthenticatedWebApplication {
     protected Class<? extends WebPage> getSignInPageClass() {
         return LoginPage.class;
     }
+
 }

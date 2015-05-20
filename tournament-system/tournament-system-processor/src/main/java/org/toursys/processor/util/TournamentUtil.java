@@ -2,13 +2,15 @@ package org.toursys.processor.util;
 
 import java.security.MessageDigest;
 
-import org.toursys.processor.TournamentException;
+import org.toursys.repository.model.Groups;
+import org.toursys.repository.model.GroupsPlayOffType;
+import org.toursys.repository.model.Tournament;
 
 public class TournamentUtil {
 
     public static final String ALGORITHM_SHA = "SHA-512";
 
-    public static String getRoundName(int playerCount, int position) {
+    private static String getRoundName(int playerCount, int position) {
         int actualRound = getRound(playerCount, position);
         int roundsCount = binlog(playerCount);
 
@@ -26,9 +28,10 @@ public class TournamentUtil {
             return RoundName.FINALS_8.name();
         case 4:
             return RoundName.FINALS_16.name();
+        default:
+            return RoundName.UNKNOWN.name();
         }
 
-        throw new TournamentException("Unknown round of playOff");
     }
 
     /*
@@ -98,5 +101,25 @@ public class TournamentUtil {
             result.append(Integer.toHexString(value[i] & 0xFF));
         }
         return result.toString();
+    }
+
+    public static String getRoundName(Tournament tournament, Groups group, Integer position) {
+        if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
+            switch (position) {
+            case 0:
+                return RoundName.FINAL.name();
+            case 1:
+                return RoundName._3rd.name();
+            case 2:
+                return RoundName._5th.name();
+            default:
+                return RoundName.UNKNOWN.name();
+            }
+        } else {
+            int playerCount = GroupsPlayOffType.FINAL.equals(group.getPlayOffType()) ? tournament.getPlayOffFinal()
+                    : tournament.getPlayOffLower();
+            return getRoundName(playerCount, position);
+        }
+
     }
 }

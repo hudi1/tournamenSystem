@@ -16,6 +16,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
+import org.toursys.processor.BadOptionsTournamentException;
 import org.toursys.processor.util.NameGenerator;
 import org.toursys.repository.dao.helper.TournamentFactory;
 import org.toursys.repository.model.GameImpl;
@@ -232,6 +233,12 @@ public class TournamentServiceParametrizedITest {
                 break;
             case LOWER:
                 gamesCount = tournament.getPlayOffLower();
+                break;
+            case CROSS:
+                if (tournament.getPlayOffFinal() != tournament.getPlayOffLower()) {
+                    throw new BadOptionsTournamentException();
+                }
+                gamesCount += tournament.getPlayOffFinal();
                 break;
             default:
                 break;

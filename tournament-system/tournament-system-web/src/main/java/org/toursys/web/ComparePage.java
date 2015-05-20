@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -24,6 +23,7 @@ import org.toursys.processor.service.GroupService;
 import org.toursys.processor.service.ParticipantService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
+import org.toursys.web.components.TournamentAjaxButton;
 
 @AuthorizeInstantiation(Roles.USER)
 public class ComparePage extends WebPage {
@@ -59,10 +59,10 @@ public class ComparePage extends WebPage {
         }
 
         private void addCloseButton(final ModalWindow window) {
-            add(new AjaxButton("close", new ResourceModel("saveClose")) {
+            add(new TournamentAjaxButton("close", new ResourceModel("saveClose")) {
                 private static final long serialVersionUID = 1L;
 
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                protected void submit(AjaxRequestTarget target, Form<?> form) {
                     window.close(target);
                 }
             });

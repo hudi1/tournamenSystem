@@ -1,10 +1,10 @@
-SEQ_PARTICIPANT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'PARTICIPANT';
-SEQ_PLAYER(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'PLAYER';
-SEQ_GAME(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'GAME';
-SEQ_TOURNAMENT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'TOURNAMENT';
-SEQ_SEASON(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'SEASON';
-SEQ_GROUP(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'GROUPS';
-SEQ_USER(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournament_system' AND TABLE_NAME = 'USER';
+SEQ_PARTICIPANT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'PARTICIPANT';
+SEQ_PLAYER(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'PLAYER';
+SEQ_GAME(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'GAME';
+SEQ_TOURNAMENT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'TOURNAMENT';
+SEQ_SEASON(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'SEASON';
+SEQ_GROUP(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'GROUPS';
+SEQ_USER(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'USER';
 
 INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
   insert into %%PLAYER (%ID, %NAME, %SURNAME, %CLUB, {? :playerDiscriminator | %PLAYER_DISCRIMINATOR,} %WORLD_RANKING, %USER_ID)
@@ -18,10 +18,10 @@ INSERT_GROUPS(CRUD,inx=Groups,outx=Groups,tab=groups)=
 
 INSERT_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
   insert into %%TOURNAMENT (%ID, %NAME, %SEASON_ID {? :finalPromoting | ,%FINAL_PROMOTING} {? :lowerPromoting | ,%LOWER_PROMOTING} {? :winPoints | ,%WIN_POINTS}
-  	{? :playOffFinal | ,%PLAY_OFF_FINAL} {? :playOffLower | ,%PLAY_OFF_LOWER} {? :minPlayersInGroup | ,%MIN_PLAYERS_IN_GROUP} {? :sortType | ,%SORT_TYPE}
+  	{? :playOffFinal | ,%PLAY_OFF_FINAL} {? :playOffLower | ,%PLAY_OFF_LOWER} {? :minPlayersInGroup | ,%MIN_PLAYERS_IN_GROUP} {? :sortType | ,%SORT_TYPE} {? :publish | ,%PUBLISH}
   )
   {= values (:id(seq=SEQ_TOURNAMENT), :name, :season.id, {? :finalPromoting | :finalPromoting} {? :lowerPromoting | ,:lowerPromoting} {? :winPoints| ,:winPoints} {? :playOffFinal | ,:playOffFinal} {? :playOffLower | ,:playOffLower} 
-  	{? :minPlayersInGroup | ,:minPlayersInGroup } {? :sortType | ,:sortType } 
+  	{? :minPlayersInGroup | ,:minPlayersInGroup } {? :sortType | ,:sortType } {? :publish | ,:publish } 
   ) }
 ;
 
@@ -87,6 +87,7 @@ UPDATE_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
     { ,%PLAY_OFF_LOWER = :playOffLower(call=isDef) }
     { ,%MIN_PLAYERS_IN_GROUP = :minPlayersInGroup(call=isDef) }
     { ,%SORT_TYPE = :sortType(call=isDef) }
+    { ,%PUBLISH = :publish(call=isDef) }
   }
   {= where
     {& %ID = :id(!empty) }
@@ -452,7 +453,7 @@ INSERT_SEASON(CRUD,inx=Season,outx=Season,tab=season)=
 
 GET_SEASON(CRUD,inx=Season,outx=Season,tab=season=s,tab=tournament=t,tab=user=u)=
   select %s.ID @id(id), %s.NAME @name, %s.USER_ID @user.id(id)
-         {? :tournaments(call=toInit) | , %t.ID @tournaments.id(id), %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_FINAL @tournaments.playOffFinal, %t.PLAY_OFF_LOWER @tournaments.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournaments.minPlayersInGroup, %t.SORT_TYPE @tournaments.sortType }
+         {? :tournaments(call=toInit) | , %t.ID @tournaments.id(id), %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_FINAL @tournaments.playOffFinal, %t.PLAY_OFF_LOWER @tournaments.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournaments.minPlayersInGroup, %t.SORT_TYPE @tournaments.sortType, %t.PUBLISH @tournaments.publish }
          {? :user(call=toInit) | , %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.PLATNOST @user.platnost }
   from %%SEASON s
   {? :tournaments(call=toInit) | left join %%TOURNAMENT t on %s.ID = %t.SEASON_ID }
@@ -484,7 +485,7 @@ DELETE_SEASON(CRUD,inx=Season,outx=Season,tab=season)=
 
 SELECT_SEASON(QRY,inx=Season,outx=Season,tab=season=s,tab=tournament=t,tab=user=u)=
   select %s.ID @id(id), %s.NAME @name, %s.USER_ID @user.id(id)
-         {? :tournaments(call=toInit) | , %t.ID @tournaments.id(id), %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_FINAL @tournaments.playOffFinal, %t.PLAY_OFF_LOWER @tournaments.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournaments.minPlayersInGroup, %t.SORT_TYPE @tournaments.sortType }
+         {? :tournaments(call=toInit) | , %t.ID @tournaments.id(id), %t.NAME @tournaments.name, %t.SEASON_ID @tournaments.season.id, %t.FINAL_PROMOTING @tournaments.finalPromoting, %t.LOWER_PROMOTING @tournaments.lowerPromoting, %t.WIN_POINTS @tournaments.winPoints, %t.PLAY_OFF_FINAL @tournaments.playOffFinal, %t.PLAY_OFF_LOWER @tournaments.playOffLower, %t.MIN_PLAYERS_IN_GROUP @tournaments.minPlayersInGroup, %t.SORT_TYPE @tournaments.sortType, %t.PUBLISH @tournaments.publish }
          {? :user(call=toInit) | , %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.PLATNOST @user.platnost }
   from %%SEASON s
   {? :tournaments(call=toInit) | left join %%TOURNAMENT t on %s.ID = %t.SEASON_ID }
@@ -499,7 +500,7 @@ SELECT_SEASON(QRY,inx=Season,outx=Season,tab=season=s,tab=tournament=t,tab=user=
 ;
 
 GET_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g,tab=finalStanding=f,tab=season=s)=
-  select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_FINAL @playOffFinal, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup, %t.SORT_TYPE @sortType
+  select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_FINAL @playOffFinal, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup, %t.SORT_TYPE @sortType, %t.PUBLISH @publish
          {? :groups(call=toInit) | , %g.ID @groups.id(id), %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.TYPE @groups.type, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace, %g.PLAY_OFF @groups.playOff, %g.PLAY_OFF_TYPE @groups.playOffType }
          {? :finalStandings(call=toInit) | , %f.ID @finalStandings.id(id), %f.PLAYER_ID @finalStandings.player.id, %f.FINAL_RANK @finalStandings.finalRank, %f.TOURNAMENT_ID @finalStandings.tournament.id }
          {? :season(call=toInit) | , %s.NAME @season.name, %s.USER_ID @season.user.id }
@@ -518,6 +519,7 @@ GET_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g
     {& %t.PLAY_OFF_LOWER = :playOffLower }
     {& %t.MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
     {& %t.SORT_TYPE = :sortType }
+    {& %t.PUBLISH = :publish }
   }
 ;
 
@@ -529,7 +531,7 @@ DELETE_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
 ;
 
 SELECT_TOURNAMENT(QRY,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups=g,tab=finalStanding=f,tab=season=s)=
-  select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_FINAL @playOffFinal, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup, %t.SORT_TYPE @sortType
+  select %t.ID @id(id), %t.NAME @name, %t.SEASON_ID @season.id(id), %t.FINAL_PROMOTING @finalPromoting, %t.LOWER_PROMOTING @lowerPromoting, %t.WIN_POINTS @winPoints, %t.PLAY_OFF_FINAL @playOffFinal, %t.PLAY_OFF_LOWER @playOffLower, %t.MIN_PLAYERS_IN_GROUP @minPlayersInGroup, %t.SORT_TYPE @sortType, %t.PUBLISH @publish
          {? :groups(call=toInit) | , %g.ID @groups.id(id), %g.NAME @groups.name, %g.NUMBER_OF_HOCKEY @groups.numberOfHockey, %g.TYPE @groups.type, %g.INDEX_OF_FIRST_HOCKEY @groups.indexOfFirstHockey, %g.TOURNAMENT_ID @groups.tournament.id, %g.COPY_RESULT @groups.copyResult, %g.PLAY_THIRD_PLACE @groups.playThirdPlace, %g.PLAY_OFF @groups.playOff, %g.PLAY_OFF_TYPE @groups.playOffType }
          {? :finalStandings(call=toInit) | , %f.ID @finalStandings.id(id), %f.PLAYER_ID @finalStandings.player.id, %f.FINAL_RANK @finalStandings.finalRank, %f.TOURNAMENT_ID @finalStandings.tournament.id }
          {? :season(call=toInit) | , %s.NAME @season.name, %s.USER_ID @season.user.id }
@@ -548,6 +550,7 @@ SELECT_TOURNAMENT(QRY,inx=Tournament,outx=Tournament,tab=tournament=t,tab=groups
     {& %t.PLAY_OFF_LOWER = :playOffLower }
     {& %t.MIN_PLAYERS_IN_GROUP = :minPlayersInGroup }
     {& UPPER(%t.SORT_TYPE) like :+sortType }
+    {& %t.PUBLISH = :publish }
   }
   {#1 order by %t.ID }
   {#2 order by %t.SEASON_ID }

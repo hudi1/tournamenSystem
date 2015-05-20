@@ -8,12 +8,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -29,6 +26,10 @@ import org.apache.wicket.request.resource.SharedResourceReference;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;
 import org.toursys.web.components.PropertyPageableListView;
+import org.toursys.web.components.TournamentAjaxButton;
+import org.toursys.web.components.TournamentAjaxCheckBox;
+import org.toursys.web.components.TournamentAjaxEditableLabel;
+import org.toursys.web.link.TournamentAjaxLink;
 
 @AuthorizeInstantiation(Roles.USER)
 public class TournamentPage extends BasePage {
@@ -71,11 +72,12 @@ public class TournamentPage extends BasePage {
         }
 
         private void addTournamentAddButton() {
-            add(new AjaxButton("addTournament", new ResourceModel("addTournament")) {
+            add(new TournamentAjaxButton("addTournament", new ResourceModel("addTournament")) {
 
                 private static final long serialVersionUID = 1L;
 
-                public void onClick(AjaxRequestTarget target) {
+                @Override
+                public void submit(AjaxRequestTarget target, Form<?> form) {
                     Tournament tournament = new Tournament();
                     tournament.setName(getString("enterName"));
                     selectedSeason.getTournaments().add(tournamentService.createTournament(selectedSeason, tournament));
@@ -85,16 +87,6 @@ public class TournamentPage extends BasePage {
                 @Override
                 public boolean isVisible() {
                     return selectedSeason != null;
-                };
-
-                @Override
-                protected void onError(AjaxRequestTarget target, Form<?> form) {
-                    onClick(target);
-                }
-
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    onClick(target);
                 }
 
             });
@@ -108,21 +100,20 @@ public class TournamentPage extends BasePage {
 
                 @Override
                 protected void populateItem(final ListItem<Tournament> listItem) {
-                    listItem.add(new AjaxEditableLabel<String>("name") {
+                    listItem.add(new TournamentAjaxEditableLabel("name") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onSubmit(AjaxRequestTarget target) {
-                            super.onSubmit(target);
+                        public void submit(AjaxRequestTarget target) {
                             tournamentService.updateTournament(listItem.getModelObject());
                         };
 
                     });
-                    listItem.add(new AjaxLink<Void>("deleteTournament") {
+                    listItem.add(new TournamentAjaxLink("deleteTournament") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onClick(AjaxRequestTarget target) {
+                        public void click(AjaxRequestTarget target) {
                             Tournament tournament = listItem.getModelObject();
                             TournamentForm.this.getModelObject().getTournaments().remove(tournament);
                             tournamentService.deleteTournament(tournament);
@@ -137,8 +128,7 @@ public class TournamentPage extends BasePage {
 
                                 @Override
                                 public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(confirm(" + getString("del.tournament") + ")){ " + script
-                                            + "}else{return false;}";
+                                    return "if(!confirm('" + getString("del.tournament") + "')) return false;" + script;
                                 }
 
                             };
@@ -153,11 +143,11 @@ public class TournamentPage extends BasePage {
                                 }
                             })));
 
-                    listItem.add(new AjaxLink<Void>("enterTournament") {
+                    listItem.add(new TournamentAjaxLink("enterTournament") {
 
                         private static final long serialVersionUID = 1L;
 
-                        public void onClick(AjaxRequestTarget target) {
+                        public void click(AjaxRequestTarget target) {
                             getTournamentSession().setTournament(listItem.getModelObject());
                             setResponsePage(RegistrationPage.class);
                         }
@@ -171,6 +161,16 @@ public class TournamentPage extends BasePage {
                                     return getString("enterTournament");
                                 }
                             })));
+
+                    listItem.add(new TournamentAjaxCheckBox("publish") {
+
+                        private static final long serialVersionUID = 1L;
+
+                        protected void update(AjaxRequestTarget target) {
+                            tournamentService.updateTournament(listItem.getModelObject());
+                        };
+
+                    });
 
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
@@ -223,8 +223,4 @@ public class TournamentPage extends BasePage {
         }
     }
 
-    @Override
-    protected IModel<String> newHeadingModel() {
-        return new ResourceModel("selectTournament");
-    }
 }

@@ -10,7 +10,6 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AbstractAutoCompleteRenderer;
@@ -36,6 +35,8 @@ import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Player;
 import org.toursys.web.components.ModelAutoCompleteTextField;
+import org.toursys.web.components.TournamentAjaxButton;
+import org.toursys.web.components.TournamentButton;
 import org.toursys.web.link.AjaxModelLink;
 
 @AuthorizeInstantiation(Roles.USER)
@@ -188,8 +189,8 @@ public class RegistrationPage extends TournamentHomePage {
 
                                 @Override
                                 public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(confirm(" + getString("del.participant") + ")){ " + script
-                                            + "}else{return false;}";
+                                    return "if(!confirm('" + getString("del.participant") + "')) return false;"
+                                            + script;
                                 }
 
                             };
@@ -218,12 +219,12 @@ public class RegistrationPage extends TournamentHomePage {
         }
 
         private void addShowPlayersButton() {
-            add(new Button("playersButton", new ResourceModel("players")) {
+            add(new TournamentButton("playersButton", new ResourceModel("players")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     setResponsePage(PlayerPage.class, getPageParameters());
                 }
             });
@@ -235,7 +236,7 @@ public class RegistrationPage extends TournamentHomePage {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void click(AjaxRequestTarget target) {
                     modalWindow.show(target);
                 }
             });
@@ -276,25 +277,27 @@ public class RegistrationPage extends TournamentHomePage {
         }
 
         private Button getRegisterPlayersButton() {
-            return new Button("registerButton") {
+            return new TournamentButton("registerButton") {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit() {
+                public void submit() {
                     registerPlayer();
                 }
             };
         }
 
         private void registerPlayer() {
+
             if (playerModel.getObject() != null) {
                 Player player = playerModel.getObject();
                 notRegistratedPlayers.remove(player);
-                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player,
-                        group._setType(GroupsType.BASIC)));
+                tournamentParticipants.add(participantService.createBasicParticipant(tournament, player, new Groups()
+                        ._setName(group.getName())._setType(GroupsType.BASIC)));
                 playerModel.setObject(null);
             }
+
         }
     }
 
@@ -312,12 +315,12 @@ public class RegistrationPage extends TournamentHomePage {
         }
 
         private void addPlusButton(final TextField<String> groupTextField) {
-            add(new AjaxButton("minus", Model.of("-")) {
+            add(new TournamentAjaxButton("minus", Model.of("-")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                public void submit(AjaxRequestTarget target, Form<?> form) {
                     Integer groupName = Integer.parseInt(group.getName());
                     if (groupName > 1) {
                         groupName--;
@@ -330,12 +333,12 @@ public class RegistrationPage extends TournamentHomePage {
         }
 
         private void addMinusButton(final TextField<String> groupTextField) {
-            add(new AjaxButton("plus", Model.of("+")) {
+            add(new TournamentAjaxButton("plus", Model.of("+")) {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                public void submit(AjaxRequestTarget target, Form<?> form) {
                     Integer groupName = Integer.parseInt(group.getName());
                     groupName++;
                     group.setName(groupName.toString());
@@ -360,7 +363,7 @@ public class RegistrationPage extends TournamentHomePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of(getString("registration") + " " + tournament.getName());
+        return Model.of(getString(this.getClass().getSimpleName()) + ": " + tournament.getName());
     }
 
 }
