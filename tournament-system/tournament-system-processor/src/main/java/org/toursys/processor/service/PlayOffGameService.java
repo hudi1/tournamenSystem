@@ -151,30 +151,10 @@ public class PlayOffGameService extends AbstractService {
         LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
 
         List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
-        updatePlayOffGames(playOffPlayer, finalgames, group);
+        updatePlayOffGames(playOffPlayer, finalgames, group, playOffPlayerCount);
 
         time = System.currentTimeMillis() - time;
         logger.debug("End: Update playerOff games: " + time + " ms");
-    }
-
-    private void updatePlayOffGames(LinkedList<Participant> playOffPlayer, List<PlayOffGame> finalgames, Groups group) {
-        if (finalgames.size() != playOffPlayer.size()) {
-            throw new RuntimeException("Size of players is not same as playOffGames." + finalgames.size() + " vs "
-                    + playOffPlayer.size());
-        }
-
-        for (PlayOffGame playOffGame : finalgames) {
-            if (!playOffPlayer.isEmpty()) {
-                playOffGame.setHomeParticipant(playOffPlayer.removeFirst());
-                playOffGame.setAwayParticipant(playOffPlayer.removeLast());
-            } else {
-                playOffGame.setHomeParticipant(null);
-                playOffGame.setAwayParticipant(null);
-                playOffGame.setResult(null);
-                playOffGame.setStatus(null);
-            }
-            updatePlayOffGame(playOffGame);
-        }
     }
 
     @Transactional
@@ -236,15 +216,53 @@ public class PlayOffGameService extends AbstractService {
 
             PlayOffGame playOffGame;
             if (!playOffPlayer.isEmpty()) {
-                position = pc.getPosition(i);
                 playOffGame = createPlayOffGame(playOffPlayer.removeFirst(), playOffPlayer.removeLast(), group,
-                        position);
+                        pc.getPosition(i));
                 position = playerCount / 2;
             } else {
                 playOffGame = createPlayOffGame(null, null, group, ++position);
             }
             playOffGames.add(playOffGame);
         }
+        logger.debug("Created play off games: " + playOffGames);
+    }
+
+    private void updatePlayOffGames(LinkedList<Participant> playOffPlayer, List<PlayOffGame> finalgames, Groups group,
+            int playOffPlayerCount) {
+        logger.debug("Updating playOff games: " + finalgames);
+        int playerCount = playOffPlayer.size();
+        PositionCounter pc = new PositionCounter(playerCount);
+        int position = 0;
+
+        for (int i = 0; i < playOffPlayerCount; i++) {
+            if (!playOffPlayer.isEmpty()) {
+                PlayOffGame playOffGame = getPlayOffGameByPosition(finalgames, pc.getPosition(i));
+                playOffGame.setHomeParticipant(playOffPlayer.removeFirst());
+                playOffGame.setAwayParticipant(playOffPlayer.removeLast());
+                position = playerCount / 2;
+                updatePlayOffGame(playOffGame);
+            } else {
+                PlayOffGame playOffGame = getPlayOffGameByPosition(finalgames, ++position);
+                playOffGame.setHomeParticipant(null);
+                playOffGame.setAwayParticipant(null);
+                playOffGame.setResult(null);
+                playOffGame.setStatus(null);
+                updatePlayOffGame(playOffGame);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        LinkedList<String> myQueue = new LinkedList<String>();
+        myQueue.add("A");
+        myQueue.add("B");
+        myQueue.add("C");
+        myQueue.add("D");
+
+        List<String> myList = new ArrayList<String>(myQueue);
+
+        for (Object theFruit : myList)
+            System.out.println(theFruit);
     }
 
     private void updatePlayOffGame(List<PlayOffGame> playOffGames, int position, int playerPlayOffCount) {

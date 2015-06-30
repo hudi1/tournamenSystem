@@ -53,7 +53,6 @@ public class SkTournamentSorter extends TournamentSorter {
         temporatyParticipant.add(participants.get(0));
 
         for (int i = 0; i < participants.size() - 1; i++) {
-            logger.debug("xxxxxxxxxxxx" + Arrays.toString(temporatyParticipant.toArray()));
 
             if (participants.get(i).getPoints() == participants.get(i + 1).getPoints()) {
                 temporatyParticipant.add(participants.get(i + 1));
@@ -62,7 +61,9 @@ public class SkTournamentSorter extends TournamentSorter {
             int position = i;
             if (participants.get(i).getPoints() != participants.get(i + 1).getPoints()
                     || (i == participants.size() - 2)) {
-                if (i == participants.size() - 2) {
+                if ((i == participants.size() - 2)
+                        && (participants.get(i).getPoints() == participants.get(i + 1).getPoints())) {
+                    logger.debug("increasing position" + position);
                     position++;
                 }
                 if (temporatyParticipant.size() > 2) {
@@ -88,7 +89,7 @@ public class SkTournamentSorter extends TournamentSorter {
             }
         }
 
-        logger.debug("End Sort participants: " + Arrays.toString(participants.toArray()));
+        logger.debug("End Sort participants: " + level + " " + Arrays.toString(participants.toArray()));
     }
 
     private void setRanks(List<Participant> participants) {

@@ -520,7 +520,7 @@ public class TournamentOverviewPage extends BasePage {
 
     @Override
     protected IModel<String> newHeadingModel() {
-        return Model.of(getString(this.getClass().getName()) + ": " + tournament.getName());
+        return Model.of(getString(this.getClass().getSimpleName()) + ": " + tournament.getName());
     }
 
 }

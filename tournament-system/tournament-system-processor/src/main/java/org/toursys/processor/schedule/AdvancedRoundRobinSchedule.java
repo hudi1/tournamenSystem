@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.toursys.processor.BadOptionsTournamentException;
 import org.toursys.processor.service.TournamentService;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
@@ -16,6 +19,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
     @SpringBean(name = "tournamentService")
     private TournamentService tournamentService;
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private LinkedList<List<Participant>> playerPerBasicGroup;
     private int playerCount;
 
@@ -27,18 +31,19 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
 
     @Override
     protected void createSchedule() {
+        logger.debug("Creating advanced round robim schedule, playerCount: " + playerPerBasicGroup.get(0).size());
         schedule = new ArrayList<GameImpl>();
         if (playerPerBasicGroup.isEmpty()) {
             return;
         }
 
         // TODO vyhodit a osetrit aby k tomu nemohlo nastat
-        // checkPlayerCount();
-
+        checkPlayerCount();
+        playerCount = playerPerBasicGroup.get(0).size();
         int groupCount = playerPerBasicGroup.size();
 
         if (groupCount % 2 == 0) {
-            for (int i = 0; i < groupCount; i++) {
+            for (int i = 0; i < groupCount - 1; i++) {
                 createEvenGroupRound();
                 rotatePlayerPerBasicGroup();
             }
@@ -48,12 +53,13 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
         }
     }
 
-    /*
-     * private void checkPlayerCount() { for (int i = 0; i < playerPerBasicGroup.size() - 1; i++) { if
-     * (playerPerBasicGroup.get(i).size() != playerPerBasicGroup.get(i + 1).size()) { throw new
-     * TournamentException("Count of players in groups where is counted previous result is not same"); } } playerCount =
-     * playerPerBasicGroup.get(0).size(); }
-     */
+    private void checkPlayerCount() {
+        for (int i = 0; i < playerPerBasicGroup.size() - 1; i++) {
+            if (playerPerBasicGroup.get(i).size() != playerPerBasicGroup.get(i + 1).size()) {
+                throw new BadOptionsTournamentException();
+            }
+        }
+    }
 
     private void createEvenGroupRound() {
         List<Round> rounds = new ArrayList<Round>();

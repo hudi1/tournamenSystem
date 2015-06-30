@@ -14,4 +14,5 @@ public abstract class AbstractService {
     public void setTournamentAggregationDao(TournamentAggregationDao tournamentAggregationDao) {
         this.tournamentAggregationDao = tournamentAggregationDao;
     }
+
 }

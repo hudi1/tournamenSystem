@@ -175,6 +175,7 @@ public class ParticipantService extends AbstractService {
                 }
             }
         }
+        logger.debug("Return get Advanced Players By Group" + playerByGroup);
         return playerByGroup;
     }
 

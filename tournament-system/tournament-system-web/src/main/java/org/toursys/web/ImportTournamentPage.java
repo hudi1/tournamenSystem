@@ -2,34 +2,24 @@ package org.toursys.web;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.UrlTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.UrlValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.toursys.processor.service.ImportService;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 import org.toursys.web.mask.MaskIndicatingAjaxButton;
 
-public class ImportTournamentPage extends WebPage {
+public class ImportTournamentPage extends AbstractBasePage {
 
     private static final long serialVersionUID = 1L;
     private final User user;
     private final Tournament tournament;
 
-    @SpringBean(name = "importService")
-    protected ImportService importService;
-
     final FeedbackPanel feedBackPanel;
     final ModalWindow modalWindow;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public ImportTournamentPage(final ModalWindow modalWindow, final User user, Tournament tournament) {
         this.user = user;

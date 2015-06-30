@@ -48,7 +48,8 @@ public class GroupPage extends TournamentHomePage {
     private Groups group;
     private List<Participant> participants;
     private ModalWindow modalWindow;
-    private boolean sortParticipants;
+
+    // private boolean sortParticipants;
 
     public GroupPage() {
         this(new PageParameters());
@@ -405,17 +406,14 @@ public class GroupPage extends TournamentHomePage {
         }
     }
 
-    private boolean getSortParticipants(PageParameters parameters) {
-        if (parameters.get(UPDATE).isNull()) {
-            return false;
-        } else {
-            return parameters.get(UPDATE).toBoolean();
-        }
-    }
+    /*
+     * private boolean getSortParticipants(PageParameters parameters) { if (parameters.get(UPDATE).isNull()) { return
+     * false; } else { return parameters.get(UPDATE).toBoolean(); } }
+     */
 
     private void prepareData(PageParameters parameters) {
         group = getGroup(parameters);
-        sortParticipants = getSortParticipants(parameters);
+        // sortParticipants = getSortParticipants(parameters);
 
         if (group != null) {
             this.participants = getParticipants();
@@ -428,7 +426,7 @@ public class GroupPage extends TournamentHomePage {
     }
 
     private void updateFinalStanding() {
-        if (group.getType().equals(GroupsType.FINAL) && sortParticipants) {
+        if (group.getType().equals(GroupsType.FINAL)) {
             finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
         }
     }
@@ -445,9 +443,9 @@ public class GroupPage extends TournamentHomePage {
         List<Participant> participants = participantService.getSortedParticipants(new Participant()._setGroup(group));
         gameService.processGames(participants);
 
-        if (sortParticipants) {
-            participantService.sortParticipants(participants, tournament);
-        }
+        /*
+         * if (sortParticipants) { participantService.sortParticipants(participants, tournament); }
+         */
         return participants;
     }
 

@@ -8,7 +8,6 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -19,61 +18,16 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.RequestUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.toursys.processor.TournamentPageParameter;
-import org.toursys.processor.service.FinalStandingService;
-import org.toursys.processor.service.GameService;
-import org.toursys.processor.service.GroupService;
-import org.toursys.processor.service.ParticipantService;
-import org.toursys.processor.service.PlayOffGameService;
-import org.toursys.processor.service.PlayerService;
-import org.toursys.processor.service.ScheduleService;
-import org.toursys.processor.service.SeasonService;
-import org.toursys.processor.service.TournamentService;
-import org.toursys.processor.service.UserService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 import org.toursys.web.link.BookmarkableModelPageLink;
 import org.toursys.web.session.TournamentAuthenticatedWebSession;
 
-public abstract class BasePage extends WebPage implements TournamentPageParameter {
+public abstract class BasePage extends AbstractBasePage implements TournamentPageParameter {
 
     private static final long serialVersionUID = 1L;
-
-    @SpringBean(name = "playerService")
-    protected PlayerService playerService;
-
-    @SpringBean(name = "gameService")
-    protected GameService gameService;
-
-    @SpringBean(name = "scheduleService")
-    protected ScheduleService scheduleService;
-
-    @SpringBean(name = "seasonService")
-    protected SeasonService seasonService;
-
-    @SpringBean(name = "userService")
-    protected UserService userService;
-
-    @SpringBean(name = "groupService")
-    protected GroupService groupService;
-
-    @SpringBean(name = "participantService")
-    protected ParticipantService participantService;
-
-    @SpringBean(name = "playOffGameService")
-    protected PlayOffGameService playOffGameService;
-
-    @SpringBean(name = "finalStandingService")
-    protected FinalStandingService finalStandingService;
-
-    @SpringBean(name = "tournamentService")
-    protected TournamentService tournamentService;
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected IModel<String> newHeadingModel() {
         return new ResourceModel(this.getClass().getSimpleName());
