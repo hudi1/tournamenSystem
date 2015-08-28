@@ -43,7 +43,7 @@ public class TournamentOptionsPage extends TournamentHomePage {
 
     public TournamentOptionsPage(PageParameters parameters) {
         tournament = getTournament(parameters);
-        group = getGroup(parameters);
+        group = getGroup(parameters, tournament);
         setTournamentOption(parameters);
         setTableOption(parameters);
         createPage();

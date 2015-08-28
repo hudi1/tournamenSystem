@@ -56,7 +56,7 @@ public class PlayOffPage extends TournamentHomePage {
 
     private Tournament initPlayOffTournament() {
         Tournament tournament = new Tournament();
-        tournament.getGroups().addAll(groupService.getFinalGroups(new Groups()._setTournament(this.tournament)));
+        tournament.getGroups().addAll(groupService.getFinalGroups(this.tournament));
         for (Groups group : tournament.getGroups()) {
             group.getPlayOffGames().addAll(playOffGameService.getPlayOffGames(new PlayOffGame()._setGroup(group)));
         }

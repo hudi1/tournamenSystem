@@ -68,7 +68,7 @@ public class TournamentOverviewPage extends BasePage {
 
     private void prepareData(PageParameters parameters) {
         tournament = getTournament(parameters, true);
-        group = getGroup(parameters, true);
+        group = getGroup(parameters, tournament, true);
         participants = getParticipants();
         finalGroups = getFinalGroups();
         finalStandings = finalStandingService.getFinalStandings(tournament);
@@ -83,7 +83,7 @@ public class TournamentOverviewPage extends BasePage {
     }
 
     private List<Groups> getFinalGroups() {
-        List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(this.tournament));
+        List<Groups> finalGroups = groupService.getFinalGroups(tournament);
         for (Groups group : finalGroups) {
             group.getPlayOffGames().addAll(playOffGameService.getPlayOffGames(new PlayOffGame()._setGroup(group)));
         }
@@ -93,7 +93,7 @@ public class TournamentOverviewPage extends BasePage {
     private List<Participant> getParticipants() {
         List<Participant> participants;
         if (group != null) {
-            participants = participantService.getSortedParticipants(new Participant()._setGroup(group));
+            participants = participantService.getParticipandByGroup(group);
         } else {
             participants = new ArrayList<Participant>();
         }

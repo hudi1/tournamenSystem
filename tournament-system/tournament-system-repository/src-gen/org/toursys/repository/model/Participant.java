@@ -14,6 +14,7 @@ public class Participant implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	public static final int ORDER_BY_ID = 1;
+	public static final int ORDER_BY_RANK = 4;
 	public static final int ORDER_BY_GROUP = 3;
 	public static final int ORDER_BY_PLAYER = 2;
 	

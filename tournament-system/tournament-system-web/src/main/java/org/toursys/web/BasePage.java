@@ -226,18 +226,17 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
         throw new RestartResponseAtInterceptPageException(TournamentPage.class);
     }
 
-    protected Groups getGroup(PageParameters parameters) {
-        return getGroup(parameters, false);
+    protected Groups getGroup(PageParameters parameters, Tournament tournament) {
+        return getGroup(parameters, tournament, false);
     }
 
-    protected Groups getGroup(PageParameters parameters, boolean ignoreSession) {
+    protected Groups getGroup(PageParameters parameters, Tournament tournament, boolean ignoreSession) {
         Groups group = null;
         if (!parameters.get(GID).isNull()) {
-            group = groupService.getGroup(new Groups()._setId(parameters.get(GID).toInteger()));
+            group = groupService.getGroupById(parameters.get(GID).toInteger());
         }
         if (group == null) {
-            group = groupService.getGroup(new Groups()._setTournament(getTournament(parameters, ignoreSession))
-                    ._setName("1"));
+            group = groupService.getGroupByTournament(tournament);
         }
         return group;
     }

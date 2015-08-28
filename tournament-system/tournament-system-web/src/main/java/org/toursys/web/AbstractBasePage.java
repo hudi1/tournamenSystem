@@ -6,17 +6,17 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.toursys.processor.service.FinalStandingService;
-import org.toursys.processor.service.GameService;
-import org.toursys.processor.service.GroupService;
-import org.toursys.processor.service.ImportService;
-import org.toursys.processor.service.ParticipantService;
-import org.toursys.processor.service.PlayOffGameService;
-import org.toursys.processor.service.PlayerService;
-import org.toursys.processor.service.ScheduleService;
-import org.toursys.processor.service.SeasonService;
-import org.toursys.processor.service.TournamentService;
-import org.toursys.processor.service.UserService;
+import org.toursys.processor.service.game.GameService;
+import org.toursys.processor.service.group.GroupService;
+import org.toursys.processor.service.imports.ImportService;
+import org.toursys.processor.service.participant.ParticipantService;
+import org.toursys.processor.service.playOffGame.PlayOffGameService;
+import org.toursys.processor.service.player.PlayerService;
+import org.toursys.processor.service.schedule.ScheduleService;
+import org.toursys.processor.service.season.SeasonService;
+import org.toursys.processor.service.standing.FinalStandingService;
+import org.toursys.processor.service.tournament.TournamentService;
+import org.toursys.processor.service.user.UserService;
 
 public class AbstractBasePage extends WebPage {
 

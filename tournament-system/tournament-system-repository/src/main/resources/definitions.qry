@@ -1,7 +1,7 @@
 resolve-pojo-on;
-database-is-offline;
+database-is-online;
 database-jdbc-driver   com.mysql.jdbc.Driver;
-database-has-url   jdbc:mysql:\//localhost/tournament_system;
+database-has-url   jdbc:mysql:\//localhost/tournamentsystem;
 database-login-username   root;
 database-login-password   root;
 

@@ -87,6 +87,29 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.1</version>
                 </plugin>
+
+                <plugin>
+                    <!-- Run to generate XSDs: mvn light-air:generate-xsd -->
+                    <groupId>net.sf.lightairmp</groupId>
+                    <artifactId>light-air-maven-plugin</artifactId>
+                    <version>0.5</version>
+                    <executions>
+                        <execution>
+                            <phase>process-test-resources</phase>
+                            <goals>
+                                <goal>generate-xsd</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>mysql</groupId>
+                            <artifactId>mysql-connector-java</artifactId>
+                            <version>${version.mysql}</version>
+                            <scope>runtime</scope>                            
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -289,6 +312,13 @@
                 <groupId>xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>${version.xstream}</version>
+            </dependency>
+
+            <!-- JavaX -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
             </dependency>
 
             <!-- Test -->

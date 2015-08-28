@@ -15,6 +15,10 @@ public class GroupsName extends LinkedList<String> {
         add("F");
         add("G");
         add("H");
+        add("I");
+        add("J");
+        add("K");
+        add("L");
     }
 
     public String getNext(String groupName) {

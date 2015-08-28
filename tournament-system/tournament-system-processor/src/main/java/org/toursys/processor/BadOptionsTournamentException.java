@@ -6,7 +6,7 @@ public class BadOptionsTournamentException extends TournamentException {
 
     private static final long serialVersionUID = 1L;
 
-    private final String CODE = MessaceCodes.PDF;
+    private final String CODE = MessaceCodes.OPTIONS;
 
     public BadOptionsTournamentException() {
         super();

@@ -40,7 +40,7 @@ public class SchedulePage extends TournamentHomePage {
 
     public SchedulePage(PageParameters parameters) {
         this.tournament = getTournament(parameters);
-        this.group = getGroup(parameters);
+        this.group = getGroup(parameters, tournament);
         this.scheduleGames = getSchedule().getSchedule();
         createPage();
     }
@@ -52,7 +52,7 @@ public class SchedulePage extends TournamentHomePage {
     private RoundRobinSchedule getSchedule() {
         logger.debug("Creating schedule start");
         long time = System.currentTimeMillis();
-        List<Participant> participants = participantService.getParticipants(new Participant()._setGroup(group));
+        List<Participant> participants = participantService.getParticipandByGroup(group);
         RoundRobinSchedule schedule = scheduleService.getSchedule(tournament, group, participants);
         time = System.currentTimeMillis() - time;
         logger.debug("Creating schedule end: " + time + " ms");
@@ -87,10 +87,11 @@ public class SchedulePage extends TournamentHomePage {
                     long time = System.currentTimeMillis();
                     gameService.updateBothGames(scheduleGames);
                     time = System.currentTimeMillis() - time;
-                    sortParticipants();
+                    List<Participant> participants = sortParticipants();
 
                     if (GroupsType.FINAL.equals(group.getType())) {
                         playOffGameService.updatePlayOffGames(tournament, group);
+                        finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
                     }
                     logger.debug("Submit schedule end: " + time + " ms");
                     setResponsePage(SchedulePage.class, getPageParameters());
@@ -98,11 +99,11 @@ public class SchedulePage extends TournamentHomePage {
             });
         }
 
-        private void sortParticipants() {
-            List<Participant> participants = participantService.getSortedParticipants(new Participant()
-                    ._setGroup(group));
+        private List<Participant> sortParticipants() {
+            List<Participant> participants = participantService.getParticipandByGroup(group);
 
-            participantService.sortParticipants(participants, tournament);
+            participantService.sortParticipantsByRank(participants, tournament);
+            return participants;
         }
 
         private void addBackButton() {

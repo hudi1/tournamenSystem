@@ -33,12 +33,12 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.toursys.processor.pdf.PdfFactory;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Groups;
-import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
 import org.toursys.web.components.TournamentAjaxButton;
 import org.toursys.web.components.TournamentButton;
 import org.toursys.web.link.DownloadModelLink;
 import org.toursys.web.model.TournamentFileReadOnlyModel;
+import org.toursys.web.util.WebUtil;
 
 @AuthorizeInstantiation(Roles.USER)
 public class GroupPage extends TournamentHomePage {
@@ -48,8 +48,6 @@ public class GroupPage extends TournamentHomePage {
     private Groups group;
     private List<Participant> participants;
     private ModalWindow modalWindow;
-
-    // private boolean sortParticipants;
 
     public GroupPage() {
         this(new PageParameters());
@@ -61,6 +59,18 @@ public class GroupPage extends TournamentHomePage {
         prepareData(parameters);
         clearPageParameters();
         createPage();
+    }
+
+    private void prepareData(PageParameters parameters) {
+        group = getGroup(parameters, getTournament(parameters));
+
+        if (group != null) {
+            this.participants = participantService.getParticipandByGroup(group);
+            setUpGoldGoalModalWindow();
+        } else {
+            participants = new ArrayList<Participant>();
+        }
+
     }
 
     protected void createPage() {
@@ -91,6 +101,19 @@ public class GroupPage extends TournamentHomePage {
             addGroupTable();
             addGroupsButton();
             addGroupOptionsButton();
+        }
+
+        private void addGroupTable() {
+            addGroupTableHeader();
+            addParticipantsGroupListView();
+        }
+
+        private void addGroupTableHeader() {
+            addGroupHeaderPlayerIndex();
+            add(new Label("name", new ResourceModel("name")));
+            add(new Label("rank", new ResourceModel("rank")));
+            add(new Label("points", new ResourceModel("points")));
+            add(new Label("score", new ResourceModel("score")));
         }
 
         private void addGroupOptionsButton() {
@@ -147,7 +170,6 @@ public class GroupPage extends TournamentHomePage {
                 @Override
                 public void submit() {
                     groupService.copyResult(tournament);
-                    finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -163,9 +185,7 @@ public class GroupPage extends TournamentHomePage {
 
                 @Override
                 public void submit() {
-                    groupService.createFinalGroup(tournament);
-                    finalStandingService.processFinalStandings(tournament);
-                    playOffGameService.processPlayOffGames(tournament);
+                    groupService.processFinalGroup(tournament);
                     setResponsePage(GroupPage.class, getPageParameters());
                 }
             };
@@ -330,9 +350,7 @@ public class GroupPage extends TournamentHomePage {
                     final Participant participant = listItem.getModelObject();
                     listItem.setModel(new CompoundPropertyModel<Participant>(participant));
                     listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
-                    listItem.add(new Label("name", participant.getPlayer().getName().charAt(0) + ". "
-                            + participant.getPlayer().getSurname() + " "
-                            + participant.getPlayer().getPlayerDiscriminator()));
+                    listItem.add(new Label("name", WebUtil.getParticipandPlayerShortName(participant)));
                     listItem.add(new Label("score", participant.getScore().toString()));
                     listItem.add(new Label("points", ((Integer) participant.getPoints()).toString()));
                     listItem.add(new Label("rank", (participant.getRank() != null) ? participant.getRank().toString()
@@ -344,20 +362,15 @@ public class GroupPage extends TournamentHomePage {
 
                         @Override
                         protected void populateItem(ListItem<Participant> gameItem) {
-                            final Participant participant1 = gameItem.getModelObject();
+                            final Participant rowParticipant = gameItem.getModelObject();
 
-                            if (participant.equals(participant1)) {
+                            if (participant.equals(rowParticipant)) {
                                 gameItem.add(new Label("game", "X"));
                             } else {
-                                Game game = null;
+                                Game game = WebUtil.findParticipantGame(participant, rowParticipant);
                                 String result = "";
-                                for (Game pomGame : participant.getGames()) {
-                                    if (pomGame.getAwayParticipant().getId().equals(participant1.getId())) {
-                                        game = pomGame;
-                                        break;
-                                    }
-                                }
-                                if (game.getResult() != null) {
+
+                                if (game != null && game.getResult() != null) {
                                     result = game.getResult().toString(" + ");
                                 }
                                 // TODO AJAX EDITABLE LABEL
@@ -392,43 +405,6 @@ public class GroupPage extends TournamentHomePage {
             });
         }
 
-        private void addGroupTable() {
-            addGroupTableHeader();
-            addParticipantsGroupListView();
-        }
-
-        private void addGroupTableHeader() {
-            addGroupHeaderPlayerIndex();
-            add(new Label("name", new ResourceModel("name")));
-            add(new Label("rank", new ResourceModel("rank")));
-            add(new Label("points", new ResourceModel("points")));
-            add(new Label("score", new ResourceModel("score")));
-        }
-    }
-
-    /*
-     * private boolean getSortParticipants(PageParameters parameters) { if (parameters.get(UPDATE).isNull()) { return
-     * false; } else { return parameters.get(UPDATE).toBoolean(); } }
-     */
-
-    private void prepareData(PageParameters parameters) {
-        group = getGroup(parameters);
-        // sortParticipants = getSortParticipants(parameters);
-
-        if (group != null) {
-            this.participants = getParticipants();
-            setUpGoldGoalModalWindow();
-            updateFinalStanding();
-        } else {
-            participants = new ArrayList<Participant>();
-        }
-
-    }
-
-    private void updateFinalStanding() {
-        if (group.getType().equals(GroupsType.FINAL)) {
-            finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
-        }
     }
 
     private void setUpGoldGoalModalWindow() {
@@ -437,16 +413,6 @@ public class GroupPage extends TournamentHomePage {
         if (!goldGoalParticipants.isEmpty()) {
             createModalWindow(goldGoalParticipants);
         }
-    }
-
-    private List<Participant> getParticipants() {
-        List<Participant> participants = participantService.getSortedParticipants(new Participant()._setGroup(group));
-        gameService.processGames(participants);
-
-        /*
-         * if (sortParticipants) { participantService.sortParticipants(participants, tournament); }
-         */
-        return participants;
     }
 
     private void createModalWindow(final Set<Participant> samePlayerRankParticipants) {

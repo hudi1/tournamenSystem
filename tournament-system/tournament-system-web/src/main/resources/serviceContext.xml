@@ -10,43 +10,20 @@
 
     <aop:aspectj-autoproxy proxy-target-class="true" />
 
+    <bean id="playerService" class="org.toursys.processor.service.player.PlayerService" />
+    <bean id="gameService" class="org.toursys.processor.service.game.GameService" />
+    <bean id="seasonService" class="org.toursys.processor.service.season.SeasonService" />
+    <bean id="tournamentService" class="org.toursys.processor.service.tournament.TournamentService" />
+    <bean id="userService" class="org.toursys.processor.service.user.UserService" />
+    <bean id="groupService" class="org.toursys.processor.service.group.GroupService" />
+    <bean id="participantService" class="org.toursys.processor.service.participant.ParticipantService" />
+    <bean id="scheduleService" class="org.toursys.processor.service.schedule.ScheduleService" />
+    <bean id="playOffGameService" class="org.toursys.processor.service.playOffGame.PlayOffGameService" />
+    <bean id="finalStandingService" class="org.toursys.processor.service.standing.FinalStandingService" />
+    <bean id="importService" class="org.toursys.processor.service.imports.ImportService" />
 
-    <bean id="abstractService" class="org.toursys.processor.service.AbstractService" abstract="true">
-        <property name="tournamentAggregationDao" ref="tournamentAggregationDao" />
-    </bean>
-
-    <bean id="playerService" class="org.toursys.processor.service.PlayerService" parent="abstractService" />
-    <bean id="gameService" class="org.toursys.processor.service.GameService" parent="abstractService" />
-    <bean id="seasonService" class="org.toursys.processor.service.SeasonService" parent="abstractService" />
-    <bean id="tournamentService" class="org.toursys.processor.service.TournamentService" parent="abstractService" />
-    <bean id="userService" class="org.toursys.processor.service.UserService" parent="abstractService" />
-
-    <bean id="groupService" class="org.toursys.processor.service.GroupService" parent="abstractService">
-        <property name="gameService" ref="gameService" />
-        <property name="participantService" ref="participantService" />
-    </bean>
-    <bean id="participantService" class="org.toursys.processor.service.ParticipantService" parent="abstractService">
-        <property name="groupService" ref="groupService" />
-    </bean>
-    <bean id="scheduleService" class="org.toursys.processor.service.ScheduleService" parent="abstractService">
-        <property name="participantService" ref="participantService" />
-    </bean>
-    <bean id="playOffGameService" class="org.toursys.processor.service.PlayOffGameService" parent="abstractService">
-        <property name="groupService" ref="groupService" />
-        <property name="participantService" ref="participantService" />
-    </bean>
-
-    <bean id="finalStandingService" class="org.toursys.processor.service.FinalStandingService" parent="abstractService">
-        <property name="groupService" ref="groupService" />
-        <property name="participantService" ref="participantService" />
-    </bean>
-
-    <bean id="importService" class="org.toursys.processor.service.ImportService" parent="abstractService">
-        <property name="gameService" ref="gameService" />
-        <property name="participantService" ref="participantService" />
-        <property name="playerService" ref="playerService" />
-        <property name="finalStandingService" ref="finalStandingService" />
-        <property name="playOffGameService" ref="playOffGameService" />
-    </bean>
+    <bean id="groupModel" class="org.toursys.processor.service.group.GroupModel" />
+    <bean id="gameModel" class="org.toursys.processor.service.game.GameModel" />
+    <bean id="finalStandingModel" class="org.toursys.processor.service.standing.FinalStandingModel" />
 
 </beans>

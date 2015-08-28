@@ -25,10 +25,13 @@ public class PlayerEditPage extends TournamentHomePage {
     }
 
     public PlayerEditPage(PageParameters pageParameters) {
+        this(new Player(), pageParameters);
+    }
+
+    public PlayerEditPage(Player player, PageParameters pageParameters) {
         super(pageParameters);
         this.user = getTournamentSession().getUser();
-
-        createPage(new Player()._setUser(user));
+        createPage(player._setUser(user));
     }
 
     protected void createPage(Player player) {
@@ -90,6 +93,10 @@ public class PlayerEditPage extends TournamentHomePage {
             add(new RequiredTextField<String>("surnameInput", new PropertyModel<String>(player, "surname")));
             add(new Label("club", new ResourceModel("club")));
             add(new TextField<String>("clubInput", new PropertyModel<String>(player, "club")));
+            add(new Label("worldRanking", new ResourceModel("worldRanking")));
+            add(new TextField<String>("worldRankingInput", new PropertyModel<String>(player, "worldRanking")));
+            add(new Label("ithfId", new ResourceModel("ithfId")));
+            add(new TextField<String>("ithfIdInput", new PropertyModel<String>(player, "ithfId")));
         }
     }
 

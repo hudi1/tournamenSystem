@@ -17,6 +17,11 @@
 		</form>
 		<form wicket:id="playerForm">
 			<div>
+				<span wicket:id="chooseRegistrationSystem"> Choose registration system: </span> <select
+					wicket:id="options"></select> <input class="tournamentButton"
+					type="submit" wicket:id="registrationButton" value="Registration" />
+			</div>
+			<div>
 				<span wicket:id="choosePlayer"> Choose player: </span> <input
 					type="text" class="allPlayers" wicket:id="players"></input> <input
 					class="tournamentButton" type="submit" wicket:id="playersButton"

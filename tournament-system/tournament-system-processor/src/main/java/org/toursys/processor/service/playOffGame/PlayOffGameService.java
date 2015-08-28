@@ -1,14 +1,18 @@
-package org.toursys.processor.service;
+package org.toursys.processor.service.playOffGame;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Required;
+import javax.inject.Inject;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.processor.BadOptionsTournamentException;
+import org.toursys.processor.service.group.GroupService;
+import org.toursys.processor.service.participant.ParticipantService;
 import org.toursys.processor.util.PositionCounter;
+import org.toursys.repository.dao.PlayOffGameDao;
 import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsPlayOffType;
@@ -17,54 +21,55 @@ import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
 
-public class PlayOffGameService extends AbstractService {
+public class PlayOffGameService {
 
+    @Inject
     private ParticipantService participantService;
+
+    @Inject
     private GroupService groupService;
 
-    // Basic operations
+    @Inject
+    private PlayOffGameDao playOffGameDao;
 
     @Transactional
-    public PlayOffGame createPlayOffGame(Participant homePlayer, Participant awayPlayer, Groups group, int position) {
-        logger.debug("Create playerOff game: " + homePlayer + " " + awayPlayer + " " + group + " " + position);
-        return tournamentAggregationDao.createPlayOffGame(homePlayer, awayPlayer, group, position);
+    public PlayOffGame createPlayOffGame(Participant homeParticipant, Participant awayParticipant, Groups group,
+            int position) {
+        PlayOffGame playOffGame = new PlayOffGame(group, position);
+        playOffGame.setHomeParticipant(homeParticipant);
+        playOffGame.setAwayParticipant(awayParticipant);
+
+        return playOffGameDao.insert(playOffGame);
     }
 
     @Transactional
     public PlayOffGame createPlayOffGame(PlayOffGame playOffGame) {
-        logger.debug("Create playerOff game: " + playOffGame.toStringFull());
-        return tournamentAggregationDao.createPlayOffGame(playOffGame);
+        return playOffGameDao.insert(playOffGame);
     }
 
     @Transactional(readOnly = true)
     public PlayOffGame getPlayOffGame(PlayOffGame playOffGame) {
-        logger.debug("Get playerOff game: " + playOffGame);
-        return tournamentAggregationDao.getPlayOffGame(playOffGame);
+        return playOffGameDao.get(playOffGame);
     }
 
     @Transactional
     public int updatePlayOffGame(PlayOffGame playOffGame) {
-        logger.debug("Update playerOff game: " + playOffGame);
         playOffGame.setNull(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
                 PlayOffGame.Attribute.result, PlayOffGame.Attribute.status);
-        return tournamentAggregationDao.updatePlayOffGame(playOffGame);
+        return playOffGameDao.update(playOffGame);
     }
 
     @Transactional
     public int deletePlayOffGame(PlayOffGame playOffGame) {
-        logger.debug("Delete playerOff game: " + playOffGame);
-        return tournamentAggregationDao.deletePlayOffGame(playOffGame);
+        return playOffGameDao.delete(playOffGame);
     }
 
     @Transactional(readOnly = true)
     public List<PlayOffGame> getPlayOffGames(PlayOffGame playOffGame) {
-        logger.debug("Get list playerOff games: " + playOffGame);
         playOffGame.setInit(PlayOffGame.Association.awayParticipant.name(),
                 PlayOffGame.Association.homeParticipant.name());
-        return tournamentAggregationDao.getListPlayOffGames(playOffGame);
+        return playOffGameDao.list(playOffGame);
     }
-
-    // Advanced operations
 
     @Transactional
     public int updatePlayOffGameResult(PlayOffGame playOffGame) {
@@ -91,24 +96,20 @@ public class PlayOffGameService extends AbstractService {
             playOffGame.setStatus(null);
         }
 
-        logger.debug("Update playerOff game result: " + playOffGame);
         return updatePlayOffGame(playOffGame);
     }
 
     @Transactional
     public void processPlayOffGames(Tournament tournament) {
-        long time = System.currentTimeMillis();
-        logger.debug("Process playerOff games: " + tournament);
 
-        List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
+        List<Groups> finalGroups = groupService.getFinalGroups(tournament);
         int groupIndex = 0;
 
         for (Groups group : finalGroups) {
             List<Participant> players = new ArrayList<Participant>();
             if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
                 groupIndex++;
-                List<Participant> tempPart = participantService.getSortedParticipants(new Participant()
-                        ._setGroup(group));
+                List<Participant> tempPart = participantService.getParticipandByGroup(group);
                 if (groupIndex % 2 == 0) {
                     Collections.reverse(tempPart);
                 }
@@ -117,7 +118,7 @@ public class PlayOffGameService extends AbstractService {
                     continue;
                 }
             } else {
-                players = participantService.getSortedParticipants(new Participant()._setGroup(group));
+                players = participantService.getParticipandByGroup(group);
             }
             int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
@@ -131,16 +132,12 @@ public class PlayOffGameService extends AbstractService {
             deletePlayOffGames(finalgames);
             createPlayOffGames(playOffPlayer, group, playOffPlayerCount);
         }
-        time = System.currentTimeMillis() - time;
-        logger.debug("End: Process playerOff games: " + time + " ms");
     }
 
     @Transactional
     public void updatePlayOffGames(Tournament tournament, Groups group) {
-        long time = System.currentTimeMillis();
-        logger.debug("Update playerOff games: " + group);
 
-        List<Participant> players = participantService.getSortedParticipants(new Participant()._setGroup(group));
+        List<Participant> players = participantService.getParticipandByGroup(group);
 
         int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
@@ -153,15 +150,12 @@ public class PlayOffGameService extends AbstractService {
         List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
         updatePlayOffGames(playOffPlayer, finalgames, group, playOffPlayerCount);
 
-        time = System.currentTimeMillis() - time;
-        logger.debug("End: Update playerOff games: " + time + " ms");
     }
 
     @Transactional
     public void updateNextRoundPlayOffGames(Tournament tournament) {
-        logger.debug("Update next round playOff games: " + tournament);
 
-        List<Groups> finalGroups = groupService.getFinalGroups(new Groups()._setTournament(tournament));
+        List<Groups> finalGroups = groupService.getFinalGroups(tournament);
         for (Groups group : finalGroups) {
 
             if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
@@ -224,12 +218,10 @@ public class PlayOffGameService extends AbstractService {
             }
             playOffGames.add(playOffGame);
         }
-        logger.debug("Created play off games: " + playOffGames);
     }
 
     private void updatePlayOffGames(LinkedList<Participant> playOffPlayer, List<PlayOffGame> finalgames, Groups group,
             int playOffPlayerCount) {
-        logger.debug("Updating playOff games: " + finalgames);
         int playerCount = playOffPlayer.size();
         PositionCounter pc = new PositionCounter(playerCount);
         int position = 0;
@@ -250,19 +242,6 @@ public class PlayOffGameService extends AbstractService {
                 updatePlayOffGame(playOffGame);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        LinkedList<String> myQueue = new LinkedList<String>();
-        myQueue.add("A");
-        myQueue.add("B");
-        myQueue.add("C");
-        myQueue.add("D");
-
-        List<String> myList = new ArrayList<String>(myQueue);
-
-        for (Object theFruit : myList)
-            System.out.println(theFruit);
     }
 
     private void updatePlayOffGame(List<PlayOffGame> playOffGames, int position, int playerPlayOffCount) {
@@ -340,13 +319,4 @@ public class PlayOffGameService extends AbstractService {
         return (playerCount / 2) + (int) Math.ceil((double) currentGame / 2);
     }
 
-    @Required
-    public void setParticipantService(ParticipantService participantService) {
-        this.participantService = participantService;
-    }
-
-    @Required
-    public void setGroupService(GroupService groupService) {
-        this.groupService = groupService;
-    }
 }

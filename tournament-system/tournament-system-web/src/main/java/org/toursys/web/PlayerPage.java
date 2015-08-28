@@ -2,6 +2,7 @@ package org.toursys.web;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -30,6 +31,7 @@ import org.toursys.repository.model.User;
 import org.toursys.web.components.PropertyPageableListView;
 import org.toursys.web.components.TournamentButton;
 import org.toursys.web.link.TournamentAjaxLink;
+import org.toursys.web.util.WebUtil;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends TournamentHomePage {
@@ -78,6 +80,7 @@ public class PlayerPage extends TournamentHomePage {
 
             addPlayerListView();
             addNewPlayerButton();
+            addUpdateOnlinePlayerButton(model.getObject().getPlayers());
             add(modalWindow = createModalWindow());
             addModalButton(modalWindow);
         }
@@ -162,6 +165,24 @@ public class PlayerPage extends TournamentHomePage {
                                 }
                             })));
 
+                    listItem.add(new TournamentAjaxLink("enterPlayer") {
+
+                        private static final long serialVersionUID = 1L;
+
+                        public void click(AjaxRequestTarget target) {
+                            setResponsePage(new PlayerEditPage(player, getPageParameters()));
+                        }
+
+                    }.add(new Image("img", new SharedResourceReference("enter"))).add(
+                            AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public String getObject() {
+                                    return getString("enterPlayer");
+                                }
+                            })));
+
                     listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
                         private static final long serialVersionUID = 1L;
 
@@ -199,6 +220,35 @@ public class PlayerPage extends TournamentHomePage {
                     setResponsePage(PlayerEditPage.class, getPageParameters());
                 }
             });
+        }
+
+        private void addUpdateOnlinePlayerButton(final List<Player> players) {
+            add(new TournamentButton("updateOnlinePlayer", new ResourceModel("updateOnlinePlayer")) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void submit() {
+                    try {
+                        List<Player> notUpdatedplayers = importService.updateOnlinePlayers(players);
+                        if (!notUpdatedplayers.isEmpty()) {
+                            logWarnMessage(notUpdatedplayers);
+                        }
+                        // TODO
+                    } catch (Exception e) {
+                        logger.error("Error: " + e);
+                        error(e.getMessage());
+                    }
+                }
+            });
+        }
+
+        protected void logWarnMessage(List<Player> players) {
+            warn(getString("playersNotFound"));
+
+            for (Player player : players) {
+                warn(WebUtil.getPlayerFullName(player));
+            }
         }
 
         private ModalWindow createModalWindow() {

@@ -19,14 +19,17 @@
 				<td><input class="inputLabel" type="text" wicket:id="name" /></td>
 				<td><input class="inputLabel" type="text" wicket:id="surname" /></td>
 				<td><input class="inputLabel" type="text" wicket:id="club" /></td>
-				<td><a wicket:id="deletePlayer"><img wicket:id="img"/></a></td>
+				<td><a wicket:id="enterPlayer"><img wicket:id="img" /></a></td>
+				<td><a wicket:id="deletePlayer"><img wicket:id="img" /></a></td>
 			</tr>
 		</table>
 
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="newPlayer"
-				value="New player" /> <a wicket:id="showModalLink"
-				class="tournamentLink" title="Import player"> Import player </a>
+				value="New player" /> <input class="tournamentButton" type="submit"
+				wicket:id="updateOnlinePlayer" value="Update online" /><a
+				wicket:id="showModalLink" class="tournamentLink"
+				title="Import player"> Import player </a>
 		</div>
 		<div wicket:id="modal"></div>
 	</form>

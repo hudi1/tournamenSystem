@@ -1,12 +1,23 @@
-package org.toursys.processor.service;
+package org.toursys.processor.service.imports;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Required;
+import javax.inject.Inject;
+
 import org.springframework.transaction.annotation.Transactional;
+import org.toursys.processor.html.PlayerHtmlUpdateFactory;
 import org.toursys.processor.html.PlayersHtmlImportFactory;
 import org.toursys.processor.html.TournamentHtmlImportFactory;
+import org.toursys.processor.service.game.GameService;
+import org.toursys.processor.service.participant.ParticipantService;
+import org.toursys.processor.service.playOffGame.PlayOffGameService;
+import org.toursys.processor.service.player.PlayerService;
+import org.toursys.processor.service.standing.FinalStandingService;
+import org.toursys.repository.dao.FinalStandingDao;
+import org.toursys.repository.dao.GameDao;
+import org.toursys.repository.dao.ParticipantExtDao;
 import org.toursys.repository.model.FinalStanding;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.Participant;
@@ -15,20 +26,38 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Tournament;
 import org.toursys.repository.model.User;
 
-public class ImportService extends AbstractService {
+public class ImportService {
 
+    @Inject
     private PlayerService playerService;
+
+    @Inject
     private ParticipantService participantService;
+
+    @Inject
     private GameService gameService;
+
+    @Inject
     private PlayOffGameService playOffGameService;
+
+    @Inject
     private FinalStandingService finalStandingService;
+
+    @Inject
+    private GameDao gameDao;
+
+    @Inject
+    private FinalStandingDao finalStandingDao;
+
+    @Inject
+    private ParticipantExtDao participantDao;
 
     @Transactional
     public void importTournament(String url, Tournament tournament, User user) {
 
         importPlayers(url + "index.htm", user);
 
-        LinkedList<Participant> participants = TournamentHtmlImportFactory.createImportedParticipants(url);
+        LinkedList<Participant> participants = TournamentHtmlImportFactory.createImportedParticipants(tournament, url);
 
         for (Participant participant : participants) {
             List<Player> players = playerService.getNotRegisteredPlayers(tournament);
@@ -54,16 +83,16 @@ public class ImportService extends AbstractService {
         LinkedList<Participant> savedParticipants = new LinkedList<Participant>();
 
         for (Participant participant : participants) {
-            savedParticipants.add(participantService.createBasicParticipant(tournament, participant.getPlayer(),
-                    participant.getGroup()));
+            savedParticipants
+                    .add(participantService.createParticipant(participant.getPlayer(), participant.getGroup()));
         }
 
         TournamentHtmlImportFactory.createImportedGames(url, savedParticipants);
 
         for (Participant participant : savedParticipants) {
-            participantService.updateParticipant(participant);
+            participantDao.update(participant);
             for (Game game : participant.getGames()) {
-                gameService.createGame(game);
+                gameDao.insert(game);
             }
         }
 
@@ -75,7 +104,7 @@ public class ImportService extends AbstractService {
         List<FinalStanding> finalStandings = TournamentHtmlImportFactory.createFinalStandings(url, savedParticipants);
         for (FinalStanding finalStanding : finalStandings) {
             finalStanding.setTournament(tournament);
-            finalStandingService.createFinalStanding(finalStanding);
+            finalStandingDao.insert(finalStanding);
         }
 
     }
@@ -88,29 +117,18 @@ public class ImportService extends AbstractService {
         }
     }
 
-    @Required
-    public void setPlayerService(PlayerService playerService) {
-        this.playerService = playerService;
-    }
+    public List<Player> updateOnlinePlayers(List<Player> players) {
+        PlayerHtmlUpdateFactory.synchronizedIthfPlayer(players);
+        List<Player> notUpdatedPlayer = new ArrayList<Player>();
 
-    @Required
-    public void setParticipantService(ParticipantService participantService) {
-        this.participantService = participantService;
-    }
+        for (Player player : players) {
+            if (player.getIthfId() == null || player.getWorldRanking() == null) {
+                notUpdatedPlayer.add(player);
+            } else {
+                playerService.updatePlayer(player);
+            }
+        }
 
-    @Required
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
+        return notUpdatedPlayer;
     }
-
-    @Required
-    public void setPlayOffGameService(PlayOffGameService playOffGameService) {
-        this.playOffGameService = playOffGameService;
-    }
-
-    @Required
-    public void setFinalStandingService(FinalStandingService finalStandingService) {
-        this.finalStandingService = finalStandingService;
-    }
-
 }

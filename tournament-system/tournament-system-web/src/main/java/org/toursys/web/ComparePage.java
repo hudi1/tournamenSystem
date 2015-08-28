@@ -78,9 +78,9 @@ public class ComparePage extends AbstractBasePage {
 
                                 @Override
                                 protected void onUpdate(AjaxRequestTarget target) {
-                                    Participant updatedParticipant = new Participant()._setId(participant.getId())
-                                            ._setRank(participant.getRank());
-                                    participantService.updateParticipant(updatedParticipant);
+                                    // Participant updatedParticipant = new Participant()._setId(participant.getId())
+                                    // ._setRank(participant.getRank());
+                                    participantService.updateParticipant(participant); // TODO test
                                 }
                             }).setVisible(participant.getPlayer() != null));
 

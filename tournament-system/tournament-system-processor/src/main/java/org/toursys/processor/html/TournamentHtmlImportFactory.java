@@ -22,13 +22,14 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Results;
 import org.toursys.repository.model.Score;
+import org.toursys.repository.model.Tournament;
 
 public class TournamentHtmlImportFactory {
     // http://trefik.cz/stiga/turnaje2014/kladno/kriz.htm
 
     private static final Logger logger = LoggerFactory.getLogger(TournamentHtmlImportFactory.class);
 
-    public static LinkedList<Participant> createImportedParticipants(String urlBase) {
+    public static LinkedList<Participant> createImportedParticipants(Tournament tournament, String urlBase) {
 
         LinkedList<Participant> tournamentParticipants = new LinkedList<Participant>();
 
@@ -39,6 +40,7 @@ public class TournamentHtmlImportFactory {
                 String groupName = element.ownText();
                 Groups group = new Groups();
                 group.setName(groupName.split(" ")[1]);
+                group.setTournament(tournament);
                 if (isNumeric(group.getName())) {
                     group.setType(GroupsType.BASIC);
                 } else {
@@ -309,4 +311,5 @@ public class TournamentHtmlImportFactory {
         }
         return player;
     }
+
 }

@@ -7,7 +7,7 @@ import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.toursys.processor.service.UserService;
+import org.toursys.processor.service.user.UserService;
 import org.toursys.processor.util.TournamentUtil;
 import org.toursys.repository.model.Season;
 import org.toursys.repository.model.Tournament;

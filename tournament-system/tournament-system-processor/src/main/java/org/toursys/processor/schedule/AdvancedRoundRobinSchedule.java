@@ -9,7 +9,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.toursys.processor.BadOptionsTournamentException;
-import org.toursys.processor.service.TournamentService;
+import org.toursys.processor.service.tournament.TournamentService;
 import org.toursys.repository.model.GameImpl;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
@@ -33,7 +33,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
     protected void createSchedule() {
         logger.debug("Creating advanced round robim schedule, playerCount: " + playerPerBasicGroup.get(0).size());
         schedule = new ArrayList<GameImpl>();
-        if (playerPerBasicGroup.isEmpty()) {
+        if (playerPerBasicGroup.size() < 2) {
             return;
         }
 
@@ -56,7 +56,8 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
     private void checkPlayerCount() {
         for (int i = 0; i < playerPerBasicGroup.size() - 1; i++) {
             if (playerPerBasicGroup.get(i).size() != playerPerBasicGroup.get(i + 1).size()) {
-                throw new BadOptionsTournamentException();
+                throw new BadOptionsTournamentException(playerPerBasicGroup.get(i).size() + " != "
+                        + playerPerBasicGroup.get(i + 1).size());
             }
         }
     }

@@ -78,7 +78,7 @@ package org.toursys.repository.model {
   final pojo Participant serializable 1 {
     id : java.lang.Integer primaryKey index 1
     points : java.lang.Integer required
-    rank : java.lang.Integer
+    rank : java.lang.Integer index 4
     group :: Groups required index 3
     player :: Player required index 2
     score : org.toursys.repository.model.Score required
@@ -99,11 +99,12 @@ package org.toursys.repository.model {
     playerDiscriminator : java.lang.String required
     worldRanking : java.lang.Integer
     user :: User required index 3
+    ithfId : java.lang.Integer
     participants : java.util.List <:Participant>
     equals ::: id
     toInit ::: participants user
-    isDef ::: club worldRanking
-    toString ::: playerDiscriminator id club name surname worldRanking
+    isDef ::: ithfId club worldRanking
+    toString ::: ithfId playerDiscriminator id club name surname worldRanking
   }
 
   final pojo PlayOffGame extends Game serializable 1 {

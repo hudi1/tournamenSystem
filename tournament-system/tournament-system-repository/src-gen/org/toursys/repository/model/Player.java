@@ -130,6 +130,21 @@ public class Player implements Serializable {
 		return this;
 	}
 
+	private Integer ithfId;
+
+	public Integer getIthfId() {
+		return ithfId;
+	}
+
+	public void setIthfId(Integer ithfId) {
+		this.ithfId = ithfId;
+	}
+
+	public Player _setIthfId(Integer ithfId) {
+		this.ithfId = ithfId;
+		return this;
+	}
+
 	private List<Participant> participants = new ArrayList<Participant>();
 
 	public List<Participant> getParticipants() {
@@ -224,7 +239,7 @@ public class Player implements Serializable {
 	}
 
 	public enum Attribute {
-		club, worldRanking
+		ithfId, club, worldRanking
 	}
 
 	private Set<String> nullValues = new HashSet<String>();
@@ -321,10 +336,10 @@ public class Player implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Player [playerDiscriminator=" + playerDiscriminator + ", id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", worldRanking=" + worldRanking + "]";
+		return "Player [ithfId=" + ithfId + ", playerDiscriminator=" + playerDiscriminator + ", id=" + id + ", club=" + club + ", name=" + name + ", surname=" + surname + ", worldRanking=" + worldRanking + "]";
 	}
 
 	public String toStringFull() {
-		return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", user=" + user + ", participants=" + participants + "]";
+		return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", user=" + user + ", ithfId=" + ithfId + ", participants=" + participants + "]";
 	}
 }
