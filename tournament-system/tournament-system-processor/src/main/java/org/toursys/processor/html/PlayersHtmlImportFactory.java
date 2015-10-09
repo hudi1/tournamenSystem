@@ -62,8 +62,11 @@ public class PlayersHtmlImportFactory {
         for (int i = 1; i < tableRows.size(); i++) {
 
             String nameAndSurname = tableRows.get(i).select("td").get(1).select("a").first().ownText();
-            String club = tableRows.get(i).select("td").get(2).select("a").first().ownText();
-
+            String club = null;
+            try {
+                club = tableRows.get(i).select("td").get(2).select("a").first().ownText();
+            } catch (Exception e) {
+            }
             Player player = new Player();
             player.setUser(user);
             player.setClub(club);

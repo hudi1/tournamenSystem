@@ -38,5 +38,13 @@ package org.toursys.repository.dao {
   dao UserDao :: User {
     scaffold
   }
+  
+  dao WchQualificationDao :: WchQualification {
+    scaffold
+  }
+
+  dao WchTournamentDao :: WchTournament {
+    scaffold
+  }
 
 }

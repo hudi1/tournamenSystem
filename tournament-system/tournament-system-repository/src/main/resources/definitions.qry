@@ -20,36 +20,39 @@ pojogen-generate-wrappers;
 
 pojo StatisticForm org.toursys.repository.model.StatisticForm;
 
-pojogen-ignore-one-to-many PARTICIPANT ID->GAME->AWAY_PARTICIPANT_ID;
+pojogen-ignore-one-to-many participant ID->game->AWAY_PARTICIPANT_ID;
 
-pojogen-ignore-one-to-many PLAYER ID->PLAY_OFF_GAME;
-pojogen-ignore-one-to-many PLAYER ID->FINAL_STANDING->PLAYER_ID;
+pojogen-ignore-one-to-many player ID->PLAY_OFF_GAME;
+pojogen-ignore-one-to-many player ID->FINAL_STANDING->PLAYER_ID;
 
 pojogen-implements-interfaces java.io.Serializable;
 pojogen-generate-methods equals toString toInit isDef;
 
-pojogen-types-for-columns PARTICIPANT SCORE->:org.toursys.repository.model.Score;
-pojogen-types-for-columns GAME RESULT->:org.toursys.repository.model.Results;
+pojogen-types-for-columns participant SCORE->:org.toursys.repository.model.Score;
+pojogen-types-for-columns game RESULT->:org.toursys.repository.model.Results;
 
 pojogen-make-it-final;
 
-metagen-column-meta-type PARTICIPANT SCORE->score;
-metagen-column-meta-type GAME RESULT->result;
+metagen-column-meta-type participant SCORE->score;
+metagen-column-meta-type game RESULT->result;
 
-pojogen-rename-columns GROUPS_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
+pojogen-rename-columns groups_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
 
-pojogen-rename-columns GROUPS_PLAY_OFF_TYPE F->FINAL L->LOWER C->CROSS;
+pojogen-rename-columns groups_PLAY_OFF_TYPE F->FINAL L->LOWER C->CROSS;
 
-pojogen-create-columns PARTICIPANT TEMP->_boolean;
+pojogen-create-columns participant TEMP->_boolean;
 
-pojogen-inherit-many-to-one PLAY_OFF_GAME GAME_ID->GAME->ID;
-table finalStanding FINAL_STANDING;
-table game GAME;
-table groups GROUPS;
-table participant PARTICIPANT;
-table playOffGame PLAY_OFF_GAME;
-table player PLAYER;
-table season SEASON;
-table tournament TOURNAMENT;
-table user USER;
+pojogen-inherit-many-to-one play_off_game GAME_ID->game->ID;
+pojogen-inherit-many-to-one wch_qualification PLAYER_ID->player->ID;
 
+table finalStanding final_standing;
+table game game;
+table groups groups;
+table participant participant;
+table playOffGame play_off_game;
+table player player;
+table season season;
+table tournament tournament;
+table user user;
+table wchQualification wch_qualification;
+table wchTournament wch_tournament;

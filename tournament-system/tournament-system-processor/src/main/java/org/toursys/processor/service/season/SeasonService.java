@@ -18,11 +18,6 @@ public class SeasonService {
         return seasonDao.insert(season);
     }
 
-    @Transactional(readOnly = true)
-    public Season getSeason(Season season) {
-        return seasonDao.get(season);
-    }
-
     @Transactional
     public int updateSeason(Season season) {
         return seasonDao.update(season);
@@ -35,7 +30,7 @@ public class SeasonService {
 
     @Transactional(readOnly = true)
     public List<Season> getSeasons(Season season) {
-        return seasonDao.list(season);
+        return seasonDao.list(season._setInit(Season.Association.tournaments));
     }
 
     @Transactional(readOnly = true)

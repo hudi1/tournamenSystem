@@ -21,9 +21,11 @@
     <bean id="playOffGameService" class="org.toursys.processor.service.playOffGame.PlayOffGameService" />
     <bean id="finalStandingService" class="org.toursys.processor.service.standing.FinalStandingService" />
     <bean id="importService" class="org.toursys.processor.service.imports.ImportService" />
+    <bean id="wChService" class="org.toursys.processor.service.wch.WChService" />
 
     <bean id="groupModel" class="org.toursys.processor.service.group.GroupModel" />
     <bean id="gameModel" class="org.toursys.processor.service.game.GameModel" />
     <bean id="finalStandingModel" class="org.toursys.processor.service.standing.FinalStandingModel" />
+    <bean id="WChModel" class="org.toursys.processor.service.wch.WChModel" />
 
 </beans>

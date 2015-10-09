@@ -162,5 +162,30 @@ package org.toursys.repository.model {
     isDef ::: name surname
     toString ::: id email name platnost role userName surname password
   }
+  
+  final pojo WchQualification serializable 1 {
+    id : java.lang.Integer primaryKey index 1
+    ithfId : java.lang.Integer required index 2
+    lastUpdate : java.util.Date required
+    name : java.lang.String required
+    wchTournaments : java.util.List <:WchTournament>
+    equals ::: id
+    toInit ::: wchTournaments
+    isDef :::
+    toString ::: ithfId id lastUpdate name
+  }
+
+  final pojo WchTournament serializable 1 {
+    id : java.lang.Integer primaryKey index 1
+    wchQualification :: WchQualification required index 2
+    name : java.lang.String
+    series : java.lang.String
+    date : java.util.Date required
+    points : java.lang.Integer
+    equals ::: id
+    toInit ::: wchQualification
+    isDef ::: series name points
+    toString ::: id series name points date
+  }
 
 }

@@ -79,17 +79,12 @@ public class GroupService {
         return groups.get(0);
     }
 
-    public Groups getGroup(Groups group) {
-        return groupsDao.get(group);
-    }
-
     public List<Groups> getGroups(Groups group) {
         return groupsDao.list(group);
     }
 
-    public Groups updateGroup(Groups group) {
-        groupsDao.update(group);
-        return group;
+    public int updateGroup(Groups group) {
+        return groupsDao.update(group);
     }
 
     @Transactional
@@ -227,13 +222,13 @@ public class GroupService {
         return groupsDao.list(group);
     }
 
-    public void createGroups(Tournament tournament, List<Participant> tournamentParticipants, String groupName) {
+    public void createGroups(Tournament tournament, List<Participant> tournamentParticipants, String groupNameMax) {
         List<Groups> groupss = getBasicGroups(tournament);
         for (Groups groups : groupss) {
             groupsDao.delete(groups);
         }
 
-        Integer maxGroupName = Integer.parseInt(groupName);
+        Integer maxGroupName = Integer.parseInt(groupNameMax);
         SnakeList snakeList = new SnakeList(maxGroupName);
         Map<Integer, List<Participant>> participantByGroup = new HashMap<Integer, List<Participant>>();
 

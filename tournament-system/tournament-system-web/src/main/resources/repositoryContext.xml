@@ -45,6 +45,8 @@
     <bean id="tournamentDao" class="org.toursys.repository.dao.impl.TournamentDaoImpl" parent="dao" />
     <bean id="userDao" class="org.toursys.repository.dao.impl.UserDaoImpl" parent="dao" />
     <bean id="finalStandingDao" class="org.toursys.repository.dao.impl.FinalStandingDaoImpl" parent="dao" />
+    <bean id="wchQualificationDao" class="org.toursys.repository.dao.impl.WchQualificationDaoImpl" parent="dao" />
+    <bean id="wchTournamentDaoImpl" class="org.toursys.repository.dao.impl.WchTournamentDaoImpl" parent="dao" />
 
     <bean id="sqlFactory" class="org.sqlproc.engine.jdbc.JdbcEngineFactory" init-method="init">
         <property name="metaFilesNames">

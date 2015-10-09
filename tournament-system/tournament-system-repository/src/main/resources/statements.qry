@@ -5,6 +5,8 @@ SEQ_TOURNAMENT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE T
 SEQ_SEASON(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'SEASON';
 SEQ_GROUP(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'GROUPS';
 SEQ_USER(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'USER';
+SEQ_WCH_TOURNAMENT(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'WCH_TOURNAMENT';
+SEQ_WCH_QUALIFICATION(OPT)=SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'tournamentsystem' AND TABLE_NAME = 'WCH_QUALIFICATION';
 
 INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
   insert into %%PLAYER (%ID, %NAME, %SURNAME, %CLUB, {? :playerDiscriminator | %PLAYER_DISCRIMINATOR,} %WORLD_RANKING, %USER_ID, %ITHF_ID)
@@ -20,7 +22,7 @@ INSERT_TOURNAMENT(CRUD,inx=Tournament,outx=Tournament,tab=tournament)=
   insert into %%TOURNAMENT (%ID, %NAME, %SEASON_ID {? :finalPromoting | ,%FINAL_PROMOTING} {? :lowerPromoting | ,%LOWER_PROMOTING} {? :winPoints | ,%WIN_POINTS}
   	{? :playOffFinal | ,%PLAY_OFF_FINAL} {? :playOffLower | ,%PLAY_OFF_LOWER} {? :minPlayersInGroup | ,%MIN_PLAYERS_IN_GROUP} {? :sortType | ,%SORT_TYPE} {? :publish | ,%PUBLISH}
   )
-  {= values (:id(seq=SEQ_TOURNAMENT), :name, :season.id, {? :finalPromoting | :finalPromoting} {? :lowerPromoting | ,:lowerPromoting} {? :winPoints| ,:winPoints} {? :playOffFinal | ,:playOffFinal} {? :playOffLower | ,:playOffLower} 
+  {= values (:id(seq=SEQ_TOURNAMENT), :name, :season.id {? :finalPromoting | ,:finalPromoting} {? :lowerPromoting | ,:lowerPromoting} {? :winPoints| ,:winPoints} {? :playOffFinal | ,:playOffFinal} {? :playOffLower | ,:playOffLower} 
   	{? :minPlayersInGroup | ,:minPlayersInGroup } {? :sortType | ,:sortType } {? :publish | ,:publish } 
   ) }
 ;
@@ -703,3 +705,104 @@ GET_PARTICIPANT_IN_TOURNAMENT(QRY,inx=Tournament,outx=Participant,tab=player=p,t
 	 }
 ;
 
+INSERT_WCH_TOURNAMENT(CRUD,inx=WchTournament,outx=WchTournament,tab=wchTournament)=
+  insert into %%WCH_TOURNAMENT (%ID, %NAME, %POINTS, %SERIES, %DATE, %WCH_QUALIFICATION_ID)
+  {= values (:id(seq=SEQ_WCH_TOURNAMENT), :name, :points, :series, :date, :wchQualification.id) }
+;
+
+GET_WCH_TOURNAMENT(CRUD,inx=WchTournament,outx=WchTournament,tab=wchTournament=t,tab=wchQualification=q)=
+  select %t.ID @id(id), %t.NAME @name, %t.POINTS @points, %t.SERIES @series, %t.DATE @date, 
+  from %%WCH_TOURNAMENT t
+  {= where
+    {& %t.ID = :id }
+    {& %t.NAME = :name }
+    {& %t.POINTS = :points }
+    {& %t.SERIES = :series }
+    {& %t.DATE = :date }
+  }
+;
+
+UPDATE_WCH_TOURNAMENT(CRUD,inx=WchTournament,outx=WchTournament,tab=wchTournament)=
+  update %%WCH_TOURNAMENT
+  {= set
+    { ,%NAME = :name }
+    { ,%POINTS = :points }
+    { ,%SERIES = :series }
+    { ,%DATE = :date }
+  }
+  {= where
+    {& %ID = :id(!empty) }
+  }
+;
+
+DELETE_WCH_TOURNAMENT(CRUD,inx=WchTournament,outx=WchTournament,tab=wchTournament)=
+  delete from %%WCH_TOURNAMENT
+  {= where
+    {& %ID = :id(!empty) }
+  }
+;
+
+SELECT_WCH_TOURNAMENT(QRY,inx=WchTournament,outx=WchTournament,tab=wchTournament=t,tab=wchQualification=q)=
+  select %t.ID @id(id), %t.NAME @name, %t.POINTS @points, %t.SERIES @series, %t.DATE @date, 
+  from %%WCH_TOURNAMENT t
+  {= where
+  	{& %t.ID = :id }
+    {& UPPER(%t.NAME) like :+name }
+    {& %t.POINTS = :points }
+    {& UPPER(%t.SERIES) like :+series }
+    {& UPPER(%t.DATE) like :+date }
+  }
+  {#1 order by %t.ID }
+;
+
+INSERT_WCH_QUALIFICATION(CRUD,inx=WchQualification,outx=WchQualification,tab=wchQualification)=
+  insert into %%WCH_QUALIFICATION (%ID, %ITHF_ID, %LAST_UPDATE, %NAME)
+  {= values (:id(seq=SEQ_WCH_QUALIFICATION), :ithfId, :lastUpdate, :name) }
+;
+
+GET_WCH_QUALIFICATION(CRUD,inx=WchQualification,outx=WchQualification,tab=wchTournament=t,tab=wchQualification=q)=
+  select %q.ID @id(id), %q.ITHF_ID @ithfId, %q.LAST_UPDATE @lastUpdate, %q.NAME @name
+         {? :wchTournaments(call=toInit) | , %t.ID @wchTournaments.id(id), %t.NAME @wchTournaments.name, %t.POINTS @wchTournaments.points, %t.SERIES @wchTournaments.series, %t.DATE @wchTournaments.date }
+  from %%WCH_QUALIFICATION q
+  {? :wchTournaments(call=toInit) | left join %%WCH_TOURNAMENT t on %q.ID = %t.WCH_QUALIFICATION_ID }
+  {= where
+    {& %q.ID = :id }
+    {& %q.ITHF_ID = :ithfId }
+    {& %q.LAST_UPDATE = :lastUpdate }
+    {& %q.NAME = :name }
+  }
+;
+
+UPDATE_WCH_QUALIFICATION(CRUD,inx=WchQualification,outx=WchQualification,tab=wchQualification)=
+  update %%WCH_QUALIFICATION
+  {= set
+    { ,%ITHF_ID = :ithfId }
+    { ,%LAST_UPDATE = :lastUpdate }
+    { ,%NAME = :name }
+  }
+  {= where
+    {& %ID = :id(!empty) }
+  }
+;
+
+DELETE_WCH_QUALIFICATION(CRUD,inx=WchQualification,outx=WchQualification,tab=wchQualification)=
+  delete from %%WCH_QUALIFICATION
+  {= where
+    {& %ID = :id(!empty) }
+  }
+;
+
+SELECT_WCH_QUALIFICATION(QRY,inx=WchQualification,outx=WchQualification,tab=wchTournament=t,tab=wchQualification=q)=
+  select %q.ID @id(id), %q.ITHF_ID @ithfId, %q.LAST_UPDATE @lastUpdate, %q.NAME @name
+         {? :wchTournaments(call=toInit) | , %t.ID @wchTournaments.id(id), %t.NAME @wchTournaments.name, %t.POINTS @wchTournaments.points, %t.SERIES @wchTournaments.series, %t.DATE @wchTournaments.date }
+  from %%WCH_QUALIFICATION q
+  {? :wchTournaments(call=toInit) | left join %%WCH_TOURNAMENT t on %q.ID = %t.WCH_QUALIFICATION_ID }
+  {= where
+    {& %q.ID = :id }
+    {& %q.ITHF_ID = :ithfId }
+    {& %q.LAST_UPDATE = :lastUpdate }
+    {& UPPER(%q.NAME) like :+name }    
+  }
+  {#1 order by %q.ID }
+  {#2 order by %q.ITHF_ID }
+;

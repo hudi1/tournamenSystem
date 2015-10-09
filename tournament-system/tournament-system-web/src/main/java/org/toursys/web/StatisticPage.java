@@ -109,25 +109,27 @@ public class StatisticPage extends BasePage {
         }
 
         public void addDropDownTournament() {
-            add(new DropDownChoice<Tournament>("tournament", tournamentService.getTournaments(new Tournament()
-                    ._setSeason(new Season()._setUser(user))), new IChoiceRenderer<Tournament>() {
+            // TODO brat sezonu z DropDownChoice
+            Season season = new Season();
+            add(new DropDownChoice<Tournament>("tournament", season.getTournaments(),
+                    new IChoiceRenderer<Tournament>() {
 
-                private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-                @Override
-                public Object getDisplayValue(Tournament tournament) {
-                    return tournament.getName();
-                }
+                        @Override
+                        public Object getDisplayValue(Tournament tournament) {
+                            return tournament.getName();
+                        }
 
-                @Override
-                public String getIdValue(Tournament tournament, int index) {
-                    if (tournament == null || tournament.getId() == null) {
-                        return null;
-                    } else {
-                        return tournament.getId().toString();
-                    }
-                }
-            }));
+                        @Override
+                        public String getIdValue(Tournament tournament, int index) {
+                            if (tournament == null || tournament.getId() == null) {
+                                return null;
+                            } else {
+                                return tournament.getId().toString();
+                            }
+                        }
+                    }));
         }
 
         public void addDropDownSeason() {

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../dataset.xsd">
+
+	<user email="email" id="@any" name="@null" password="password" platnost="1" role="USER" surname="@null" user_name="username"/>
+	<user email="adminEmail" id="@any" name="@null" password="password" platnost="1" role="ADMIN" surname="admin" user_name="admin"/>
+
+</dataset>

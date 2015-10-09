@@ -56,6 +56,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
         mountPage("tournamentHome", TournamentHomePage.class);
         mountPage("publicTournament", PublicTournamentPage.class);
         mountPage("tournamentOverview", TournamentOverviewPage.class);
+        mountPage("wchPage", WChPage.class);
     }
 
     private void mountResource() {

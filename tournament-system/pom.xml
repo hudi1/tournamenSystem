@@ -11,7 +11,7 @@
     <properties>
         <version.spring>3.0.5.RELEASE</version.spring>
         <version.log4j>1.2.15</version.log4j>
-        <version.junit>4.7</version.junit>
+        <version.junit>4.11</version.junit>
         <version.commons-io>1.4</version.commons-io>
         <version.commons-codec>1.4</version.commons-codec>
         <version.commons-lang>2.6</version.commons-lang>
@@ -106,7 +106,7 @@
                             <groupId>mysql</groupId>
                             <artifactId>mysql-connector-java</artifactId>
                             <version>${version.mysql}</version>
-                            <scope>runtime</scope>                            
+                            <scope>runtime</scope>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -361,10 +361,19 @@
             <dependency>
                 <groupId>net.sf.lightair</groupId>
                 <artifactId>light-air</artifactId>
-                <version>${version.light-air}</version>
+                <version>2.4.0</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>log4j-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
-
 
             <!-- CGLIB -->
             <dependency>
@@ -385,6 +394,23 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>local-db</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <properties>
+                <local.db.driver>com.mysql.jdbc.Driver</local.db.driver>
+                <local.db.databaseName>tournamentsystem</local.db.databaseName>
+                <local.db.url>jdbc:mysql://localhost/${local.db.databaseName}?characterEncoding=UTF-8</local.db.url>
+                <local.db.user>root</local.db.user>
+                <local.db.password>root</local.db.password>
+            </properties>
+        </profile>
+    </profiles>
 
     <licenses>
         <license>

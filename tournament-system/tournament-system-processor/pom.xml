@@ -119,6 +119,10 @@
             <groupId>xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.sf.lightair</groupId>
+            <artifactId>light-air</artifactId>
+        </dependency>        
     </dependencies>
 
     <profiles>

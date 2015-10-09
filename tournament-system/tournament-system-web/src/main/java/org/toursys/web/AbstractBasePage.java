@@ -17,6 +17,7 @@ import org.toursys.processor.service.season.SeasonService;
 import org.toursys.processor.service.standing.FinalStandingService;
 import org.toursys.processor.service.tournament.TournamentService;
 import org.toursys.processor.service.user.UserService;
+import org.toursys.processor.service.wch.WChService;
 
 public class AbstractBasePage extends WebPage {
 
@@ -54,6 +55,9 @@ public class AbstractBasePage extends WebPage {
 
     @SpringBean(name = "importService")
     protected ImportService importService;
+
+    @SpringBean(name = "wChService")
+    protected WChService wChService;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

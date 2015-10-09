@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../dataset.xsd">
+
+	<user email="adminEmail" id="$userid" name="@null" password="password" platnost="1" role="ADMIN" surname="admin" user_name="admin"/>
+	
+	<season id="@any" name="adminSeason" user_id="$userid"/>
+
+	<tournament id="@any" name="adminTournament" final_promoting="1" lower_promoting="1" min_players_in_group="1" play_off_final="1" play_off_lower="1"  publish="1" season_id="1" sort_type="SK" win_points="1" />
+
+</dataset>

@@ -1,7 +1,5 @@
 package org.toursys.processor.service.tournament;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +14,7 @@ public class TournamentService {
 
     @Transactional
     public Tournament createTournament(Season season, Tournament tournament) {
-        return tournamentDao.insert(tournament._setSeason(season));
+        return tournamentDao.insert(tournament._setSeason(new Season()._setId(season.getId())));
     }
 
     @Transactional(readOnly = true)
@@ -34,8 +32,4 @@ public class TournamentService {
         return tournamentDao.delete(tournament);
     }
 
-    @Transactional(readOnly = true)
-    public List<Tournament> getTournaments(Tournament tournament) {
-        return tournamentDao.list(tournament);
-    }
 }

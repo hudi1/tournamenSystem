@@ -22,9 +22,8 @@ public class UserService {
         return userDao.get(user);
     }
 
-    public User updateUser(User user) {
-        userDao.update(user);
-        return user;
+    public int updateUser(User user) {
+        return userDao.update(user);
     }
 
     public User createUser(User user) {

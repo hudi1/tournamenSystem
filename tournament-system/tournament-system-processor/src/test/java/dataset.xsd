@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:dflt="tournamentsystem">
+	<xsd:import namespace="tournamentsystem" schemaLocation="tournamentsystem.xsd" />
+	<xsd:element name="dataset">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="final_standing" type="dflt:final_standing__type" />
+				<xsd:element name="game" type="dflt:game__type" />
+				<xsd:element name="groups" type="dflt:groups__type" />
+				<xsd:element name="participant" type="dflt:participant__type" />
+				<xsd:element name="player" type="dflt:player__type" />
+				<xsd:element name="play_off_game" type="dflt:play_off_game__type" />
+				<xsd:element name="season" type="dflt:season__type" />
+				<xsd:element name="tournament" type="dflt:tournament__type" />
+				<xsd:element name="user" type="dflt:user__type" />
+				<xsd:any namespace="tournamentsystem" />
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
