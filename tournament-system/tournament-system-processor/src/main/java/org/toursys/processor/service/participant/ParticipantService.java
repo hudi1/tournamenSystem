@@ -189,7 +189,7 @@ public class ParticipantService {
 
     public List<Participant> getParticipandByGroup(Groups group) {
         SqlStandardControl control = new SqlStandardControl();
-        control.setOrder(SqlOrder.getAscOrder(4));
+        control.setAscOrder(Participant.ORDER_BY_RANK);
 
         Participant participant = new Participant();
         participant.setGroup(group);

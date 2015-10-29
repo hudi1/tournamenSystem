@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 import org.sqlproc.engine.SqlQuery;
 import org.sqlproc.engine.SqlRuntimeContext;
 import org.sqlproc.engine.SqlRuntimeException;
-import org.sqlproc.engine.impl.BeanUtils;
 import org.sqlproc.engine.type.SqlInternalType;
 import org.toursys.repository.model.Results;
+import org.toursys.repository.model.Score;
 
 public class ResultType extends SqlInternalType {
 
@@ -21,7 +21,7 @@ public class ResultType extends SqlInternalType {
 
     @Override
     public Class<?>[] getClassTypes() {
-        return new Class[] { ResultType.class };
+        return new Class[] { Results.class };
     }
 
     @Override
@@ -35,10 +35,11 @@ public class ResultType extends SqlInternalType {
     }
 
     @Override
-    public void setResult(SqlRuntimeContext runtimeCtxCtx, Object resultInstance, String attributeName,
+    public void setResult(SqlRuntimeContext runtimeCtx, Object resultInstance, String attributeName,
             Object resultValue, boolean ingoreError) throws SqlRuntimeException {
-        Method m = BeanUtils.getSetter(resultInstance, attributeName, Results.class);
-        if (m == null) {
+        if (resultValue == null) {
+			if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, null, Results.class))
+				return;             	
             if (ingoreError) {
                 logger.error("There's no getter for " + attributeName + " in " + resultInstance
                         + ", META type is ResultType");
@@ -47,11 +48,6 @@ public class ResultType extends SqlInternalType {
                 throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
                         + ", META type is ResultType");
             }
-        }
-
-        if (resultValue == null) {
-            BeanUtils.simpleInvokeMethod(m, resultInstance, new Results());
-            return;
         }
 
         if (!(resultValue instanceof String)) {
@@ -64,15 +60,17 @@ public class ResultType extends SqlInternalType {
         }
 
         String result = (String) resultValue;
-        /*
-         * Matcher matcher = pattern.matcher(score); if (!matcher.matches()) { if (ingoreError) {
-         * logger.error("Incorrect result score format '" + score + "'"); return; } else { throw new
-         * SqlRuntimeException("Incorrect result score format '" + score + "'"); } }
-         * 
-         * int leftSide = Integer.parseInt(matcher.group(1)); int rightSide = Integer.parseInt(matcher.group(2));
-         */
-        BeanUtils.simpleInvokeMethod(m, resultInstance, new Results(result));
-
+		if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Results(result),
+				Results.class))
+			return;
+		if (ingoreError) {
+			logger.error("There's no getter for " + attributeName + " in " + resultInstance
+					+ ", META type is ResultType");
+			return;
+		} else {
+			throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
+					+ ", META type is ResultType");
+		}
     }
 
     @Override

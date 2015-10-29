@@ -18,6 +18,7 @@ import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
+import org.toursys.repository.model.PlayOffGameStatus;
 import org.toursys.repository.model.Result;
 import org.toursys.repository.model.Tournament;
 
@@ -86,9 +87,9 @@ public class PlayOffGameService {
             }
 
             if (homeWinnerCount > awayWinnerCount) {
-                playOffGame.setStatus(GameStatus.WIN);
+                playOffGame.setStatus(PlayOffGameStatus.WIN);
             } else if (homeWinnerCount < awayWinnerCount) {
-                playOffGame.setStatus(GameStatus.LOSE);
+                playOffGame.setStatus(PlayOffGameStatus.LOSE);
             } else {
                 playOffGame.setStatus(null);
             }

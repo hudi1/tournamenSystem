@@ -218,7 +218,7 @@ public class GroupService {
     public List<Groups> getSortedByNameFinalGroups(Tournament tournament) {
         Groups group = groupModel.createFinalGroup(tournament);
         SqlStandardControl control = new SqlStandardControl();
-        control.setOrder(SqlOrder.getAscOrder(4));
+        control.setAscOrder(Groups.ORDER_BY_NAME);
         return groupsDao.list(group);
     }
 

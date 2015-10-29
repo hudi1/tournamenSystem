@@ -1,0 +1,91 @@
+resolve-pojo-on;
+database-is-online;
+generate-from-to;
+validate-resources - "statements.meta" entity.model dao.model;
+database-jdbc-driver   com.mysql.jdbc.Driver;
+database-has-url   "jdbc:mysql://localhost/tournamentsystem";
+database-login-username   root;
+database-login-password   root;
+
+pojogen-generate-wrappers;
+
+pojogen-make-it-final;
+pojogen-generate-operators;
+pojogen-not-abstract-tables game;
+
+pojogen-ignore-one-to-many participant ID->game->AWAY_PARTICIPANT_ID;
+pojogen-ignore-one-to-many participant ID->play_off_game->AWAY_PARTICIPANT_ID;
+pojogen-ignore-one-to-many participant ID->game->AWAY_PARTICIPANT_ID;
+pojogen-ignore-one-to-many player ID->PLAY_OFF_GAME;
+pojogen-ignore-one-to-many player ID->FINAL_STANDING->PLAYER_ID;
+
+pojogen-implements-interfaces java.io.Serializable;
+pojogen-generate-methods equals toString toInit isDef;
+
+pojogen-types-for-columns participant SCORE->org.toursys.repository.model.Score;
+pojogen-types-for-columns game RESULT->org.toursys.repository.model.Results;
+pojogen-types-for-columns play_off_game RESULT->org.toursys.repository.model.Results;
+
+metagen-column-meta-type participant SCORE->score;
+metagen-column-meta-type game RESULT->result;
+metagen-column-meta-type play_off_game RESULT->result;
+
+pojogen-rename-columns groups_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
+
+pojogen-rename-columns groups_PLAY_OFF_TYPE F->FINAL L->LOWER C->CROSS;
+
+pojogen-create-columns participant TEMP->boolean;
+
+pojogen-inherit-many-to-one play_off_game GAME_ID->game->ID;
+pojogen-inherit-many-to-one wch_qualification PLAYER_ID->player->ID;
+
+metagen-generate-sequences;
+metagen-table-sequence final_standing FINAL_STANDING;
+metagen-table-sequence game GAME;
+metagen-table-sequence groups GROUPS;
+metagen-table-sequence participant PARTICIPANT;
+metagen-table-sequence player PLAYER;
+metagen-table-sequence season SEASON;
+metagen-table-sequence tournament TOURNAMENT;
+metagen-table-sequence user USER;
+metagen-table-sequence wch_qualification WCH_QUALIFICATION;
+metagen-table-sequence wch_tournament WCH_TOURNAMENT;
+
+table finalStanding final_standing;
+table game game;
+table groups groups;
+table participant participant;
+table playOffGame play_off_game;
+table player player;
+table season season;
+table tournament tournament;
+table user user;
+table wchQualification wch_qualification;
+table wchTournament wch_tournament;
+
+compress-meta-directives;
+pojogen-package org.toursys.repository.model;
+daogen-implementation-package impl;
+daogen-package org.toursys.repository.dao;
+
+pojo FinalStanding org.toursys.repository.model.FinalStanding;
+pojo Game org.toursys.repository.model.Game;
+pojo Groups org.toursys.repository.model.Groups;
+pojo Participant org.toursys.repository.model.Participant;
+pojo PlayOffGame org.toursys.repository.model.PlayOffGame;
+pojo Player org.toursys.repository.model.Player;
+pojo Result org.toursys.repository.model.Result;
+pojo Results org.toursys.repository.model.Results;
+pojo Score org.toursys.repository.model.Score;
+pojo Season org.toursys.repository.model.Season;
+pojo StatisticForm org.toursys.repository.model.StatisticForm;
+pojo Tournament org.toursys.repository.model.Tournament;
+pojo User org.toursys.repository.model.User;
+pojo WchQualification org.toursys.repository.model.WchQualification;
+pojo WchTournament org.toursys.repository.model.WchTournament;
+
+
+
+//database-debug-level TRACE;
+//pojogen-debug-level TRACE;
+//metagen-debug-level TRACE;

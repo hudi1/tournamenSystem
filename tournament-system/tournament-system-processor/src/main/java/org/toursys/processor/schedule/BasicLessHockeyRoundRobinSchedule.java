@@ -88,7 +88,7 @@ public class BasicLessHockeyRoundRobinSchedule extends RoundRobinSchedule {
 
     @Override
     protected void addGameToSchedule(Participant homePlayer, Participant awayPlayer) {
-        if (!homePlayer.getTemp() && !awayPlayer.getTemp()) {
+        if (!homePlayer.isTemp() && !awayPlayer.isTemp()) {
             for (Game game : homePlayer.getGames()) {
                 if (game.getAwayParticipant().equals(awayPlayer)) {
                     game._setHomeParticipant(homePlayer)._setAwayParticipant(awayPlayer);

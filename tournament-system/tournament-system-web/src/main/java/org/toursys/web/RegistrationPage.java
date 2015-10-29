@@ -104,6 +104,11 @@ public class RegistrationPage extends TournamentHomePage {
                     groupService.createGroups(tournament, tournamentParticipants, group.getName());
                     setResponsePage(RegistrationPage.class, getPageParameters());
                 }
+                
+                @Override
+                public boolean isVisible() {
+                	return selectOptions.equals(RegistrationOptions.SNAKE);
+                }
             });
 
         }
