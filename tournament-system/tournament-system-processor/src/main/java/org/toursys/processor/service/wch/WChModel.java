@@ -8,6 +8,7 @@ import java.util.List;
 import org.toursys.repository.model.WChRecord;
 import org.toursys.repository.model.WchQualification;
 import org.toursys.repository.model.WchTournament;
+import org.toursys.repository.model.wch.WChExcludedSeries;
 import org.toursys.repository.model.wch.WChSeason;
 
 public class WChModel {
@@ -16,12 +17,15 @@ public class WChModel {
 
     public List<WChRecord> map(WChSeason wChSeason, List<WchQualification> wchQualifications) {
         List<WChRecord> wChRecords = new ArrayList<WChRecord>();
+        WChExcludedSeries excludedSeries = new WChExcludedSeries();
         for (WchQualification wchQualification : wchQualifications) {
             WChRecord wChRecord = new WChRecord();
             wChRecord.setName(wchQualification.getName());
             int total = 0;
             for (WchTournament wchTournament : wchQualification.getWchTournaments()) {
-                if (NATION_SERIES.equals(wchTournament.getSeries())) {
+            	if (excludedSeries.contains(wchTournament.getSeries())){
+            		continue;
+            	} else if (NATION_SERIES.equals(wchTournament.getSeries())) {
                     if (wchTournament.getDate().after(wChSeason.getStartDateYear1())
                             && wchTournament.getDate().before(wChSeason.getEndDateYear1())) {
                         wChRecord.setSlovakChampionship1points(wchTournament.getPoints());
