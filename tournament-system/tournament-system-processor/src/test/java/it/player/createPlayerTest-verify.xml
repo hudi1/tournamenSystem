@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../dataset.xsd">
+
+	<user email="adminEmail" id="1" name="@null" password="password" platnost="1" role="ADMIN" surname="admin" user_name="admin"/>
+
+    <season id="1" name="adminSeason" user_id="1"/>
+
+    <tournament id="1" name="tournament" final_promoting="5" lower_promoting="6" min_players_in_group="7" play_off_final="8" play_off_lower="9"  publish="1" season_id="1" sort_type="CZ" win_points="10" />
+	
+	<groups id="1" copy_result="true" index_of_first_hockey="1" name="name" number_of_hockey="1" play_off_type="F" play_off="true" play_third_place="true" tournament_id="1" type="F"/>
+
+    <player id="1" club="adminClub" name="adminName" surname="adminSurname" user_id="1"/>
+    <player id="2" club="adminClub2" name="adminName2" surname="adminSurname2" user_id="1"/>
+    <player id="@any" club="club" name="name" surname="surname" ithf_id="1" world_ranking="1" user_id="1" />
+
+	<participant id="1" group_id="1" player_id="1" />
+
+</dataset>

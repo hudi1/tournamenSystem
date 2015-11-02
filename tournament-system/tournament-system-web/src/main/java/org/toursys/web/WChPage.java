@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.toursys.repository.model.User;
 import org.toursys.repository.model.WChRecord;
 import org.toursys.repository.model.wch.WCh2017Season;
 import org.toursys.web.components.TournamentButton;
@@ -20,6 +21,7 @@ public class WChPage extends BasePage {
     private static final long serialVersionUID = 1L;
 
     private List<WChRecord> records;
+    private User user;
 
     private void prepareData(PageParameters parameters) {
         records = wChService.getWchRecords(WCh2017Season.getInstance());
@@ -31,6 +33,7 @@ public class WChPage extends BasePage {
 
     public WChPage(PageParameters parameters) {
         super(parameters);
+        this.user = getTournamentSession().getUser();
 
         prepareData(parameters);
         createPage();
@@ -63,9 +66,14 @@ public class WChPage extends BasePage {
 
                 @Override
                 public void submit() {
-                    wChService.updateWch();
+                    wChService.updateWch(user);
 
                     setResponsePage(WChPage.class, getPageParameters());
+                }
+
+                @Override
+                public boolean isVisible() {
+                    return user != null;
                 }
             };
             add(schedule);

@@ -11,6 +11,7 @@ import org.toursys.processor.service.player.PlayerService;
 import org.toursys.repository.dao.WchQualificationDao;
 import org.toursys.repository.dao.impl.WchTournamentDaoImpl;
 import org.toursys.repository.model.Player;
+import org.toursys.repository.model.User;
 import org.toursys.repository.model.WChRecord;
 import org.toursys.repository.model.WchQualification;
 import org.toursys.repository.model.WchTournament;
@@ -77,8 +78,8 @@ public class WChService {
         return wChRecords;
     }
 
-    public void updateWch() {
-        List<Player> players = playerService.getPlayers(new Player());
+    public void updateWch(User user) {
+        List<Player> players = playerService.getUserPlayers(user);
         for (Player player : players) {
             if (player.getIthfId() != null) {
                 WchQualification wchQualification = WChHtmlImportFactory.getWchQualification(player.getIthfId());

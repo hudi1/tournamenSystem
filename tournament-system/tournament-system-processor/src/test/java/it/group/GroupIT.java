@@ -1,5 +1,7 @@
 package it.group;
 
+import java.util.List;
+
 import net.sf.lightair.LightAirSpringRunner;
 import net.sf.lightair.annotation.Setup;
 import net.sf.lightair.annotation.Verify;
@@ -10,10 +12,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.toursys.processor.service.group.GroupService;
+import org.toursys.processor.service.participant.ParticipantService;
 import org.toursys.processor.service.tournament.TournamentService;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.GroupsType;
+import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.Tournament;
 
 @RunWith(LightAirSpringRunner.class)
@@ -26,6 +30,9 @@ public class GroupIT {
 
     @Autowired
     private TournamentService tournamentService;
+
+    @Autowired
+    private ParticipantService participantService;
 
     @Test
     @Verify("createGroupTest-verify.xml")
@@ -59,6 +66,37 @@ public class GroupIT {
                 ._setName("groupNameEdit")._setNumberOfHockey(1)._setPlayOff(false)
                 ._setPlayOffType(GroupsPlayOffType.LOWER)._setPlayThirdPlace(false)._setType(GroupsType.BASIC));
         Assert.assertNotSame(0, count);
+    }
+
+    @Test
+    @Verify("getGroupTest-verify.xml")
+    public void getGroupsTest() {
+        List<Groups> groups = groupService.getGroups(new Groups());
+        Assert.assertSame(2, groups.size());
+    }
+
+    @Test
+    @Verify("getGroupTest-verify.xml")
+    public void getBasicGroupsTest() {
+        List<Groups> groups = groupService.getBasicGroups(new Tournament()._setId(1));
+        Assert.assertSame(1, groups.size());
+    }
+
+    @Test
+    @Verify("getGroupTest-verify.xml")
+    public void getFinalGroupsTest() {
+        List<Groups> groups = groupService.getFinalGroups(new Tournament()._setId(1));
+        Assert.assertSame(1, groups.size());
+    }
+
+    @Test
+    @Verify("createGroupsTest-verify.xml")
+    // TODO
+    public void createGroups() {
+        Tournament tournament = new Tournament()._setId(1);
+        List<Participant> tournamentParticipants = participantService.getRegistratedParticipant(tournament);
+
+        groupService.createGroups(new Tournament()._setId(1), tournamentParticipants, "4");
     }
 
 }

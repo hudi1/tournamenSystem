@@ -10,6 +10,7 @@ import org.toursys.repository.model.Player;
 import org.toursys.repository.model.Player.Attribute;
 import org.toursys.repository.model.StatisticForm;
 import org.toursys.repository.model.Tournament;
+import org.toursys.repository.model.User;
 
 public class PlayerService {
 
@@ -17,20 +18,15 @@ public class PlayerService {
     private PlayerExtDao playerDao;
 
     @Transactional
-    public Player createPlayer(Player player) {
-
-        Player dbPlayer = getPlayer(player._setClub(null));
+    public Player createPlayer(User user, Player player) {
+        player.setUser(user);
+        Player dbPlayer = playerDao.get(player);
 
         if (dbPlayer == null) {
             return playerDao.insert(player);
         } else {
             return dbPlayer;
         }
-    }
-
-    @Transactional(readOnly = true)
-    public Player getPlayer(Player player) {
-        return playerDao.get(player);
     }
 
     @Transactional
@@ -45,7 +41,9 @@ public class PlayerService {
     }
 
     @Transactional(readOnly = true)
-    public List<Player> getPlayers(Player player) {
+    public List<Player> getUserPlayers(User user) {
+        Player player = new Player();
+        player.setUser(user);
         player.setInit(Player.Association.user.name());
         return playerDao.list(player);
     }

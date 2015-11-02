@@ -111,9 +111,9 @@ public class ImportService {
 
     @Transactional
     public void importPlayers(String url, User user) {
-        List<Player> players = PlayersHtmlImportFactory.createdImportedPlayers(url, user);
+        List<Player> players = PlayersHtmlImportFactory.createdImportedPlayers(url);
         for (Player player : players) {
-            playerService.createPlayer(player);
+            playerService.createPlayer(user, player);
         }
     }
 

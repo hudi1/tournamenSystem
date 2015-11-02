@@ -19,7 +19,6 @@ import org.toursys.repository.dao.GroupsDao;
 import org.toursys.repository.dao.ParticipantExtDao;
 import org.toursys.repository.dao.PlayOffGameDao;
 import org.toursys.repository.model.FinalStanding;
-import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.Participant;
