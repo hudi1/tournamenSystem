@@ -1,14 +1,14 @@
-SEQ=TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'tournament' and table_schema = 'tournamentsystem';
-SEQ=PLAYER(OPT)=select auto_increment from information_schema.tables where table_name = 'player' and table_schema = 'tournamentsystem';
-SEQ=PLAY_OFF_GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'play_off_game' and table_schema = 'tournamentsystem';
-SEQ=SEASON(OPT)=select auto_increment from information_schema.tables where table_name = 'season' and table_schema = 'tournamentsystem';
-SEQ=PARTICIPANT(OPT)=select auto_increment from information_schema.tables where table_name = 'participant' and table_schema = 'tournamentsystem';
-SEQ=WCH_TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_tournament' and table_schema = 'tournamentsystem';
-SEQ=GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'game' and table_schema = 'tournamentsystem';
-SEQ=GROUPS(OPT)=select auto_increment from information_schema.tables where table_name = 'groups' and table_schema = 'tournamentsystem';
-SEQ=FINAL_STANDING(OPT)=select auto_increment from information_schema.tables where table_name = 'final_standing' and table_schema = 'tournamentsystem';
-SEQ=WCH_QUALIFICATION(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_qualification' and table_schema = 'tournamentsystem';
-SEQ=USER(OPT)=select auto_increment from information_schema.tables where table_name = 'user' and table_schema = 'tournamentsystem';
+SEQ=TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'tournament';
+SEQ=PLAYER(OPT)=select auto_increment from information_schema.tables where table_name = 'player';
+SEQ=PLAY_OFF_GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'play_off_game';
+SEQ=SEASON(OPT)=select auto_increment from information_schema.tables where table_name = 'season';
+SEQ=PARTICIPANT(OPT)=select auto_increment from information_schema.tables where table_name = 'participant';
+SEQ=WCH_TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_tournament';
+SEQ=GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'game';
+SEQ=GROUPS(OPT)=select auto_increment from information_schema.tables where table_name = 'groups';
+SEQ=FINAL_STANDING(OPT)=select auto_increment from information_schema.tables where table_name = 'final_standing';
+SEQ=WCH_QUALIFICATION(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_qualification';
+SEQ=USER(OPT)=select auto_increment from information_schema.tables where table_name = 'user';
 
 INSERT_FINAL_STANDING(CRUD,in=FinalStanding,out=FinalStanding,tab=finalStanding)=
   insert into %%final_standing (%ID, %PLAYER_ID, %FINAL_RANK, %TOURNAMENT_ID)
@@ -768,3 +768,16 @@ SELECT_WCH_TOURNAMENT(QRY,in=WchTournament,out=WchTournament,tab=wchTournament=w
   {#ID order by %w.ID }
   {#WCH_QUALIFICATION order by %w.WCH_QUALIFICATION_ID }
 ;
+
+// Model statistics
+// Tables=11
+// Columns=72
+// Primary Keys=11
+// Exports=14
+// Imports=14
+// Indexes=35
+// Check Constraints=35
+// Procedures=0
+// Procedures Columns=0
+// Functions=0
+// Functions Columns=0
