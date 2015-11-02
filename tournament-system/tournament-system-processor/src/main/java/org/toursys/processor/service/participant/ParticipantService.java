@@ -9,14 +9,12 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.sqlproc.engine.SqlOrder;
 import org.sqlproc.engine.impl.SqlStandardControl;
 import org.toursys.processor.BadOptionsTournamentException;
 import org.toursys.processor.service.group.GroupModel;
 import org.toursys.processor.service.group.GroupService;
 import org.toursys.processor.sorter.SkTournamentSorter;
 import org.toursys.processor.sorter.TournamentSorter;
-import org.toursys.repository.dao.GroupsDao;
 import org.toursys.repository.dao.ParticipantExtDao;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
@@ -32,9 +30,6 @@ public class ParticipantService {
 
     @Inject
     private ParticipantExtDao participantDao;
-
-    @Inject
-    private GroupsDao groupsDao;
 
     @Inject
     private GroupModel groupModel;
@@ -66,7 +61,7 @@ public class ParticipantService {
                 Groups group = deletedParticipant.getGroup();
                 participants = participantDao.list(new Participant()._setGroup(group));
                 if (participants.isEmpty()) {
-                    groupsDao.delete(group);
+                    groupService.deleteGroup(group);
                 }
             }
         }
@@ -84,10 +79,10 @@ public class ParticipantService {
         if (groupName != null) {
             Groups group = groupModel.createBasicGroup(tournament);
             group.setName(groupName);
-            List<Groups> savedGroups = groupsDao.list(group);
+            List<Groups> savedGroups = groupService.getGroups(group);
             if (savedGroups.isEmpty()) {
                 groupModel.initDefaultGroup(group);
-                groupsDao.insert(group);
+                groupService.createGroup(group);
             } else {
                 group = savedGroups.get(0);
             }

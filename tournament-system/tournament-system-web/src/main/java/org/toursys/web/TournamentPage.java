@@ -40,7 +40,7 @@ public class TournamentPage extends BasePage {
     private List<Season> seasons;
 
     public TournamentPage() {
-        seasons = seasonService.getSeasons(new Season()._setUser(getTournamentSession().getUser()));
+        seasons = seasonService.getUserSeasons(getTournamentSession().getUser());
         selectedSeason = selectSeason();
         createPage();
     }

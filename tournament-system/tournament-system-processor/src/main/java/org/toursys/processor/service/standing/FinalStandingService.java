@@ -25,6 +25,7 @@ import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.Participant;
 import org.toursys.repository.model.PlayOffGame;
 import org.toursys.repository.model.PlayOffGame.Association;
+import org.toursys.repository.model.PlayOffGameStatus;
 import org.toursys.repository.model.Tournament;
 
 public class FinalStandingService {
@@ -144,9 +145,9 @@ public class FinalStandingService {
                 for (int i = 0; i < playOffGames.size() - 4; i++) {
                     Integer round = TournamentUtil.getRound(playOffGames.size(), playOffGames.get(i).getPosition());
                     Participant participant = null;
-                    if (GameStatus.WIN.equals(playOffGames.get(i).getStatus())) {
+                    if (PlayOffGameStatus.WIN.equals(playOffGames.get(i).getStatus())) {
                         participant = playOffGames.get(i).getAwayParticipant();
-                    } else if (GameStatus.LOSE.equals(playOffGames.get(i).getStatus())) {
+                    } else if (PlayOffGameStatus.LOSE.equals(playOffGames.get(i).getStatus())) {
                         participant = playOffGames.get(i).getHomeParticipant();
                     }
 
@@ -183,8 +184,8 @@ public class FinalStandingService {
                             ._setFinalRank(position)._setTournament(tournament));
 
                     if (playOffGames.get(i).getStatus() != null
-                            && !GameStatus.DRAW.equals(playOffGames.get(i).getStatus())) {
-                        if (playOffGames.get(i).getStatus().equals(GameStatus.WIN)) {
+                            && !PlayOffGameStatus.DRAW.equals(playOffGames.get(i).getStatus())) {
+                        if (playOffGames.get(i).getStatus().equals(PlayOffGameStatus.WIN)) {
                             if (playOffGames.get(i).getHomeParticipant() != null) {
                                 firstFinalStanding.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
                             } else {
@@ -195,7 +196,7 @@ public class FinalStandingService {
                             } else {
                                 secondFinalStanding.setPlayer(null);
                             }
-                        } else if (playOffGames.get(i).getStatus().equals(GameStatus.LOSE)) {
+                        } else if (playOffGames.get(i).getStatus().equals(PlayOffGameStatus.LOSE)) {
                             if (playOffGames.get(i).getAwayParticipant() != null) {
                                 firstFinalStanding.setPlayer(playOffGames.get(i).getAwayParticipant().getPlayer());
                             } else {
@@ -228,7 +229,7 @@ public class FinalStandingService {
             FinalStanding finalStanding2 = finalStandingDao.get(finalStandingModel.createFinalStanding(tournament,
                     i + 1));
 
-            if (GameStatus.WIN.equals(playOffGames.get(i).getStatus())) {
+            if (PlayOffGameStatus.WIN.equals(playOffGames.get(i).getStatus())) {
                 if (playOffGames.get(i).getHomeParticipant() != null) {
                     finalStanding1.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
                 } else {
@@ -239,7 +240,7 @@ public class FinalStandingService {
                 } else {
                     finalStanding2.setPlayer(null);
                 }
-            } else if (GameStatus.LOSE.equals(playOffGames.get(i).getStatus())) {
+            } else if (PlayOffGameStatus.LOSE.equals(playOffGames.get(i).getStatus())) {
                 if (playOffGames.get(i).getHomeParticipant() != null) {
                     finalStanding1.setPlayer(playOffGames.get(i).getHomeParticipant().getPlayer());
                 } else {

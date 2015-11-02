@@ -8,6 +8,8 @@
     <Loggers>
 
         <Logger name="org.toursys" level="debug" />
+        <Logger name="org.apache.wicket" level="error" />
+        <Logger name="org.sqlproc" level="error" />
 
     </Loggers>
 </Configuration>

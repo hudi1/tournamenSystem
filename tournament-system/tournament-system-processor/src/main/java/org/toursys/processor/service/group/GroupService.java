@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.sqlproc.engine.SqlOrder;
 import org.sqlproc.engine.impl.SqlStandardControl;
 import org.toursys.processor.comparators.WorldRankingComparator;
 import org.toursys.processor.service.game.GameService;
@@ -53,6 +52,31 @@ public class GroupService {
     @Inject
     private PlayOffGameService playOffGameService;
 
+    @Transactional
+    public Groups createGroup(Groups group) {
+        return groupsDao.insert(group);
+    }
+
+    @Transactional
+    public int updateGroup(Groups group) {
+        return groupsDao.update(group);
+    }
+
+    @Transactional
+    public int deleteGroup(Groups group) {
+        return groupsDao.delete(group);
+    }
+
+    @Transactional(readOnly = true)
+    public Groups getGroup(Groups group) {
+        return groupsDao.get(group);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Groups> getGroups(Groups group) {
+        return groupsDao.list(group);
+    }
+
     @Transactional(readOnly = true)
     public List<Groups> getBasicGroups(Tournament tournament) {
         Groups group = groupModel.createBasicGroup(tournament);
@@ -65,11 +89,7 @@ public class GroupService {
         return groupsDao.list(group);
     }
 
-    public Groups getGroupById(Integer id) {
-        Groups group = groupModel.createGroup(id);
-        return groupsDao.get(group);
-    }
-
+    @Transactional(readOnly = true)
     public Groups getGroupByTournament(Tournament tournament) {
         Groups group = groupModel.createGroup(tournament);
         List<Groups> groups = groupsDao.list(group);
@@ -77,14 +97,6 @@ public class GroupService {
             return null;
         }
         return groups.get(0);
-    }
-
-    public List<Groups> getGroups(Groups group) {
-        return groupsDao.list(group);
-    }
-
-    public int updateGroup(Groups group) {
-        return groupsDao.update(group);
     }
 
     @Transactional

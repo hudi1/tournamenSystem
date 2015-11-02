@@ -7,13 +7,11 @@
 
     <context:annotation-config />
 
-    <context:property-placeholder location="classpath:spring/database.properties" />
-
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="${local.db.driver}" />
-        <property name="url" value="${local.db.url}" />
-        <property name="username" value="${local.db.user}" />
-        <property name="password" value="${local.db.password}" />
+        <property name="driverClassName" value="${db.driver}" />
+        <property name="url" value="${db.url}" />
+        <property name="username" value="${db.username}" />
+        <property name="password" value="${db.password}" />
         <property name="defaultAutoCommit" value="true" />
         <property name="poolPreparedStatements" value="false" />
         <property name="maxOpenPreparedStatements" value="0" />
@@ -36,7 +34,7 @@
         <property name="metaFilesNames">
             <list>
                 <value>custom-statements.meta</value>
-                <value>statements.meta</value>
+                <value>statements.meta</value>                
             </list>
         </property>
         <property name="customTypes">

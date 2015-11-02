@@ -1,6 +1,5 @@
 package org.toursys.repository.type;
 
-import java.lang.reflect.Method;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +12,6 @@ import org.sqlproc.engine.SqlRuntimeContext;
 import org.sqlproc.engine.SqlRuntimeException;
 import org.sqlproc.engine.type.SqlInternalType;
 import org.toursys.repository.model.Results;
-import org.toursys.repository.model.Score;
 
 public class ResultType extends SqlInternalType {
 
@@ -38,8 +36,8 @@ public class ResultType extends SqlInternalType {
     public void setResult(SqlRuntimeContext runtimeCtx, Object resultInstance, String attributeName,
             Object resultValue, boolean ingoreError) throws SqlRuntimeException {
         if (resultValue == null) {
-			if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, null, Results.class))
-				return;             	
+            if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, null, Results.class))
+                return;
             if (ingoreError) {
                 logger.error("There's no getter for " + attributeName + " in " + resultInstance
                         + ", META type is ResultType");
@@ -60,17 +58,16 @@ public class ResultType extends SqlInternalType {
         }
 
         String result = (String) resultValue;
-		if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Results(result),
-				Results.class))
-			return;
-		if (ingoreError) {
-			logger.error("There's no getter for " + attributeName + " in " + resultInstance
-					+ ", META type is ResultType");
-			return;
-		} else {
-			throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
-					+ ", META type is ResultType");
-		}
+        if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Results(result), Results.class))
+            return;
+        if (ingoreError) {
+            logger.error("There's no getter for " + attributeName + " in " + resultInstance
+                    + ", META type is ResultType");
+            return;
+        } else {
+            throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
+                    + ", META type is ResultType");
+        }
     }
 
     @Override

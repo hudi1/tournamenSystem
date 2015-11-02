@@ -10,14 +10,14 @@
 
     <properties>
         <version.spring>4.2.1.RELEASE</version.spring>
-        <version.log4j>1.2.15</version.log4j>
+        <version.log4j>2.3</version.log4j>
         <version.junit>4.11</version.junit>
         <version.commons-io>1.4</version.commons-io>
         <version.commons-codec>1.4</version.commons-codec>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-http>3.1</version.commons-http>
-		<version.sql-processor>3.1.0</version.sql-processor>
-		<version.eclipse-xtext>2.8.2</version.eclipse-xtext>
+        <version.sql-processor>3.1.0</version.sql-processor>
+        <version.eclipse-xtext>2.8.2</version.eclipse-xtext>
         <version.slf4j>1.6.1</version.slf4j>
         <version.wicket>1.5.9</version.wicket>
         <version.wicket-minis>1.5.9</version.wicket-minis>
@@ -52,43 +52,119 @@
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <defaultGoal>install</defaultGoal>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <compilerVersion>1.6</compilerVersion>
-                    <encoding>UTF-8</encoding>
-                    <optimize>true</optimize>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                    <forkMode>once</forkMode>
-                    <childDelegation>false</childDelegation>
-                </configuration>
-            </plugin>
-        </plugins>
-
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/java</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1</version>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.6</version>
+                    <executions>
+                        <execution>
+                            <id>copy-resources</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <encoding>UTF-8</encoding>
+                                <outputDirectory>${basedir}/target/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <filtering>true</filtering>
+                                        <directory>${basedir}/../config/default/resources</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>copy-webapp-resources</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${basedir}/target/${project.build.finalName}</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${configdir}/webapp</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>copy-webinf-resources</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <overwrite>true</overwrite>
+                                <outputDirectory>${basedir}/target/${project.build.finalName}/WEB-INF</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                        <forkMode>once</forkMode>
+                        <childDelegation>false</childDelegation>
+                        <excludes>
+                            <exclude>**/*IT.java</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <classifier>${config}</classifier>
+                        <warName>${project.artifactId}</warName>
+                        <webXml>${basedir}/target/${project.build.finalName}/WEB-INF/web.xml</webXml>
+                        <webResources>
+                            <resource>
+                                <filtering>true</filtering>
+                                <directory>${basedir}/../config/default/WEB-INF</directory>
+                                <targetPath>WEB-INF</targetPath>
+                            </resource>
+                        </webResources>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <!-- Run to generate XSDs: mvn light-air:generate-xsd -->
                     <groupId>net.sf.lightairmp</groupId>
@@ -111,9 +187,100 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>1.0-alpha-2</version>
+                    <executions>
+                        <execution>
+                            <id>read deployment configuration from build properties</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>read-project-properties</goal>
+                            </goals>
+                            <configuration>
+                                <files>
+                                    <file>${konfigurace}</file>
+                                </files>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin><!-- Eclipse lifecycle mapping -->
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven 
+                    build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>properties-maven-plugin</artifactId>
+                                        <versionRange>[1.0-alpha-2,)</versionRange>
+                                        <goals>
+                                            <goal>read-project-properties</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute>
+                                            <runOnIncremental>false</runOnIncremental>
+                                        </execute>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>enforce</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+
             </plugins>
+
         </pluginManagement>
     </build>
+
+    <dependencies>
+
+        <!-- Log -->
+        <!-- APIs, @compile -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <!-- bridges, @runtime -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+        </dependency>
+        <!-- impl, @runtime -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -121,19 +288,19 @@
             <dependency>
                 <groupId>org.toursys</groupId>
                 <artifactId>tournament-system-web</artifactId>
-                <version>${version}</version>
+                <version> ${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.toursys</groupId>
                 <artifactId>tournament-system-processor</artifactId>
-                <version>${version}</version>
+                <version> ${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.toursys</groupId>
                 <artifactId>tournament-system-repository</artifactId>
-                <version>${version}</version>
+                <version> ${project.version}</version>
             </dependency>
 
             <!-- Wicket -->
@@ -174,50 +341,39 @@
                 <version>${version.wicket}</version>
             </dependency>
 
-            <!-- LOG -->
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${version.log4j}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>mail</artifactId>
-                        <groupId>javax.mail</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>jms</artifactId>
-                        <groupId>javax.jms</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>jmxtools</artifactId>
-                        <groupId>com.sun.jdmk</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>jmxri</artifactId>
-                        <groupId>com.sun.jmx</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+            <!-- Log -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${version.slf4j}</version>
+                <version>1.7.5</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${version.slf4j}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${version.log4j}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-ext</artifactId>
-                <version>${version.slf4j}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${version.log4j}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${version.servlet}</version>
-                <scope>provided</scope>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${version.log4j}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${version.log4j}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jcl</artifactId>
+                <version>${version.log4j}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <!-- AspectJ -->
@@ -227,73 +383,67 @@
                 <version>${version.aspectj}</version>
             </dependency>
 
-			<!-- Spring framework -->
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-beans</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context-support</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-webmvc</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-core</artifactId>
-				<version>${version.spring-security}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-aop</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-expression</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-jdbc</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-tx</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${version.spring}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<version>${version.spring}</version>
-				<scope>test</scope>
-			</dependency>
+            <!-- Spring framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${version.spring-security}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-aop</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-expression</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${version.spring}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.itextpdf</groupId>
@@ -329,90 +479,90 @@
                 <version>${version.commons-lang}</version>
             </dependency>
 
-			<!-- database -->
-			<dependency>
-				<groupId>org.sqlproc</groupId>
-				<artifactId>sql-processor</artifactId>
-				<version>${version.sql-processor}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-					<exclusion>
-                		<groupId>org.aspectj</groupId>
-                		<artifactId>aspectjweaver</artifactId>
-            		</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.sqlproc</groupId>
-				<artifactId>sql-processor-spring</artifactId>
-				<version>${version.sql-processor}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-					<exclusion>
-                		<groupId>org.aspectj</groupId>
-                		<artifactId>aspectjweaver</artifactId>
-            		</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.sqlproc.model</groupId>
-				<artifactId>sqlmodel</artifactId>
-				<version>2.4.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.sqlproc.meta</groupId>
-				<artifactId>sqlmeta</artifactId>
-				<version>2.4.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<!-- Eclipse XTEXT dependency -->
-			<dependency>
-				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>org.eclipse.xtext</artifactId>
-				<version>${version.eclipse-xtext}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>org.eclipse.xtext.common.types</artifactId>
-				<version>${version.eclipse-xtext}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>org.eclipse.xtext.util</artifactId>
-				<version>${version.eclipse-xtext}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>org.eclipse.xtext.xbase.lib</artifactId>
-				<version>${version.eclipse-xtext}</version>
-				<scope>provided</scope>
-			</dependency>
-            
+            <!-- database -->
+            <dependency>
+                <groupId>org.sqlproc</groupId>
+                <artifactId>sql-processor</artifactId>
+                <version>${version.sql-processor}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.sqlproc</groupId>
+                <artifactId>sql-processor-spring</artifactId>
+                <version>${version.sql-processor}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.sqlproc.model</groupId>
+                <artifactId>sqlmodel</artifactId>
+                <version>2.4.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.sqlproc.meta</groupId>
+                <artifactId>sqlmeta</artifactId>
+                <version>2.4.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Eclipse XTEXT dependency -->
+            <dependency>
+                <groupId>org.eclipse.xtext</groupId>
+                <artifactId>org.eclipse.xtext</artifactId>
+                <version>${version.eclipse-xtext}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.xtext</groupId>
+                <artifactId>org.eclipse.xtext.common.types</artifactId>
+                <version>${version.eclipse-xtext}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.xtext</groupId>
+                <artifactId>org.eclipse.xtext.util</artifactId>
+                <version>${version.eclipse-xtext}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.xtext</groupId>
+                <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+                <version>${version.eclipse-xtext}</version>
+                <scope>provided</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <version>${version.jsoup}</version>
             </dependency>
             <dependency>
-                <groupId>xstream</groupId>
+                <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>${version.xstream}</version>
             </dependency>
@@ -425,12 +575,6 @@
             </dependency>
 
             <!-- Test -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${version.spring}</version>
-                <scope>test</scope>
-            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
@@ -500,10 +644,7 @@
 
     <profiles>
         <profile>
-            <id>local-db</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>itest-local</id>
 
             <properties>
                 <local.db.driver>com.mysql.jdbc.Driver</local.db.driver>
@@ -512,7 +653,33 @@
                 <local.db.user>root</local.db.user>
                 <local.db.password>root</local.db.password>
             </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>surefire-itest</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*IT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
+
     </profiles>
 
     <licenses>

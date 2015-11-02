@@ -1,6 +1,5 @@
 package org.toursys.repository.type;
 
-import java.lang.reflect.Method;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,8 +37,8 @@ public class ScoreType extends SqlInternalType {
     public void setResult(SqlRuntimeContext runtimeCtx, Object resultInstance, String attributeName,
             Object resultValue, boolean ingoreError) throws SqlRuntimeException {
         if (resultValue == null) {
-			if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, null, Score.class))
-				return;        	
+            if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, null, Score.class))
+                return;
             if (ingoreError) {
                 logger.error("There's no setter for " + attributeName + " in " + resultInstance
                         + ", META type is ScoreType");
@@ -72,17 +71,16 @@ public class ScoreType extends SqlInternalType {
 
         int leftSide = Integer.parseInt(matcher.group(1));
         int rightSide = Integer.parseInt(matcher.group(2));
-		if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Score(leftSide,rightSide),
-				Score.class))
-			return;
-		if (ingoreError) {
-			logger.error("There's no setter for " + attributeName + " in " + resultInstance
-					+ ", META type is ScoreType");
-			return;
-		} else {
-			throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
-					+ ", META type is ScoreType");
-		}
+        if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Score(leftSide, rightSide), Score.class))
+            return;
+        if (ingoreError) {
+            logger.error("There's no setter for " + attributeName + " in " + resultInstance
+                    + ", META type is ScoreType");
+            return;
+        } else {
+            throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
+                    + ", META type is ScoreType");
+        }
     }
 
     @Override

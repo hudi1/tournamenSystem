@@ -4,9 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.toursys.repository.model.Participant;
@@ -74,6 +73,7 @@ public class SkTournamentSorterTest {
         Assert.assertEquals(participant.getPoints(), points);
     }
 
+    @SuppressWarnings("unchecked")
     private void readData(String file) throws Exception {
         String xml = FileUtils.readFileToString(new File("src/test/resources/xml/" + file), "UTF-8");
         participants = (List<Participant>) xstream.fromXML(xml);

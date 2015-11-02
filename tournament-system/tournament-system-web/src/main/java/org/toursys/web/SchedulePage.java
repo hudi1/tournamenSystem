@@ -198,6 +198,9 @@ public class SchedulePage extends TournamentHomePage {
 
                     listItem.add(new TextField<Result>("result") {
 
+                        private static final long serialVersionUID = 1L;
+
+                        @SuppressWarnings("unchecked")
                         @Override
                         public final <Results> IConverter<Results> getConverter(Class<Results> type) {
                             return (IConverter<Results>) ResultConverter.getInstance();

@@ -2,12 +2,6 @@ package org.toursys.repository.model {
 
 
     #Serializable(1)
-    final #Enum GameStatus {
-        #Values(DRAW = "DRAW",LOSE = "LOSE",WIN = "WIN")
-        #Attr String value
-    }
-
-    #Serializable(1)
     final #Enum GroupsPlayOffType {
         #Values(CROSS = "C",FINAL = "F",LOWER = "L")
         #Attr String value
@@ -51,7 +45,7 @@ package org.toursys.repository.model {
         #Attr java.util.List <Integer> ids
     }
 
-    #Operators #Serializable(1) #Equals(id) #ToString(id,status,result)
+    #Operators #Serializable(1) #Equals(id) #ToString(id,result)
     final #Pojo Game {
         #PrimaryKey() #Index
         #Attr Integer id
@@ -59,8 +53,6 @@ package org.toursys.repository.model {
         #Attr Participant homeParticipant
         #IsDef #ToInit #Index
         #Attr Participant awayParticipant
-        #IsDef
-        #Attr GameStatus status
         #IsDef
         #Attr org.toursys.repository.model.Results result
         #Attr boolean onlyIds

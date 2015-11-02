@@ -116,9 +116,6 @@ public class WChService {
                         if (wchTournamentSaved != null && wchQualificationDb.getId() != null) {
                             wchTournamentSaved.setWchQualification(wchQualificationDb);
                             createWchTournament(wchTournamentSaved);
-                        } else {
-                            System.out.println(wchQualificationDb + "11111111111");
-                            System.out.println(wchTournamentSaved + "22222222222");
                         }
                     }
                 }

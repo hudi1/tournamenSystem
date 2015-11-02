@@ -237,7 +237,7 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
     protected Groups getGroup(PageParameters parameters, Tournament tournament, boolean ignoreSession) {
         Groups group = null;
         if (!parameters.get(GID).isNull()) {
-            group = groupService.getGroupById(parameters.get(GID).toInteger());
+            group = groupService.getGroup(new Groups()._setId(parameters.get(GID).toInteger()));
         }
         if (group == null) {
             group = groupService.getGroupByTournament(tournament);

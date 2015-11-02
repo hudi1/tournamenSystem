@@ -31,7 +31,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
 
     @Override
     protected void createSchedule() {
-        logger.debug("Creating advanced round robim schedule, playerCount: " + playerPerBasicGroup.get(0).size());
+        logger.debug("Creating advanced round robin schedule, playerCount: " + playerPerBasicGroup.get(0).size());
         schedule = new ArrayList<GameImpl>();
         if (playerPerBasicGroup.size() < 2) {
             return;

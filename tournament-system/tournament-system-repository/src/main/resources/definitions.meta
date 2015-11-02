@@ -42,6 +42,7 @@ pojogen-inherit-many-to-one wch_qualification PLAYER_ID->player->ID;
 metagen-generate-sequences;
 metagen-table-sequence final_standing FINAL_STANDING;
 metagen-table-sequence game GAME;
+metagen-table-sequence play_off_game PLAY_OFF_GAME;
 metagen-table-sequence groups GROUPS;
 metagen-table-sequence participant PARTICIPANT;
 metagen-table-sequence player PLAYER;

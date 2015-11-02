@@ -13,7 +13,6 @@ import org.toursys.processor.service.group.GroupService;
 import org.toursys.processor.service.participant.ParticipantService;
 import org.toursys.processor.util.PositionCounter;
 import org.toursys.repository.dao.PlayOffGameDao;
-import org.toursys.repository.model.GameStatus;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.GroupsPlayOffType;
 import org.toursys.repository.model.Participant;
@@ -33,15 +32,8 @@ public class PlayOffGameService {
     @Inject
     private PlayOffGameDao playOffGameDao;
 
-    @Transactional
-    public PlayOffGame createPlayOffGame(Participant homeParticipant, Participant awayParticipant, Groups group,
-            int position) {
-        PlayOffGame playOffGame = new PlayOffGame(group, position);
-        playOffGame.setHomeParticipant(homeParticipant);
-        playOffGame.setAwayParticipant(awayParticipant);
-
-        return playOffGameDao.insert(playOffGame);
-    }
+    @Inject
+    private PlayOffGameModel playOffGameModel;
 
     @Transactional
     public PlayOffGame createPlayOffGame(PlayOffGame playOffGame) {
@@ -128,9 +120,6 @@ public class PlayOffGameService {
             }
 
             LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
-
-            List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
-            deletePlayOffGames(finalgames);
             createPlayOffGames(playOffPlayer, group, playOffPlayerCount);
         }
     }
@@ -196,12 +185,6 @@ public class PlayOffGameService {
         return playOffPlayerCount;
     }
 
-    private void deletePlayOffGames(List<PlayOffGame> finalgames) {
-        for (PlayOffGame playOffGame : finalgames) {
-            deletePlayOffGame(playOffGame);
-        }
-    }
-
     private void createPlayOffGames(LinkedList<Participant> playOffPlayer, Groups group, int playOffPlayerCount) {
         List<PlayOffGame> playOffGames = new LinkedList<PlayOffGame>();
         int playerCount = playOffPlayer.size();
@@ -211,12 +194,13 @@ public class PlayOffGameService {
 
             PlayOffGame playOffGame;
             if (!playOffPlayer.isEmpty()) {
-                playOffGame = createPlayOffGame(playOffPlayer.removeFirst(), playOffPlayer.removeLast(), group,
-                        pc.getPosition(i));
+                playOffGame = playOffGameModel.createPlayOffGame(playOffPlayer.removeFirst(),
+                        playOffPlayer.removeLast(), group, pc.getPosition(i));
                 position = playerCount / 2;
             } else {
-                playOffGame = createPlayOffGame(null, null, group, ++position);
+                playOffGame = playOffGameModel.createPlayOffGame(null, null, group, ++position);
             }
+            createPlayOffGame(playOffGame);
             playOffGames.add(playOffGame);
         }
     }
@@ -259,7 +243,7 @@ public class PlayOffGameService {
         }
 
         if (playOffGame.getStatus() != null) {
-            if (playOffGame.getStatus().equals(GameStatus.WIN)) {
+            if (playOffGame.getStatus().equals(PlayOffGameStatus.WIN)) {
                 if (position % 2 == 1) {
                     tempPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
                     if (isThirdPlace) {
@@ -271,7 +255,7 @@ public class PlayOffGameService {
                         tempThirdPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
                     }
                 }
-            } else if (playOffGame.getStatus().equals(GameStatus.LOSE)) {
+            } else if (playOffGame.getStatus().equals(PlayOffGameStatus.LOSE)) {
                 if (position % 2 == 1) {
                     tempPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
                     if (isThirdPlace) {
