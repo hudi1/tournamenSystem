@@ -28,107 +28,107 @@ import org.toursys.repository.model.User;
 
 public class ImportService {
 
-    @Inject
-    private PlayerService playerService;
+	@Inject
+	private PlayerService playerService;
 
-    @Inject
-    private ParticipantService participantService;
+	@Inject
+	private ParticipantService participantService;
 
-    @Inject
-    private GameService gameService;
+	@Inject
+	private GameService gameService;
 
-    @Inject
-    private PlayOffGameService playOffGameService;
+	@Inject
+	private PlayOffGameService playOffGameService;
 
-    @Inject
-    private FinalStandingService finalStandingService;
+	@Inject
+	private FinalStandingService finalStandingService;
 
-    @Inject
-    private GameDao gameDao;
+	@Inject
+	private GameDao gameDao;
 
-    @Inject
-    private FinalStandingDao finalStandingDao;
+	@Inject
+	private FinalStandingDao finalStandingDao;
 
-    @Inject
-    private ParticipantExtDao participantDao;
+	@Inject
+	private ParticipantExtDao participantDao;
 
-    @Transactional
-    public void importTournament(String url, Tournament tournament, User user) {
+	@Transactional
+	public void importTournament(String url, Tournament tournament, User user) {
 
-        importPlayers(url + "index.htm", user);
+		importPlayers(url + "index.htm", user);
 
-        LinkedList<Participant> participants = TournamentHtmlImportFactory.createImportedParticipants(tournament, url);
+		LinkedList<Participant> participants = TournamentHtmlImportFactory.createImportedParticipants(tournament, url);
 
-        for (Participant participant : participants) {
-            List<Player> players = playerService.getNotRegisteredPlayers(tournament);
-            Boolean founded = false;
-            for (Player player : players) {
-                if (player.getSurname().equals(participant.getPlayer().getSurname())) {
-                    if (player.getName().charAt(0) == participant.getPlayer().getName().charAt(0)) {
-                        if (player.getPlayerDiscriminator().equals(participant.getPlayer().getPlayerDiscriminator())) {
-                            founded = true;
-                            participant.setPlayer(player);
-                            break;
-                        }
-                    }
-                }
-            }
+		for (Participant participant : participants) {
+			List<Player> players = playerService.getNotRegisteredPlayers(tournament);
+			Boolean founded = false;
+			for (Player player : players) {
+				if (player.getSurname().equals(participant.getPlayer().getSurname())) {
+					if (player.getName().charAt(0) == participant.getPlayer().getName().charAt(0)) {
+						if (player.getPlayerDiscriminator().equals(participant.getPlayer().getPlayerDiscriminator())) {
+							founded = true;
+							participant.setPlayer(player);
+							break;
+						}
+					}
+				}
+			}
 
-            if (!founded) {
-                // Parametrizovat a lokalizovat vyjimky
-                throw new RuntimeException(participant.getPlayer().toString());
-            }
-        }
+			if (!founded) {
+				// Parametrizovat a lokalizovat vyjimky
+				throw new RuntimeException(participant.getPlayer().toString());
+			}
+		}
 
-        LinkedList<Participant> savedParticipants = new LinkedList<Participant>();
+		LinkedList<Participant> savedParticipants = new LinkedList<Participant>();
 
-        for (Participant participant : participants) {
-            savedParticipants
-                    .add(participantService.createParticipant(participant.getPlayer(), participant.getGroup()));
-        }
+		for (Participant participant : participants) {
+			savedParticipants
+			        .add(participantService.createParticipant(participant.getPlayer(), participant.getGroup()));
+		}
 
-        TournamentHtmlImportFactory.createImportedGames(url, savedParticipants);
+		TournamentHtmlImportFactory.createImportedGames(url, savedParticipants);
 
-        for (Participant participant : savedParticipants) {
-            participantDao.update(participant);
-            for (Game game : participant.getGames()) {
-                gameDao.insert(game);
-            }
-        }
+		for (Participant participant : savedParticipants) {
+			participantDao.update(participant);
+			for (Game game : participant.getGames()) {
+				gameDao.insert(game);
+			}
+		}
 
-        List<PlayOffGame> playOffGames = TournamentHtmlImportFactory.createPlayOffGames(url, savedParticipants);
-        for (PlayOffGame playOffGame : playOffGames) {
-            playOffGameService.createPlayOffGame(playOffGame);
-        }
+		List<PlayOffGame> playOffGames = TournamentHtmlImportFactory.createPlayOffGames(url, savedParticipants);
+		for (PlayOffGame playOffGame : playOffGames) {
+			playOffGameService.createPlayOffGame(playOffGame);
+		}
 
-        List<FinalStanding> finalStandings = TournamentHtmlImportFactory.createFinalStandings(url, savedParticipants);
-        for (FinalStanding finalStanding : finalStandings) {
-            finalStanding.setTournament(tournament);
-            finalStandingDao.insert(finalStanding);
-        }
+		List<FinalStanding> finalStandings = TournamentHtmlImportFactory.createFinalStandings(url, savedParticipants);
+		for (FinalStanding finalStanding : finalStandings) {
+			finalStanding.setTournament(tournament);
+			finalStandingDao.insert(finalStanding);
+		}
 
-    }
+	}
 
-    @Transactional
-    public void importPlayers(String url, User user) {
-        List<Player> players = PlayersHtmlImportFactory.createdImportedPlayers(url);
-        for (Player player : players) {
-            playerService.createPlayer(user, player);
-        }
-    }
+	@Transactional
+	public void importPlayers(String url, User user) {
+		List<Player> players = PlayersHtmlImportFactory.createdImportedPlayers(url);
+		for (Player player : players) {
+			playerService.createPlayer(user, player);
+		}
+	}
 
-    public List<Player> updateOnlinePlayers(List<Player> players) {
-        PlayerHtmlUpdateFactory.synchronizedIthfPlayer(players);
-        List<Player> notUpdatedPlayer = new ArrayList<Player>();
+	public List<Player> updateOnlinePlayers(List<Player> players) {
+		PlayerHtmlUpdateFactory.synchronizedIthfPlayer(players);
+		List<Player> notUpdatedPlayer = new ArrayList<Player>();
 
-        for (Player player : players) {
-            if (player.getIthfId() == null || player.getWorldRanking() == null) {
-                notUpdatedPlayer.add(player);
-            } else {
-                playerService.updatePlayer(player);
-            }
-        }
+		for (Player player : players) {
+			if (player.getIthfId() == null || player.getWorldRanking() == null) {
+				notUpdatedPlayer.add(player);
+			} else {
+				playerService.updatePlayer(player);
+			}
+		}
 
-        return notUpdatedPlayer;
-    }
+		return notUpdatedPlayer;
+	}
 }

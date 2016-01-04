@@ -23,285 +23,295 @@ import org.toursys.repository.model.Tournament;
 
 public class PlayOffGameService {
 
-    @Inject
-    private ParticipantService participantService;
+	@Inject
+	private ParticipantService participantService;
 
-    @Inject
-    private GroupService groupService;
+	@Inject
+	private GroupService groupService;
 
-    @Inject
-    private PlayOffGameDao playOffGameDao;
+	@Inject
+	private PlayOffGameDao playOffGameDao;
 
-    @Inject
-    private PlayOffGameModel playOffGameModel;
+	@Inject
+	private PlayOffGameModel playOffGameModel;
 
-    @Transactional
-    public PlayOffGame createPlayOffGame(PlayOffGame playOffGame) {
-        return playOffGameDao.insert(playOffGame);
-    }
+	@Transactional
+	public PlayOffGame createPlayOffGame(PlayOffGame playOffGame) {
+		return playOffGameDao.insert(playOffGame);
+	}
 
-    @Transactional(readOnly = true)
-    public PlayOffGame getPlayOffGame(PlayOffGame playOffGame) {
-        return playOffGameDao.get(playOffGame);
-    }
+	@Transactional(readOnly = true)
+	public PlayOffGame getPlayOffGame(PlayOffGame playOffGame) {
+		return playOffGameDao.get(playOffGame);
+	}
 
-    @Transactional
-    public int updatePlayOffGame(PlayOffGame playOffGame) {
-        playOffGame.setNull(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
-                PlayOffGame.Attribute.result, PlayOffGame.Attribute.status);
-        return playOffGameDao.update(playOffGame);
-    }
+	@Transactional
+	public int updatePlayOffGame(PlayOffGame playOffGame) {
+		playOffGame.setNull(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
+		        PlayOffGame.Attribute.result, PlayOffGame.Attribute.status);
+		return playOffGameDao.update(playOffGame);
+	}
 
-    @Transactional
-    public int deletePlayOffGame(PlayOffGame playOffGame) {
-        return playOffGameDao.delete(playOffGame);
-    }
+	@Transactional
+	public int deletePlayOffGame(PlayOffGame playOffGame) {
+		return playOffGameDao.delete(playOffGame);
+	}
 
-    @Transactional(readOnly = true)
-    public List<PlayOffGame> getPlayOffGames(PlayOffGame playOffGame) {
-        playOffGame.setInit(PlayOffGame.Association.awayParticipant.name(),
-                PlayOffGame.Association.homeParticipant.name());
-        return playOffGameDao.list(playOffGame);
-    }
+	@Transactional(readOnly = true)
+	public List<PlayOffGame> getPlayOffGames(PlayOffGame playOffGame) {
+		playOffGame.setInit(PlayOffGame.Association.awayParticipant.name(),
+		        PlayOffGame.Association.homeParticipant.name());
+		return playOffGameDao.list(playOffGame);
+	}
 
-    @Transactional
-    public int updatePlayOffGameResult(PlayOffGame playOffGame) {
-        if (playOffGame.getResult() != null) {
+	@Transactional
+	public int updatePlayOffGameResult(PlayOffGame playOffGame) {
+		if (playOffGame.getResult() != null) {
 
-            int homeWinnerCount = 0;
-            int awayWinnerCount = 0;
-            for (Result result : playOffGame.getResult().getResults()) {
-                if (result.getLeftSide() > result.getRightSide()) {
-                    homeWinnerCount++;
-                } else if (result.getLeftSide() < result.getRightSide()) {
-                    awayWinnerCount++;
-                }
-            }
+			int homeWinnerCount = 0;
+			int awayWinnerCount = 0;
+			for (Result result : playOffGame.getResult().getResults()) {
+				if (result.getLeftSide() > result.getRightSide()) {
+					homeWinnerCount++;
+				} else if (result.getLeftSide() < result.getRightSide()) {
+					awayWinnerCount++;
+				}
+			}
 
-            if (homeWinnerCount > awayWinnerCount) {
-                playOffGame.setStatus(PlayOffGameStatus.WIN);
-            } else if (homeWinnerCount < awayWinnerCount) {
-                playOffGame.setStatus(PlayOffGameStatus.LOSE);
-            } else {
-                playOffGame.setStatus(null);
-            }
-        } else {
-            playOffGame.setStatus(null);
-        }
+			if (homeWinnerCount > awayWinnerCount) {
+				playOffGame.setStatus(PlayOffGameStatus.WIN);
+			} else if (homeWinnerCount < awayWinnerCount) {
+				playOffGame.setStatus(PlayOffGameStatus.LOSE);
+			} else {
+				playOffGame.setStatus(null);
+			}
+		} else {
+			playOffGame.setStatus(null);
+		}
 
-        return updatePlayOffGame(playOffGame);
-    }
+		return updatePlayOffGame(playOffGame);
+	}
 
-    @Transactional
-    public void processPlayOffGames(Tournament tournament) {
+	@Transactional
+	public void processPlayOffGames(Tournament tournament) {
 
-        List<Groups> finalGroups = groupService.getFinalGroups(tournament);
-        int groupIndex = 0;
+		List<Groups> finalGroups = groupService.getFinalGroups(tournament);
+		int groupIndex = 0;
 
-        for (Groups group : finalGroups) {
-            List<Participant> players = new ArrayList<Participant>();
-            if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
-                groupIndex++;
-                List<Participant> tempPart = participantService.getParticipandByGroup(group);
-                if (groupIndex % 2 == 0) {
-                    Collections.reverse(tempPart);
-                }
-                players.addAll(tempPart);
-                if (finalGroups.size() != groupIndex) {
-                    continue;
-                }
-            } else {
-                players = participantService.getParticipandByGroup(group);
-            }
-            int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
+		for (Groups group : finalGroups) {
+			List<Participant> players = new ArrayList<Participant>();
+			if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
+				groupIndex++;
+				List<Participant> tempPart = participantService.getParticipandByGroup(group);
+				if (groupIndex % 2 == 0) {
+					Collections.reverse(tempPart);
+				}
+				players.addAll(tempPart);
+				if (finalGroups.size() != groupIndex) {
+					continue;
+				}
+			} else {
+				players = participantService.getParticipandByGroup(group);
+			}
+			int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
-            while (players.size() < playOffPlayerCount) {
-                players.add(new Participant());
-            }
+			while (players.size() < playOffPlayerCount) {
+				players.add(new Participant());
+			}
 
-            LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
-            createPlayOffGames(playOffPlayer, group, playOffPlayerCount);
-        }
-    }
+			LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
+			createPlayOffGames(playOffPlayer, group, playOffPlayerCount);
+		}
+	}
 
-    @Transactional
-    public void updatePlayOffGames(Tournament tournament, Groups group) {
+	@Transactional
+	public void updatePlayOffGames(Tournament tournament, Groups group) {
 
-        List<Participant> players = participantService.getParticipandByGroup(group);
+		List<Participant> players = participantService.getParticipandByGroup(group);
 
-        int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
+		int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
-        while (players.size() < playOffPlayerCount) {
-            players.add(new Participant());
-        }
+		while (players.size() < playOffPlayerCount) {
+			players.add(new Participant()._setTemp(true));
+		}
 
-        LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
+		LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
 
-        List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
-        updatePlayOffGames(playOffPlayer, finalgames, group, playOffPlayerCount);
+		List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
+		updatePlayOffGames(playOffPlayer, finalgames, group, playOffPlayerCount);
 
-    }
+	}
 
-    @Transactional
-    public void updateNextRoundPlayOffGames(Tournament tournament) {
+	@Transactional
+	public void updateNextRoundPlayOffGames(Tournament tournament) {
 
-        List<Groups> finalGroups = groupService.getFinalGroups(tournament);
-        for (Groups group : finalGroups) {
+		List<Groups> finalGroups = groupService.getFinalGroups(tournament);
+		for (Groups group : finalGroups) {
 
-            if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
-                continue;
-            }
+			if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
+				continue;
+			}
 
-            int playerPlayOffCount = getPlayOffPlayerCount(group, tournament);
-            List<PlayOffGame> playOffGames = getPlayOffGames(new PlayOffGame()._setGroup(group));
+			int playerPlayOffCount = getPlayOffPlayerCount(group, tournament);
+			List<PlayOffGame> playOffGames = getPlayOffGames(new PlayOffGame()._setGroup(group));
 
-            // u finale a o tretie miesto uz nie je co updatovat
-            int gameCount = playOffGames.size() - 2;
-            for (int i = 0; i < gameCount; i++) {
-                updatePlayOffGame(playOffGames, i + 1, playerPlayOffCount);
-            }
-        }
-    }
+			// u finale a o tretie miesto uz nie je co updatovat
+			int gameCount = playOffGames.size() - 2;
+			for (int i = 0; i < gameCount; i++) {
+				updatePlayOffGame(playOffGames, i + 1, playerPlayOffCount);
+			}
+		}
+	}
 
-    private int getPlayOffPlayerCount(Groups group, Tournament tournament) {
-        int playOffPlayerCount = 0;
+	private int getPlayOffPlayerCount(Groups group, Tournament tournament) {
+		int playOffPlayerCount = 0;
 
-        switch (group.getPlayOffType()) {
-        case FINAL:
-            playOffPlayerCount += tournament.getPlayOffFinal();
-            break;
-        case LOWER:
-            playOffPlayerCount += tournament.getPlayOffLower();
-            break;
-        case CROSS:
-            if (tournament.getPlayOffFinal() != tournament.getPlayOffLower()) {
-                throw new BadOptionsTournamentException();
-            }
-            playOffPlayerCount += tournament.getPlayOffFinal();
-            break;
-        default:
-            break;
-        }
-        return playOffPlayerCount;
-    }
+		switch (group.getPlayOffType()) {
+		case FINAL:
+			playOffPlayerCount += tournament.getPlayOffFinal();
+			break;
+		case LOWER:
+			playOffPlayerCount += tournament.getPlayOffLower();
+			break;
+		case CROSS:
+			if (tournament.getPlayOffFinal() != tournament.getPlayOffLower()) {
+				throw new BadOptionsTournamentException();
+			}
+			playOffPlayerCount += tournament.getPlayOffFinal();
+			break;
+		default:
+			break;
+		}
+		return playOffPlayerCount;
+	}
 
-    private void createPlayOffGames(LinkedList<Participant> playOffPlayer, Groups group, int playOffPlayerCount) {
-        List<PlayOffGame> playOffGames = new LinkedList<PlayOffGame>();
-        int playerCount = playOffPlayer.size();
-        PositionCounter pc = new PositionCounter(playerCount);
-        int position = 0;
-        for (int i = 0; i < playOffPlayerCount; i++) {
+	private void createPlayOffGames(LinkedList<Participant> playOffPlayer, Groups group, int playOffPlayerCount) {
+		List<PlayOffGame> playOffGames = new LinkedList<PlayOffGame>();
+		int playerCount = playOffPlayer.size();
+		PositionCounter pc = new PositionCounter(playerCount);
+		int position = 0;
+		for (int i = 0; i < playOffPlayerCount; i++) {
 
-            PlayOffGame playOffGame;
-            if (!playOffPlayer.isEmpty()) {
-                playOffGame = playOffGameModel.createPlayOffGame(playOffPlayer.removeFirst(),
-                        playOffPlayer.removeLast(), group, pc.getPosition(i));
-                position = playerCount / 2;
-            } else {
-                playOffGame = playOffGameModel.createPlayOffGame(null, null, group, ++position);
-            }
-            createPlayOffGame(playOffGame);
-            playOffGames.add(playOffGame);
-        }
-    }
+			PlayOffGame playOffGame;
+			if (!playOffPlayer.isEmpty()) {
+				playOffGame = playOffGameModel.createPlayOffGame(playOffPlayer.removeFirst(),
+				        playOffPlayer.removeLast(), group, pc.getPosition(i));
+				position = playerCount / 2;
+			} else {
+				playOffGame = playOffGameModel.createPlayOffGame(null, null, group, ++position);
+			}
+			createPlayOffGame(playOffGame);
+			playOffGames.add(playOffGame);
+		}
+	}
 
-    private void updatePlayOffGames(LinkedList<Participant> playOffPlayer, List<PlayOffGame> finalgames, Groups group,
-            int playOffPlayerCount) {
-        int playerCount = playOffPlayer.size();
-        PositionCounter pc = new PositionCounter(playerCount);
-        int position = 0;
+	private void updatePlayOffGames(LinkedList<Participant> playOffPlayer, List<PlayOffGame> finalgames, Groups group,
+	        int playOffPlayerCount) {
+		int playerCount = playOffPlayer.size();
+		PositionCounter pc = new PositionCounter(playerCount);
+		int position = 0;
 
-        for (int i = 0; i < playOffPlayerCount; i++) {
-            if (!playOffPlayer.isEmpty()) {
-                PlayOffGame playOffGame = getPlayOffGameByPosition(finalgames, pc.getPosition(i));
-                playOffGame.setHomeParticipant(playOffPlayer.removeFirst());
-                playOffGame.setAwayParticipant(playOffPlayer.removeLast());
-                position = playerCount / 2;
-                updatePlayOffGame(playOffGame);
-            } else {
-                PlayOffGame playOffGame = getPlayOffGameByPosition(finalgames, ++position);
-                playOffGame.setHomeParticipant(null);
-                playOffGame.setAwayParticipant(null);
-                playOffGame.setResult(null);
-                playOffGame.setStatus(null);
-                updatePlayOffGame(playOffGame);
-            }
-        }
-    }
+		for (int i = 0; i < playOffPlayerCount; i++) {
 
-    private void updatePlayOffGame(List<PlayOffGame> playOffGames, int position, int playerPlayOffCount) {
+			if (!playOffPlayer.isEmpty()) {
+				PlayOffGame playOffGame = getPlayOffGameByPosition(finalgames, pc.getPosition(i));
+				playOffGame.setHomeParticipant(playOffPlayer.removeFirst());
+				if (playOffGame.getHomeParticipant().isTemp()) {
+					playOffGame.setHomeParticipant(null);
+				}
+				playOffGame.setAwayParticipant(playOffPlayer.removeLast());
+				if (playOffGame.getAwayParticipant().isTemp()) {
+					playOffGame.setAwayParticipant(null);
+				}
+				position = playerCount / 2;
 
-        PlayOffGame playOffGame = playOffGames.get(position - 1);
-        int nextPosition = nextGame(playerPlayOffCount, position);
-        PlayOffGame tempPlayOffGame = getPlayOffGameByPosition(playOffGames, nextPosition);
+				System.out.println(playOffGame.toStringFull());
 
-        PlayOffGame tempThirdPlayOffGame = null;
-        // hra o tretie miesto bude ako posledna hra
-        boolean isThirdPlace = (nextPosition == playOffGames.size() - 1);
-        if (isThirdPlace) {
-            tempThirdPlayOffGame = getPlayOffGameByPosition(playOffGames, nextPosition + 1);
-        }
+				updatePlayOffGame(playOffGame);
+			} else {
+				PlayOffGame playOffGame = getPlayOffGameByPosition(finalgames, ++position);
+				playOffGame.setHomeParticipant(null);
+				playOffGame.setAwayParticipant(null);
+				playOffGame.setResult(null);
+				playOffGame.setStatus(null);
+				updatePlayOffGame(playOffGame);
+			}
+		}
+	}
 
-        if (playOffGame.getStatus() != null) {
-            if (playOffGame.getStatus().equals(PlayOffGameStatus.WIN)) {
-                if (position % 2 == 1) {
-                    tempPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
-                    if (isThirdPlace) {
-                        tempThirdPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
-                    }
-                } else {
-                    tempPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
-                    if (isThirdPlace) {
-                        tempThirdPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
-                    }
-                }
-            } else if (playOffGame.getStatus().equals(PlayOffGameStatus.LOSE)) {
-                if (position % 2 == 1) {
-                    tempPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
-                    if (isThirdPlace) {
-                        tempThirdPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
-                    }
-                } else {
-                    tempPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
-                    if (isThirdPlace) {
-                        tempThirdPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
-                    }
-                }
-            } else {
-                tempPlayOffGame.setStatus(null);
-            }
-        } else {
-            if (position % 2 == 1) {
-                tempPlayOffGame._setHomeParticipant((null));
-                if (isThirdPlace) {
-                    tempThirdPlayOffGame._setHomeParticipant((null));
-                }
-            } else {
-                tempPlayOffGame._setAwayParticipant((null));
-                if (isThirdPlace) {
-                    tempThirdPlayOffGame._setAwayParticipant((null));
-                }
-            }
-        }
+	private void updatePlayOffGame(List<PlayOffGame> playOffGames, int position, int playerPlayOffCount) {
 
-        updatePlayOffGame(tempPlayOffGame);
-        if (tempThirdPlayOffGame != null) {
-            updatePlayOffGame(tempThirdPlayOffGame);
-        }
-    }
+		PlayOffGame playOffGame = playOffGames.get(position - 1);
+		int nextPosition = nextGame(playerPlayOffCount, position);
+		PlayOffGame tempPlayOffGame = getPlayOffGameByPosition(playOffGames, nextPosition);
 
-    private PlayOffGame getPlayOffGameByPosition(List<PlayOffGame> playOffGames, int position) {
+		PlayOffGame tempThirdPlayOffGame = null;
+		// hra o tretie miesto bude ako posledna hra
+		boolean isThirdPlace = (nextPosition == playOffGames.size() - 1);
+		if (isThirdPlace) {
+			tempThirdPlayOffGame = getPlayOffGameByPosition(playOffGames, nextPosition + 1);
+		}
 
-        for (PlayOffGame playOffGame : playOffGames) {
-            if (playOffGame.getPosition().equals(position)) {
-                return playOffGame;
-            }
-        }
-        return null;
-    }
+		if (playOffGame.getStatus() != null) {
+			if (playOffGame.getStatus().equals(PlayOffGameStatus.WIN)) {
+				if (position % 2 == 1) {
+					tempPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
+					if (isThirdPlace) {
+						tempThirdPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
+					}
+				} else {
+					tempPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
+					if (isThirdPlace) {
+						tempThirdPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
+					}
+				}
+			} else if (playOffGame.getStatus().equals(PlayOffGameStatus.LOSE)) {
+				if (position % 2 == 1) {
+					tempPlayOffGame._setHomeParticipant((playOffGame.getAwayParticipant()));
+					if (isThirdPlace) {
+						tempThirdPlayOffGame._setHomeParticipant((playOffGame.getHomeParticipant()));
+					}
+				} else {
+					tempPlayOffGame._setAwayParticipant((playOffGame.getAwayParticipant()));
+					if (isThirdPlace) {
+						tempThirdPlayOffGame._setAwayParticipant((playOffGame.getHomeParticipant()));
+					}
+				}
+			} else {
+				tempPlayOffGame.setStatus(null);
+			}
+		} else {
+			if (position % 2 == 1) {
+				tempPlayOffGame._setHomeParticipant((null));
+				if (isThirdPlace) {
+					tempThirdPlayOffGame._setHomeParticipant((null));
+				}
+			} else {
+				tempPlayOffGame._setAwayParticipant((null));
+				if (isThirdPlace) {
+					tempThirdPlayOffGame._setAwayParticipant((null));
+				}
+			}
+		}
 
-    public int nextGame(int playerCount, int currentGame) {
-        return (playerCount / 2) + (int) Math.ceil((double) currentGame / 2);
-    }
+		updatePlayOffGame(tempPlayOffGame);
+		if (tempThirdPlayOffGame != null) {
+			updatePlayOffGame(tempThirdPlayOffGame);
+		}
+	}
+
+	private PlayOffGame getPlayOffGameByPosition(List<PlayOffGame> playOffGames, int position) {
+
+		for (PlayOffGame playOffGame : playOffGames) {
+			if (playOffGame.getPosition().equals(position)) {
+				return playOffGame;
+			}
+		}
+		return null;
+	}
+
+	public int nextGame(int playerCount, int currentGame) {
+		return (playerCount / 2) + (int) Math.ceil((double) currentGame / 2);
+	}
 
 }

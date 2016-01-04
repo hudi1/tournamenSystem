@@ -19,9 +19,6 @@
         play_off="true" play_third_place="true" tournament_id="1" type="F" />
     <groups id="4" copy_result="true" index_of_first_hockey="1" name="B" number_of_hockey="1" play_off_type="F"
         play_off="true" play_third_place="true" tournament_id="1" type="F" />
-
-    <groups id="5" copy_result="true" index_of_first_hockey="1" name="A" number_of_hockey="1" play_off_type="F"
-        play_off="true" play_third_place="true" tournament_id="2" type="F" />    
         
     <player id="-1" club="adminClub0" name="adminName0" surname="adminSurname0" user_id="1" />
 
@@ -55,8 +52,6 @@
     <participant id="15" group_id="4" player_id="7" />
     <participant id="16" group_id="4" player_id="8" rank="4" equal_rank="1"/>
 
-    <participant id="17" group_id="5" player_id="1" rank="1" />    
-
     <game id="@any" away_participant_id="1" home_participant_id="2" result="0:1" />
     <game id="@any" away_participant_id="1" home_participant_id="3" result="0:1" />
     <game id="@any" away_participant_id="1" home_participant_id="4" result="0:1" />
@@ -71,5 +66,5 @@
 
     <game id="@any" away_participant_id="3" home_participant_id="4" result="0:1" />
     <game id="@any" away_participant_id="4" home_participant_id="3" result="1:0" />
-
+    
 </dataset>

@@ -85,10 +85,9 @@ public class WChHtmlImportFactory {
         return wchQualification;
     }
 
-    public static void main(String[] args) {
-        WchQualification a = getWchQualification(260047);
+    public static void main(String[] args) throws Exception {
 
-        System.out.println(a);
+        System.out.println(getWchQualification(260173).toStringFull());
     }
 
 }

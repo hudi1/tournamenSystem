@@ -140,12 +140,10 @@ public class ParticipantService {
 			promotingCount += tournament.getLowerPromoting();
 			break;
 		case CROSS:
-			if (tournament.getPlayOffFinal() != tournament.getPlayOffLower()) {
+			if (tournament.getFinalPromoting() != tournament.getLowerPromoting()) {
 				throw new BadOptionsTournamentException();
 			}
 			promotingCount += tournament.getLowerPromoting();
-			break;
-		default:
 			break;
 		}
 

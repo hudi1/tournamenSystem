@@ -19,6 +19,12 @@ public class WChModel {
         for (WchQualification wchQualification : wchQualifications) {
             WChRecord wChRecord = new WChRecord();
             wChRecord.setName(wchQualification.getName());
+            Collections.sort(wchQualification.getWchTournaments(), new Comparator<WchTournament>() {
+                @Override
+                public int compare(WchTournament o1, WchTournament o2) {
+                    return o2.getPoints().compareTo(o1.getPoints());
+                };
+            });
             int total = 0;
             for (WchTournament wchTournament : wchQualification.getWchTournaments()) {
                 if (NATION_SERIES.equals(wchTournament.getSeries())) {

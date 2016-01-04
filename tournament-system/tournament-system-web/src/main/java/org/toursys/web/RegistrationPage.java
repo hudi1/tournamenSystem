@@ -101,7 +101,7 @@ public class RegistrationPage extends TournamentHomePage {
 
                 @Override
                 public void submit() {
-                    groupService.createGroups(tournament, tournamentParticipants, group.getName());
+                    groupService.createGroupsWithSnakeSystem(tournament, tournamentParticipants, group.getName());
                     setResponsePage(RegistrationPage.class, getPageParameters());
                 }
                 

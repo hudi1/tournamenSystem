@@ -6,11 +6,13 @@
 	<xsd:element name="game" type="game__type" />
 	<xsd:element name="groups" type="groups__type" />
 	<xsd:element name="participant" type="participant__type" />
-	<xsd:element name="player" type="player__type" />
 	<xsd:element name="play_off_game" type="play_off_game__type" />
+	<xsd:element name="player" type="player__type" />
 	<xsd:element name="season" type="season__type" />
 	<xsd:element name="tournament" type="tournament__type" />
 	<xsd:element name="user" type="user__type" />
+	<xsd:element name="wch_qualification" type="wch_qualification__type" />
+	<xsd:element name="wch_tournament" type="wch_tournament__type" />
 	<xsd:complexType name="final_standing__type">
 		<xsd:attribute name="final_rank" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
@@ -22,7 +24,6 @@
 		<xsd:attribute name="home_participant_id" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="result" use="optional" type="la:ColumnType" />
-		<xsd:attribute name="status" use="optional" type="la:ColumnType" />
 	</xsd:complexType>
 	<xsd:complexType name="groups__type">
 		<xsd:attribute name="copy_result" use="optional" type="la:ColumnType" />
@@ -45,6 +46,15 @@
 		<xsd:attribute name="rank" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="score" use="optional" type="la:ColumnType" />
 	</xsd:complexType>
+	<xsd:complexType name="play_off_game__type">
+		<xsd:attribute name="away_participant_id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="group_id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="home_participant_id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="position" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="result" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="status" use="optional" type="la:ColumnType" />
+	</xsd:complexType>
 	<xsd:complexType name="player__type">
 		<xsd:attribute name="club" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
@@ -54,11 +64,6 @@
 		<xsd:attribute name="surname" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="user_id" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="world_ranking" use="optional" type="la:ColumnType" />
-	</xsd:complexType>
-	<xsd:complexType name="play_off_game__type">
-		<xsd:attribute name="game_id" use="optional" type="la:ColumnType" />
-		<xsd:attribute name="group_id" use="optional" type="la:ColumnType" />
-		<xsd:attribute name="position" use="optional" type="la:ColumnType" />
 	</xsd:complexType>
 	<xsd:complexType name="season__type">
 		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
@@ -87,5 +92,19 @@
 		<xsd:attribute name="role" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="surname" use="optional" type="la:ColumnType" />
 		<xsd:attribute name="user_name" use="optional" type="la:ColumnType" />
+	</xsd:complexType>
+	<xsd:complexType name="wch_qualification__type">
+		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="ithf_id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="last_update" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="name" use="optional" type="la:ColumnType" />
+	</xsd:complexType>
+	<xsd:complexType name="wch_tournament__type">
+		<xsd:attribute name="date" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="id" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="name" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="points" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="series" use="optional" type="la:ColumnType" />
+		<xsd:attribute name="wch_qualification_id" use="optional" type="la:ColumnType" />
 	</xsd:complexType>
 </xsd:schema>

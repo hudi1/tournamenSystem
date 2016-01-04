@@ -7,13 +7,12 @@ import net.sf.lightair.annotation.Setup;
 import net.sf.lightair.annotation.Verify;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.toursys.processor.service.player.PlayerService;
-import org.toursys.processor.service.tournament.TournamentService;
-import org.toursys.processor.service.user.UserService;
 import org.toursys.repository.model.Player;
 import org.toursys.repository.model.StatisticForm;
 import org.toursys.repository.model.Tournament;
@@ -27,16 +26,18 @@ public class PlayerIT {
 	@Autowired
 	private PlayerService playerService;
 
-	@Autowired
-	private UserService userService;
+	private User user;
+	private Tournament tournament;
 
-	@Autowired
-	private TournamentService tournamentService;
+	@Before
+	public void setup() {
+		user = new User()._setId(1);
+		tournament = new Tournament()._setId(1);
+	}
 
 	@Test
 	@Verify("createPlayerTest-verify.xml")
 	public void createPlayerTest() {
-		User user = userService.getUser(new User()._setUserName("admin"));
 		Player player = playerService
 		        .createPlayer(user, new Player()._setClub("club")._setName("name")._setSurname("surname")
 		                ._setWorldRanking(1)._setIthfId(1));
@@ -44,9 +45,16 @@ public class PlayerIT {
 	}
 
 	@Test
+	@Verify("getUserPlayersTest-verify.xml")
+	public void createExistingPlayerTest() {
+		Player player = playerService.createPlayer(user, new Player()._setClub("adminClub")._setName("adminName")
+		        ._setSurname("adminSurname"));
+		Assert.assertEquals((Integer) 1, player.getId());
+	}
+
+	@Test
 	@Verify("updatePlayerTest-verify.xml")
 	public void updatePlayerTest() {
-		User user = userService.getUser(new User()._setUserName("admin"));
 		Player player = playerService.getUserPlayers(user).get(0);
 		int count = playerService.updatePlayer(player._setName("nameEdit")._setSurname("surnameEdit")
 		        ._setClub("clubEdit")._setWorldRanking(1)._setIthfId(1));
@@ -56,7 +64,6 @@ public class PlayerIT {
 	@Test
 	@Verify("getUserPlayersTest-verify.xml")
 	public void getUserPlayerTest() {
-		User user = userService.getUser(new User()._setUserName("admin"));
 		List<Player> seasons = playerService.getUserPlayers(user);
 		Assert.assertSame(2, seasons.size());
 	}
@@ -71,7 +78,6 @@ public class PlayerIT {
 	@Test
 	@Verify("getUserPlayersTest-verify.xml")
 	public void getNotRegisteredPlayers() {
-		Tournament tournament = tournamentService.getTournament(new Tournament()._setId(1));
 		List<Player> players = playerService.getNotRegisteredPlayers(tournament);
 		Assert.assertSame(1, players.size());
 	}
@@ -79,7 +85,6 @@ public class PlayerIT {
 	@Test
 	@Verify("getUserPlayersTest-verify.xml")
 	public void getPlayersGames() {
-		User user = userService.getUser(new User()._setUserName("admin"));
 		List<Player> players = playerService.getPlayersGames(new StatisticForm()._setUser(user));
 		Assert.assertSame(2, players.size());
 	}
