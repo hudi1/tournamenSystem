@@ -1,39 +1,74 @@
 package org.toursys.repository.dao;
 
 import java.util.List;
-import org.sqlproc.engine.SqlSession;
 import org.sqlproc.engine.SqlControl;
+import org.sqlproc.engine.SqlRowProcessor;
+import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.model.User;
 
+@SuppressWarnings("all")
 public interface UserDao {
-	
-		public User insert(SqlSession sqlSession, User user, SqlControl sqlControl);
-		public User insert(User user, SqlControl sqlControl);
-		public User insert(SqlSession sqlSession, User user);
-		public User insert(User user);
-	
-		public User get(SqlSession sqlSession, User user, SqlControl sqlControl);
-		public User get(User user, SqlControl sqlControl);
-			public User get(SqlSession sqlSession, User user);
-		public User get(User user);
-	
-		public int update(SqlSession sqlSession, User user, SqlControl sqlControl);
-		public int update(User user, SqlControl sqlControl);
-		public int update(SqlSession sqlSession, User user);
-		public int update(User user);
-	
-		public int delete(SqlSession sqlSession, User user, SqlControl sqlControl);
-		public int delete(User user, SqlControl sqlControl);
-		public int delete(SqlSession sqlSession, User user);
-		public int delete(User user);
-	
-		public List<User> list(SqlSession sqlSession, User user, SqlControl sqlControl);
-		public List<User> list(User user, SqlControl sqlControl);
-		public List<User> list(SqlSession sqlSession, User user);
-		public List<User> list(User user);
-	
-		public int count(SqlSession sqlSession, User user, SqlControl sqlControl);
-		public int count(User user, SqlControl sqlControl);
-		public int count(SqlSession sqlSession, User user);
-		public int count(User user);
+  public User insert(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public User insert(final User user, SqlControl sqlControl);
+  
+  public User insert(final SqlSession sqlSession, final User user);
+  
+  public User insert(final User user);
+  
+  public User get(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public User get(final User user, SqlControl sqlControl);
+  
+  public User get(final SqlSession sqlSession, final User user);
+  
+  public User get(final User user);
+  
+  public int update(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public int update(final User user, SqlControl sqlControl);
+  
+  public int update(final SqlSession sqlSession, final User user);
+  
+  public int update(final User user);
+  
+  public int delete(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public int delete(final User user, SqlControl sqlControl);
+  
+  public int delete(final SqlSession sqlSession, final User user);
+  
+  public int delete(final User user);
+  
+  public List<User> list(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public List<User> list(final User user, SqlControl sqlControl);
+  
+  public List<User> list(final SqlSession sqlSession, final User user);
+  
+  public List<User> list(final User user);
+  
+  public int query(final SqlSession sqlSession, final User user, SqlControl sqlControl, final SqlRowProcessor<User> sqlRowProcessor);
+  
+  public int query(final User user, SqlControl sqlControl, final SqlRowProcessor<User> sqlRowProcessor);
+  
+  public int query(final SqlSession sqlSession, final User user, final SqlRowProcessor<User> sqlRowProcessor);
+  
+  public int query(final User user, final SqlRowProcessor<User> sqlRowProcessor);
+  
+  public List<User> listFromTo(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public List<User> listFromTo(final User user, SqlControl sqlControl);
+  
+  public List<User> listFromTo(final SqlSession sqlSession, final User user);
+  
+  public List<User> listFromTo(final User user);
+  
+  public int count(final SqlSession sqlSession, final User user, SqlControl sqlControl);
+  
+  public int count(final User user, SqlControl sqlControl);
+  
+  public int count(final SqlSession sqlSession, final User user);
+  
+  public int count(final User user);
 }

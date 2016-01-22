@@ -1,0 +1,47 @@
+#Implementation(impl)
+package org.toursys.repository.dao {
+
+    #CRUD(org.toursys.repository.model.FinalStanding) #Query(org.toursys.repository.model.FinalStanding)
+    #Dao FinalStandingDao {
+    }
+
+    #CRUD(org.toursys.repository.model.Game) #Query(org.toursys.repository.model.Game)
+    #Dao GameDao {
+    }
+
+    #CRUD(org.toursys.repository.model.Groups) #Query(org.toursys.repository.model.Groups)
+    #Dao GroupsDao {
+    }
+
+    #CRUD(org.toursys.repository.model.Participant) #Query(org.toursys.repository.model.Participant)
+    #Dao ParticipantDao {
+    }
+
+    #CRUD(org.toursys.repository.model.PlayOffGame) #Query(org.toursys.repository.model.PlayOffGame)
+    #Dao PlayOffGameDao {
+    }
+
+    #CRUD(org.toursys.repository.model.Player) #Query(org.toursys.repository.model.Player)
+    #Dao PlayerDao {
+    }
+
+    #CRUD(org.toursys.repository.model.Season) #Query(org.toursys.repository.model.Season)
+    #Dao SeasonDao {
+    }
+
+    #CRUD(org.toursys.repository.model.Tournament) #Query(org.toursys.repository.model.Tournament)
+    #Dao TournamentDao {
+    }
+
+    #CRUD(org.toursys.repository.model.User) #Query(org.toursys.repository.model.User)
+    #Dao UserDao {
+    }
+
+    #CRUD(org.toursys.repository.model.WchQualification) #Query(org.toursys.repository.model.WchQualification)
+    #Dao WchQualificationDao {
+    }
+
+    #CRUD(org.toursys.repository.model.WchTournament) #Query(org.toursys.repository.model.WchTournament)
+    #Dao WchTournamentDao {
+    }
+}

@@ -11,10 +11,11 @@ import org.toursys.processor.service.player.PlayerService;
 import org.toursys.repository.dao.WchQualificationDao;
 import org.toursys.repository.dao.impl.WchTournamentDaoImpl;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.WChRecord;
+import org.toursys.repository.model.User;
 import org.toursys.repository.model.WchQualification;
 import org.toursys.repository.model.WchTournament;
 import org.toursys.repository.model.wch.WChSeason;
+import org.toursys.repository.model.wch.WChTableRecord;
 
 public class WChService {
 
@@ -71,17 +72,18 @@ public class WChService {
     }
 
     @Transactional(readOnly = true)
-    public List<WChRecord> getWchRecords(WChSeason wChSeason) {
+    public WChTableRecord getWchRecords(WChSeason wChSeason) {
         List<WchQualification> wchQualifications = listWchQualification(new WchQualification());
-        List<WChRecord> wChRecords = wChModel.map(wChSeason, wchQualifications);
-        return wChRecords;
+        WChTableRecord wchTableRecord = wChModel.map(wChSeason, wchQualifications);
+        return wchTableRecord;
     }
 
-    public void updateWch() {
-        List<Player> players = playerService.getPlayers(new Player());
+    public void updateWch(User user) {
+        List<Player> players = playerService.getUserPlayers(user);
         for (Player player : players) {
             if (player.getIthfId() != null) {
                 WchQualification wchQualification = WChHtmlImportFactory.getWchQualification(player.getIthfId());
+
                 boolean newQualification = false;
                 if (wchQualification != null) {
                     WchQualification wchQualificationDb = getWchQualification(new WchQualification()
@@ -97,6 +99,7 @@ public class WChService {
                         newQualification = true;
                     }
                     for (WchTournament wchTournament : wchQualification.getWchTournaments()) {
+
                         WchTournament wchTournamentSaved = null;
                         if (newQualification) {
                             wchTournamentSaved = wchTournament;
@@ -116,14 +119,10 @@ public class WChService {
                         if (wchTournamentSaved != null && wchQualificationDb.getId() != null) {
                             wchTournamentSaved.setWchQualification(wchQualificationDb);
                             createWchTournament(wchTournamentSaved);
-                        } else {
-                            System.out.println(wchQualificationDb + "11111111111");
-                            System.out.println(wchTournamentSaved + "22222222222");
                         }
                     }
                 }
             }
         }
-
     }
 }

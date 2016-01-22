@@ -9,14 +9,12 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.sqlproc.engine.SqlOrder;
 import org.sqlproc.engine.impl.SqlStandardControl;
 import org.toursys.processor.BadOptionsTournamentException;
 import org.toursys.processor.service.group.GroupModel;
 import org.toursys.processor.service.group.GroupService;
 import org.toursys.processor.sorter.SkTournamentSorter;
 import org.toursys.processor.sorter.TournamentSorter;
-import org.toursys.repository.dao.GroupsDao;
 import org.toursys.repository.dao.ParticipantExtDao;
 import org.toursys.repository.model.Groups;
 import org.toursys.repository.model.Participant;
@@ -27,176 +25,166 @@ import org.toursys.repository.model.Tournament;
 
 public class ParticipantService {
 
-    @Inject
-    private GroupService groupService;
+	@Inject
+	private GroupService groupService;
 
-    @Inject
-    private ParticipantExtDao participantDao;
+	@Inject
+	private ParticipantExtDao participantDao;
 
-    @Inject
-    private GroupsDao groupsDao;
+	@Inject
+	private GroupModel groupModel;
 
-    @Inject
-    private GroupModel groupModel;
+	@Transactional
+	public int updateParticipant(Participant participant) {
+		return participantDao.update(participant);
+	}
 
-    @Transactional
-    public void updateParticipant(Participant participant) {
-        participantDao.update(participant);
-    }
+	@Transactional
+	public Participant createParticipant(Player player, Groups group) {
+		return participantDao.insert(new Participant(0, group, player, new Score(0, 0)));
+	}
 
-    @Transactional
-    public List<Participant> getParticipants(Participant participant) {
-        return participantDao.list(participant);
-    }
+	@Transactional
+	public int deletePlayerParticipant(Participant participant, Tournament tournament) {
+		int count = 0;
+		List<Participant> participants = participantDao.list(new Participant()._setPlayer(participant.getPlayer())
+		        ._setInit(Participant.Association.group));
 
-    @Transactional
-    public Participant createParticipant(Player player, Groups group) {
-        return participantDao.insert(new Participant(0, group, player, new Score(0, 0)));
-    }
+		for (Participant deletedParticipant : participants) {
+			if (deletedParticipant.getGroup().getTournament().equals(tournament)) {
+				count += participantDao.delete(deletedParticipant);
+				Groups group = deletedParticipant.getGroup();
+				participants = participantDao.list(new Participant()._setGroup(group));
+				if (participants.isEmpty()) {
+					groupService.deleteGroup(group);
+				}
+			}
+		}
 
-    @Transactional
-    public int deletePlayerParticipant(Participant participant, Tournament tournament) {
-        int count = 0;
-        List<Participant> participants = participantDao.list(new Participant()._setPlayer(participant.getPlayer())
-                ._setInit(Participant.Association.group));
+		return count;
+	}
 
-        for (Participant deletedParticipant : participants) {
-            if (deletedParticipant.getGroup().getTournament().equals(tournament)) {
-                count += participantDao.delete(deletedParticipant);
-                Groups group = deletedParticipant.getGroup();
-                participants = participantDao.list(new Participant()._setGroup(group));
-                if (participants.isEmpty()) {
-                    groupsDao.delete(group);
-                }
-            }
-        }
+	@Transactional(readOnly = true)
+	public List<Participant> getRegistratedParticipant(Tournament tournament) {
+		return participantDao.listTournamentParticipants(tournament);
+	}
 
-        return count;
-    }
+	@Transactional
+	public Participant createBasicParticipant(Tournament tournament, Player player, String groupName) {
+		if (groupName != null) {
+			Groups group = groupModel.createBasicGroup(tournament);
+			group.setName(groupName);
+			List<Groups> savedGroups = groupService.getGroups(group);
+			if (savedGroups.isEmpty()) {
+				groupModel.initDefaultGroup(group);
+				groupService.createGroup(group);
+			} else {
+				group = savedGroups.get(0);
+			}
+			return createParticipant(player, group);
+		} else {
+			return new Participant(0, null, player, new Score(0, 0));
+		}
+	}
 
-    @Transactional(readOnly = true)
-    public List<Participant> getRegistratedParticipant(Tournament tournament) {
-        return participantDao.listTournamentParticipants(tournament);
-    }
+	@Transactional
+	public void sortParticipantsByRank(List<Participant> participants, Tournament tournament) {
 
-    @Transactional
-    public Participant createBasicParticipant(Tournament tournament, Player player, String groupName) {
-        if (groupName != null) {
-            Groups group = groupModel.createBasicGroup(tournament);
-            group.setName(groupName);
-            List<Groups> savedGroups = groupsDao.list(group);
-            if (savedGroups.isEmpty()) {
-                groupModel.initDefaultGroup(group);
-                groupsDao.insert(group);
-            } else {
-                group = savedGroups.get(0);
-            }
-            return createParticipant(player, group);
-        } else {
-            return new Participant(0, null, player, new Score(0, 0));
-        }
-    }
+		// TODO CZ
+		TournamentSorter sorter = new SkTournamentSorter(tournament);
+		sorter.sort(participants);
 
-    @Transactional
-    public void sortParticipantsByRank(List<Participant> participants, Tournament tournament) {
+		for (Participant participant : participants) {
+			participantDao.update(participant._setNull(Participant.Attribute.equalRank));
+		}
 
-        // TODO CZ
-        TournamentSorter sorter = new SkTournamentSorter(tournament);
-        sorter.sort(participants);
+	}
 
-        for (Participant participant : participants) {
-            participantDao.update(participant._setNull(Participant.Attribute.equalRank));
-        }
+	@Transactional(readOnly = true)
+	public LinkedList<List<Participant>> getAdvancedPlayersByGroup(Groups group, Tournament tournament,
+	        List<Participant> finalParticipants) {
 
-    }
+		LinkedList<List<Participant>> playerByGroup = new LinkedList<List<Participant>>();
 
-    @Transactional(readOnly = true)
-    public LinkedList<List<Participant>> getAdvancedPlayersByGroup(Groups group, Tournament tournament,
-            List<Participant> finalParticipants) {
+		List<Groups> basicGroups = groupService.getBasicGroups(tournament);
 
-        LinkedList<List<Participant>> playerByGroup = new LinkedList<List<Participant>>();
+		int startIndex = getStartIndex(tournament, group);
+		int promotingCount = getPromoting(tournament, group);
 
-        List<Groups> basicGroups = groupService.getBasicGroups(tournament);
+		for (Groups basicGroup : basicGroups) {
+			List<Participant> participants = new ArrayList<Participant>();
+			playerByGroup.add(participants);
+			List<Participant> players = getParticipandByGroup(basicGroup);
 
-        int startIndex = getStartIndex(tournament, group);
-        int promotingCount = getPromoting(tournament, group);
+			for (Participant participant : players.subList(Math.min(startIndex, players.size()),
+			        Math.min(players.size(), promotingCount + startIndex))) {
+				for (Participant finalParticipant : finalParticipants) {
+					if (participant.getPlayer().equals(finalParticipant.getPlayer())) {
+						participants.add(finalParticipant);
+						break;
+					}
+				}
+			}
+		}
+		return playerByGroup;
+	}
 
-        for (Groups basicGroup : basicGroups) {
-            List<Participant> participants = new ArrayList<Participant>();
-            playerByGroup.add(participants);
-            List<Participant> players = getParticipandByGroup(basicGroup);
+	private int getPromoting(Tournament tournament, Groups group) {
+		int promotingCount = 0;
 
-            for (Participant participant : players.subList(Math.min(startIndex, players.size()),
-                    Math.min(players.size(), promotingCount + startIndex))) {
-                for (Participant finalParticipant : finalParticipants) {
-                    if (participant.getPlayer().equals(finalParticipant.getPlayer())) {
-                        participants.add(finalParticipant);
-                        break;
-                    }
-                }
-            }
-        }
-        return playerByGroup;
-    }
+		switch (group.getPlayOffType()) {
+		case FINAL:
+			promotingCount += tournament.getFinalPromoting();
+			break;
+		case LOWER:
+			promotingCount += tournament.getLowerPromoting();
+			break;
+		case CROSS:
+			if (tournament.getFinalPromoting() != tournament.getLowerPromoting()) {
+				throw new BadOptionsTournamentException();
+			}
+			promotingCount += tournament.getLowerPromoting();
+			break;
+		}
 
-    private int getPromoting(Tournament tournament, Groups group) {
-        int promotingCount = 0;
+		return promotingCount;
+	}
 
-        switch (group.getPlayOffType()) {
-        case FINAL:
-            promotingCount += tournament.getFinalPromoting();
-            break;
-        case LOWER:
-            promotingCount += tournament.getLowerPromoting();
-            break;
-        case CROSS:
-            if (tournament.getPlayOffFinal() != tournament.getPlayOffLower()) {
-                throw new BadOptionsTournamentException();
-            }
-            promotingCount += tournament.getLowerPromoting();
-            break;
-        default:
-            break;
-        }
+	private int getStartIndex(Tournament tournament, Groups group) {
+		int startIndex = 0;
 
-        return promotingCount;
-    }
+		List<Groups> finalGroups = groupService.getSortedByNameFinalGroups(tournament);
+		for (Groups finalGroup : finalGroups) {
+			if (finalGroup.equals(group)) {
+				break;
+			}
+			startIndex += getPromoting(tournament, finalGroup);
+		}
 
-    private int getStartIndex(Tournament tournament, Groups group) {
-        int startIndex = 0;
+		return startIndex;
+	}
 
-        List<Groups> finalGroups = groupService.getSortedByNameFinalGroups(tournament);
-        for (Groups finalGroup : finalGroups) {
-            if (finalGroup.equals(group)) {
-                break;
-            }
-            startIndex += getPromoting(tournament, finalGroup);
-        }
+	public Set<Participant> getGoldGoalParticipants(List<Participant> participants) {
+		Set<Participant> participantsSet = new HashSet<Participant>();
 
-        return startIndex;
-    }
+		for (Participant participant : participants) {
+			if (participant.getEqualRank() != null) {
+				participantsSet.add(participant);
+			}
+		}
+		return participantsSet;
+	}
 
-    public Set<Participant> getGoldGoalParticipants(List<Participant> participants) {
-        Set<Participant> participantsSet = new HashSet<Participant>();
+	public List<Participant> getParticipandByGroup(Groups group) {
+		SqlStandardControl control = new SqlStandardControl();
+		control.setAscOrder(Participant.ORDER_BY_RANK);
 
-        for (Participant participant : participants) {
-            if (participant.getEqualRank() != null) {
-                participantsSet.add(participant);
-            }
-        }
-        return participantsSet;
-    }
+		Participant participant = new Participant();
+		participant.setGroup(group);
+		participant.setInit(Association.player, Association.games);
 
-    public List<Participant> getParticipandByGroup(Groups group) {
-        SqlStandardControl control = new SqlStandardControl();
-        control.setOrder(SqlOrder.getAscOrder(4));
-
-        Participant participant = new Participant();
-        participant.setGroup(group);
-        participant.setInit(Association.player, Association.games);
-
-        List<Participant> participants = participantDao.list(participant, control);
-        return participants;
-    }
+		List<Participant> participants = participantDao.list(participant, control);
+		return participants;
+	}
 
 }

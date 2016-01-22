@@ -16,6 +16,8 @@ public class PlayerHtmlUpdateFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(PlayerHtmlUpdateFactory.class);
 
+    private static final String UNKNOWN_CLUB = "???";
+
     public static void synchronizedIthfPlayer(List<Player> players) {
         try {
             URL url = new URL("http://stiga.trefik.cz/ithf/ranking/ranking.txt");
@@ -31,7 +33,8 @@ public class PlayerHtmlUpdateFactory {
                     String[] playerLine = myLine.split("\\t");
                     int rank = Integer.parseInt(playerLine[0]);
                     int playerId = Integer.parseInt(playerLine[1]);
-                    String playerName = playerLine[2].trim().toUpperCase();
+                    String playerName = konvertujNaAscii(playerLine[2].trim()).toUpperCase();
+                    String club = playerLine[3];
 
                     Player foundedPlayer = null;
 
@@ -40,9 +43,9 @@ public class PlayerHtmlUpdateFactory {
                             foundedPlayer = player;
                             // break;
                         } else {
-                            String dbName = (konvertujNaAscii(player.getName()) + " "
-                                    + konvertujNaAscii(player.getSurname()) + " " + player.getPlayerDiscriminator())
-                                    .toUpperCase().trim();
+                            String dbName = (konvertujNaAscii(player.getName() + " " + player.getSurname() + " "
+                                    + player.getPlayerDiscriminator())).toUpperCase().trim();
+
                             if (playerName.equals(dbName)) {
                                 foundedPlayer = player;
                                 foundedPlayer.setIthfId(playerId);
@@ -53,6 +56,9 @@ public class PlayerHtmlUpdateFactory {
 
                     if (foundedPlayer != null) {
                         foundedPlayer.setWorldRanking(rank);
+                        if (!UNKNOWN_CLUB.equals(club)) {
+                            foundedPlayer.setClub(club);
+                        }
                     }
                 }
 

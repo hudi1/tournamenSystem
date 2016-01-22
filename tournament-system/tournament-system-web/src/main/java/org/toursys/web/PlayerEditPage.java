@@ -31,7 +31,7 @@ public class PlayerEditPage extends TournamentHomePage {
     public PlayerEditPage(Player player, PageParameters pageParameters) {
         super(pageParameters);
         this.user = getTournamentSession().getUser();
-        createPage(player._setUser(user));
+        createPage(player);
     }
 
     protected void createPage(Player player) {
@@ -77,7 +77,7 @@ public class PlayerEditPage extends TournamentHomePage {
                     if (player.getId() != null) {
                         playerService.updatePlayer(player);
                     } else {
-                        playerService.createPlayer(player);
+                        playerService.createPlayer(user, player);
                     }
 
                     setResponsePage(PlayerPage.class, getPageParameters());

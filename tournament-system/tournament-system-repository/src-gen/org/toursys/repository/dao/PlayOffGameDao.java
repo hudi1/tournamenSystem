@@ -1,39 +1,74 @@
 package org.toursys.repository.dao;
 
 import java.util.List;
-import org.sqlproc.engine.SqlSession;
 import org.sqlproc.engine.SqlControl;
+import org.sqlproc.engine.SqlRowProcessor;
+import org.sqlproc.engine.SqlSession;
 import org.toursys.repository.model.PlayOffGame;
 
+@SuppressWarnings("all")
 public interface PlayOffGameDao {
-	
-		public PlayOffGame insert(SqlSession sqlSession, PlayOffGame playOffGame, SqlControl sqlControl);
-		public PlayOffGame insert(PlayOffGame playOffGame, SqlControl sqlControl);
-		public PlayOffGame insert(SqlSession sqlSession, PlayOffGame playOffGame);
-		public PlayOffGame insert(PlayOffGame playOffGame);
-	
-		public PlayOffGame get(SqlSession sqlSession, PlayOffGame playOffGame, SqlControl sqlControl);
-		public PlayOffGame get(PlayOffGame playOffGame, SqlControl sqlControl);
-			public PlayOffGame get(SqlSession sqlSession, PlayOffGame playOffGame);
-		public PlayOffGame get(PlayOffGame playOffGame);
-	
-		public int update(SqlSession sqlSession, PlayOffGame playOffGame, SqlControl sqlControl);
-		public int update(PlayOffGame playOffGame, SqlControl sqlControl);
-		public int update(SqlSession sqlSession, PlayOffGame playOffGame);
-		public int update(PlayOffGame playOffGame);
-	
-		public int delete(SqlSession sqlSession, PlayOffGame playOffGame, SqlControl sqlControl);
-		public int delete(PlayOffGame playOffGame, SqlControl sqlControl);
-		public int delete(SqlSession sqlSession, PlayOffGame playOffGame);
-		public int delete(PlayOffGame playOffGame);
-	
-		public List<PlayOffGame> list(SqlSession sqlSession, PlayOffGame playOffGame, SqlControl sqlControl);
-		public List<PlayOffGame> list(PlayOffGame playOffGame, SqlControl sqlControl);
-		public List<PlayOffGame> list(SqlSession sqlSession, PlayOffGame playOffGame);
-		public List<PlayOffGame> list(PlayOffGame playOffGame);
-	
-		public int count(SqlSession sqlSession, PlayOffGame playOffGame, SqlControl sqlControl);
-		public int count(PlayOffGame playOffGame, SqlControl sqlControl);
-		public int count(SqlSession sqlSession, PlayOffGame playOffGame);
-		public int count(PlayOffGame playOffGame);
+  public PlayOffGame insert(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public PlayOffGame insert(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public PlayOffGame insert(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public PlayOffGame insert(final PlayOffGame playOffGame);
+  
+  public PlayOffGame get(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public PlayOffGame get(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public PlayOffGame get(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public PlayOffGame get(final PlayOffGame playOffGame);
+  
+  public int update(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public int update(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public int update(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public int update(final PlayOffGame playOffGame);
+  
+  public int delete(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public int delete(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public int delete(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public int delete(final PlayOffGame playOffGame);
+  
+  public List<PlayOffGame> list(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public List<PlayOffGame> list(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public List<PlayOffGame> list(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public List<PlayOffGame> list(final PlayOffGame playOffGame);
+  
+  public int query(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl, final SqlRowProcessor<PlayOffGame> sqlRowProcessor);
+  
+  public int query(final PlayOffGame playOffGame, SqlControl sqlControl, final SqlRowProcessor<PlayOffGame> sqlRowProcessor);
+  
+  public int query(final SqlSession sqlSession, final PlayOffGame playOffGame, final SqlRowProcessor<PlayOffGame> sqlRowProcessor);
+  
+  public int query(final PlayOffGame playOffGame, final SqlRowProcessor<PlayOffGame> sqlRowProcessor);
+  
+  public List<PlayOffGame> listFromTo(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public List<PlayOffGame> listFromTo(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public List<PlayOffGame> listFromTo(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public List<PlayOffGame> listFromTo(final PlayOffGame playOffGame);
+  
+  public int count(final SqlSession sqlSession, final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public int count(final PlayOffGame playOffGame, SqlControl sqlControl);
+  
+  public int count(final SqlSession sqlSession, final PlayOffGame playOffGame);
+  
+  public int count(final PlayOffGame playOffGame);
 }

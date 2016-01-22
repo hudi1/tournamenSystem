@@ -40,7 +40,7 @@ public class TournamentPage extends BasePage {
     private List<Season> seasons;
 
     public TournamentPage() {
-        seasons = seasonService.getSeasons(new Season()._setUser(getTournamentSession().getUser()));
+        seasons = seasonService.getUserSeasons(getTournamentSession().getUser());
         selectedSeason = selectSeason();
         createPage();
     }
@@ -80,7 +80,8 @@ public class TournamentPage extends BasePage {
                 public void submit(AjaxRequestTarget target, Form<?> form) {
                     Tournament tournament = new Tournament();
                     tournament.setName(getString("enterName"));
-                    selectedSeason.getTournaments().add(tournamentService.createTournament(selectedSeason, tournament));
+                    tournamentService.createTournament(selectedSeason, tournament);
+                    selectedSeason.getTournaments().add(tournamentService.getTournament(tournament));
                     target.add(TournamentForm.this);
                 }
 

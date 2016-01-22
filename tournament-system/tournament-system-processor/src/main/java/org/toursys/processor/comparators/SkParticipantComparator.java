@@ -43,11 +43,6 @@ public class SkParticipantComparator implements Comparator<Participant> {
             return 1;
         }
 
-        System.out.println("ccccccccccccccccccc1" + participant1.getPlayer());
-        System.out.println("ccccccccccccccccccc2" + participant2.getPlayer());
-        System.out.println("ccccccccccccccccccc1" + participant1.getScore());
-        System.out.println("ccccccccccccccccccc2" + participant2.getScore());
-
         if ((participant1.getScore().getLeftSide() - participant1.getScore().getRightSide()) > (participant2.getScore()
                 .getLeftSide() - participant2.getScore().getRightSide())) {
             return -1;

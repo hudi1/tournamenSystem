@@ -18,7 +18,7 @@ public class WChHtmlImportFactory {
 
     private static final String ITHF_URL = "http://stiga.trefik.cz/ithf/ranking/player.aspx?id=";
     private static final String NATION = "Slovakia";
-    private static final String TOO_OLD = "2014";
+    private static final Integer TOO_OLD = 2013;
 
     private static final Logger logger = LoggerFactory.getLogger(WChHtmlImportFactory.class);
 
@@ -75,7 +75,7 @@ public class WChHtmlImportFactory {
             wchTournament.setSeries(series);
             wchTournament.setDate(df.parse(date));
             wchTournament.setName(name);
-            if (yearDf.format(wchTournament.getDate()).equals(TOO_OLD)) {
+            if (Integer.parseInt(yearDf.format(wchTournament.getDate())) <= TOO_OLD) {
                 break;
             }
             wchQualification.getWchTournaments().add(wchTournament);
@@ -83,12 +83,6 @@ public class WChHtmlImportFactory {
         }
 
         return wchQualification;
-    }
-
-    public static void main(String[] args) {
-        WchQualification a = getWchQualification(260047);
-
-        System.out.println(a);
     }
 
 }

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.springframework.transaction.annotation.Transactional;
 import org.toursys.repository.dao.SeasonDao;
 import org.toursys.repository.model.Season;
+import org.toursys.repository.model.User;
 
 public class SeasonService {
 
@@ -29,8 +30,8 @@ public class SeasonService {
     }
 
     @Transactional(readOnly = true)
-    public List<Season> getSeasons(Season season) {
-        return seasonDao.list(season._setInit(Season.Association.tournaments));
+    public List<Season> getUserSeasons(User user) {
+        return seasonDao.list(new Season()._setUser(user)._setInit(Season.Association.tournaments));
     }
 
     @Transactional(readOnly = true)

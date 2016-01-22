@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.toursys.processor.ImportTournamentException;
 import org.toursys.repository.model.Player;
-import org.toursys.repository.model.User;
 
 public class PlayersHtmlImportFactory {
 
@@ -22,13 +21,13 @@ public class PlayersHtmlImportFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(PlayersHtmlImportFactory.class);
 
-    public static List<Player> createdImportedPlayers(String url, User user) {
+    public static List<Player> createdImportedPlayers(String url) {
         List<Player> players = new ArrayList<Player>();
 
         try {
             if (url.contains(TREFIK_URL)) {
                 Document doc = Jsoup.connect(url).get();
-                players = getTrefikPlayers(doc, user);
+                players = getTrefikPlayers(doc);
             } else if (url.contains(ITHF_URL)) {
 
                 Document doc = Jsoup.connect(url).get();
@@ -43,7 +42,7 @@ public class PlayersHtmlImportFactory {
                 allFields.put("butCountry", "Sign In");
 
                 doc = Jsoup.connect(url).data(allFields).post();
-                players = getIthfPlayers(doc, user);
+                players = getIthfPlayers(doc);
             }
         } catch (Exception e) {
             logger.error("Error during importing players", e);
@@ -52,14 +51,14 @@ public class PlayersHtmlImportFactory {
         return players;
     }
 
-    private static List<Player> getIthfPlayers(Document doc, User user) {
+    private static List<Player> getIthfPlayers(Document doc) {
         List<Player> players = new ArrayList<Player>();
 
         Element span = doc.select("span#LabRanking").first();
         Element body = span.select("table").get(1);
         Elements tableRows = body.select(" > tbody > tr:has(table)");
 
-        for (int i = 1; i < tableRows.size(); i++) {
+        for (int i = 0; i < tableRows.size(); i++) {
 
             String nameAndSurname = tableRows.get(i).select("td").get(1).select("a").first().ownText();
             String club = null;
@@ -68,7 +67,6 @@ public class PlayersHtmlImportFactory {
             } catch (Exception e) {
             }
             Player player = new Player();
-            player.setUser(user);
             player.setClub(club);
             player.setName(nameAndSurname.split(" ")[0]);
             player.setSurname(nameAndSurname.split(" ")[1]);
@@ -80,7 +78,7 @@ public class PlayersHtmlImportFactory {
         return players;
     }
 
-    private static List<Player> getTrefikPlayers(Document doc, User user) {
+    private static List<Player> getTrefikPlayers(Document doc) {
         List<Player> players = new ArrayList<Player>();
 
         Element playerTable = doc.select("table").last();
@@ -94,7 +92,6 @@ public class PlayersHtmlImportFactory {
 
             Player player = TournamentHtmlImportFactory.parsePlayer(nameAndSurname);
             player.setClub(club.replace("*", "").trim());
-            player.setUser(user);
             players.add(player);
         }
         return players;

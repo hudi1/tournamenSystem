@@ -32,26 +32,11 @@
         <constructor-arg ref="jdbcTemplate" />
     </bean>
 
-    <!-- DAOs -->
-    <bean id="dao" autowire="byType" abstract="true">
-        <constructor-arg name="sqlEngineFactory" ref="sqlFactory" />
-        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
-    </bean>
-
-    <bean id="gameDao" class="org.toursys.repository.dao.impl.GameExtDaoImpl" parent="dao" />
-    <bean id="playOffGameDao" class="org.toursys.repository.dao.impl.PlayOffGameDaoImpl" parent="dao" />
-    <bean id="playerDao" class="org.toursys.repository.dao.impl.PlayerExtDaoImpl" parent="dao" />
-    <bean id="participantDao" class="org.toursys.repository.dao.impl.ParticipantExtDaoImpl" parent="dao" />
-    <bean id="seasonDao" class="org.toursys.repository.dao.impl.SeasonDaoImpl" parent="dao" />
-    <bean id="groupDao" class="org.toursys.repository.dao.impl.GroupsExtDaoImpl" parent="dao" />
-    <bean id="tournamentDao" class="org.toursys.repository.dao.impl.TournamentDaoImpl" parent="dao" />
-    <bean id="userDao" class="org.toursys.repository.dao.impl.UserDaoImpl" parent="dao" />
-    <bean id="finalStandingDao" class="org.toursys.repository.dao.impl.FinalStandingDaoImpl" parent="dao" />
-
     <bean id="sqlFactory" class="org.sqlproc.engine.jdbc.JdbcEngineFactory" init-method="init">
         <property name="metaFilesNames">
             <list>
-                <value>statements.qry</value>
+                <value>custom-statements.meta</value>
+                <value>statements.meta</value>
             </list>
         </property>
         <property name="customTypes">

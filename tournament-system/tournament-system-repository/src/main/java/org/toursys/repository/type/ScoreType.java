@@ -1,6 +1,5 @@
 package org.toursys.repository.type;
 
-import java.lang.reflect.Method;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +11,6 @@ import java.util.regex.Pattern;
 import org.sqlproc.engine.SqlQuery;
 import org.sqlproc.engine.SqlRuntimeContext;
 import org.sqlproc.engine.SqlRuntimeException;
-import org.sqlproc.engine.impl.BeanUtils;
 import org.sqlproc.engine.type.SqlInternalType;
 import org.toursys.repository.model.Score;
 
@@ -36,23 +34,19 @@ public class ScoreType extends SqlInternalType {
     }
 
     @Override
-    public void setResult(SqlRuntimeContext runtimeCtxCtx, Object resultInstance, String attributeName,
+    public void setResult(SqlRuntimeContext runtimeCtx, Object resultInstance, String attributeName,
             Object resultValue, boolean ingoreError) throws SqlRuntimeException {
-        Method m = BeanUtils.getSetter(resultInstance, attributeName, Score.class);
-        if (m == null) {
+        if (resultValue == null) {
+            if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, null, Score.class))
+                return;
             if (ingoreError) {
-                logger.error("There's no getter for " + attributeName + " in " + resultInstance
+                logger.error("There's no setter for " + attributeName + " in " + resultInstance
                         + ", META type is ScoreType");
                 return;
             } else {
                 throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
                         + ", META type is ScoreType");
             }
-        }
-
-        if (resultValue == null) {
-            BeanUtils.simpleInvokeMethod(m, resultInstance, null);
-            return;
         }
 
         if (!(resultValue instanceof String)) {
@@ -77,8 +71,16 @@ public class ScoreType extends SqlInternalType {
 
         int leftSide = Integer.parseInt(matcher.group(1));
         int rightSide = Integer.parseInt(matcher.group(2));
-        BeanUtils.simpleInvokeMethod(m, resultInstance, new Score(leftSide, rightSide));
-
+        if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Score(leftSide, rightSide), Score.class))
+            return;
+        if (ingoreError) {
+            logger.error("There's no setter for " + attributeName + " in " + resultInstance
+                    + ", META type is ScoreType");
+            return;
+        } else {
+            throw new SqlRuntimeException("There's no setter for " + attributeName + " in " + resultInstance
+                    + ", META type is ScoreType");
+        }
     }
 
     @Override

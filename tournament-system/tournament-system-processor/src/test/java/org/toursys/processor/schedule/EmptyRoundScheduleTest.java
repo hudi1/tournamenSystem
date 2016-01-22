@@ -9,17 +9,17 @@ import org.toursys.repository.model.GameImpl;
 
 public class EmptyRoundScheduleTest {
 
-    private RoundRobinSchedule schedule;
+	private RoundRobinSchedule schedule;
 
-    @Before
-    public void setup() {
-        schedule = new EmptyRoundRobinSchedule();
-    }
+	@Before
+	public void setup() {
+		schedule = new EmptyRoundRobinSchedule();
+	}
 
-    @Test
-    public void test() throws Exception {
-        List<GameImpl> games = schedule.getSchedule();
+	@Test
+	public void test() throws Exception {
+		List<GameImpl> games = schedule.getSchedule();
 
-        Assert.assertTrue(games.isEmpty());
-    }
+		Assert.assertTrue(games.isEmpty());
+	}
 }

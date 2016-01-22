@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+
+    <bean id="playerService" class="org.toursys.processor.service.player.PlayerService" />
+    <bean id="gameService" class="org.toursys.processor.service.game.GameService" />
+    <bean id="seasonService" class="org.toursys.processor.service.season.SeasonService" />
+    <bean id="tournamentService" class="org.toursys.processor.service.tournament.TournamentService" />
+    <bean id="userService" class="org.toursys.processor.service.user.UserService" />
+    <bean id="groupService" class="org.toursys.processor.service.group.GroupService" />
+    <bean id="participantService" class="org.toursys.processor.service.participant.ParticipantService" />
+    <bean id="scheduleService" class="org.toursys.processor.service.schedule.ScheduleService" />
+    <bean id="playOffGameService" class="org.toursys.processor.service.playOffGame.PlayOffGameService" />
+    <bean id="finalStandingService" class="org.toursys.processor.service.standing.FinalStandingService" />
+    <bean id="importService" class="org.toursys.processor.service.imports.ImportService" />
+    <bean id="wChService" class="org.toursys.processor.service.wch.WChService" />
+
+    <bean id="groupModel" class="org.toursys.processor.service.group.GroupModel" />
+    <bean id="gameModel" class="org.toursys.processor.service.game.GameModel" />
+    <bean id="finalStandingModel" class="org.toursys.processor.service.standing.FinalStandingModel" />
+    <bean id="WChModel" class="org.toursys.processor.service.wch.WChModel" />
+    <bean id="playOffGameModel" class="org.toursys.processor.service.playOffGame.PlayOffGameModel" />
+
+</beans>

@@ -1,362 +1,507 @@
 package org.toursys.repository.model;
-	
-import java.util.List;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.lang.reflect.InvocationTargetException;
-import org.apache.commons.beanutils.MethodUtils;
+import org.sqlproc.engine.annotation.Pojo;
+import org.toursys.repository.model.Player;
+import org.toursys.repository.model.Season;
+import org.toursys.repository.model.UserRole;
 
+@Pojo
+@SuppressWarnings("all")
 public class User implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	public static final int ORDER_BY_ID = 1;
-	public static final int ORDER_BY_EMAIL = 3;
-	public static final int ORDER_BY_USER_NAME = 2;
-	
-	public User() {
-	}
-		
-	public User(String email, String userName, String password, UserRole role, Integer platnost) {
-		this.email = email;
-		this.userName = userName;
-		this.password = password;
-		this.role = role;
-		this.platnost = platnost;
-	}
-
-	private Integer id;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public User _setId(Integer id) {
-		this.id = id;
-		return this;
-	}
-
-	private String name;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public User _setName(String name) {
-		this.name = name;
-		return this;
-	}
-
-	private String surname;
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public User _setSurname(String surname) {
-		this.surname = surname;
-		return this;
-	}
-
-	private String email;
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public User _setEmail(String email) {
-		this.email = email;
-		return this;
-	}
-
-	private String userName;
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public User _setUserName(String userName) {
-		this.userName = userName;
-		return this;
-	}
-
-	private String password;
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public User _setPassword(String password) {
-		this.password = password;
-		return this;
-	}
-
-	private UserRole role;
-
-	public UserRole getRole() {
-		return role;
-	}
-
-	public void setRole(UserRole role) {
-		this.role = role;
-	}
-
-	public User _setRole(UserRole role) {
-		this.role = role;
-		return this;
-	}
-
-	private Integer platnost;
-
-	public Integer getPlatnost() {
-		return platnost;
-	}
-
-	public void setPlatnost(Integer platnost) {
-		this.platnost = platnost;
-	}
-
-	public User _setPlatnost(Integer platnost) {
-		this.platnost = platnost;
-		return this;
-	}
-
-	private List<Player> players = new ArrayList<Player>();
-
-	public List<Player> getPlayers() {
-		return players;
-	}
-
-	public void setPlayers(List<Player> players) {
-		this.players = players;
-	}
-
-	public User _setPlayers(List<Player> players) {
-		this.players = players;
-		return this;
-	}
-
-	private List<Season> seasons = new ArrayList<Season>();
-
-	public List<Season> getSeasons() {
-		return seasons;
-	}
-
-	public void setSeasons(List<Season> seasons) {
-		this.seasons = seasons;
-	}
-
-	public User _setSeasons(List<Season> seasons) {
-		this.seasons = seasons;
-		return this;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (id == null || !id.equals(other.id))
-		return false;
-		return true;
-	}	
-
-	public enum Association {
-		seasons, players
-	}
-
-	private Set<String> initAssociations = new HashSet<String>();
-
-	public void setInit(Association... associations) {
-		if (associations == null)
-			throw new IllegalArgumentException();
-		for (Association association : associations)
-			initAssociations.add(association.name());
-	}
-	
-	public User	_setInit(Association... associations) {
-		setInit(associations);
-		return this;
-	}
-
-	public void clearInit(Association... associations) {
-		if (associations == null)
-			throw new IllegalArgumentException();
-		for (Association association : associations)
-			initAssociations.remove(association.name());
-	}
-
-	public User _clearInit(Association... associations) {
-		clearInit(associations);
-		return this;
-	}
-
-	public void setInit(String... associations) {
-		if (associations == null)
-			throw new IllegalArgumentException();
-		for (String association : associations)
-			initAssociations.add(association);
-	}
-
-	public User _setInit(String... associations) {
-		setInit(associations);
-		return this;
-	}
-
-	public void clearInit(String... associations) {
-		if (associations == null)
-			throw new IllegalArgumentException();
-		for (String association : associations)
-			initAssociations.remove(association);
-	}
-
-	public User _clearInit(String... associations) {
-		clearInit(associations);
-		return this;
-	}
-
-	public Boolean toInit(String association) {
-		if (association == null)
-			throw new IllegalArgumentException();
-		return initAssociations.contains(association);
-	}
-
-	public void clearAllInit() {
-		initAssociations = new HashSet<String>();
-	}
-
-	public enum Attribute {
-		name, surname
-	}
-
-	private Set<String> nullValues = new HashSet<String>();
-
-	public void setNull(Attribute... attributes) {
-		if (attributes == null)
-			throw new IllegalArgumentException();
-		for (Attribute attribute : attributes)
-			nullValues.add(attribute.name());
-	}
-
-	public User _setNull(Attribute... attributes) {
-		setNull(attributes);
-		return this;
-	}
-
-	public void clearNull(Attribute... attributes) {
-		if (attributes == null)
-			throw new IllegalArgumentException();
-		for (Attribute attribute : attributes)
-			nullValues.remove(attribute.name());
-	}
-
-	public User _clearNull(Attribute... attributes) {
-		clearNull(attributes);
-		return this;
-	}
-
-	public void setNull(String... attributes) {
-		if (attributes == null)
-			throw new IllegalArgumentException();
-		for (String attribute : attributes)
-			nullValues.add(attribute);
-	}
-
-	public User _setNull(String... attributes) {
-		setNull(attributes);
-		return this;
-	}
-
-	public void clearNull(String... attributes) {
-		if (attributes == null)
-			throw new IllegalArgumentException();
-		for (String attribute : attributes)
-			nullValues.remove(attribute);
-	}
-
-	public User _clearNull(String... attributes) {
-		clearNull(attributes);
-		return this;
-	}
-
-	public Boolean isNull(String attrName) {
-		if (attrName == null)
-			throw new IllegalArgumentException();
-		return nullValues.contains(attrName);
-	}
-
-	public Boolean isNull(Attribute attribute) {
-		if (attribute == null)
-			throw new IllegalArgumentException();
-		return nullValues.contains(attribute.name());
-	}
-
-	public Boolean isDef(String attrName) {
-		if (attrName == null)
-			throw new IllegalArgumentException();
-		if (nullValues.contains(attrName))
-			return true;
-		try {
-			Object result = MethodUtils.invokeMethod(this, "get" + attrName.substring(0, 1).toUpperCase() + attrName.substring(1, attrName.length()), null);
-			return (result != null) ? true : false;
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-		try {
-			Object result = MethodUtils.invokeMethod(this, "is" + attrName.substring(0, 1).toUpperCase() + attrName.substring(1, attrName.length()), null);
-			return (result != null) ? true : false;
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-		return false;
-	}
-
-	public void clearAllNull() {
-		nullValues = new HashSet<String>();
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", email=" + email + ", name=" + name + ", platnost=" + platnost + ", role=" + role + ", userName=" + userName + ", surname=" + surname + ", password=" + password + "]";
-	}
-
-	public String toStringFull() {
-		return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", userName=" + userName + ", password=" + password + ", role=" + role + ", platnost=" + platnost + ", players=" + players + ", seasons=" + seasons + "]";
-	}
+  private final static long serialVersionUID = 1L;
+  
+  public final static String ORDER_BY_ID = "ID";
+  
+  public final static String ORDER_BY_EMAIL = "EMAIL";
+  
+  public final static String ORDER_BY_USER_NAME = "USER_NAME";
+  
+  public User() {
+  }
+  
+  public User(final String email, final String userName, final String password, final UserRole role, final Integer platnost) {
+    super();
+    setEmail(email);
+    setUserName(userName);
+    setPassword(password);
+    setRole(role);
+    setPlatnost(platnost);
+  }
+  
+  private Integer id;
+  
+  public Integer getId() {
+    return this.id;
+  }
+  
+  public void setId(final Integer id) {
+    this.id = id;
+  }
+  
+  public User _setId(final Integer id) {
+    this.id = id;
+    return this;
+  }
+  
+  private String name;
+  
+  public String getName() {
+    return this.name;
+  }
+  
+  public void setName(final String name) {
+    this.name = name;
+  }
+  
+  public User _setName(final String name) {
+    this.name = name;
+    return this;
+  }
+  
+  private String surname;
+  
+  public String getSurname() {
+    return this.surname;
+  }
+  
+  public void setSurname(final String surname) {
+    this.surname = surname;
+  }
+  
+  public User _setSurname(final String surname) {
+    this.surname = surname;
+    return this;
+  }
+  
+  private String email;
+  
+  public String getEmail() {
+    return this.email;
+  }
+  
+  public void setEmail(final String email) {
+    this.email = email;
+  }
+  
+  public User _setEmail(final String email) {
+    this.email = email;
+    return this;
+  }
+  
+  private String userName;
+  
+  public String getUserName() {
+    return this.userName;
+  }
+  
+  public void setUserName(final String userName) {
+    this.userName = userName;
+  }
+  
+  public User _setUserName(final String userName) {
+    this.userName = userName;
+    return this;
+  }
+  
+  private String password;
+  
+  public String getPassword() {
+    return this.password;
+  }
+  
+  public void setPassword(final String password) {
+    this.password = password;
+  }
+  
+  public User _setPassword(final String password) {
+    this.password = password;
+    return this;
+  }
+  
+  private UserRole role;
+  
+  public UserRole getRole() {
+    return this.role;
+  }
+  
+  public void setRole(final UserRole role) {
+    this.role = role;
+  }
+  
+  public User _setRole(final UserRole role) {
+    this.role = role;
+    return this;
+  }
+  
+  private Integer platnost;
+  
+  public Integer getPlatnost() {
+    return this.platnost;
+  }
+  
+  public void setPlatnost(final Integer platnost) {
+    this.platnost = platnost;
+  }
+  
+  public User _setPlatnost(final Integer platnost) {
+    this.platnost = platnost;
+    return this;
+  }
+  
+  private List<Player> players = new java.util.ArrayList<Player>();
+  
+  public List<Player> getPlayers() {
+    return this.players;
+  }
+  
+  public void setPlayers(final List<Player> players) {
+    this.players = players;
+  }
+  
+  public User _setPlayers(final List<Player> players) {
+    this.players = players;
+    return this;
+  }
+  
+  private List<Season> seasons = new java.util.ArrayList<Season>();
+  
+  public List<Season> getSeasons() {
+    return this.seasons;
+  }
+  
+  public void setSeasons(final List<Season> seasons) {
+    this.seasons = seasons;
+  }
+  
+  public User _setSeasons(final List<Season> seasons) {
+    this.seasons = seasons;
+    return this;
+  }
+  
+  private boolean onlyIds;
+  
+  public boolean isOnlyIds() {
+    return this.onlyIds;
+  }
+  
+  public void setOnlyIds(final boolean onlyIds) {
+    this.onlyIds = onlyIds;
+  }
+  
+  public User _setOnlyIds(final boolean onlyIds) {
+    this.onlyIds = onlyIds;
+    return this;
+  }
+  
+  private List<Integer> ids = new java.util.ArrayList<Integer>();
+  
+  public List<Integer> getIds() {
+    return this.ids;
+  }
+  
+  public void setIds(final List<Integer> ids) {
+    this.ids = ids;
+  }
+  
+  public User _setIds(final List<Integer> ids) {
+    this.ids = ids;
+    return this;
+  }
+  
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj)
+    	return true;
+    if (obj == null)
+    	return false;
+    if (getClass() != obj.getClass())
+    	return false;
+    User other = (User) obj;
+    if (id == null || !id.equals(other.id))
+    	return false;
+    return true;
+  }
+  
+  @Override
+  public String toString() {
+    return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", userName=" + userName + ", password=" + password + ", role=" + role + ", platnost=" + platnost + "]";
+  }
+  
+  public String toStringFull() {
+    return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", userName=" + userName + ", password=" + password + ", role=" + role + ", platnost=" + platnost + ", players=" + players + ", seasons=" + seasons + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
+  }
+  
+  public enum Attribute {
+    name,
+    
+    surname;
+  }
+  
+  private Set<String> nullValues =  new java.util.HashSet<String>();
+  
+  public void setNull(final User.Attribute... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (Attribute attribute : attributes)
+    	nullValues.add(attribute.name());
+  }
+  
+  public User _setNull(final User.Attribute... attributes) {
+    setNull(attributes);
+    return this;
+  }
+  
+  public void clearNull(final User.Attribute... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (Attribute attribute : attributes)
+    	nullValues.remove(attribute.name());
+  }
+  
+  public User _clearNull(final User.Attribute... attributes) {
+    clearNull(attributes);
+    return this;
+  }
+  
+  public void setNull(final String... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (String attribute : attributes)
+    	nullValues.add(attribute);
+  }
+  
+  public User _setNull(final String... attributes) {
+    setNull(attributes);
+    return this;
+  }
+  
+  public void clearNull(final String... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (String attribute : attributes)
+    	nullValues.remove(attribute);
+  }
+  
+  public User _clearNull(final String... attributes) {
+    clearNull(attributes);
+    return this;
+  }
+  
+  public Boolean isNull(final User.Attribute attribute) {
+    if (attribute == null)
+    	throw new IllegalArgumentException();
+    return nullValues.contains(attribute.name());
+  }
+  
+  public Boolean isNull(final String attrName) {
+    if (attrName == null)
+    	throw new IllegalArgumentException();
+    return nullValues.contains(attrName);
+  }
+  
+  public Boolean isDef(final String attrName, final Boolean isAttrNotNull) {
+    if (attrName == null)
+    	throw new IllegalArgumentException();
+    if (nullValues.contains(attrName))
+    	return true;
+    if (isAttrNotNull != null)
+    	return isAttrNotNull;
+    return false;
+  }
+  
+  public void clearAllNull() {
+    nullValues = new java.util.HashSet<String>();
+  }
+  
+  public enum Association {
+    players,
+    
+    seasons;
+  }
+  
+  private Set<String> initAssociations =  new java.util.HashSet<String>();
+  
+  public Set<String> getInitAssociations() {
+    return this.initAssociations;
+  }
+  
+  public void setInitAssociations(final Set<String> initAssociations) {
+    this.initAssociations = initAssociations;
+  }
+  
+  public void setInit(final User.Association... associations) {
+    if (associations == null)
+    	throw new IllegalArgumentException();
+    for (Association association : associations)
+    	initAssociations.add(association.name());
+  }
+  
+  public User _setInit(final User.Association... associations) {
+    setInit(associations);
+    return this;
+  }
+  
+  public void clearInit(final User.Association... associations) {
+    if (associations == null)
+    	throw new IllegalArgumentException();
+    for (Association association : associations)
+    	initAssociations.remove(association.name());
+  }
+  
+  public User _clearInit(final User.Association... associations) {
+    clearInit(associations);
+    return this;
+  }
+  
+  public void setInit(final String... associations) {
+    if (associations == null)
+    	throw new IllegalArgumentException();
+    for (String association : associations)
+    	initAssociations.add(association);
+  }
+  
+  public User _setInit(final String... associations) {
+    setInit(associations);
+    return this;
+  }
+  
+  public void clearInit(final String... associations) {
+    if (associations == null)
+    	throw new IllegalArgumentException();
+    for (String association : associations)
+    	initAssociations.remove(association);
+  }
+  
+  public User _clearInit(final String... associations) {
+    clearInit(associations);
+    return this;
+  }
+  
+  public Boolean toInit(final User.Association association) {
+    if (association == null)
+    	throw new IllegalArgumentException();
+    return initAssociations.contains(association.name());
+  }
+  
+  public Boolean toInit(final String association) {
+    if (association == null)
+    	throw new IllegalArgumentException();
+    return initAssociations.contains(association);
+  }
+  
+  public void clearAllInit() {
+    initAssociations = new java.util.HashSet<String>();
+  }
+  
+  public enum OpAttribute {
+    id,
+    
+    name,
+    
+    surname,
+    
+    email,
+    
+    userName,
+    
+    password,
+    
+    role,
+    
+    platnost,
+    
+    players,
+    
+    seasons,
+    
+    onlyIds,
+    
+    ids;
+  }
+  
+  private Map<String, String> operators =  new java.util.HashMap<String, String>();
+  
+  public Map<String, String> getOperators() {
+    return operators;
+  }
+  
+  public void setOp(final String operator, final User.OpAttribute... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (OpAttribute attribute : attributes)
+    	operators.put(attribute.name(), operator);
+  }
+  
+  public User _setOp(final String operator, final User.OpAttribute... attributes) {
+    setOp(operator, attributes);
+    return this;
+  }
+  
+  public void clearOp(final User.OpAttribute... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (OpAttribute attribute : attributes)
+    	operators.remove(attribute.name());
+  }
+  
+  public User _clearOp(final User.OpAttribute... attributes) {
+    clearOp(attributes);
+    return this;
+  }
+  
+  public void setOp(final String operator, final String... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (String attribute : attributes)
+    	operators.put(attribute, operator);
+  }
+  
+  public User _setOp(final String operator, final String... attributes) {
+    setOp(operator, attributes);
+    return this;
+  }
+  
+  public void clearOp(final String... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (String attribute : attributes)
+    	operators.remove(attribute);
+  }
+  
+  public User _clearOp(final String... attributes) {
+    clearOp(attributes);
+    return this;
+  }
+  
+  public void setNullOp(final User.OpAttribute... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (OpAttribute attribute : attributes)
+    	operators.put(attribute.name(), "is null");
+  }
+  
+  public User _setNullOp(final User.OpAttribute... attributes) {
+    setNullOp(attributes);
+    return this;
+  }
+  
+  public void setNullOp(final String... attributes) {
+    if (attributes == null)
+    	throw new IllegalArgumentException();
+    for (String attribute : attributes)
+    	operators.put(attribute, "is null");
+  }
+  
+  public User _setNullOp(final String... attributes) {
+    setNullOp(attributes);
+    return this;
+  }
+  
+  public void clearAllOps() {
+    operators = new java.util.HashMap<String, String>();
+  }
 }

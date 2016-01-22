@@ -7,47 +7,36 @@
 </wicket:head>
 <wicket:extend>
 	<form wicket:id="wchForm">
-		<table class="groupTable">
-			<tr>
-				<th colspan="2" />
-				<th colspan="4" align="center">2015/2016</th>
-				<th colspan="4" align="center">2016/2017</th>
-			</tr>
-			<tr>
-				<th />			
-				<th wicket:id="name" />
-				<th>1</th>
-				<th>2</th>
-				<th>3</th>
-				<th>SVK Ch</th>
-				<th>1</th>
-				<th>2</th>
-				<th>3</th>
-				<th>SVK Ch</th>
-				<th>total</th>
-				<th wicket:id="rank" />
-			</tr>
-			<tr wicket:id="records">
-
-				<td><span wicket:id="index">[index]</span></td>
-				<td><span wicket:id="name">[record]</span></td>
-				<td><span wicket:id="tournamentPoint1year1">[record]</span></td>
-				<td><span wicket:id="tournamentPoint1year2">[record]</span></td>
-				<td><span wicket:id="tournamentPoint1year3">[record]</span></td>
-				<td><span wicket:id="points1year">[record]</span></td>
-				<td><span wicket:id="tournamentPoint2year1">[record]</span></td>
-				<td><span wicket:id="tournamentPoint2year2">[record]</span></td>
-				<td><span wicket:id="tournamentPoint2year3">[record]</span></td>
-				<td><span wicket:id="points2year">[record]</span></td>
-				<td><span wicket:id="total">[record]</span></td>
-				<td><span wicket:id=rank>[rank]</span></td>
-			</tr>
-		</table>
 		<div>
-			<span> <input class="tournamentButton" type="submit"
-				wicket:id="update" value="Update" />
-			</span>
-		</div>		
+			<span wicket:id="season">Season</span> <select wicket:id="seasons"></select>
+			<table class="groupTable">
+				<tr>
+					<th colspan="2" />
+					<div wicket:id="tableHeader.wchSeasonHeaders">
+					<th wicket:id="season">[season]</th>
+					</div>
+				</tr>
+				<tr>
+					<th />
+					<th wicket:id="name" />
+					<th wicket:id="tableHeader.wchTournamentHeaders"><span wicket:id="tournament">[tournament]</span></th>
+					<th wicket:id="total" />
+					<th wicket:id="rank" />
+				</tr>
+				<tr wicket:id="records">
+					<td><span wicket:id="index">[index]</span></td>
+					<td><span wicket:id="name">[name]</span></td>
+					<td wicket:id="seasonRecords"><span wicket:id="points">[records]</span></td>
+					<td><span wicket:id="total">[total]</span></td>
+					<td><span wicket:id="rank">[rank]</span></td>
+				</tr>
+			</table>
+			<div>
+				<span> <input class="tournamentButton" type="submit"
+					wicket:id="update" value="Update" />
+				</span>
+			</div>
+		</div>
 	</form>
 </wicket:extend>
 </html>

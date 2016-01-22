@@ -237,7 +237,7 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
     protected Groups getGroup(PageParameters parameters, Tournament tournament, boolean ignoreSession) {
         Groups group = null;
         if (!parameters.get(GID).isNull()) {
-            group = groupService.getGroupById(parameters.get(GID).toInteger());
+            group = groupService.getGroup(new Groups()._setId(parameters.get(GID).toInteger()));
         }
         if (group == null) {
             group = groupService.getGroupByTournament(tournament);
@@ -268,8 +268,7 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
             if ((data != null) && (data.length > 1)) {
                 if (((TournamentAuthenticatedWebSession) getSession()).signIn(data[0], data[1])) {
                     if (!continueToOriginalDestination()) {
-                        throw new RestartResponseException(getSession().getPageFactory().newPage(
-                                getApplication().getHomePage()));
+                        throw new RestartResponseException(getSession().getPageFactory().newPage(getPage().getClass()));
                     }
                 }
             }

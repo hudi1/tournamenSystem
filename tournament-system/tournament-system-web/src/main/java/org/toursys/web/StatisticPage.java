@@ -133,25 +133,24 @@ public class StatisticPage extends BasePage {
         }
 
         public void addDropDownSeason() {
-            add(new DropDownChoice<Season>("season", seasonService.getSeasons(new Season()._setUser(user)),
-                    new IChoiceRenderer<Season>() {
+            add(new DropDownChoice<Season>("season", seasonService.getUserSeasons(user), new IChoiceRenderer<Season>() {
 
-                        private static final long serialVersionUID = 1L;
+                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public Object getDisplayValue(Season season) {
-                            return season.getName();
-                        }
+                @Override
+                public Object getDisplayValue(Season season) {
+                    return season.getName();
+                }
 
-                        @Override
-                        public String getIdValue(Season season, int index) {
-                            if (season == null || season.getId() == null) {
-                                return null;
-                            } else {
-                                return season.getId().toString();
-                            }
-                        }
-                    }));
+                @Override
+                public String getIdValue(Season season, int index) {
+                    if (season == null || season.getId() == null) {
+                        return null;
+                    } else {
+                        return season.getId().toString();
+                    }
+                }
+            }));
         }
 
         private void addSubmitButton(final StatisticForm statisticForm) {

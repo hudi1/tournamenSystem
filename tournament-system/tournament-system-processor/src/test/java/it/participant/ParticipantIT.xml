@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../dataset.xsd">
+
+    <user email="adminEmail" id="1" name="@null" password="password" platnost="1" role="ADMIN" surname="admin"
+        user_name="admin" />
+
+    <season id="1" name="adminSeason" user_id="1" />
+
+    <tournament id="1" name="tournament" final_promoting="2" lower_promoting="2" min_players_in_group="1"
+        play_off_final="8" play_off_lower="9" publish="1" season_id="1" sort_type="CZ" win_points="10" />
+    <tournament id="2" name="tournament2" final_promoting="2" lower_promoting="2" min_players_in_group="1"
+        play_off_final="8" play_off_lower="9" publish="1" season_id="1" sort_type="CZ" win_points="10" />        
+
+    <groups id="1" copy_result="true" index_of_first_hockey="1" name="1" number_of_hockey="1" play_off_type="F"
+        play_off="true" play_third_place="true" tournament_id="1" type="B" />
+    <groups id="2" copy_result="true" index_of_first_hockey="1" name="2" number_of_hockey="1" play_off_type="F"
+        play_off="true" play_third_place="true" tournament_id="1" type="B" />
+    <groups id="3" copy_result="true" index_of_first_hockey="1" name="A" number_of_hockey="1" play_off_type="F"
+        play_off="true" play_third_place="true" tournament_id="1" type="F" />
+    <groups id="4" copy_result="true" index_of_first_hockey="1" name="B" number_of_hockey="1" play_off_type="F"
+        play_off="true" play_third_place="true" tournament_id="1" type="F" />
+
+    <groups id="5" copy_result="true" index_of_first_hockey="1" name="A" number_of_hockey="1" play_off_type="F"
+        play_off="true" play_third_place="true" tournament_id="2" type="F" />        
+
+    <player id="-1" club="adminClub0" name="adminName0" surname="adminSurname0" user_id="1" />
+
+    <player id="1" club="adminClub1" name="adminName1" surname="adminSurname1" user_id="1" />
+    <player id="2" club="adminClub2" name="adminName2" surname="adminSurname2" user_id="1" />
+    <player id="3" club="adminClub3" name="adminName3" surname="adminSurname3" user_id="1" />
+    <player id="4" club="adminClub4" name="adminName4" surname="adminSurname4" user_id="1" />
+
+    <player id="5" club="adminClub5" name="adminName5" surname="adminSurname5" user_id="1" />
+    <player id="6" club="adminClub6" name="adminName6" surname="adminSurname6" user_id="1" />
+    <player id="7" club="adminClub7" name="adminName7" surname="adminSurname7" user_id="1" />
+    <player id="8" club="adminClub8" name="adminName8" surname="adminSurname8" user_id="1" />
+
+    <participant id="1" group_id="1" player_id="1" rank="1" />
+    <participant id="2" group_id="1" player_id="2" rank="2" />
+    <participant id="3" group_id="1" player_id="3" rank="3" />
+    <participant id="4" group_id="1" player_id="4" rank="4" />
+
+    <participant id="5" group_id="2" player_id="5" rank="1" />
+    <participant id="6" group_id="2" player_id="6" rank="2" />
+    <participant id="7" group_id="2" player_id="7" rank="3" />
+    <participant id="8" group_id="2" player_id="8" rank="4" />
+
+    <participant id="9" group_id="3" player_id="1" rank="1" />
+    <participant id="10" group_id="3" player_id="2" rank="2"/>
+    <participant id="11" group_id="3" player_id="5" rank="3" />
+    <participant id="12" group_id="3" player_id="6" rank="4" />
+
+    <participant id="13" group_id="4" player_id="3" rank="1" />
+    <participant id="14" group_id="4" player_id="4" rank="2" />
+    <participant id="15" group_id="4" player_id="7" rank="3" />
+    <participant id="16" group_id="4" player_id="8" rank="4" equal_rank="1"/>
+    
+    <participant id="17" group_id="5" player_id="1" rank="1" />    
+
+    <game id="@auto" away_participant_id="1" home_participant_id="2" result="0:1" />
+    <game id="@auto" away_participant_id="1" home_participant_id="3" result="0:1" />
+    <game id="@auto" away_participant_id="1" home_participant_id="4" result="0:1" />
+    <game id="@auto" away_participant_id="2" home_participant_id="1" result="1:0" />
+    <game id="@auto" away_participant_id="3" home_participant_id="1" result="1:0" />
+    <game id="@auto" away_participant_id="4" home_participant_id="1" result="1:0" />    
+    
+    <game id="@auto" away_participant_id="2" home_participant_id="3" result="0:1" />
+    <game id="@auto" away_participant_id="2" home_participant_id="4" result="0:1" />
+    <game id="@auto" away_participant_id="3" home_participant_id="2" result="1:0" />
+    <game id="@auto" away_participant_id="4" home_participant_id="2" result="1:0" />
+
+    <game id="@auto" away_participant_id="3" home_participant_id="4" result="0:1" />
+    <game id="@auto" away_participant_id="4" home_participant_id="3" result="1:0" />
+
+</dataset>

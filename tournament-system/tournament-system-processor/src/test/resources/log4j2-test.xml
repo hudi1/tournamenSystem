@@ -1,45 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="off" monitorInterval="10">
-	<Appenders>
-		<Console name="console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
-		</Console>
-	</Appenders>
-	<Loggers>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
 
-		
-		<Logger name="com.mchange" level="trace" />
+        <Logger name="org.toursys" level="debug" />
 
-
-		<!--
-		<Logger name="cz.isvs.ais3" level="debug" />
-		<Logger name="cz.isvs.ais3" level="trace" />
-
-		<Logger name="cz.isvs.ais3.db" level="off" />
-		<Logger name="cz.isvs.ais3.sqlp" level="off" />
-
-		<Logger name="cz.isvs.ais3.db.DbConnectionInterceptor" level="info" />
-		<Logger name="cz.isvs.ais3.service.CommonLogicServiceBase" level="info" />
-		<Logger name="cz.isvs.ais3.authentication.logic.service.AuthenticationService" level="trace" />
-
-		<Logger name="ch.ralscha.extdirectspring" level="debug" />
-
-		<Logger name="org.sqlproc" level="debug" />
-		log sql statements:
-		<Logger name="org.sqlproc.engine.spring.SpringQuery" level="debug" />
-		log loading config files:
-		<Logger name="org.sqlproc.engine.SqlProcessorLoader" level="trace" />
-		<Logger name="org.sqlproc.engine.SqlFilesLoader" level="trace" />
-
-		<Logger name="org.springframework" level="info" />
-		<Logger name="org.springframework.web" level="debug" />
-		<Logger name="org.springframework.context" level="debug" />
-		<Logger name="org.springframework.beans" level="debug" />
-		<Logger name="org.springframework.core" level="debug" />
-		<Logger name="org.springframework.jdbc" level="debug" />
-		<Logger name="org.springframework.transaction" level="debug" />
-
-		<Logger name="com.mchange" level="trace" />
-		-->
-	</Loggers>
+    </Loggers>
 </Configuration>

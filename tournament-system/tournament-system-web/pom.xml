@@ -10,52 +10,18 @@
         <groupId>org.toursys</groupId>
         <artifactId>tournament-system-parent</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <properties>
-        <konfigurace>${basedir}/../config/build.properties</konfigurace>
+        <configdir>${basedir}/../config/default/</configdir>
+        <konfigurace>${configdir}/build.properties</konfigurace>        
     </properties>
 
     <build>
         <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
-        <resources>
-            <resource>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.html</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.png</include>
-                </includes>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <includes>
-                    <include>**/*.html</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.png</include>
-                </includes>
-            </testResource>
-        </testResources>
-
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <warName>${project.artifactId}</warName>
-                    <webResources>
-                        <resource>
-                            <filtering>true</filtering>
-                            <directory>src/main/webapp</directory>
-                        </resource>
-                    </webResources>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
@@ -64,23 +30,8 @@
                 <!-- configuration> <contextPath>${path}</contextPath> </configuration -->
             </plugin>
             <plugin>
-                <groupId>org.bitstrings.maven.plugins</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>read-properties</goal>
-                        </goals>
-                        <configuration>
-                            <readers>
-                                <reader implementation="org.bitstrings.maven.plugins.properties.io.FilePropertiesReader">
-                                    <file>${konfigurace}</file>
-                                </reader>
-                            </readers>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -95,6 +46,7 @@
             </activation>
             <properties>
                 <konfigurace>${basedir}/../config/${config}/build.properties</konfigurace>
+                <configdir>${basedir}/../config/${config}/</configdir>
             </properties>
             <build>
                 <plugins>
@@ -102,51 +54,12 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>**/*ITest.java</exclude>
+                                <exclude>**/*IT.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.bitstrings.maven.plugins</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>read-properties</goal>
-                                </goals>
-                                <configuration>
-                                    <readers>
-                                        <reader implementation="org.bitstrings.maven.plugins.properties.io.FilePropertiesReader">
-                                            <file>${konfigurace}</file>
-                                        </reader>
-                                    </readers>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <webResources>
-                                <!--resource> <filtering>true</filtering> <directory>${basedir}/../config/${config}/resources</directory> 
-                                    <targetPath>WEB-INF/classes</targetPath> </resource -->
-                                <resource>
-                                    <filtering>true</filtering>
-                                    <directory>${basedir}/../config</directory>
-                                    <targetPath>WEB-INF/classes</targetPath>
-                                    <includes>
-                                        <include>log4j.properties</include>
-                                        <include>logging.properties</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <filtering>true</filtering>
-                                    <directory>${basedir}/../config/${config}/webapp</directory>
-                                    <targetPath>WEB-INF</targetPath>
-                                </resource>
-                            </webResources>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -164,29 +77,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>7.6.0.v20120127</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>7.6.0.v20120127</version>
-    </dependency>
-
 
         <!-- Wicket -->
         <dependency>

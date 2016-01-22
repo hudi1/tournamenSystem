@@ -1,14 +1,31 @@
 package org.toursys.repository.model.wch;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
-public abstract class WChSeason {
+import org.toursys.repository.model.WchTournament;
 
-    public abstract Date getStartDateYear1();
+public abstract class WChSeason implements Serializable {
 
-    public abstract Date getStartDateYear2();
+    private static final long serialVersionUID = 1L;
 
-    public abstract Date getEndDateYear1();
+    public abstract String getNationalChampionshipSeriesName();
 
-    public abstract Date getEndDateYear2();
+    public abstract String getNationalChampionshipSeriesIndexName();
+
+    public abstract String getNationalSeriesName();
+
+    public abstract int getNationalSeriesCount();
+
+    public abstract int getOtherSeriesCount();
+
+    public abstract List<String> getExcludedSeries();
+
+    public abstract String getSeason(WchTournament wchTournament);
+
+    public abstract Map<String, String> getSeasonsName();
+
+    public abstract String getLabelName();
+
 }
