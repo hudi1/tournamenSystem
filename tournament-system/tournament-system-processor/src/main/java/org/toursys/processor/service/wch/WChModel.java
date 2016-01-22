@@ -1,6 +1,7 @@
 package org.toursys.processor.service.wch;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +27,7 @@ public class WChModel {
     }
 
     private List<WChRecord> getWChRecords(WChSeason wChSeason, List<WchQualification> wchQualifications) {
-        List<String> excludedSeries = wChSeason.getExcludedSeries();
+        Collection<String> excludedSeries = wChSeason.getExcludedSeries();
         List<WChRecord> wChRecords = new ArrayList<WChRecord>();
 
         for (WchQualification wchQualification : wchQualifications) {

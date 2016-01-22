@@ -11,10 +11,10 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
     private static final long serialVersionUID = 1L;
 
     /** The page to show. */
-    private int currentPage;
+    private long currentPage;
 
     /** Number of rows per page of the list view. */
-    private int itemsPerPage;
+    private long itemsPerPage;
 
     /**
      * Constructor
@@ -28,7 +28,7 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      */
     public PropertyPageableListView(final String id, int itemsPerPage) {
         super(id);
-        this.itemsPerPage = itemsPerPage;
+        setItemsPerPage(itemsPerPage);
     }
 
     /**
@@ -41,9 +41,9 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      * @param itemsPerPage
      *            Number of rows to show on a page
      */
-    public PropertyPageableListView(final String id, final IModel<? extends List<? extends T>> model, int itemsPerPage) {
+    public PropertyPageableListView(final String id, final IModel<? extends List<T>> model, int itemsPerPage) {
         super(id, model);
-        this.itemsPerPage = itemsPerPage;
+        setItemsPerPage(itemsPerPage);
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      *            Number of rows to show on a page
      * @see ListView#ListView(String, List)
      */
-    public PropertyPageableListView(final String id, final List<? extends T> list, final int itemsPerPage) {
+    public PropertyPageableListView(final String id, final List<T> list, final int itemsPerPage) {
         super(id, list);
         this.itemsPerPage = itemsPerPage;
     }
@@ -68,7 +68,7 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      * 
      * @return Returns the currentPage.
      */
-    public final int getCurrentPage() {
+    public final long getCurrentPage() {
         // If first cell is out of range, bring page back into range
         while ((currentPage > 0) && ((currentPage * itemsPerPage) >= getItemCount())) {
             currentPage--;
@@ -82,7 +82,7 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      * 
      * @return The number of pages in this list view
      */
-    public final int getPageCount() {
+    public final long getPageCount() {
         return ((getItemCount() + itemsPerPage) - 1) / itemsPerPage;
     }
 
@@ -91,8 +91,23 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      * 
      * @return the maximum number of rows on each page.
      */
-    public final int getItemsPerPage() {
+    public final long getItemsPerPage() {
         return itemsPerPage;
+    }
+
+    /**
+     * Sets the maximum number of rows on each page.
+     * 
+     * @param itemsPerPage
+     *            the maximum number of rows on each page.
+     */
+    public final void setItemsPerPage(long itemsPerPage) {
+        if (itemsPerPage < 0) {
+            itemsPerPage = 0;
+        }
+
+        addStateChange();
+        this.itemsPerPage = itemsPerPage;
     }
 
     /**
@@ -113,14 +128,14 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
     /**
      * @return offset of first item
      */
-    public int getFirstItemOffset() {
+    public long getFirstItemOffset() {
         return getCurrentPage() * getItemsPerPage();
     }
 
     /**
      * @see org.apache.wicket.markup.html.navigation.paging.IPageableItems#getItemCount()
      */
-    public int getItemCount() {
+    public long getItemCount() {
         return getList().size();
     }
 
@@ -130,8 +145,8 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
     @Override
     public int getViewSize() {
         if (getDefaultModelObject() != null) {
-            super.setStartIndex(getFirstItemOffset());
-            super.setViewSize(getItemsPerPage());
+            super.setStartIndex((int) getFirstItemOffset());
+            super.setViewSize((int) getItemsPerPage());
         }
 
         return super.getViewSize();
@@ -143,12 +158,12 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
      * @param currentPage
      *            The currentPage to set.
      */
-    public final void setCurrentPage(int currentPage) {
+    public final void setCurrentPage(long currentPage) {
         if (currentPage < 0) {
             currentPage = 0;
         }
 
-        int pageCount = getPageCount();
+        long pageCount = getPageCount();
         if ((currentPage > 0) && (currentPage >= pageCount)) {
             currentPage = pageCount - 1;
         }

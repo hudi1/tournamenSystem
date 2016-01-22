@@ -3,8 +3,8 @@ package org.toursys.web;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -78,18 +78,20 @@ public class SeasonPage extends BasePage {
                         }
 
                         @Override
-                        protected IAjaxCallDecorator getAjaxCallDecorator() {
-                            return new AjaxCallDecorator() {
+                        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                            super.updateAjaxAttributes(attributes);
+                            attributes.getAjaxCallListeners().add(new AjaxCallListener() {
 
                                 private static final long serialVersionUID = 1L;
 
                                 @Override
-                                public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(!confirm('" + getString("del.season") + "')) return false;" + script;
+                                public CharSequence getSuccessHandler(Component component) {
+                                    return "if(!confirm('" + getString("del.season") + "')) return false;";
                                 }
 
-                            };
+                            });
                         }
+
                     }.add(new Image("img", new SharedResourceReference("delete"))).add(
                             AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
                                 private static final long serialVersionUID = 1L;

@@ -1,5 +1,7 @@
 package org.toursys.web;
 
+import java.util.List;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -10,6 +12,7 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.toursys.repository.model.Game;
 import org.toursys.repository.model.GroupsType;
 import org.toursys.repository.model.Participant;
@@ -129,6 +132,19 @@ public class StatisticPage extends BasePage {
                                 return tournament.getId().toString();
                             }
                         }
+
+                        @Override
+                        public Tournament getObject(String id, IModel<? extends List<? extends Tournament>> choices) {
+                            List<? extends Tournament> _choices = choices.getObject();
+                            for (int index = 0; index < _choices.size(); index++) {
+                                // Get next choice
+                                final Tournament choice = _choices.get(index);
+                                if (getIdValue(choice, index).equals(id)) {
+                                    return choice;
+                                }
+                            }
+                            return null;
+                        }
                     }));
         }
 
@@ -150,6 +166,20 @@ public class StatisticPage extends BasePage {
                         return season.getId().toString();
                     }
                 }
+
+                @Override
+                public Season getObject(String id, IModel<? extends List<? extends Season>> choices) {
+                    List<? extends Season> _choices = choices.getObject();
+                    for (int index = 0; index < _choices.size(); index++) {
+                        // Get next choice
+                        final Season choice = _choices.get(index);
+                        if (getIdValue(choice, index).equals(id)) {
+                            return choice;
+                        }
+                    }
+                    return null;
+                }
+
             }));
         }
 

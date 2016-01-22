@@ -76,7 +76,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
             mountResource();
             getMarkupSettings().setStripWicketTags(true);
             getMarkupSettings().setCompressWhitespace(true);
-            getMarkupSettings().setDefaultAfterDisabledLink("");
+            // getMarkupSettings().setDefaultAfterDisabledLink("");
             this.getResourceSettings().setResourcePollFrequency(null);
             getDebugSettings().setDevelopmentUtilitiesEnabled(true);
             // getApplicationSettings().setInternalErrorPage(HomePage.class);
@@ -94,6 +94,12 @@ public class WicketApplication extends AuthenticatedWebApplication {
     }
 
     private void loadI18nMessages() {
+
+        System.out.println(getServletContext().getMajorVersion());
+        System.out.println(getServletContext().getMinorVersion());
+        System.out.println(getServletContext().getClass());
+        System.out.println(getServletContext().getContextPath());
+
         getResourceSettings().getStringResourceLoaders()
                 .add(new SpringStringResourceLoader(WebApplicationContextUtils
                         .getWebApplicationContext(getServletContext())));

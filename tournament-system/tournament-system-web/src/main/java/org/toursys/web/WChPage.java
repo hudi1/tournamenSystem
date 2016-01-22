@@ -39,6 +39,7 @@ public class WChPage extends BasePage {
     private static List<WChSeason> WCH_SEASONS = new ArrayList<WChSeason>();
 
     static {
+        // TODO zistit ci je mozno pridat vsechny instance z package org.toursys.processor.service.wch.season
         WCH_SEASONS.add(WCh2017Season.getInstance());
         WCH_SEASONS.add(WCh2015Season.getInstance());
     }
@@ -90,6 +91,19 @@ public class WChPage extends BasePage {
                 @Override
                 public String getIdValue(WChSeason season, int index) {
                     return season.getLabelName();
+                }
+
+                @Override
+                public WChSeason getObject(String id, IModel<? extends List<? extends WChSeason>> choices) {
+                    List<? extends WChSeason> _choices = choices.getObject();
+                    for (int index = 0; index < _choices.size(); index++) {
+                        // Get next choice
+                        final WChSeason choice = _choices.get(index);
+                        if (getIdValue(choice, index).equals(id)) {
+                            return choice;
+                        }
+                    }
+                    return null;
                 }
             }).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 

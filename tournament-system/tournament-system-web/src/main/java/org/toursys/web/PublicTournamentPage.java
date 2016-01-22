@@ -134,6 +134,19 @@ public class PublicTournamentPage extends BasePage {
                         return season.getId().toString();
                     }
                 }
+
+                @Override
+                public Season getObject(String id, IModel<? extends List<? extends Season>> choices) {
+                    List<? extends Season> _choices = choices.getObject();
+                    for (int index = 0; index < _choices.size(); index++) {
+                        // Get next choice
+                        final Season choice = _choices.get(index);
+                        if (getIdValue(choice, index).equals(id)) {
+                            return choice;
+                        }
+                    }
+                    return null;
+                }
             }).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 private static final long serialVersionUID = 1L;

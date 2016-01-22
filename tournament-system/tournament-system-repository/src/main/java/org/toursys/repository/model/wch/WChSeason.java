@@ -1,7 +1,7 @@
 package org.toursys.repository.model.wch;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.toursys.repository.model.WchTournament;
@@ -20,7 +20,7 @@ public abstract class WChSeason implements Serializable {
 
     public abstract int getOtherSeriesCount();
 
-    public abstract List<String> getExcludedSeries();
+    public abstract Collection<String> getExcludedSeries();
 
     public abstract String getSeason(WchTournament wchTournament);
 

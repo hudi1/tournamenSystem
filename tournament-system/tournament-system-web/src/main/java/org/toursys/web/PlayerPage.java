@@ -8,8 +8,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -36,254 +36,256 @@ import org.toursys.web.util.WebUtil;
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends TournamentHomePage {
 
-	private static final long serialVersionUID = 1L;
-	private User user;
+    private static final long serialVersionUID = 1L;
+    private User user;
 
-	public PlayerPage() {
-		this(new PageParameters());
-	}
+    public PlayerPage() {
+        this(new PageParameters());
+    }
 
-	public PlayerPage(PageParameters pageParameters) {
-		super(pageParameters);
-		this.user = getTournamentSession().getUser();
+    public PlayerPage(PageParameters pageParameters) {
+        super(pageParameters);
+        this.user = getTournamentSession().getUser();
 
-		createPage();
-	}
+        createPage();
+    }
 
-	protected void createPage() {
-		add(new PlayerForm(Model.of(getUserWithPlayers())));
-	}
+    protected void createPage() {
+        add(new PlayerForm(Model.of(getUserWithPlayers())));
+    }
 
-	private User getUserWithPlayers() {
-		User user = new User();
-		user.getPlayers().addAll(playerService.getUserPlayers(this.user));
-		Collections.sort(user.getPlayers(), new Comparator<Player>() {
-			@Override
-			public int compare(Player p1, Player p2) {
-				return p1.getSurname().compareTo(p2.getSurname());
-			}
-		});
-		return user;
-	}
+    private User getUserWithPlayers() {
+        User user = new User();
+        user.getPlayers().addAll(playerService.getUserPlayers(this.user));
+        Collections.sort(user.getPlayers(), new Comparator<Player>() {
+            @Override
+            public int compare(Player p1, Player p2) {
+                return p1.getSurname().compareTo(p2.getSurname());
+            }
+        });
+        return user;
+    }
 
-	private class PlayerForm extends Form<User> {
+    private class PlayerForm extends Form<User> {
 
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		public PlayerForm(Model<User> model) {
-			super("playerForm", new CompoundPropertyModel<User>(model));
-			ModalWindow modalWindow;
+        public PlayerForm(Model<User> model) {
+            super("playerForm", new CompoundPropertyModel<User>(model));
+            ModalWindow modalWindow;
 
-			add(new Label("name", new ResourceModel("name")));
-			add(new Label("surname", new ResourceModel("surname")));
-			add(new Label("club", new ResourceModel("club")));
+            add(new Label("name", new ResourceModel("name")));
+            add(new Label("surname", new ResourceModel("surname")));
+            add(new Label("club", new ResourceModel("club")));
 
-			addPlayerListView();
-			addNewPlayerButton();
-			addUpdateOnlinePlayerButton(model.getObject().getPlayers());
-			add(modalWindow = createModalWindow());
-			addModalButton(modalWindow);
-		}
+            addPlayerListView();
+            addNewPlayerButton();
+            addUpdateOnlinePlayerButton(model.getObject().getPlayers());
+            add(modalWindow = createModalWindow());
+            addModalButton(modalWindow);
+        }
 
-		private void addPlayerListView() {
-			PropertyPageableListView<Player> listView;
-			add(listView = new PropertyPageableListView<Player>("players", ITEM_PER_PAGE) {
+        private void addPlayerListView() {
+            PropertyPageableListView<Player> listView;
+            add(listView = new PropertyPageableListView<Player>("players", ITEM_PER_PAGE) {
 
-				private static final long serialVersionUID = 1L;
+                private static final long serialVersionUID = 1L;
 
-				@Override
-				protected void populateItem(final ListItem<Player> listItem) {
-					final Player player = listItem.getModelObject();
-					listItem.setModel(new CompoundPropertyModel<Player>(player));
-					listItem.add(new TextField<String>("name").add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                @Override
+                protected void populateItem(final ListItem<Player> listItem) {
+                    final Player player = listItem.getModelObject();
+                    listItem.setModel(new CompoundPropertyModel<Player>(player));
+                    listItem.add(new TextField<String>("name").add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
-						private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-						@Override
-						protected void onUpdate(AjaxRequestTarget target) {
-							playerService.updatePlayer(listItem.getModelObject());
-						}
-					}));
+                        @Override
+                        protected void onUpdate(AjaxRequestTarget target) {
+                            playerService.updatePlayer(listItem.getModelObject());
+                        }
+                    }));
 
-					listItem.add(new TextField<String>("surname", Model.of(player.getSurname() + " "
-					        + player.getPlayerDiscriminator())).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    listItem.add(new TextField<String>("surname", Model.of(player.getSurname() + " "
+                            + player.getPlayerDiscriminator())).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
-						private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-						@Override
-						protected void onUpdate(AjaxRequestTarget target) {
-							Player player = listItem.getModelObject();
-							if (player.getSurname().contains(" ")) {
-								player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
-								        Math.min(player.getSurname().split(" ")[1].length(), 3)));
-								player.setSurname(player.getSurname().split(" ")[0]);
-							}
-							playerService.updatePlayer(player);
-						}
-					}));
+                        @Override
+                        protected void onUpdate(AjaxRequestTarget target) {
+                            Player player = listItem.getModelObject();
+                            if (player.getSurname().contains(" ")) {
+                                player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
+                                        Math.min(player.getSurname().split(" ")[1].length(), 3)));
+                                player.setSurname(player.getSurname().split(" ")[0]);
+                            }
+                            playerService.updatePlayer(player);
+                        }
+                    }));
 
-					listItem.add(new TextField<String>("club").add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    listItem.add(new TextField<String>("club").add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
-						private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-						@Override
-						protected void onUpdate(AjaxRequestTarget target) {
-							playerService.updatePlayer(listItem.getModelObject());
-						}
-					}));
+                        @Override
+                        protected void onUpdate(AjaxRequestTarget target) {
+                            playerService.updatePlayer(listItem.getModelObject());
+                        }
+                    }));
 
-					listItem.add(new TournamentAjaxLink("deletePlayer") {
+                    listItem.add(new TournamentAjaxLink("deletePlayer") {
 
-						private static final long serialVersionUID = 1L;
+                        private static final long serialVersionUID = 1L;
 
-						public void click(AjaxRequestTarget target) {
-							PlayerForm.this.getModelObject().getPlayers().remove(listItem.getModelObject());
-							playerService.deletePlayer(listItem.getModelObject());
-							target.add(PlayerForm.this);
-						}
+                        public void click(AjaxRequestTarget target) {
+                            PlayerForm.this.getModelObject().getPlayers().remove(listItem.getModelObject());
+                            playerService.deletePlayer(listItem.getModelObject());
+                            target.add(PlayerForm.this);
+                        }
 
-						@Override
-						protected IAjaxCallDecorator getAjaxCallDecorator() {
-							return new AjaxCallDecorator() {
+                        @Override
+                        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                            super.updateAjaxAttributes(attributes);
+                            attributes.getAjaxCallListeners().add(new AjaxCallListener() {
 
-								private static final long serialVersionUID = 1L;
+                                private static final long serialVersionUID = 1L;
 
-								@Override
-								public CharSequence decorateScript(Component c, CharSequence script) {
-									return "if(!confirm('" + getString("del.player") + "')) return false;" + script;
-								}
+                                @Override
+                                public CharSequence getSuccessHandler(Component component) {
+                                    return "if(!confirm('" + getString("del.player") + "')) return false;";
+                                }
 
-							};
-						}
-					}.add(new Image("img", new SharedResourceReference("delete"))).add(
-					        AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
-						        private static final long serialVersionUID = 1L;
+                            });
+                        }
 
-						        @Override
-						        public String getObject() {
-							        return getString("deletePlayer");
-						        }
-					        })));
+                    }.add(new Image("img", new SharedResourceReference("delete"))).add(
+                            AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
 
-					listItem.add(new TournamentAjaxLink("enterPlayer") {
+                                @Override
+                                public String getObject() {
+                                    return getString("deletePlayer");
+                                }
+                            })));
 
-						private static final long serialVersionUID = 1L;
+                    listItem.add(new TournamentAjaxLink("enterPlayer") {
 
-						public void click(AjaxRequestTarget target) {
-							setResponsePage(new PlayerEditPage(player, getPageParameters()));
-						}
+                        private static final long serialVersionUID = 1L;
 
-					}.add(new Image("img", new SharedResourceReference("enter"))).add(
-					        AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
-						        private static final long serialVersionUID = 1L;
+                        public void click(AjaxRequestTarget target) {
+                            setResponsePage(new PlayerEditPage(player, getPageParameters()));
+                        }
 
-						        @Override
-						        public String getObject() {
-							        return getString("enterPlayer");
-						        }
-					        })));
+                    }.add(new Image("img", new SharedResourceReference("enter"))).add(
+                            AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
+                                private static final long serialVersionUID = 1L;
 
-					listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
-						private static final long serialVersionUID = 1L;
+                                @Override
+                                public String getObject() {
+                                    return getString("enterPlayer");
+                                }
+                            })));
 
-						@Override
-						public String getObject() {
-							return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
-						}
-					}));
-				}
+                    listItem.add(AttributeModifier.replace("class", new AbstractReadOnlyModel<String>() {
+                        private static final long serialVersionUID = 1L;
 
-			});
-			AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
-			add(navigator);
-		}
+                        @Override
+                        public String getObject() {
+                            return (listItem.getIndex() % 2 == 1) ? "even" : "odd";
+                        }
+                    }));
+                }
 
-		private void addModalButton(final ModalWindow modalWindow) {
-			add(new TournamentAjaxLink("showModalLink") {
+            });
+            AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
+            add(navigator);
+        }
 
-				private static final long serialVersionUID = 1L;
+        private void addModalButton(final ModalWindow modalWindow) {
+            add(new TournamentAjaxLink("showModalLink") {
 
-				@Override
-				public void click(AjaxRequestTarget target) {
-					modalWindow.show(target);
-				}
-			});
-		}
+                private static final long serialVersionUID = 1L;
 
-		private void addNewPlayerButton() {
-			add(new TournamentButton("newPlayer", new ResourceModel("newPlayer")) {
+                @Override
+                public void click(AjaxRequestTarget target) {
+                    modalWindow.show(target);
+                }
+            });
+        }
 
-				private static final long serialVersionUID = 1L;
+        private void addNewPlayerButton() {
+            add(new TournamentButton("newPlayer", new ResourceModel("newPlayer")) {
 
-				@Override
-				public void submit() {
-					setResponsePage(PlayerEditPage.class, getPageParameters());
-				}
-			});
-		}
+                private static final long serialVersionUID = 1L;
 
-		private void addUpdateOnlinePlayerButton(final List<Player> players) {
-			add(new TournamentButton("updateOnlinePlayer", new ResourceModel("updateOnlinePlayer")) {
+                @Override
+                public void submit() {
+                    setResponsePage(PlayerEditPage.class, getPageParameters());
+                }
+            });
+        }
 
-				private static final long serialVersionUID = 1L;
+        private void addUpdateOnlinePlayerButton(final List<Player> players) {
+            add(new TournamentButton("updateOnlinePlayer", new ResourceModel("updateOnlinePlayer")) {
 
-				@Override
-				public void submit() {
-					try {
-						List<Player> notUpdatedplayers = importService.updateOnlinePlayers(players);
-						if (!notUpdatedplayers.isEmpty()) {
-							logWarnMessage(notUpdatedplayers);
-						}
-						// TODO
-					} catch (Exception e) {
-						logger.error("Error: " + e);
-						error(e.getMessage());
-					}
-				}
-			});
-		}
+                private static final long serialVersionUID = 1L;
 
-		protected void logWarnMessage(List<Player> players) {
-			warn(getString("playersNotFound"));
+                @Override
+                public void submit() {
+                    try {
+                        List<Player> notUpdatedplayers = importService.updateOnlinePlayers(players);
+                        if (!notUpdatedplayers.isEmpty()) {
+                            logWarnMessage(notUpdatedplayers);
+                        }
+                        // TODO
+                    } catch (Exception e) {
+                        logger.error("Error: " + e);
+                        error(e.getMessage());
+                    }
+                }
+            });
+        }
 
-			for (Player player : players) {
-				warn(WebUtil.getPlayerFullName(player));
-			}
-		}
+        protected void logWarnMessage(List<Player> players) {
+            warn(getString("playersNotFound"));
 
-		private ModalWindow createModalWindow() {
-			final ModalWindow modal;
-			add(modal = new ModalWindow("modal"));
-			modal.setCookieName("modal-1");
+            for (Player player : players) {
+                warn(WebUtil.getPlayerFullName(player));
+            }
+        }
 
-			modal.setPageCreator(new ModalWindow.PageCreator() {
+        private ModalWindow createModalWindow() {
+            final ModalWindow modal;
+            add(modal = new ModalWindow("modal"));
+            modal.setCookieName("modal-1");
 
-				private static final long serialVersionUID = 1L;
+            modal.setPageCreator(new ModalWindow.PageCreator() {
 
-				public Page createPage() {
-					return new ImportPlayerPage(modal, user);
-				}
-			});
+                private static final long serialVersionUID = 1L;
 
-			modal.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+                public Page createPage() {
+                    return new ImportPlayerPage(modal, user);
+                }
+            });
 
-				private static final long serialVersionUID = 1L;
+            modal.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
 
-				public boolean onCloseButtonClicked(AjaxRequestTarget target) {
-					return true;
-				}
-			});
+                private static final long serialVersionUID = 1L;
 
-			modal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+                public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                    return true;
+                }
+            });
 
-				private static final long serialVersionUID = 10094L;
+            modal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
 
-				public void onClose(AjaxRequestTarget target) {
-					setResponsePage(PlayerPage.class, getPageParameters());
-				}
-			});
-			return modal;
-		}
-	}
+                private static final long serialVersionUID = 10094L;
+
+                public void onClose(AjaxRequestTarget target) {
+                    setResponsePage(PlayerPage.class, getPageParameters());
+                }
+            });
+            return modal;
+        }
+    }
 
 }

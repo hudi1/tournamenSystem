@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -122,17 +122,18 @@ public class TournamentPage extends BasePage {
                         }
 
                         @Override
-                        protected IAjaxCallDecorator getAjaxCallDecorator() {
-                            return new AjaxCallDecorator() {
+                        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                            super.updateAjaxAttributes(attributes);
+                            attributes.getAjaxCallListeners().add(new AjaxCallListener() {
 
                                 private static final long serialVersionUID = 1L;
 
                                 @Override
-                                public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(!confirm('" + getString("del.tournament") + "')) return false;" + script;
+                                public CharSequence getSuccessHandler(Component component) {
+                                    return "if(!confirm('" + getString("del.tournament") + "')) return false;";
                                 }
 
-                            };
+                            });
                         }
                     }.add(new Image("imgDelete", new SharedResourceReference("delete"))).add(
                             AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
@@ -205,6 +206,19 @@ public class TournamentPage extends BasePage {
                     } else {
                         return season.getId().toString();
                     }
+                }
+
+                @Override
+                public Season getObject(String id, IModel<? extends List<? extends Season>> choices) {
+                    List<? extends Season> _choices = choices.getObject();
+                    for (int index = 0; index < _choices.size(); index++) {
+                        // Get next choice
+                        final Season choice = _choices.get(index);
+                        if (getIdValue(choice, index).equals(id)) {
+                            return choice;
+                        }
+                    }
+                    return null;
                 }
             }).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 

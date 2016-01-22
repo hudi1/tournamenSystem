@@ -2,9 +2,9 @@ package org.toursys.processor.service.wch.season;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.toursys.repository.model.WchTournament;
@@ -82,7 +82,7 @@ public class WCh2017Season extends WChSeason {
     }
 
     @Override
-    public List<String> getExcludedSeries() {
+    public Collection<String> getExcludedSeries() {
         return new WChExcludedSeries();
     }
 

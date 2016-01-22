@@ -6,8 +6,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -104,10 +104,10 @@ public class RegistrationPage extends TournamentHomePage {
                     groupService.createGroupsWithSnakeSystem(tournament, tournamentParticipants, group.getName());
                     setResponsePage(RegistrationPage.class, getPageParameters());
                 }
-                
+
                 @Override
                 public boolean isVisible() {
-                	return selectOptions.equals(RegistrationOptions.SNAKE);
+                    return selectOptions.equals(RegistrationOptions.SNAKE);
                 }
             });
 
@@ -210,19 +210,20 @@ public class RegistrationPage extends TournamentHomePage {
                         }
 
                         @Override
-                        protected IAjaxCallDecorator getAjaxCallDecorator() {
-                            return new AjaxCallDecorator() {
+                        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                            super.updateAjaxAttributes(attributes);
+                            attributes.getAjaxCallListeners().add(new AjaxCallListener() {
 
                                 private static final long serialVersionUID = 1L;
 
                                 @Override
-                                public CharSequence decorateScript(Component c, CharSequence script) {
-                                    return "if(!confirm('" + getString("del.participant") + "')) return false;"
-                                            + script;
+                                public CharSequence getSuccessHandler(Component component) {
+                                    return "if(!confirm('" + getString("del.participant") + "')) return false;";
                                 }
 
-                            };
+                            });
                         }
+
                     }.add(new Image("img", new SharedResourceReference("delete"))).add(
                             AttributeModifier.replace("title", new AbstractReadOnlyModel<String>() {
                                 private static final long serialVersionUID = 1L;
@@ -350,6 +351,20 @@ public class RegistrationPage extends TournamentHomePage {
                 public String getIdValue(String object, int index) {
                     return index + "";
                 }
+
+                @Override
+                public String getObject(String id, IModel<? extends List<? extends String>> choices) {
+                    List<? extends String> _choices = choices.getObject();
+                    for (int index = 0; index < _choices.size(); index++) {
+                        // Get next choice
+                        final String choice = _choices.get(index);
+                        if (getIdValue(choice, index).equals(id)) {
+                            return choice;
+                        }
+                    }
+                    return null;
+                }
+
             }).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 private static final long serialVersionUID = 1L;

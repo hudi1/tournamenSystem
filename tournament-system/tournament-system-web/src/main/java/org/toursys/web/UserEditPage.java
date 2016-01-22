@@ -15,13 +15,10 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
-import org.sqlproc.engine.SqlProcessorException;
 import org.toursys.repository.model.User;
 import org.toursys.repository.model.UserImpl;
 import org.toursys.repository.model.UserRole;
 import org.toursys.web.components.TournamentButton;
-import org.toursys.web.validator.ExistingEmailValidator;
-import org.toursys.web.validator.UsernameValidator;
 
 public class UserEditPage extends BasePage {
 
@@ -133,7 +130,7 @@ public class UserEditPage extends BasePage {
             add(new Label("email", new ResourceModel("email")));
             final EmailTextField email = new EmailTextField("emailInput", new PropertyModel<String>(user, "email"));
             email.setRequired(true);
-            email.add(new ExistingEmailValidator());
+            // email.add(new ExistingEmailValidator());
             add(email);
         }
 
@@ -171,7 +168,7 @@ public class UserEditPage extends BasePage {
             add(username = new Label("username", new ResourceModel("username")));
             add(usernameInput = new RequiredTextField<String>("usernameInput", new PropertyModel<String>(user,
                     "userName")));
-            usernameInput.add(new UsernameValidator());
+            // usernameInput.add(new UsernameValidator());
 
             if (!showUsername) {
                 username.setVisible(false);

@@ -278,12 +278,12 @@ public class GroupPage extends TournamentHomePage {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Iterator<Groups> iterator(int first, int count) {
-                    return groups.subList(first, first + count).iterator();
+                public Iterator<Groups> iterator(long first, long count) {
+                    return groups.subList((int) first, (int) (first + count)).iterator();
                 }
 
                 @Override
-                public int size() {
+                public long size() {
                     return groups.size();
                 }
 
@@ -336,7 +336,7 @@ public class GroupPage extends TournamentHomePage {
                 }
             };
             gridView.setRows(1);
-            gridView.setColumns(Math.max(1, dataProvider.size()));
+            gridView.setColumns((int) Math.max(1, dataProvider.size()));
             add(gridView);
         }
 

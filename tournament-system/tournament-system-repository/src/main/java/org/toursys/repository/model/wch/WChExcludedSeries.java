@@ -1,8 +1,8 @@
 package org.toursys.repository.model.wch;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
-public class WChExcludedSeries extends ArrayList<String> {
+public class WChExcludedSeries extends HashSet<String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,6 +41,7 @@ public class WChExcludedSeries extends ArrayList<String> {
         add("Slovak Championships Veterans");
         add("Slovak Championships Juniors");
         add("Zabka Tour");
+        add("Nove Zamky Development League");
     }
 
 }

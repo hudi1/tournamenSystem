@@ -19,8 +19,8 @@
         <version.sql-processor>3.1.0</version.sql-processor>
         <version.eclipse-xtext>2.8.2</version.eclipse-xtext>
         <version.slf4j>1.6.1</version.slf4j>
-        <version.wicket>1.5.9</version.wicket>
-        <version.wicket-minis>1.5.9</version.wicket-minis>
+        <version.wicket>7.1.0</version.wicket>
+        <version.wicket-minis>7.1.0</version.wicket-minis>
         <version.cglib>2.2</version.cglib>
         <version.itextpdf>5.1.3</version.itextpdf>
         <version.itextpdf-tool>1.1.1</version.itextpdf-tool>

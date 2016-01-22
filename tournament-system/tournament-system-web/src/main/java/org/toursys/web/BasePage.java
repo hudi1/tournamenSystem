@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.markup.html.basic.Label;
@@ -267,9 +266,10 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
             String[] data = authenticationStrategy.load();
             if ((data != null) && (data.length > 1)) {
                 if (((TournamentAuthenticatedWebSession) getSession()).signIn(data[0], data[1])) {
-                    if (!continueToOriginalDestination()) {
-                        throw new RestartResponseException(getSession().getPageFactory().newPage(getPage().getClass()));
-                    }
+                    continueToOriginalDestination();
+                    // if (!continueToOriginalDestination()) {
+                    // throw new RestartResponseException(getSession().getPageFactory().newPage(getPage().getClass()));
+                    // }
                 }
             }
         }
