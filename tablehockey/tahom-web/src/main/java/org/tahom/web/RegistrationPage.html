@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+	<div>
+		<form wicket:id="groupForm" class="registration">
+			<div>
+				<label class="spinnerLabel"><span wicket:id="group">
+						Group: </span> </label> <input type="submit" wicket:id="minus" /><input
+					type="text" wicket:id="name" class="spinner" /><input
+					type="submit" wicket:id="plus" />
+			</div>
+		</form>
+		<form wicket:id="playerForm">
+			<div>
+				<span wicket:id="chooseRegistrationSystem"> Choose registration system: </span> <select
+					wicket:id="options"></select> <input class="tournamentButton"
+					type="submit" wicket:id="registrationButton" value="Registration" />
+			</div>
+			<div>
+				<span wicket:id="choosePlayer"> Choose player: </span> <input
+					type="text" class="allPlayers" wicket:id="allPlayers"></input> <input
+					class="tournamentButton" type="submit" wicket:id="players"
+					value="Player" /> <a wicket:id="showModalLinkTournament"
+					class="tournamentLink" title="Import tournament"> Import
+					tournament </a>
+			</div>
+			<table class="registratedPlayerTable">
+				<tbody>
+					<tr>
+						<th />
+						<th><span wicket:id="name">name</span></th>
+						<th><span wicket:id="surname">Surname</span></th>
+						<th><span wicket:id="tableName">Table name</span></th>
+						<th />
+					</tr>
+					<tr wicket:id="participants">
+						<td><span wicket:id="number">1.</span></td>
+						<td><span wicket:id="name">name</span></td>
+						<td><span wicket:id="surname">surname</span></td>
+						<td><span wicket:id="group">group</span></td>
+						<td><a wicket:id="deleteParticipant"><img wicket:id="img" /></a></td>
+					</tr>
+				</tbody>
+			</table>
+			<div wicket:id="modal"></div>
+		</form>
+	</div>
+</wicket:extend>
+</html>
+

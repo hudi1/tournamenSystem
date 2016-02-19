@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament System</title>
+</wicket:head>
+<wicket:extend>
+
+	<form class="userform" wicket:id="userEditForm">
+		<fieldset>
+			<legend wicket:id="userLegend"></legend>
+			<div>
+				<label wicket:for="userName"> <span
+					wicket:id="userNameLabel">Username:</span>
+				</label><input type="text" wicket:id="userName" />
+			</div>
+			<div>
+				<label wicket:for="name"> <span wicket:id="nameLabel">Name:</span></label><input
+					type="text" wicket:id="name" />
+			</div>
+			<div>
+				<label wicket:for="surname"> <span wicket:id="surnameLabel">Surname:</span>
+				</label><input type="text" wicket:id="surname" />
+			</div>
+			<div>
+				<label wicket:for="email"> <span wicket:id="emailLabel">Email:</span>
+				</label><input type="email" autocomplete="off" wicket:id="email" />
+			</div>
+			<div>
+				<label wicket:for="password"> <span
+					wicket:id="passwordLabel">Password:</span>
+				</label><input type="password" wicket:id="password" />
+			</div>
+			<div>
+				<label wicket:for="confirmPassword"> <span
+					wicket:id="confirmPasswordLabel">Confirm Password:</span>
+				</label><input type="password" wicket:id="confirmPassword" />
+			</div>
+			<div>
+				<label wicket:for="validity"> <span
+					wicket:id="validityLabel">Validity:</span>
+				</label><input type="text" wicket:id="validity" />
+			</div>
+			<div>
+				<label wicket:for="role"> <span wicket:id="roleLabel">Authorization:</span>
+				</label><select wicket:id="role" />
+			</div>
+		</fieldset>
+
+		<div>
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="tournamentButton" type="submit"
+				wicket:id="back" title="back" value="Back" />
+		</div>
+	</form>
+
+</wicket:extend>
+</html>

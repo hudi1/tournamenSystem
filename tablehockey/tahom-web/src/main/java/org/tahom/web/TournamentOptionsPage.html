@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
+	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
+<wicket:head>
+	<title>Tournament options</title>
+</wicket:head>
+<wicket:extend>
+	<form wicket:id="tableOptionsForm">
+		<fieldset>
+			<legend wicket:id="tableLegend"></legend>
+			<div>
+				<label class="option" wicket:for="numberOfHockey"> <span
+					wicket:id="numberOfHockeyLabel">Count of hockey: </span></label><input
+					type="text" wicket:id="numberOfHockey" />
+			</div>
+			<div>
+				<label class="option" wicket:for="indexOfFirstHockey"> <span
+					wicket:id="indexOfFirstHockeyLabel"> Start hockey: </span>
+				</label><input type="text" wicket:id="indexOfFirstHockey" />
+			</div>
+			<div>
+				<label class="option" wicket:for="copyResult"> <span
+					wicket:id="copyResultLabel"> CopyResult: </span>
+				</label><input type="checkbox" wicket:id="copyResult" />
+			</div>
+			<div>
+				<label class="option" wicket:for="playThirdPlace"> <span
+					wicket:id="playThirdPlaceLabel"> Play for third place: </span>
+				</label><input type="checkbox" wicket:id="playThirdPlace" />
+			</div>
+			<div>
+				<label class="option"> <span
+					wicket:id="groupsPlayOffTypeLabel"> Group play off type: </span>
+				</label><select wicket:id="groupsPlayOffType" />
+			</div>
+		</fieldset>
+
+		<div>
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="tournamentButton" type="submit"
+				wicket:id="back" value="Back" />
+		</div>
+
+	</form>
+
+	<form wicket:id="tournamentOptionsForm">
+		<fieldset>
+			<legend wicket:id="tournamentLegend"></legend>
+			<div>
+				<label class="option" wicket:for="winPoints"> <span
+					wicket:id="winPointsLabel">Points for win: </span></label><input type="text"
+					wicket:id="winPoints" />
+			</div>
+			<div>
+				<label class="option" wicket:for="finalPromoting"> <span
+					wicket:id="finalPromotingLabel">Promoting to final groups: </span></label><input
+					type="text" wicket:id="finalPromoting" />
+			</div>
+			<div>
+				<label class="option" wicket:for="lowerPromoting"> <span
+					wicket:id="lowerPromotingLabel">Promoting to lower groups: </span></label><input
+					type="text" wicket:id="lowerPromoting" />
+			</div>
+			<div>
+				<label class="option" wicket:for="playOffFinal"> <span
+					wicket:id="playOffFinalLabel">Count of advancing player from
+						final groups to play off: </span></label><input type="text"
+					wicket:id="playOffFinal" />
+			</div>
+			<div>
+				<label class="option" wicket:for="playOffLower"> <span
+					wicket:id="playOffLowerLabel">Count of advancing player from
+						lower groups to play off: </span></label><input type="text"
+					wicket:id="playOffLower" />
+			</div>
+			<div>
+				<label class="option" wicket:for="minPlayersInGroup"> <span
+					wicket:id="minPlayersInGroupLabel">Min player in group: </span></label><input
+					type="text" wicket:id="minPlayersInGroup" />
+			</div>
+			<div>
+				<label class="option" wicket:for="public"> <span
+					wicket:id="publicLabel">Public: </span></label><input type="checkbox"
+					wicket:id="public" />
+			</div>
+		</fieldset>
+
+		<div>
+			<input class="tournamentButton" type="submit" wicket:id="submit"
+				value="Save" /> <input class="tournamentButton" type="submit"
+				wicket:id="back" value="Back" />
+		</div>
+
+	</form>
+
+	<form wicket:id="selectOptionsForm">
+		<div>
+			<input class="tournamentButton" type="submit" wicket:id="groupOptions"
+				value="Group" /> <input class="tournamentButton" type="submit"
+				wicket:id="tournamentOptions" value="Tournament" />
+		</div>
+	</form>
+
+</wicket:extend>
+</html>

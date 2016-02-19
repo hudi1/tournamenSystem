@@ -1,0 +1,47 @@
+#Implementation(impl)
+package org.tahom.repository.dao {
+
+    #CRUD(org.tahom.repository.model.FinalStanding) #Query(org.tahom.repository.model.FinalStanding)
+    #Dao FinalStandingDao {
+    }
+
+    #CRUD(org.tahom.repository.model.Game) #Query(org.tahom.repository.model.Game)
+    #Dao GameDao {
+    }
+
+    #CRUD(org.tahom.repository.model.Groups) #Query(org.tahom.repository.model.Groups)
+    #Dao GroupsDao {
+    }
+
+    #CRUD(org.tahom.repository.model.Participant) #Query(org.tahom.repository.model.Participant)
+    #Dao ParticipantDao {
+    }
+
+    #CRUD(org.tahom.repository.model.PlayOffGame) #Query(org.tahom.repository.model.PlayOffGame)
+    #Dao PlayOffGameDao {
+    }
+
+    #CRUD(org.tahom.repository.model.Player) #Query(org.tahom.repository.model.Player)
+    #Dao PlayerDao {
+    }
+
+    #CRUD(org.tahom.repository.model.Season) #Query(org.tahom.repository.model.Season)
+    #Dao SeasonDao {
+    }
+
+    #CRUD(org.tahom.repository.model.Tournament) #Query(org.tahom.repository.model.Tournament)
+    #Dao TournamentDao {
+    }
+
+    #CRUD(org.tahom.repository.model.User) #Query(org.tahom.repository.model.User)
+    #Dao UserDao {
+    }
+
+    #CRUD(org.tahom.repository.model.WchQualification) #Query(org.tahom.repository.model.WchQualification)
+    #Dao WchQualificationDao {
+    }
+
+    #CRUD(org.tahom.repository.model.WchTournament) #Query(org.tahom.repository.model.WchTournament)
+    #Dao WchTournamentDao {
+    }
+}

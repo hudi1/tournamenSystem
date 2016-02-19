@@ -1,0 +1,208 @@
+package org.tahom.web;
+
+import java.util.List;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.PropertyListView;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.tahom.web.mask.MaskIndicatingAjaxButton;
+import org.tahom.repository.model.Game;
+import org.tahom.repository.model.GroupsType;
+import org.tahom.repository.model.Participant;
+import org.tahom.repository.model.Player;
+import org.tahom.repository.model.Result;
+import org.tahom.repository.model.Score;
+import org.tahom.repository.model.Season;
+import org.tahom.repository.model.StatisticForm;
+import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.User;
+
+@AuthorizeInstantiation(Roles.USER)
+public class StatisticPage extends BasePage {
+
+    private static final long serialVersionUID = 1L;
+    private final User user;
+
+    public StatisticPage() {
+        this.user = getTournamentSession().getUser();
+
+        createPage();
+    }
+
+    private void createPage() {
+        add(new StatisticWebForm(new StatisticForm()._setUser(user)));
+        // add(new Image("work", new ContextRelativeResource(getLocaleImagePath("/img/work.png"))));
+    }
+
+    private class StatisticWebForm extends Form<StatisticForm> {
+
+        private static final long serialVersionUID = 1L;
+
+        public StatisticWebForm(final StatisticForm statisticForm) {
+            super("statisticForm", new CompoundPropertyModel<StatisticForm>(statisticForm));
+
+            addPlayerListView();
+            addDropDownTournament();
+            addDropDownSeason();
+            addSubmitButton(statisticForm);
+
+        }
+
+        private void addPlayerListView() {
+            add(new PropertyListView<Player>("players") {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void populateItem(final ListItem<Player> listItem) {
+                    final Player player = listItem.getModelObject();
+                    listItem.add(new Label("surname"));
+                    listItem.add(new Label("playerDiscriminator"));
+                    listItem.add(new Label("name"));
+
+                    int leftSide = 0;
+                    int rightSide = 0;
+
+                    Integer zeroCount = 0;
+                    Integer tenPlusCount = 0;
+                    Integer matches = 0;
+
+                    for (Participant participant : player.getParticipants()) {
+                        // System.out.println(pp);
+                        for (Game game : participant.getGames()) {
+                            if (game.getResult() == null) {
+                                continue;
+                            }
+                            for (Result result : game.getResult().getResults()) {
+                                if (GroupsType.FINAL.equals(participant.getGroup().getType()) && result.isContumacy()) {
+                                    continue;
+                                }
+
+                                matches++;
+
+                                if (result.getLeftSide() > 9) {
+                                    tenPlusCount++;
+                                }
+
+                                if (result.getRightSide() == 0) {
+                                    zeroCount++;
+                                }
+
+                                leftSide += result.getLeftSide();
+                                rightSide += result.getRightSide();
+                            }
+                        }
+                    }
+                    Score score = new Score(leftSide, rightSide);
+
+                    listItem.add(new Label("score", score.toString()));
+                    listItem.add(new Label("zeroCount", zeroCount.toString()));
+                    listItem.add(new Label("tenPlusCount", tenPlusCount.toString()));
+                    listItem.add(new Label("matches", matches.toString()));
+                }
+            });
+        }
+
+        public void addDropDownTournament() {
+            // TODO brat sezonu z DropDownChoice
+            Season season = new Season();
+            add(new DropDownChoice<Tournament>("tournament", season.getTournaments(),
+                    new IChoiceRenderer<Tournament>() {
+
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public Object getDisplayValue(Tournament tournament) {
+                            return tournament.getName();
+                        }
+
+                        @Override
+                        public String getIdValue(Tournament tournament, int index) {
+                            if (tournament == null || tournament.getId() == null) {
+                                return null;
+                            } else {
+                                return tournament.getId().toString();
+                            }
+                        }
+
+                        @Override
+                        public Tournament getObject(String id, IModel<? extends List<? extends Tournament>> choices) {
+                            List<? extends Tournament> _choices = choices.getObject();
+                            for (int index = 0; index < _choices.size(); index++) {
+                                // Get next choice
+                                final Tournament choice = _choices.get(index);
+                                if (getIdValue(choice, index).equals(id)) {
+                                    return choice;
+                                }
+                            }
+                            return null;
+                        }
+                    }));
+        }
+
+        public void addDropDownSeason() {
+            add(new DropDownChoice<Season>("season", seasonService.getUserSeasons(user), new IChoiceRenderer<Season>() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public Object getDisplayValue(Season season) {
+                    return season.getName();
+                }
+
+                @Override
+                public String getIdValue(Season season, int index) {
+                    if (season == null || season.getId() == null) {
+                        return null;
+                    } else {
+                        return season.getId().toString();
+                    }
+                }
+
+                @Override
+                public Season getObject(String id, IModel<? extends List<? extends Season>> choices) {
+                    List<? extends Season> _choices = choices.getObject();
+                    for (int index = 0; index < _choices.size(); index++) {
+                        // Get next choice
+                        final Season choice = _choices.get(index);
+                        if (getIdValue(choice, index).equals(id)) {
+                            return choice;
+                        }
+                    }
+                    return null;
+                }
+
+            }));
+        }
+
+        private void addSubmitButton(final StatisticForm statisticForm) {
+            add(new MaskIndicatingAjaxButton("showPlayers") {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void submit(AjaxRequestTarget target, Form<?> form) {
+                    StatisticWebForm.this.getModelObject().getPlayers().clear();
+                    StatisticWebForm.this.getModelObject().getPlayers()
+                            .addAll(playerService.getPlayersGames(statisticForm));
+                    target.add(StatisticWebForm.this);
+                }
+
+                @Override
+                public String maskText() {
+                    return getString("maskText");
+                }
+
+            });
+        }
+    }
+
+}
