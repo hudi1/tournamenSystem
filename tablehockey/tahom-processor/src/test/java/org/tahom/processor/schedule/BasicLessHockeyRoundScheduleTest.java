@@ -11,13 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.tahom.processor.schedule.BasicLessHockeyRoundRobinSchedule;
-import org.tahom.processor.schedule.RoundRobinSchedule;
+import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.repository.model.Game;
-import org.tahom.repository.model.GameImpl;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Player;
+import org.tahom.repository.model.Surname;
 
 @RunWith(value = Parameterized.class)
 public class BasicLessHockeyRoundScheduleTest extends AbstractScheduleTest {
@@ -39,8 +38,8 @@ public class BasicLessHockeyRoundScheduleTest extends AbstractScheduleTest {
 		participants = new ArrayList<Participant>();
 
 		for (int i = 0; i < playerCount; i++) {
-			participants
-			        .add(new Participant()._setPlayer(new Player(i + 1 + "", i + 1 + "", null, null))._setId(i + 1));
+			participants.add(new Participant()._setPlayer(new Player(i + 1 + "", new Surname(i + 1 + ""), null))
+			        ._setId(i + 1));
 		}
 
 		for (Participant participant1 : participants) {
@@ -72,7 +71,7 @@ public class BasicLessHockeyRoundScheduleTest extends AbstractScheduleTest {
 
 	@Test
 	public void test() throws Exception {
-		List<GameImpl> games = schedule.getSchedule();
+		List<GameDto> games = schedule.getSchedule();
 
 		Assert.assertFalse(games.isEmpty());
 		Assert.assertEquals(games.size(), playerCount * (playerCount - 1) / 2);
@@ -83,16 +82,16 @@ public class BasicLessHockeyRoundScheduleTest extends AbstractScheduleTest {
 		Set<Game> gamesInSchedule = new HashSet<Game>();
 
 		int round = 1;
-		for (GameImpl gameImpl : games) {
-			checkConstainsInSchedule(gameImpl, gamesInSchedule);
-			if (gameImpl.getRound() == round) {
-				checkConstainsInRound(gameImpl.getAwayParticipant(), players);
-				checkConstainsInRound(gameImpl.getHomeParticipant(), players);
+		for (GameDto gameDto : games) {
+			checkConstainsInSchedule(gameDto, gamesInSchedule);
+			if (gameDto.getRound() == round) {
+				checkConstainsInRound(gameDto.getAwayParticipantId(), players);
+				checkConstainsInRound(gameDto.getHomeParticipantId(), players);
 			} else {
 				players.clear();
 				round++;
-				checkConstainsInRound(gameImpl.getAwayParticipant(), players);
-				checkConstainsInRound(gameImpl.getHomeParticipant(), players);
+				checkConstainsInRound(gameDto.getAwayParticipantId(), players);
+				checkConstainsInRound(gameDto.getHomeParticipantId(), players);
 			}
 		}
 	}

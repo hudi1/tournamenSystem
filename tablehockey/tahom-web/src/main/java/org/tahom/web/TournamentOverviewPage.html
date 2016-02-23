@@ -7,69 +7,82 @@
 </wicket:head>
 <wicket:extend>
 	<div class="overview">
-		<a href="#" wicket:id="finalStandingsLink"><span wicket:id="finalStandingsOverview">finalStandingsLink</span></a> <br />
-		<a href="#" wicket:id="groupsLink"><span wicket:id="groupsOverview">groupsLink</span></a> <br />
-		<a href="#" wicket:id="playOffLink"><span wicket:id="playOffOverview">playOffLink</span></a> <br />
+		<a href="#" wicket:id="finalStandingsLink"><span
+			wicket:id="finalStandingsOverview">finalStandingsLink</span></a> <br />
+		<a href="#" wicket:id="groupsLink"><span
+			wicket:id="groupsOverview">groupsLink</span></a> <br /> <a href="#"
+			wicket:id="playOffLink"><span wicket:id="playOffOverview">playOffLink</span></a>
+		<br /> <br />
 	</div>
 	<div>
 		<form wicket:id="finalStandingsForm">
-			<table class="player">
+			<table class="finalStandingTable">
 				<tbody>
+					<tr>
+						<th wicket:id="rank" />
+						<th wicket:id="name" />
+						<th wicket:id="club" />
+					</tr>
 					<tr wicket:id="rows">
-						<td><span wicket:id="rank">rank</span></td>
-						<td><span wicket:id="surname">surname</span></td>
-						<td><span wicket:id="name">name</span></td>
+						<td class="finalStandingTableRank"><span wicket:id="rank">rank</span></td>
+						<td class="finalStandingTableLeft"><span wicket:id="name">name</span></td>
+						<td><span wicket:id="club">club</span></td>
 					</tr>
 				</tbody>
 			</table>
 		</form>
 		<form wicket:id="groupForm">
-			<table class="groupTable">
-				<tr>
-					<th />
-					<th wicket:id="name" />
-					<th wicket:id="nameList"><span wicket:id="playerName"></span></th>
-					<th wicket:id="score" />
-					<th wicket:id="points" />
-					<th wicket:id="rank" />
-				</tr>
-				<tr wicket:id="participants">
-					<td><span wicket:id="index">[index]</span></td>
-					<td><span wicket:id="name">[name]</span></td>
-					<td wicket:id="gameList"><span wicket:id="game"></span></td>
-					<td><span wicket:id="score">[score]</span></td>
-					<td><span wicket:id="points">[points]</span></td>
-					<td><span wicket:id=rank>[rank]</span></td>
-				</tr>
-			</table>
-			<table>
-				<tr wicket:id="rows">
-					<td wicket:id="cols">
-						<div>
-							<input class="tournamentButton" type="submit" wicket:id="group" />
-						</div>
-					</td>
-				</tr>
-			</table>
+			<div wicket:id="groups">
+				<br />
+				<div class="groupsTableSubHeader" wicket:id="groupName" />
+				<br />
+				<div class="results">
+					<table class="resultTable">
+						<tr>
+							<th />
+							<th nowrap="" wicket:id="name" />
+							<th wicket:id="nameList"><span wicket:id="playerName"></span></th>
+							<th wicket:id="score" />
+							<th wicket:id="points" />
+							<th wicket:id="rank" />
+						</tr>
+						<tr wicket:id="participants">
+							<td><span wicket:id="index">[index]</span></td>
+							<td><span wicket:id="name">[name]</span></td>
+							<td wicket:id="gameList"><span wicket:id="game"></span></td>
+							<td><span wicket:id="score">[score]</span></td>
+							<td><span wicket:id="points">[points]</span></td>
+							<td><span wicket:id=rank>[rank]</span></td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</form>
 		<form wicket:id="playOffForm">
 			<div wicket:id="groups">
-				<table class="dataview">
+				<table class="playOffTable">
 					<tr>
 						<th><span wicket:id="name">name</span></th>
 					</tr>
 					<tr>
 						<th><span wicket:id="round">Round</span></th>
-						<th><span wicket:id="player">Player</span></th>
-						<th><span wicket:id="result">Result</span></th>
+						<th colspan="3"><span wicket:id="players">Players</span></th>
+						<th wicket:id="matches"><span wicket:id=matchNumber>Match</span></th>
+						<th><span wicket:id="score">Score</span></th>
 					</tr>
 					<tr wicket:id="playOffGames">
-						<td style="font-weight: bold;"><span wicket:id="roundName"></span></td>
-						<td style="width: 300px;"><span wicket:id="player"></span>:<span
-							wicket:id="opponent"></span></td>
-						<td><span wicket:id="result" style="width: 300px;"></span></td>
+						<td><span wicket:id="roundName"></span></td>
+						<td class="playOffTableRight"><span wicket:id="player"></span></td>
+						<td class="playOffTableSep">-</td>
+						<td class="playOffTableLeft"><span wicket:id="opponent"></span></td>
+						<td nowrap="" class="playOffTableResult" wicket:id="result"><span
+							wicket:id="item">[result]</span></td>
+						<td nowrap="" class="playOffTableResultNo" wicket:id="emptyResult"><span
+							wicket:id="item">[result]</span></td>
+						<td class="playOffTableResult"><span wicket:id="score">[score]</span></td>
 					</tr>
 				</table>
+				<br />
 			</div>
 		</form>
 	</div>

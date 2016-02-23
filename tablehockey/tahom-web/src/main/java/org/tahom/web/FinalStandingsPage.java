@@ -67,7 +67,7 @@ public class FinalStandingsPage extends TournamentHomePage {
 					listItem.add(new Label("name", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
 					        .getName() : ""));
 					listItem.add(new Label("surname", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
-					        .getSurname() + " " + finalStanding.getPlayer().getPlayerDiscriminator() : ""));
+					        .getSurname().toString() : ""));
 					listItem.add(new Label("rank", finalStanding.getFinalRank() + "."));
 
 					listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));

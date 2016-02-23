@@ -9,20 +9,20 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.sqlproc.engine.impl.SqlStandardControl;
 import org.tahom.processor.BadOptionsTournamentException;
 import org.tahom.processor.comparators.RankComparator;
 import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.participant.ParticipantService;
+import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.processor.util.TournamentUtil;
 import org.tahom.repository.dao.FinalStandingDao;
-import org.tahom.repository.dao.PlayOffGameDao;
 import org.tahom.repository.model.FinalStanding;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
-import org.tahom.repository.model.PlayOffGame.Association;
 import org.tahom.repository.model.Tournament;
 
 public class FinalStandingService {
@@ -34,19 +34,22 @@ public class FinalStandingService {
 	private ParticipantService participantService;
 
 	@Inject
-	private FinalStandingDao finalStandingDao;
+	private PlayOffGameService playOffGameService;
 
 	@Inject
-	private PlayOffGameDao playOffGameDao;
+	private FinalStandingDao finalStandingDao;
 
 	@Inject
 	private FinalStandingModel finalStandingModel;
 
 	@Transactional(readOnly = true)
 	public List<FinalStanding> getFinalStandings(Tournament tournament) {
+		SqlStandardControl control = new SqlStandardControl();
+		control.setAscOrder(FinalStanding.ORDER_BY_FINAL_RANK);
+
 		FinalStanding finalStanding = new FinalStanding()._setTournament(tournament);
 		finalStanding.setInit(FinalStanding.Association.player.name());
-		return finalStandingDao.list(finalStanding);
+		return finalStandingDao.list(finalStanding, control);
 	}
 
 	@Transactional
@@ -125,7 +128,7 @@ public class FinalStandingService {
 		List<Groups> finalGroups = groupService.getFinalGroups(tournament);
 		for (Groups group : finalGroups) {
 
-			List<PlayOffGame> playOffGames = getFullPlayOffGames(group);
+			List<PlayOffGame> playOffGames = playOffGameService.getFullPlayOffGames(group);
 			if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
 				updateFinalStandings(tournament, playOffGames, 0);
 			} else {
@@ -270,10 +273,4 @@ public class FinalStandingService {
 		participants.clear();
 	}
 
-	private List<PlayOffGame> getFullPlayOffGames(Groups group) {
-		PlayOffGame playOffGame = new PlayOffGame();
-		playOffGame.setGroup(group);
-		playOffGame.setInit(Association.awayParticipant, Association.homeParticipant);
-		return playOffGameDao.list(playOffGame);
-	}
 }

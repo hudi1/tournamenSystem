@@ -31,7 +31,7 @@ public abstract class RoundRobinSchedule {
 					game._setHomeParticipant(homePlayer)._setAwayParticipant(awayPlayer);
 					GameDto gameDto = createGameDto(game);
 					gameDto.setRound(getActualRound());
-					gameDto.setHockey(getActualHocket());
+					gameDto.setHockey(getActualHockey());
 					schedule.add(gameDto);
 					break;
 				}
@@ -42,7 +42,7 @@ public abstract class RoundRobinSchedule {
 	protected void addEmptyGameToSchedule() {
 		GameDto game = new GameDto();
 		game.setRound(getActualRound());
-		game.setHockey(getActualHocket());
+		game.setHockey(getActualHockey());
 		schedule.add(game);
 	}
 
@@ -50,7 +50,7 @@ public abstract class RoundRobinSchedule {
 		return schedule.size() / group.getNumberOfHockey() + 1;
 	}
 
-	protected Integer getActualHocket() {
+	protected Integer getActualHockey() {
 		return schedule.size() % group.getNumberOfHockey() + group.getIndexOfFirstHockey();
 	}
 
@@ -64,7 +64,7 @@ public abstract class RoundRobinSchedule {
 		}
 		if (game.getAwayParticipant() != null) {
 			gameDto.setOpponentName(getPlayerName(game.getAwayParticipant().getPlayer()));
-			gameDto.setAwayParticipandId(game.getAwayParticipant().getId());
+			gameDto.setAwayParticipantId(game.getAwayParticipant().getId());
 		}
 		gameDto.setGameId(game.getId());
 		gameDto.setResult(game.getResult());
@@ -73,7 +73,7 @@ public abstract class RoundRobinSchedule {
 
 	private String getPlayerName(Player player) {
 		if (player != null) {
-			return player.getName() + " " + player.getSurname() + " " + player.getPlayerDiscriminator();
+			return player.getName() + " " + player.getSurname();
 		}
 		return "";
 	}

@@ -15,6 +15,7 @@ import org.tahom.processor.ImportTournamentException;
 import org.tahom.repository.model.FinalStanding;
 import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Groups;
+import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.GroupsType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
@@ -22,6 +23,7 @@ import org.tahom.repository.model.Player;
 import org.tahom.repository.model.Result;
 import org.tahom.repository.model.Results;
 import org.tahom.repository.model.Score;
+import org.tahom.repository.model.Surname;
 import org.tahom.repository.model.Tournament;
 
 public class TournamentHtmlImportFactory {
@@ -45,6 +47,9 @@ public class TournamentHtmlImportFactory {
 					group.setType(GroupsType.BASIC);
 				} else {
 					group.setType(GroupsType.FINAL);
+					if ("A".equals(group.getName().trim())) {
+						group.setPlayOffType(GroupsPlayOffType.FINAL);
+					}
 				}
 				LinkedList<Participant> participants = new LinkedList<Participant>();
 
@@ -61,23 +66,16 @@ public class TournamentHtmlImportFactory {
 
 					// new get(2)
 					String playerName = rowElement.select("td").get(1).ownText();
-					System.out.println("Parsing player: " + playerName);
+					// System.out.println("Parsing player: " + playerName);
 
 					if (playerName.contains("Chylík")) {
-						player.setPlayerDiscriminator("ml.");
-						player.setSurname("Chylík");
+						player.setSurname(new Surname("Chylík ml."));
 						player.setName("Jiří");
 					} else if (playerName.contains("I.Vépy")) {
-						player.setPlayerDiscriminator("I");
-						player.setSurname("Vépy");
+						player.setSurname(new Surname("Vépy I"));
 						player.setName("Martin");
-					} else if (playerName.contains(" ")) {
-						player.setPlayerDiscriminator(playerName.split(" ")[1]);
-						player.setSurname(playerName.split(" ")[0].split("\\.")[1]);
-						player.setName(playerName.split(" ")[0].split("\\.")[0]);
 					} else {
-						player.setPlayerDiscriminator("");
-						player.setSurname(playerName.split("\\.")[1]);
+						player.setSurname(new Surname(playerName.split("\\.", 2)[1]));
 						player.setName(playerName.split("\\.")[0]);
 					}
 				}
@@ -252,28 +250,59 @@ public class TournamentHtmlImportFactory {
 			Element body = playerTable.select("tbody").first();
 			Elements tableRows = body.select("tr");
 
-			for (int i = 1; i < tableRows.size(); i++) {
+			for (Participant participant : savedParticipants) {
+				List<FinalStanding> foundedPlayers = new ArrayList<FinalStanding>();
 
-				FinalStanding finalStanding = new FinalStanding();
-				String playerName = tableRows.get(i).select("td").get(1).ownText();
-				String rank = tableRows.get(i).select("td").get(0).ownText().replace(".", "");
-				finalStanding.setFinalRank(Integer.parseInt(rank));
+				for (int i = 1; i < tableRows.size(); i++) {
+					FinalStanding finalStanding = new FinalStanding();
+					String playerName = tableRows.get(i).select("td").get(1).ownText();
+					Player player = parsePlayer(playerName);
+					String rank = tableRows.get(i).select("td").get(0).ownText().replace(".", "");
+					finalStanding.setFinalRank(Integer.parseInt(rank));
 
-				Player player = parsePlayer(playerName);
-				boolean founded = false;
+					if (player.getSurname().getValue().equals(participant.getPlayer().getSurname().getValue())) {
 
-				for (Participant participant : savedParticipants) {
-					if (isEqualPlayer(player, participant.getPlayer())) {
-						finalStanding.setPlayer(participant.getPlayer());
-						founded = true;
+						if (player.getName().charAt(0) == participant.getPlayer().getName().charAt(0)) {
+							foundedPlayers
+							        .add(finalStanding._setPlayer(player._setId(participant.getPlayer().getId())));
+						}
 					}
 				}
 
-				if (!founded) {
-					throw new RuntimeException("Player: " + playerName + "  not found " + savedParticipants);
+				if (foundedPlayers.isEmpty()) {
+					throw new ImportTournamentException(participant.getPlayer().toString());
+				} else if (foundedPlayers.size() == 1) {
+					boolean founded = false;
+					for (FinalStanding finalStanding : finalStandings) {
+						if (finalStanding.getFinalRank().equals(foundedPlayers.get(0).getFinalRank())) {
+							founded = true;
+						}
+					}
+					if (!founded) {
+						finalStandings.add(foundedPlayers.get(0));
+					}
+
+				} else {
+					for (FinalStanding foundedPlayer : foundedPlayers) {
+						if (participant.getPlayer().getSurname().getDiscriminant()
+						        .equals(foundedPlayer.getPlayer().getSurname().getDiscriminant())) {
+							boolean founded = false;
+							for (FinalStanding finalStanding : finalStandings) {
+								if (finalStanding.getFinalRank().equals(foundedPlayer.getFinalRank())) {
+									founded = true;
+								}
+							}
+							if (!founded) {
+								finalStandings.add(foundedPlayer);
+							}
+
+							break;
+						}
+					}
 				}
 
-				finalStandings.add(finalStanding);
+				foundedPlayers.clear();
+
 			}
 		} catch (Exception e) {
 			logger.error("Error during creating play off games", e);
@@ -285,10 +314,7 @@ public class TournamentHtmlImportFactory {
 	private static boolean isEqualPlayer(Player htmlPlayer, Player player) {
 		if (htmlPlayer.getName().equals(player.getName())) {
 			if (htmlPlayer.getSurname().equals(player.getSurname())) {
-				System.out.println(htmlPlayer.getPlayerDiscriminator() + " __ " + player.getPlayerDiscriminator());
-				if (htmlPlayer.getPlayerDiscriminator().equals(player.getPlayerDiscriminator())) {
-					return true;
-				}
+				return true;
 			}
 		}
 		return false;
@@ -299,15 +325,13 @@ public class TournamentHtmlImportFactory {
 	}
 
 	public static Player parsePlayer(String playerName) {
-		System.out.println("Parse name: " + playerName);
+		// System.out.println("Parse name: " + playerName);
 		Player player = new Player();
 		if (playerName.split(" ").length == 2) {
-			player.setSurname(playerName.split(" ")[0]);
+			player.setSurname(new Surname(playerName.split(" ")[0]));
 			player.setName(playerName.split(" ")[1]);
-			player.setPlayerDiscriminator("");
 		} else if (playerName.split(" ").length == 3) {
-			player.setSurname(playerName.split(" ")[0]);
-			player.setPlayerDiscriminator(playerName.split(" ")[1]);
+			player.setSurname(new Surname(playerName.split(" ")[0] + " " + playerName.split(" ")[1]));
 			player.setName(playerName.split(" ")[2]);
 		}
 		return player;

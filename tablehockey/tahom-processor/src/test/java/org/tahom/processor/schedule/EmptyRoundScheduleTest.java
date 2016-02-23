@@ -5,9 +5,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.tahom.processor.schedule.EmptyRoundRobinSchedule;
-import org.tahom.processor.schedule.RoundRobinSchedule;
-import org.tahom.repository.model.GameImpl;
+import org.tahom.processor.service.game.dto.GameDto;
 
 public class EmptyRoundScheduleTest {
 
@@ -20,7 +18,7 @@ public class EmptyRoundScheduleTest {
 
 	@Test
 	public void test() throws Exception {
-		List<GameImpl> games = schedule.getSchedule();
+		List<GameDto> games = schedule.getSchedule();
 
 		Assert.assertTrue(games.isEmpty());
 	}

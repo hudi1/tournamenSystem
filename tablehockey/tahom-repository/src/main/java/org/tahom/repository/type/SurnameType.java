@@ -55,14 +55,8 @@ public class SurnameType extends SqlInternalType {
 		}
 
 		String surname = (String) resultValue;
-		Surname value;
-		if (surname.contains(" ")) {
-			value = new Surname(surname);
-		} else {
-			value = new Surname(surname.split(" ")[0], surname.split(" ")[1]);
-		}
 
-		if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, value, Surname.class))
+		if (runtimeCtx.simpleSetAttribute(resultInstance, attributeName, new Surname(surname), Surname.class))
 			return;
 		if (ingoreError) {
 			logger.error("There's no setter for " + attributeName + " in " + resultInstance

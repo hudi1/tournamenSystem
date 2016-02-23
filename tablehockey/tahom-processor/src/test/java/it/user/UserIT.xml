@@ -2,7 +2,7 @@
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../dataset.xsd">
 
 
-	<user email="adminEmail" id="1" name="@null" password="password" platnost="1" role="ADMIN" surname="admin" user_name="admin"/>
+	<user email="adminEmail" id="1" name="@null" password="password" validity="1" role="ADMIN" surname="admin" user_name="admin"/>
 
 
 </dataset>

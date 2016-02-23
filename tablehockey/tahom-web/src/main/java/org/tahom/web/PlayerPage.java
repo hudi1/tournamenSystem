@@ -57,7 +57,7 @@ public class PlayerPage extends TournamentHomePage {
 		Collections.sort(user.getPlayers(), new Comparator<Player>() {
 			@Override
 			public int compare(Player p1, Player p2) {
-				return p1.getSurname().compareTo(p2.getSurname());
+				return p1.getSurname().toString().compareTo(p2.getSurname().toString());
 			}
 		});
 		return user;
@@ -102,22 +102,17 @@ public class PlayerPage extends TournamentHomePage {
 						}
 					}));
 
-					listItem.add(new TextField<String>("surname", Model.of(player.getSurname() + " "
-					        + player.getPlayerDiscriminator())).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+					listItem.add(new TextField<String>("surname", Model.of(player.getSurname().toString()))
+					        .add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
-						private static final long serialVersionUID = 1L;
+						        private static final long serialVersionUID = 1L;
 
-						@Override
-						protected void onUpdate(AjaxRequestTarget target) {
-							Player player = listItem.getModelObject();
-							if (player.getSurname().contains(" ")) {
-								player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
-								        Math.min(player.getSurname().split(" ")[1].length(), 3)));
-								player.setSurname(player.getSurname().split(" ")[0]);
-							}
-							playerService.updatePlayer(player);
-						}
-					}));
+						        @Override
+						        protected void onUpdate(AjaxRequestTarget target) {
+							        Player player = listItem.getModelObject();
+							        playerService.updatePlayer(player);
+						        }
+					        }));
 
 					listItem.add(new TextField<String>("club").add(new AjaxFormComponentUpdatingBehavior("onchange") {
 

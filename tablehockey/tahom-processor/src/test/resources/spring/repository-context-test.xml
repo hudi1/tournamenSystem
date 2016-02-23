@@ -35,6 +35,7 @@
     <bean id="sqlFactory" class="org.sqlproc.engine.jdbc.JdbcEngineFactory" init-method="init">
         <property name="metaFilesNames">
             <list>
+                <value>custom-statements-test.meta</value>
                 <value>custom-statements.meta</value>
                 <value>statements.meta</value>
             </list>
@@ -43,6 +44,7 @@
             <list>
                 <bean class="org.tahom.repository.type.ScoreType"></bean>
                 <bean class="org.tahom.repository.type.ResultType"></bean>
+                <bean class="org.tahom.repository.type.SurnameType"></bean>
             </list>
         </property>
         <property name="filter" value="MYSQL" />

@@ -43,7 +43,7 @@ public class GameModel {
 
 	public Game createGameFromDto(GameDto gameDto) {
 		Game game = new Game();
-		game.setAwayParticipant(new Participant()._setId(gameDto.getAwayParticipandId()));
+		game.setAwayParticipant(new Participant()._setId(gameDto.getAwayParticipantId()));
 		game.setHomeParticipant(new Participant()._setId(gameDto.getHomeParticipantId()));
 		game.setId(gameDto.getGameId());
 		game.setResult(gameDto.getResult());

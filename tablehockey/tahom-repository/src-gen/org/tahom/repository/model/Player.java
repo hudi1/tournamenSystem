@@ -7,6 +7,7 @@ import java.util.Set;
 import org.sqlproc.engine.annotation.Pojo;
 import org.tahom.repository.model.FinalStanding;
 import org.tahom.repository.model.Participant;
+import org.tahom.repository.model.Surname;
 import org.tahom.repository.model.User;
 
 @Pojo
@@ -21,11 +22,10 @@ public class Player implements Serializable {
   public Player() {
   }
   
-  public Player(final String name, final String surname, final String playerDiscriminator, final User user) {
+  public Player(final String name, final Surname surname, final User user) {
     super();
     setName(name);
     setSurname(surname);
-    setPlayerDiscriminator(playerDiscriminator);
     setUser(user);
   }
   
@@ -59,17 +59,17 @@ public class Player implements Serializable {
     return this;
   }
   
-  private String surname;
+  private Surname surname;
   
-  public String getSurname() {
+  public Surname getSurname() {
     return this.surname;
   }
   
-  public void setSurname(final String surname) {
+  public void setSurname(final Surname surname) {
     this.surname = surname;
   }
   
-  public Player _setSurname(final String surname) {
+  public Player _setSurname(final Surname surname) {
     this.surname = surname;
     return this;
   }
@@ -86,21 +86,6 @@ public class Player implements Serializable {
   
   public Player _setClub(final String club) {
     this.club = club;
-    return this;
-  }
-  
-  private String playerDiscriminator;
-  
-  public String getPlayerDiscriminator() {
-    return this.playerDiscriminator;
-  }
-  
-  public void setPlayerDiscriminator(final String playerDiscriminator) {
-    this.playerDiscriminator = playerDiscriminator;
-  }
-  
-  public Player _setPlayerDiscriminator(final String playerDiscriminator) {
-    this.playerDiscriminator = playerDiscriminator;
     return this;
   }
   
@@ -225,11 +210,11 @@ public class Player implements Serializable {
   
   @Override
   public String toString() {
-    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", ithfId=" + ithfId + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", worldRanking=" + worldRanking + ", ithfId=" + ithfId + "]";
   }
   
   public String toStringFull() {
-    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", playerDiscriminator=" + playerDiscriminator + ", worldRanking=" + worldRanking + ", user=" + user + ", ithfId=" + ithfId + ", finalStandings=" + finalStandings + ", participants=" + participants + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", worldRanking=" + worldRanking + ", user=" + user + ", ithfId=" + ithfId + ", finalStandings=" + finalStandings + ", participants=" + participants + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
   }
   
   public enum Attribute {
@@ -406,8 +391,6 @@ public class Player implements Serializable {
     surname,
     
     club,
-    
-    playerDiscriminator,
     
     worldRanking,
     

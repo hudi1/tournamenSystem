@@ -20,6 +20,7 @@ import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
+import org.tahom.repository.model.PlayOffGame.Association;
 import org.tahom.repository.model.Tournament;
 
 public class PlayOffGameService {
@@ -79,6 +80,14 @@ public class PlayOffGameService {
 		        PlayOffGame.Association.homeParticipant.name());
 		List<PlayOffGame> playOffGames = playOffGameDao.list(playOffGame, control);
 		return playOffGameModel.createPlayOffGamesDto(playOffGames, group, tournament);
+	}
+
+	@Transactional(readOnly = true)
+	public List<PlayOffGame> getFullPlayOffGames(Groups group) {
+		PlayOffGame playOffGame = new PlayOffGame();
+		playOffGame.setGroup(group);
+		playOffGame.setInit(Association.awayParticipant, Association.homeParticipant);
+		return playOffGameDao.list(playOffGame);
 	}
 
 	@Transactional
@@ -303,6 +312,13 @@ public class PlayOffGameService {
 		return null;
 	}
 
+	/**
+	 * @param playerCount
+	 *            number of players in playOff (4,8,16...)
+	 * @param currentGame
+	 *            starting with 1
+	 * @return
+	 */
 	public int nextGame(int playerCount, int currentGame) {
 		return (playerCount / 2) + (int) Math.ceil((double) currentGame / 2);
 	}

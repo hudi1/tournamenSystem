@@ -7,7 +7,8 @@
     </Appenders>
     <Loggers>
 
-        <Logger name="org.toursys" level="debug" />
+        <Logger name="org.tahom" level="debug" />
+        <!--  Logger name="org.sqlproc" level="trace" /-->
 
     </Loggers>
 </Configuration>

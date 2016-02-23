@@ -1,0 +1,11 @@
+SEQ=TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'tournament' and table_schema = 'tablehockeyTest';
+SEQ=PLAYER(OPT)=select auto_increment from information_schema.tables where table_name = 'player' and table_schema = 'tablehockeyTest';
+SEQ=PLAY_OFF_GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'play_off_game' and table_schema = 'tablehockeyTest';
+SEQ=SEASON(OPT)=select auto_increment from information_schema.tables where table_name = 'season' and table_schema = 'tablehockeyTest';
+SEQ=PARTICIPANT(OPT)=select auto_increment from information_schema.tables where table_name = 'participant' and table_schema = 'tablehockeyTest';
+SEQ=WCH_TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_tournament' and table_schema = 'tablehockeyTest';
+SEQ=GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'game' and table_schema = 'tablehockeyTest';
+SEQ=GROUPS(OPT)=select auto_increment from information_schema.tables where table_name = 'groups' and table_schema = 'tablehockeyTest';
+SEQ=FINAL_STANDING(OPT)=select auto_increment from information_schema.tables where table_name = 'final_standing' and table_schema = 'tablehockeyTest';
+SEQ=WCH_QUALIFICATION(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_qualification' and table_schema = 'tablehockeyTest';
+SEQ=USER(OPT)=select auto_increment from information_schema.tables where table_name = 'user' and table_schema = 'tablehockeyTest';

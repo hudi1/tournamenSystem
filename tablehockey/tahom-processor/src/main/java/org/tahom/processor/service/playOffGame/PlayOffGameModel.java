@@ -48,12 +48,12 @@ public class PlayOffGameModel {
 		} else {
 			gameDto.setGameStatus(GameStatus.DRAW);
 		}
-
+		gameDto.setScore(homeWinnerCount + " : " + awayWinnerCount);
 	}
 
 	public PlayOffGame createPlayOffGameFromDto(PlayOffGameDto gameDto) {
 		PlayOffGame game = new PlayOffGame();
-		game.setAwayParticipant(new Participant()._setId(gameDto.getAwayParticipandId()));
+		game.setAwayParticipant(new Participant()._setId(gameDto.getAwayParticipantId()));
 		game.setHomeParticipant(new Participant()._setId(gameDto.getHomeParticipantId()));
 		game.setId(gameDto.getGameId());
 		game.setResult(gameDto.getResult());
@@ -79,17 +79,18 @@ public class PlayOffGameModel {
 		}
 		if (game.getAwayParticipant() != null) {
 			gameDto.setOpponentName(getPlayerName(game.getAwayParticipant().getPlayer()));
-			gameDto.setAwayParticipandId(game.getAwayParticipant().getId());
+			gameDto.setAwayParticipantId(game.getAwayParticipant().getId());
 		}
 		gameDto.setGameId(game.getId());
 		gameDto.setResult(game.getResult());
 		gameDto.setRoundName(TournamentUtil.getRoundName(tournament, group, game.getPosition()));
+		assignWinner(gameDto);
 		return gameDto;
 	}
 
 	private String getPlayerName(Player player) {
 		if (player != null) {
-			return player.getName() + " " + player.getSurname() + " " + player.getPlayerDiscriminator();
+			return player.getName() + " " + player.getSurname();
 		}
 		return "";
 	}

@@ -25,7 +25,9 @@ public class GameDto implements Serializable {
 
 	private Integer homeParticipantId;
 
-	private Integer awayParticipandId;
+	private Integer awayParticipantId;
+
+	private String score;
 
 	public String getPlayerName() {
 		return playerName;
@@ -52,6 +54,9 @@ public class GameDto implements Serializable {
 	}
 
 	public Results getResult() {
+		if (result == null) {
+			result = new Results();
+		}
 		return result;
 	}
 
@@ -91,12 +96,20 @@ public class GameDto implements Serializable {
 		this.homeParticipantId = homeParticipantId;
 	}
 
-	public Integer getAwayParticipandId() {
-		return awayParticipandId;
+	public Integer getAwayParticipantId() {
+		return awayParticipantId;
 	}
 
-	public void setAwayParticipandId(Integer awayParticipandId) {
-		this.awayParticipandId = awayParticipandId;
+	public void setAwayParticipantId(Integer awayParticipandId) {
+		this.awayParticipantId = awayParticipandId;
+	}
+
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
 	}
 
 }

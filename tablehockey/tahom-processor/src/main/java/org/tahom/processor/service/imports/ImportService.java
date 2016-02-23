@@ -71,23 +71,33 @@ public class ImportService {
 
 		for (Participant participant : participants) {
 			List<Player> players = playerService.getNotRegisteredPlayers(tournament);
-			Boolean founded = false;
+			List<Player> foundedPlayers = new ArrayList<Player>();
 			for (Player player : players) {
-				if (player.getSurname().equals(participant.getPlayer().getSurname())) {
+				if (player.getSurname().getValue().equals(participant.getPlayer().getSurname().getValue())) {
 					if (player.getName().charAt(0) == participant.getPlayer().getName().charAt(0)) {
-						if (player.getPlayerDiscriminator().equals(participant.getPlayer().getPlayerDiscriminator())) {
-							founded = true;
-							participant.setPlayer(player);
-							break;
-						}
+						foundedPlayers.add(player);
 					}
 				}
 			}
 
-			if (!founded) {
-				// Parametrizovat a lokalizovat vyjimky
-				throw new RuntimeException(participant.getPlayer().toString());
+			if (foundedPlayers.isEmpty()) {
+				throw new ImportTournamentException(participant.getPlayer().toString());
+			} else if (foundedPlayers.size() == 1) {
+				participant.setPlayer(foundedPlayers.get(0));
+			} else {
+				for (Player player : foundedPlayers) {
+					if (player.getSurname().getDiscriminant()
+					        .equals(participant.getPlayer().getSurname().getDiscriminant())) {
+						participant.setPlayer(player);
+						break;
+					}
+				}
 			}
+
+			if (participant.getPlayer().getId() == null) {
+				throw new ImportTournamentException(participant.getPlayer().toString());
+			}
+			foundedPlayers.clear();
 		}
 
 		LinkedList<Participant> savedParticipants = new LinkedList<Participant>();

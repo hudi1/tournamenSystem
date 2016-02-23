@@ -10,6 +10,7 @@ import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 
 public class BasicRoundRobinSchedule extends RoundRobinSchedule {
+
 	private int playerCount;
 	private int roundCount;
 	private List<Participant> participants;

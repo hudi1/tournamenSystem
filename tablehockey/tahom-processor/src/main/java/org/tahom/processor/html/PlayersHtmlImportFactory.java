@@ -1,6 +1,5 @@
 package org.tahom.processor.html;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tahom.processor.ImportTournamentException;
 import org.tahom.repository.model.Player;
+import org.tahom.repository.model.Surname;
 
 public class PlayersHtmlImportFactory {
 
@@ -21,11 +21,6 @@ public class PlayersHtmlImportFactory {
 	private static final String ITHF_URL = "stiga.trefik.cz/ithf/";
 
 	private static final Logger logger = LoggerFactory.getLogger(PlayersHtmlImportFactory.class);
-
-	public static void main(String[] args) throws IOException {
-		Document doc = Jsoup.connect("http://trefik.cz/stiga/turnaje2014/kladno/index.htm").get();
-
-	}
 
 	public static List<Player> createdImportedPlayers(String url) {
 		List<Player> players = new ArrayList<Player>();
@@ -77,10 +72,7 @@ public class PlayersHtmlImportFactory {
 			Player player = new Player();
 			player.setClub(club);
 			player.setName(nameAndSurname.split(" ")[0]);
-			player.setSurname(nameAndSurname.split(" ")[1]);
-			if (nameAndSurname.split(" ").length > 2 && nameAndSurname.split(" ")[2].length() < 4) {
-				player.setPlayerDiscriminator(nameAndSurname.split(" ")[2]);
-			}
+			player.setSurname(new Surname(nameAndSurname.split(" ")[1]));
 			players.add(player);
 		}
 		return players;

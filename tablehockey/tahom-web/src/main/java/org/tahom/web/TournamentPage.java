@@ -52,17 +52,17 @@ public class TournamentPage extends BasePage {
 	}
 
 	protected void createPage() {
-		add(new TournamentForm(selectedSeason));
+		add(new TournamentForm(Model.of(selectedSeason)));
 	}
 
 	private class TournamentForm extends Form<Season> {
 
 		private static final long serialVersionUID = 1L;
 
-		public TournamentForm(final Season season) {
-			super("tournamentForm", new CompoundPropertyModel<Season>(season));
+		public TournamentForm(final IModel<Season> model) {
+			super("tournamentForm", new CompoundPropertyModel<Season>(model));
 			addSeasonLabel();
-			addSeasonDropDownChoice(season);
+			addSeasonDropDownChoice(model);
 			addTournamentListView();
 			addTournamentAddButton();
 		}
@@ -149,8 +149,8 @@ public class TournamentPage extends BasePage {
 			add(navigator);
 		}
 
-		private void addSeasonDropDownChoice(final Season season) {
-			add(new DropDownChoice<Season>("seasons", Model.of(season), seasons, new IChoiceRenderer<Season>() {
+		private void addSeasonDropDownChoice(final IModel<Season> model) {
+			add(new DropDownChoice<Season>("seasons", model, seasons, new IChoiceRenderer<Season>() {
 
 				private static final long serialVersionUID = 1L;
 
@@ -185,7 +185,7 @@ public class TournamentPage extends BasePage {
 
 				@Override
 				protected void onUpdate(AjaxRequestTarget target) {
-					selectedSeason = getModelObject();
+					selectedSeason = model.getObject();
 					getTournamentSession().setSeason(selectedSeason);
 					target.add(TournamentForm.this);
 				}

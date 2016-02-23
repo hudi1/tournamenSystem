@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.tahom.processor.schedule.RoundRobinSchedule;
 import org.tahom.processor.service.game.GameService;
+import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.schedule.ScheduleService;
-import org.tahom.repository.model.GameImpl;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsType;
 import org.tahom.repository.model.Participant;
@@ -43,9 +43,9 @@ public class GameIT {
 		RoundRobinSchedule schedule = scheduleService.getSchedule(new Tournament()._setId(1), new Groups()._setId(1)
 		        ._setType(GroupsType.BASIC)._setCopyResult(false)._setNumberOfHockey(2)._setIndexOfFirstHockey(1),
 		        participants);
-		List<GameImpl> games = schedule.getSchedule();
-		for (GameImpl gameImpl : games) {
-			gameImpl.setResult(new Results("9:9"));
+		List<GameDto> games = schedule.getSchedule();
+		for (GameDto gameDto : games) {
+			gameDto.setResult(new Results("9:9"));
 		}
 		gameService.updateBothGames(games);
 	}

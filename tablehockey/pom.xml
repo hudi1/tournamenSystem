@@ -722,17 +722,17 @@
         <profile>
             <id>openshift</id>
             <properties>
-                <config>openshift</config>
+                <config>tomass</config>
             </properties>
-        </profile>    
-    
-    
+        </profile>
+
+
         <profile>
             <id>itest-local</id>
 
             <properties>
                 <local.db.driver>com.mysql.jdbc.Driver</local.db.driver>
-                <local.db.databaseName>tournamentsystem</local.db.databaseName>
+                <local.db.databaseName>tablehockeyTest</local.db.databaseName>
                 <local.db.url>jdbc:mysql://localhost/${local.db.databaseName}?characterEncoding=UTF-8</local.db.url>
                 <local.db.user>root</local.db.user>
                 <local.db.password>root</local.db.password>

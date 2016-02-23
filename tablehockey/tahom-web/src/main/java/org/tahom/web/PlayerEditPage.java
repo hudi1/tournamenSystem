@@ -7,11 +7,13 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.convert.IConverter;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.User;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentBackResourceButton;
 import org.tahom.web.components.TournamentResourceButton;
+import org.tahom.web.converter.SurnameConverter;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerEditPage extends TournamentHomePage {
@@ -68,11 +70,6 @@ public class PlayerEditPage extends TournamentHomePage {
 
 				@Override
 				public void submit() {
-					if (player.getSurname().contains(" ")) {
-						player.setPlayerDiscriminator(player.getSurname().split(" ")[1].substring(0,
-						        Math.min(player.getSurname().split(" ")[1].length(), 3)));
-						player.setSurname(player.getSurname().split(" ")[0]);
-					}
 					if (player.getId() != null) {
 						playerService.updatePlayer(player);
 					} else {
@@ -89,7 +86,16 @@ public class PlayerEditPage extends TournamentHomePage {
 			add(new ResourceLabel("nameLabel"));
 			add(new RequiredTextField<String>("name"));
 			add(new ResourceLabel("surnameLabel"));
-			add(new RequiredTextField<String>("surname"));
+			add(new RequiredTextField<String>("surname") {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				@SuppressWarnings("unchecked")
+				public final <Surname> IConverter<Surname> getConverter(Class<Surname> type) {
+					return (IConverter<Surname>) SurnameConverter.getInstance();
+				}
+			});
 			add(new ResourceLabel("clubLabel"));
 			add(new TextField<String>("club"));
 			add(new ResourceLabel("worldRankingLabel"));

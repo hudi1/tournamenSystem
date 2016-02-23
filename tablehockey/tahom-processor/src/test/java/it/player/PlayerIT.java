@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.tahom.processor.service.player.PlayerService;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.StatisticForm;
+import org.tahom.repository.model.Surname;
 import org.tahom.repository.model.Tournament;
 import org.tahom.repository.model.User;
 
@@ -38,9 +39,9 @@ public class PlayerIT {
 	@Test
 	@Verify("createPlayerTest-verify.xml")
 	public void createPlayerTest() {
-		Player player = playerService
-		        .createPlayer(user, new Player()._setClub("club")._setName("name")._setSurname("surname")
-		                ._setWorldRanking(1)._setIthfId(1));
+		Player player = playerService.createPlayer(user,
+		        new Player()._setClub("club")._setName("name")._setSurname(new Surname("surname"))._setWorldRanking(1)
+		                ._setIthfId(1));
 		Assert.assertNotNull(player.getId());
 	}
 
@@ -48,7 +49,7 @@ public class PlayerIT {
 	@Verify("getUserPlayersTest-verify.xml")
 	public void createExistingPlayerTest() {
 		Player player = playerService.createPlayer(user, new Player()._setClub("adminClub")._setName("adminName")
-		        ._setSurname("adminSurname"));
+		        ._setSurname(new Surname("adminSurname")));
 		Assert.assertEquals((Integer) 1, player.getId());
 	}
 
@@ -56,7 +57,7 @@ public class PlayerIT {
 	@Verify("updatePlayerTest-verify.xml")
 	public void updatePlayerTest() {
 		Player player = playerService.getUserPlayers(user).get(0);
-		int count = playerService.updatePlayer(player._setName("nameEdit")._setSurname("surnameEdit")
+		int count = playerService.updatePlayer(player._setName("nameEdit")._setSurname(new Surname("surnameEdit"))
 		        ._setClub("clubEdit")._setWorldRanking(1)._setIthfId(1));
 		Assert.assertNotSame(0, count);
 	}

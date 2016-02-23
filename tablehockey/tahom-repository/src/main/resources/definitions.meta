@@ -1,5 +1,3 @@
-import org.tahom.repository.model.Surname
-
 resolve-pojo-on;
 database-is-online;
 generate-from-to;

@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS `wch_qualification`;
 DROP TABLE IF EXISTS `wch_tournament`;
 SET FOREIGN_KEY_CHECKS=1;
 
-----------------------------------------------------------
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `final_standing`
@@ -86,7 +86,8 @@ CREATE TABLE IF NOT EXISTS `participant` (
   `EQUAL_RANK` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `PLAYER_ID` (`PLAYER_ID`),
-  KEY `GROUP_ID` (`GROUP_ID`)
+  KEY `GROUP_ID` (`GROUP_ID`),
+  KEY `RANK` (`RANK`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
@@ -100,12 +101,11 @@ CREATE TABLE IF NOT EXISTS `player` (
   `NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `SURNAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `CLUB` varchar(255) DEFAULT NULL,
-  `PLAYER_DISCRIMINATOR` varchar(3) NOT NULL DEFAULT '',
   `WORLD_RANKING` int(11) DEFAULT NULL,
   `USER_ID` int(11) NOT NULL,
   `ITHF_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `NAME` (`NAME`,`SURNAME`,`PLAYER_DISCRIMINATOR`),
+  UNIQUE KEY `NAME` (`NAME`,`SURNAME`,`USER_ID`),
   KEY `USER_ID` (`USER_ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `tournament` (
   `PLAY_OFF_LOWER` int(4) NOT NULL DEFAULT '8',
   `MIN_PLAYERS_IN_GROUP` int(11) NOT NULL DEFAULT '4',
   `SORT_TYPE` enum('SK','CZ') NOT NULL DEFAULT 'SK',
-  `PUBLIC` tinyint(1) NOT NULL DEFAULT '0',
+  `OPEN` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`),
   KEY `SEASON_ID` (`SEASON_ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
@@ -180,7 +180,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `USER_NAME` varchar(255) NOT NULL,
   `PASSWORD` varchar(255) NOT NULL,
   `ROLE` enum('ADMIN','USER') NOT NULL DEFAULT 'USER',
-  `PLATNOST` int(11) NOT NULL DEFAULT '0',
+  `VALIDITY` int(11) NOT NULL DEFAULT '0',
+  `OPEN` tinyint(1) NOT NULL DEFAULT '0',  
   PRIMARY KEY (`ID`),
   UNIQUE KEY `USER_NAME` (`USER_NAME`),
   UNIQUE KEY `EMAIL` (`EMAIL`)

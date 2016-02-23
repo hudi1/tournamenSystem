@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../dataset.xsd">
 
-    <user email="adminEmail" id="1" name="@null" password="password" platnost="1" role="ADMIN" surname="admin"
+    <user email="adminEmail" id="1" name="@null" password="password" validity="1" role="ADMIN" surname="admin"
         user_name="admin" />
 
     <season id="1" name="adminSeason" user_id="1" />
 
     <tournament id="1" name="tournament" final_promoting="2" lower_promoting="2" min_players_in_group="1"
-        play_off_final="8" play_off_lower="9" publish="1" season_id="1" sort_type="CZ" win_points="10" />
+        play_off_final="8" play_off_lower="9" open="1" season_id="1" sort_type="CZ" win_points="10" />
     <tournament id="2" name="tournament2" final_promoting="2" lower_promoting="2" min_players_in_group="1"
-        play_off_final="8" play_off_lower="9" publish="1" season_id="1" sort_type="CZ" win_points="10" />
+        play_off_final="8" play_off_lower="9" open="1" season_id="1" sort_type="CZ" win_points="10" />
 
     <groups id="1" copy_result="true" index_of_first_hockey="1" name="1" number_of_hockey="1" play_off_type="F"
         play_off="true" play_third_place="true" tournament_id="1" type="B" />
@@ -72,7 +72,7 @@
     <game id="@any" away_participant_id="3" home_participant_id="4" result="0:1" />
     <game id="@any" away_participant_id="4" home_participant_id="3" result="1:0" />
 
-    <play_off_game id="1" home_participant_id="@null" away_participant_id="@null" group_id="4" position="1"
+    <play_off_game id="1" home_participant_id="15" away_participant_id="16" group_id="4" position="1"
         result="1:0, 1:2, 4:1" status="WIN" />
     <play_off_game id="2" home_participant_id="15" away_participant_id="16" group_id="4" position="2"
         result="1:0" status="WIN" />

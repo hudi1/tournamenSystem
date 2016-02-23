@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.tahom.processor.service.playOffGame.PlayOffGameModel;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
+import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.Participant;
@@ -72,8 +73,10 @@ public class PlayOffGameIT {
 	@Test
 	@Verify("updatePlayOffGameResultTest-verify.xml")
 	public void updatePlayOffGameResultTest() {
-		int count = playOffGameService.updatePlayOffGameResult(new PlayOffGame()._setId(1)._setResult(
-		        new Results("1:0,1:2,4:1")));
+		PlayOffGameDto dto = new PlayOffGameDto();
+		dto.setGameId(1);
+		dto.setResult(new Results("1:0,1:2,4:1"));
+		int count = playOffGameService.updatePlayOffGameResult(dto);
 		Assert.assertNotSame(0, count);
 	}
 
@@ -89,6 +92,21 @@ public class PlayOffGameIT {
 	public void updateNextRoundPlayOffGamesTest() {
 		playOffGameService.updateNextRoundPlayOffGames(new Tournament()._setId(1)._setPlayOffFinal(8)
 		        ._setLowerPromoting(2)._setFinalPromoting(1));
+	}
+
+	@Test
+	@Verify("getPlayOffGamesByGroupTest-verify.xml")
+	public void getPlayOffGamesByGroupTest() {
+		List<PlayOffGameDto> playOffGames = playOffGameService.getPlayOffGamesByGroup(new Groups()._setId(4),
+		        new Tournament()._setPlayOffFinal(16)._setPlayOffLower(8));
+		Assert.assertSame(8, playOffGames.size());
+	}
+
+	@Test
+	@Verify("getFullPlayOffGamesTest-verify.xml")
+	public void getFullPlayOffGamesTest() {
+		List<PlayOffGame> playOffGames = playOffGameService.getFullPlayOffGames(new Groups()._setId(4));
+		Assert.assertSame(8, playOffGames.size());
 	}
 
 }

@@ -43,6 +43,7 @@
             <list>
                 <bean class="org.tahom.repository.type.ScoreType"></bean>
                 <bean class="org.tahom.repository.type.ResultType"></bean>
+                <bean class="org.tahom.repository.type.SurnameType"></bean>
             </list>
         </property>
         <property name="filter" value="MYSQL" />

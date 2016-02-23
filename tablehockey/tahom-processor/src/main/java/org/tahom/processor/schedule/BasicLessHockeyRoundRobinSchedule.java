@@ -24,9 +24,6 @@ public class BasicLessHockeyRoundRobinSchedule extends RoundRobinSchedule {
 	public BasicLessHockeyRoundRobinSchedule(Groups group, List<Participant> participants) {
 		super(group);
 
-		if (participants.size() < 2) {
-			throw new IllegalArgumentException("Unable to create schedule");
-		}
 		this.evenRoundParticipants = new ArrayList<Participant>(participants);
 		if (this.evenRoundParticipants.size() % 2 == 1) {
 			this.evenRoundParticipants.add(new Participant()._setTemp(true));
@@ -133,10 +130,10 @@ public class BasicLessHockeyRoundRobinSchedule extends RoundRobinSchedule {
 
 		List<GameDto> games = scheduleByRound.get(round);
 		for (GameDto scheduleGameImpl : games) {
-			if (game.getAwayParticipandId().equals(scheduleGameImpl.getAwayParticipandId())
-			        || game.getAwayParticipandId().equals(scheduleGameImpl.getHomeParticipantId())
+			if (game.getAwayParticipantId().equals(scheduleGameImpl.getAwayParticipantId())
+			        || game.getAwayParticipantId().equals(scheduleGameImpl.getHomeParticipantId())
 			        || game.getHomeParticipantId().equals(scheduleGameImpl.getHomeParticipantId())
-			        || game.getHomeParticipantId().equals(scheduleGameImpl.getAwayParticipandId())) {
+			        || game.getHomeParticipantId().equals(scheduleGameImpl.getAwayParticipantId())) {
 				return true;
 			}
 		}

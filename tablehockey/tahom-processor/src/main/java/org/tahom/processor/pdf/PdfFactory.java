@@ -73,7 +73,7 @@ public class PdfFactory {
 			for (Participant participant : players) {
 				// TODO index miesto inicialok
 				pdfTable.addCell(createCenterAlignBorderCell(participant.getPlayer().getName().charAt(0) + "."
-				        + participant.getPlayer().getSurname().charAt(0) + "."));
+				        + participant.getPlayer().getSurname().toString().charAt(0) + "."));
 			}
 			pdfTable.addCell(createCenterAlignBorderCell("score"));
 			pdfTable.addCell(createCenterAlignBorderCell("points"));
@@ -81,8 +81,7 @@ public class PdfFactory {
 
 			for (Participant participant1 : players) {
 				pdfTable.addCell(createCenterAlignBorderCell(participant1.getPlayer().getName().charAt(0) + "."
-				        + participant1.getPlayer().getSurname() + " "
-				        + participant1.getPlayer().getPlayerDiscriminator()));
+				        + participant1.getPlayer().getSurname()));
 
 				for (Participant participant2 : players) {
 					if (participant1.equals(participant2)) {
@@ -279,11 +278,11 @@ public class PdfFactory {
 					if (wholeSheets.get(game.getHomeParticipantId()) == null) {
 						wholeSheets.put(game.getHomeParticipantId(), new ArrayList<GameDto>());
 					}
-					if (wholeSheets.get(game.getAwayParticipandId()) == null) {
-						wholeSheets.put(game.getAwayParticipandId(), new ArrayList<GameDto>());
+					if (wholeSheets.get(game.getAwayParticipantId()) == null) {
+						wholeSheets.put(game.getAwayParticipantId(), new ArrayList<GameDto>());
 					}
 
-					wholeSheets.get(game.getAwayParticipandId()).add(game);
+					wholeSheets.get(game.getAwayParticipantId()).add(game);
 					wholeSheets.get(game.getHomeParticipantId()).add(game);
 				}
 
@@ -481,11 +480,9 @@ public class PdfFactory {
 
 					if (playOffGame.getHomeParticipant() != null && playOffGame.getAwayParticipant() != null) {
 						String playersGame = playOffGame.getHomeParticipant().getPlayer().getName().charAt(0) + "."
-						        + playOffGame.getHomeParticipant().getPlayer().getSurname() + " "
-						        + playOffGame.getHomeParticipant().getPlayer().getPlayerDiscriminator() + " : "
+						        + playOffGame.getHomeParticipant().getPlayer().getSurname() + " : "
 						        + playOffGame.getAwayParticipant().getPlayer().getName().charAt(0) + "."
-						        + playOffGame.getAwayParticipant().getPlayer().getSurname() + " "
-						        + playOffGame.getAwayParticipant().getPlayer().getPlayerDiscriminator();
+						        + playOffGame.getAwayParticipant().getPlayer().getSurname() + " ";
 
 						pdfTable.addCell(createLeftAlignCell(playersGame));
 
@@ -541,9 +538,9 @@ public class PdfFactory {
 					continue;
 				}
 				pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getSurname() != null) ? finalStanding
-				        .getPlayer().getSurname() + " " + finalStanding.getPlayer().getPlayerDiscriminator() : ""));
+				        .getPlayer().getSurname().toString() : ""));
 				pdfTable.addCell(createLeftAlignCell((finalStanding.getPlayer().getName() != null) ? finalStanding
-				        .getPlayer().getName() : " " + finalStanding.getPlayer().getPlayerDiscriminator()));
+				        .getPlayer().getName() : " "));
 			}
 
 			document.add(pdfTable);

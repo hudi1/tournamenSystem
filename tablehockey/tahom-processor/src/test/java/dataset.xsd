@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:dflt="tournamentsystem">
-	<xsd:import namespace="tournamentsystem" schemaLocation="tournamentsystem.xsd" />
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:dflt="tablehockeytest">
+	<xsd:import namespace="tablehockeytest" schemaLocation="tablehockeytest.xsd" />
 	<xsd:element name="dataset">
 		<xsd:complexType>
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -15,7 +15,7 @@
 				<xsd:element name="user" type="dflt:user__type" />
 				<xsd:element name="wch_qualification" type="dflt:wch_qualification__type" />
 				<xsd:element name="wch_tournament" type="dflt:wch_tournament__type" />
-				<xsd:any namespace="tournamentsystem" />
+				<xsd:any namespace="tablehockeytest" />
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>

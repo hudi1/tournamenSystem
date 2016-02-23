@@ -137,18 +137,16 @@ package org.tahom.repository.model {
         #Attr java.util.List <Integer> ids
     }
 
-    #Operators #Serializable(1) #Equals(id) #ToString(id,name,surname,club,playerDiscriminator,worldRanking,ithfId)
+    #Operators #Serializable(1) #Equals(id) #ToString(id,name,surname,club,worldRanking,ithfId)
     final #Pojo Player {
         #PrimaryKey() #Index
         #Attr Integer id
         #Required
         #Attr String name
         #Required
-        #Attr String surname
+        #Attr org.tahom.repository.model.Surname surname
         #IsDef
         #Attr String club
-        #Required
-        #Attr String playerDiscriminator
         #IsDef
         #Attr Integer worldRanking
         #ToInit #Required #Index

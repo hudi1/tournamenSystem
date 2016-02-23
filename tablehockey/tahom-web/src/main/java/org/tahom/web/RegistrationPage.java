@@ -127,8 +127,7 @@ public class RegistrationPage extends TournamentHomePage {
 
 				        @Override
 				        protected String getTextValue(Player player) {
-					        return (player.getName() + " " + player.getSurname() + " " + player
-					                .getPlayerDiscriminator()).trim();
+					        return (player.getName() + " " + player.getSurname()).trim();
 				        }
 
 			        }, getCustomSettings(), notRegistratedPlayers) {
@@ -137,13 +136,12 @@ public class RegistrationPage extends TournamentHomePage {
 
 				@Override
 				protected boolean add(String prefix, Player player) {
-					return player.getSurname().toLowerCase().startsWith(prefix.toLowerCase());
+					return player.getSurname().toString().toLowerCase().startsWith(prefix.toLowerCase().toString());
 				}
 
 				@Override
 				protected String objectToString(Player player) {
-					return (player.getName() + " " + player.getSurname() + " " + player.getPlayerDiscriminator())
-					        .trim();
+					return (player.getName() + " " + player.getSurname()).trim();
 				}
 
 			};
@@ -194,8 +192,7 @@ public class RegistrationPage extends TournamentHomePage {
 					final Participant participant = listItem.getModelObject();
 					listItem.add(new Label("number", listItem.getIndex() + 1 + "."));
 					listItem.add(new Label("name", participant.getPlayer().getName()));
-					listItem.add(new Label("surname", participant.getPlayer().getSurname() + " "
-					        + participant.getPlayer().getPlayerDiscriminator()));
+					listItem.add(new Label("surname", participant.getPlayer().getSurname().toString()));
 					listItem.add(new Label("group", (participant.getGroup() != null) ? participant.getGroup().getName()
 					        : ""));
 					listItem.add(new TournamentAjaxLink("deleteParticipant", getString("deleteParticipantQuestion")) {

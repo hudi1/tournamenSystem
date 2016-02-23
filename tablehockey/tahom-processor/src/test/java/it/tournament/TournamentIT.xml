@@ -2,10 +2,10 @@
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../dataset.xsd">
 
 
-	<user email="adminEmail" id="1" name="@null" password="password" platnost="1" role="ADMIN" surname="admin" user_name="admin"/>
+	<user email="adminEmail" id="1" name="@null" password="password" validity="1" role="ADMIN" surname="admin" user_name="admin"/>
 	
 	<season id="1" name="adminSeason" user_id="1"/>
 	
-	<tournament id="1" name="adminTournament" final_promoting="1" lower_promoting="1" min_players_in_group="1" play_off_final="1" play_off_lower="1"  publish="1" season_id="1" sort_type="SK" win_points="1" />
+	<tournament id="1" name="adminTournament" final_promoting="1" lower_promoting="1" min_players_in_group="1" play_off_final="1" play_off_lower="1"  open="1" season_id="1" sort_type="SK" win_points="1" />
 
 </dataset>

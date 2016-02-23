@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../dataset.xsd">
 
-	<user email="emailEdit" id="@any" name="nameEdit" password="passEdit" platnost="0" role="USER" surname="surnameEdit" user_name="usernameEdit"/>
+	<user email="emailEdit" id="@any" name="nameEdit" password="passEdit" validity="0" role="USER" surname="surnameEdit" user_name="usernameEdit"/>
 
 </dataset>

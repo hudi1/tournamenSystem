@@ -1,5 +1,5 @@
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,table,tr,th,td,embed,object
-	{
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form,
+	fieldset, input, p, blockquote, table, tr, th, td, embed, object {
 	margin: 0;
 	padding: 0;
 }
@@ -7,13 +7,14 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquot
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+	font-size: 12px;
 }
 
-fieldset,img,abbr {
+fieldset, img, abbr {
 	border: 0;
 }
 
-a,a:link,a:visited {
+a, a:link, a:visited {
 	text-decoration: none;
 }
 
@@ -66,7 +67,7 @@ em {
 
 body {
 	background: #F5F5F5 url("../img/bg.png") repeat-x;
-	font: arial, verdana, serif;
+	font-family: Verdana, Tahoma, Arial;
 }
 
 .main {
@@ -120,7 +121,7 @@ body {
 	display: inline;
 }
 
-.menu li a,.menu li a:link,.menu li a:visited {
+.menu li a, .menu li a:link, .menu li a:visited {
 	height: 30px;
 	color: #2e577a;
 	float: left;
@@ -128,8 +129,8 @@ body {
 	font-weight: bold;
 }
 
-.menu li:hover a,.menu li:hover a:link,.menu li:hover a:visited,.menu li.active a,.menu li.active a:link,.menu li.active a:visited
-	{
+.menu li:hover a, .menu li:hover a:link, .menu li:hover a:visited, .menu li.active a,
+	.menu li.active a:link, .menu li.active a:visited {
 	background: url(../img/menu_hover.png) repeat-x;
 	color: #fff;
 	text-decoration: none;
@@ -439,7 +440,7 @@ input.spinner {
 	width: 10px;
 }
 
-input.activeTournamentButton,input.activeTournamentButton:active {
+input.activeTournamentButton, input.activeTournamentButton:active {
 	background: #0e3f6c;
 	border: 1px solid #064673;
 	margin: 7px 5px 3px 0px;
@@ -466,7 +467,7 @@ input.activeTournamentButton,input.activeTournamentButton:active {
 	background-position: 0 -33px;
 }
 
-a.tournamentLink,a.tournamentLink:focus {
+a.tournamentLink, a.tournamentLink:focus {
 	background: url(../img/link_servicemore.png) repeat-x;
 	border: 1px solid #064673;
 	margin: 5px;
@@ -548,4 +549,150 @@ div.allPlayers ul li.selected {
 .overview a {
 	text-decoration: underline;
 	color: #00F;
+}
+
+.results {
+	overflow: auto;
+}
+
+table.resultTable {
+	margin: 0px auto;
+	margin-bottom: 25px;
+	width: 95%;
+}
+
+table.resultTable  th {
+	border: 1px solid #46C;
+	padding: 5px 10px;
+	background-color: #CCDDFF;
+	color: #224;
+	font-size: 13px;
+	text-align: center;
+	font-weight: bold;
+}
+
+table.resultTable  td {
+	padding: 3px 5px;
+	color: #000;
+	font-size: 12px;
+	border: 1px solid #46C;
+	text-align: center;
+	white-space: nowrap;
+}
+
+table.resultTable tr.even {
+	background-color: #d2eaf2;
+}
+
+div.groupsTableSubHeader {
+	margin: 10px 0px;
+	color: #FFF;
+	background: #77F none repeat scroll 0% 0%;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 4px 4px 4px 20px;
+}
+
+table.finalStandingTable {
+	padding: 3px 5px;
+	color: #000;
+	font-size: 12px;
+	text-align: left;
+	border: 1px solid #46C;
+	width: 650px;
+	margin: 0px auto 25px;
+}
+
+table.finalStandingTable .finalStandingTableRank {
+	padding: 3px 5px;
+	width: 20px;
+	text-align: center;
+}
+
+table.finalStandingTable  th {
+	border: 1px solid #46C;
+	padding: 5px 10px;
+	background-color: #CCDDFF;
+	color: #224;
+	font-size: 13px;
+	text-align: center;
+	font-weight: bold;
+}
+
+table.finalStandingTable  td {
+	padding: 3px 5px;
+	color: #000;
+	font-size: 12px;
+	text-align: left;
+	border: 1px solid #46C;
+}
+
+table.finalStandingTable .finalStandingTableRight {
+	text-align: right;
+	border-right: medium none;
+}
+
+table.finalStandingTable .finalStandingTableLeft {
+	text-align: left;
+	border-left: medium none;
+}
+
+table.playOffTable {
+	padding: 3px 5px;
+	color: #000;
+	font-size: 12px;
+	text-align: left;
+	border: 1px solid #46C;
+	width: 95%;
+}
+
+table.playOffTable  th {
+	border: 1px solid #46C;
+	padding: 5px 10px;
+	background-color: #CCDDFF;
+	color: #224;
+	font-size: 13px;
+	text-align: center;
+	font-weight: bold;
+}
+
+table.playOffTable  td {
+	padding: 3px 5px;
+	color: #000;
+	font-size: 12px;
+	text-align: left;
+	border: 1px solid #46C;
+}
+
+table.playOffTable .playOffTableRight {
+	text-align: right;
+	border-right: medium none;
+}
+
+table.playOffTable .playOffTableLeft {
+	text-align: left;
+	border-left: medium none;
+}
+
+table.playOffTable .playOffTableSep {
+	text-align: center;
+	width: 6px;
+	padding-left: 0px;
+	padding-right: 0px;
+	border-left: medium none;
+	border-right: medium none;
+}
+
+table.playOffTable .playOffTableResult {
+	width: 45px;
+	text-align: center;
+	padding: 6px 0px 7px;
+	background-color: #EEF;
+}
+
+table.playOffTable .playOffTableResultNo {
+	width: 45px;
+	text-align: center;
+	padding: 6px 0px 7px;
+	vertical-align: top;
 }

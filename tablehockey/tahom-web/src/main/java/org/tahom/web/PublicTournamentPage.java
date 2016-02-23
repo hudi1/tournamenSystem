@@ -126,7 +126,7 @@ public class PublicTournamentPage extends BasePage {
 					List<? extends Season> _choices = choices.getObject();
 					for (int index = 0; index < _choices.size(); index++) {
 						final Season choice = _choices.get(index);
-						if (getIdValue(choice, index).equals(id)) {
+						if (getIdValue(choice, index) != null && getIdValue(choice, index).equals(id)) {
 							return choice;
 						}
 					}
