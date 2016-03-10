@@ -298,8 +298,8 @@ form input[type="checkbox"] {
 	color: #ff0000;
 }
 
-.feedbackPanelWARNING {
-	color: #ff5e00;
+input.errorField {
+	border: 1px solid #ff5e00;
 }
 
 table.dataview {
@@ -355,6 +355,17 @@ table.groupTable tr.odd {
 
 table.groupTable tr.even {
 	background-color: #d2eaf2;
+}
+
+.groupButtonsMenu ul {
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+	list-style-type: none;
+}
+
+.groupButtonsMenu li {
+	float: left;
 }
 
 table.playersTable {

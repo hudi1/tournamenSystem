@@ -29,7 +29,6 @@ public abstract class PropertyPageableListView<T> extends PropertyListView<T> im
 	public PropertyPageableListView(final String id, int itemsPerPage) {
 		super(id);
 		setItemsPerPage(itemsPerPage);
-		setReuseItems(true);
 	}
 
 	/**

@@ -179,7 +179,7 @@ public class TournamentPage extends BasePage {
 					}
 					return null;
 				}
-			}).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+			}).add(new AjaxFormComponentUpdatingBehavior("change") {
 
 				private static final long serialVersionUID = 1L;
 

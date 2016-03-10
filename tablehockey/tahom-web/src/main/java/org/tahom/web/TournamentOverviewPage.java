@@ -1,8 +1,6 @@
 package org.tahom.web;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -17,27 +15,29 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.tahom.processor.service.finalStanding.dto.FinalStandingDto;
+import org.tahom.processor.service.finalStanding.dto.FinalStandingPageDto;
+import org.tahom.processor.service.game.dto.GameDto;
+import org.tahom.processor.service.group.dto.GroupPageOverviewDto;
+import org.tahom.processor.service.group.dto.GroupsOverviewDto;
+import org.tahom.processor.service.participant.dto.ParticipantDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
-import org.tahom.repository.model.FinalStanding;
-import org.tahom.repository.model.Game;
+import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
+import org.tahom.processor.service.playOffGame.dto.PlayOffPageDto;
 import org.tahom.repository.model.GameStatus;
-import org.tahom.repository.model.Groups;
-import org.tahom.repository.model.Participant;
-import org.tahom.repository.model.PlayOffGame;
 import org.tahom.repository.model.Result;
-import org.tahom.repository.model.Tournament;
+import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.link.TournamentLink;
 import org.tahom.web.model.EvenOddReplaceModel;
 import org.tahom.web.model.FontStyleReplaceModel;
-import org.tahom.web.util.WebUtil;
 
-public class TournamentOverviewPage extends BasePage {
+public class TournamentOverviewPage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
-	private List<FinalStanding> finalStandings;
-	private Tournament tournament;
-	private List<Groups> finalGroups;
-	private List<Groups> groups;
+	private FinalStandingPageDto finalStandingPageDto;
+	private GroupPageOverviewDto groupPageDto;
+	private PlayOffPageDto playOffPageDto;
+
 	private boolean isPlayOffOn = false;
 	private boolean isGroupOn = false;
 	private boolean isFinalStandingOn = false;
@@ -50,6 +50,7 @@ public class TournamentOverviewPage extends BasePage {
 	}
 
 	public TournamentOverviewPage(PageParameters parameters) {
+		super(parameters);
 		prepareData(parameters);
 		initFormVisibility(parameters);
 		createPage();
@@ -63,10 +64,9 @@ public class TournamentOverviewPage extends BasePage {
 	}
 
 	private void prepareData(PageParameters parameters) {
-		tournament = getTournament(parameters, true);
-		groups = getGroups();
-		finalGroups = getFinalGroups();
-		finalStandings = finalStandingService.getFinalStandings(tournament);
+		groupPageDto = groupService.getGroupPageOverviewDto(tournament);
+		playOffPageDto = playOffGameService.getPlayOffPageDto(tournament);
+		finalStandingPageDto = finalStandingService.getFinalStandingPageDto(tournament);
 	}
 
 	private void initFormVisibility(PageParameters parameters) {
@@ -75,28 +75,6 @@ public class TournamentOverviewPage extends BasePage {
 			this.isGroupOn = (parameters.get(SHOW_TOURNAMENT_OVERVIEW_PAGE_OPTIONS).toInt() & 2L) != 0L;
 			this.isPlayOffOn = (parameters.get(SHOW_TOURNAMENT_OVERVIEW_PAGE_OPTIONS).toInt() & 4L) != 0L;
 		}
-	}
-
-	private List<Groups> getFinalGroups() {
-		List<Groups> finalGroups = groupService.getFinalGroups(tournament);
-		for (Groups group : finalGroups) {
-			group.getPlayOffGames().addAll(playOffGameService.getPlayOffGames(new PlayOffGame()._setGroup(group)));
-		}
-		return finalGroups;
-	}
-
-	private List<Participant> getParticipants(Groups group) {
-		List<Participant> participants;
-		if (group != null) {
-			participants = participantService.getParticipandByGroup(group);
-		} else {
-			participants = new ArrayList<Participant>();
-		}
-		return participants;
-	}
-
-	private List<Groups> getGroups() {
-		return groupService.getGroups(new Groups()._setTournament(tournament));
 	}
 
 	private void addLinks() {
@@ -116,7 +94,7 @@ public class TournamentOverviewPage extends BasePage {
 				setResponsePage(TournamentOverviewPage.class, pageParameters);
 			}
 		};
-		Label linkLabel = new Label("finalStandingsOverview", new ResourceModel("finalStandingsOverview"));
+		Label linkLabel = new ResourceLabel("finalStandingsOverview");
 		linkLabel.setRenderBodyOnly(true);
 		link.add(linkLabel);
 		add(link);
@@ -133,7 +111,7 @@ public class TournamentOverviewPage extends BasePage {
 				setResponsePage(TournamentOverviewPage.class, pageParameters);
 			}
 		};
-		Label linkLabel = new Label("groupsOverview", new ResourceModel("groupsOverview"));
+		Label linkLabel = new ResourceLabel("groupsOverview");
 		linkLabel.setRenderBodyOnly(true);
 		link.add(linkLabel);
 		add(link);
@@ -150,18 +128,18 @@ public class TournamentOverviewPage extends BasePage {
 				setResponsePage(TournamentOverviewPage.class, pageParameters);
 			}
 		};
-		Label linkLabel = new Label("playOffOverview", new ResourceModel("playOffOverview"));
+		Label linkLabel = new ResourceLabel("playOffOverview");
 		linkLabel.setRenderBodyOnly(true);
 		link.add(linkLabel);
 		add(link);
 	}
 
-	private class PlayOffForm extends Form<Tournament> {
+	private class PlayOffForm extends Form<PlayOffPageDto> {
 
 		private static final long serialVersionUID = 1L;
 
 		public PlayOffForm() {
-			super("playOffForm");
+			super("playOffForm", new CompoundPropertyModel<PlayOffPageDto>(playOffPageDto));
 			addPlayOffTable();
 			setVisible(isPlayOffOn);
 		}
@@ -171,21 +149,20 @@ public class TournamentOverviewPage extends BasePage {
 		}
 
 		private void addFinalGroupsGameListView() {
-			add(new PropertyListView<Groups>("groups", finalGroups) {
+			add(new PropertyListView<PlayOffGroupDto>("playOffGroups") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected void populateItem(final ListItem<Groups> listItem) {
+				protected void populateItem(final ListItem<PlayOffGroupDto> listItem) {
 					addPlayOffGames(listItem);
 				}
 
-				private void addPlayOffGames(final ListItem<Groups> groupListItem) {
-					final Groups group = groupListItem.getModelObject();
+				private void addPlayOffGames(final ListItem<PlayOffGroupDto> groupListItem) {
 
-					groupListItem.add(new Label("name", group.getName()));
-					groupListItem.add(new Label("round", new ResourceModel("round")));
-					groupListItem.add(new Label("players", new ResourceModel("players")));
+					groupListItem.add(new Label("name"));
+					groupListItem.add(new ResourceLabel("round"));
+					groupListItem.add(new ResourceLabel("players"));
 					groupListItem.add(new PropertyListView<String>("matches", Arrays.asList(new String[MAX_MATCHES])) {
 
 						private static final long serialVersionUID = 1L;
@@ -196,10 +173,9 @@ public class TournamentOverviewPage extends BasePage {
 						}
 
 					});
-
 					groupListItem.add(new Label("score", new ResourceModel("score")));
-					groupListItem.add(new PropertyListView<PlayOffGameDto>("playOffGames", playOffGameService
-					        .getPlayOffGamesByGroup(group, tournament)) {
+
+					groupListItem.add(new PropertyListView<PlayOffGameDto>("playOffGames") {
 
 						private static final long serialVersionUID = 1L;
 
@@ -207,7 +183,7 @@ public class TournamentOverviewPage extends BasePage {
 						protected void populateItem(final ListItem<PlayOffGameDto> listItem) {
 							final PlayOffGameDto game = listItem.getModelObject();
 
-							listItem.add(new Label("player", game.getPlayerName()).add(new AttributeModifier("style",
+							listItem.add(new Label("playerName").add(new AttributeModifier("style",
 							        new FontStyleReplaceModel(game)) {
 								private static final long serialVersionUID = 1L;
 
@@ -217,8 +193,8 @@ public class TournamentOverviewPage extends BasePage {
 								}
 							}));
 
-							listItem.add(new Label("opponent", game.getOpponentName()).add(new AttributeModifier(
-							        "style", new FontStyleReplaceModel(game)) {
+							listItem.add(new Label("opponentName").add(new AttributeModifier("style",
+							        new FontStyleReplaceModel(game)) {
 								private static final long serialVersionUID = 1L;
 
 								@Override
@@ -227,7 +203,7 @@ public class TournamentOverviewPage extends BasePage {
 								}
 							}));
 							listItem.add(new Label("roundName", new ResourceModel(game.getRoundName())));
-							listItem.add(new PropertyListView<Result>("result", game.getResult().getResults()) {
+							listItem.add(new PropertyListView<Result>("results") {
 
 								private static final long serialVersionUID = 1L;
 
@@ -237,9 +213,8 @@ public class TournamentOverviewPage extends BasePage {
 								}
 
 							});
-							listItem.add(new PropertyListView<String>("emptyResult", Arrays
-							        .asList(new String[MAX_MATCHES - game.getResult().getResults().size()])) {
-
+							listItem.add(new PropertyListView<String>("emptyResults", Arrays
+							        .asList(new String[MAX_MATCHES - game.getResults().size()])) {
 								private static final long serialVersionUID = 1L;
 
 								@Override
@@ -248,108 +223,98 @@ public class TournamentOverviewPage extends BasePage {
 								}
 
 							});
-
-							listItem.add(new Label("score", game.getScore()));
+							listItem.add(new Label("score"));
 							listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
 						}
 					});
 				}
 			}.setReuseItems(true));
 		}
+
 	}
 
-	private class GroupForm extends Form<Void> {
+	private class GroupForm extends Form<GroupPageOverviewDto> {
 
 		private static final long serialVersionUID = 1L;
 
 		public GroupForm() {
-			super("groupForm");
-
+			super("groupForm", new CompoundPropertyModel<>(groupPageDto));
 			addGroups();
 			setVisibilityAllowed(isGroupOn);
 		}
 
 		private void addGroups() {
-			add(new PropertyListView<Groups>("groups", groups) {
+			add(new PropertyListView<GroupsOverviewDto>("groups") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected void populateItem(ListItem<Groups> groupsItem) {
-					Groups group = groupsItem.getModelObject();
-					groupsItem.add(new Label("groupName", group.getName()));
-					final List<Participant> participants = getParticipants(group);
+				protected void populateItem(ListItem<GroupsOverviewDto> groupsItem) {
+					groupsItem.add(new Label("groupName"));
+					addGroupTableHeader(groupsItem);
+					addParticipantsGroupListView(groupsItem);
+				}
+			});
+		}
 
-					groupsItem.add(new ListView<Participant>("nameList", participants) {
+		private void addGroupTableHeader(ListItem<GroupsOverviewDto> groupsItem) {
+			addGroupHeaderPlayerIndex(groupsItem);
+			groupsItem.add(new ResourceLabel("name"));
+			groupsItem.add(new ResourceLabel("rank"));
+			groupsItem.add(new ResourceLabel("points"));
+			groupsItem.add(new ResourceLabel("score"));
+		}
+
+		private void addGroupHeaderPlayerIndex(ListItem<GroupsOverviewDto> groupsItem) {
+			groupsItem.add(new PropertyListView<ParticipantDto>("participantsHeader") {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void populateItem(ListItem<ParticipantDto> listItem) {
+					listItem.add(new Label("name", listItem.getIndex() + 1 + ""));
+				}
+			});
+		}
+
+		private void addParticipantsGroupListView(ListItem<GroupsOverviewDto> groupsItem) {
+			groupsItem.add(new PropertyListView<ParticipantDto>("participants") {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void populateItem(final ListItem<ParticipantDto> listItem) {
+					listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
+					listItem.add(new Label("name"));
+					listItem.add(new Label("score"));
+					listItem.add(new Label("points"));
+					listItem.add(new Label("rank"));
+
+					ListView<GameDto> games = new PropertyListView<GameDto>("games") {
 
 						private static final long serialVersionUID = 1L;
 
 						@Override
-						protected void populateItem(ListItem<Participant> gameItem) {
-							gameItem.add(new Label("playerName", gameItem.getIndex() + 1 + ""));
-
+						protected void populateItem(ListItem<GameDto> gameItem) {
+							gameItem.add(new Label("result"));
 						}
-					});
-					groupsItem.add(new Label("name", new ResourceModel("name")));
-					groupsItem.add(new Label("rank", new ResourceModel("rank")));
-					groupsItem.add(new Label("points", new ResourceModel("points")));
-					groupsItem.add(new Label("score", new ResourceModel("score")));
-
-					groupsItem.add(new PropertyListView<Participant>("participants", participants) {
-
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						protected void populateItem(final ListItem<Participant> listItem) {
-							final Participant participant = listItem.getModelObject();
-							listItem.setModel(new CompoundPropertyModel<Participant>(participant));
-							listItem.add(new Label("index", listItem.getIndex() + 1 + ""));
-							listItem.add(new Label("name", WebUtil.getParticipandPlayerShortName(participant)));
-							listItem.add(new Label("score", participant.getScore().toString()));
-							listItem.add(new Label("points", ((Integer) participant.getPoints()).toString()));
-							listItem.add(new Label("rank", (participant.getRank() != null) ? participant.getRank()
-							        .toString() : " "));
-
-							ListView<Participant> scoreList = new ListView<Participant>("gameList", participants) {
-
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								protected void populateItem(ListItem<Participant> gameItem) {
-									final Participant rowParticipant = gameItem.getModelObject();
-
-									if (participant.equals(rowParticipant)) {
-										gameItem.add(new Label("game", "X"));
-									} else {
-										Game game = WebUtil.findParticipantGame(participant, rowParticipant);
-										String result = "";
-
-										if (game != null && game.getResult() != null) {
-											result = game.getResult().toString(" + ");
-										}
-										// TODO AJAX EDITABLE LABEL
-										gameItem.add(new Label("game", result));
-									}
-								}
-							};
-							listItem.add(scoreList);
-							listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
-						}
-					});
+					};
+					listItem.add(games);
+					listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
 				}
 			});
 		}
 	}
 
-	private class FinalStandingsForm extends Form<Void> {
+	private class FinalStandingsForm extends Form<FinalStandingPageDto> {
 
 		private static final long serialVersionUID = 1L;
 
 		public FinalStandingsForm() {
-			super("finalStandingsForm");
+			super("finalStandingsForm", new CompoundPropertyModel<FinalStandingPageDto>(finalStandingPageDto));
 
 			addFinalStandingHeader();
-			addFinalStandingListView();
+			addFinalStandingsTable();
 			setVisible(isFinalStandingOn);
 		}
 
@@ -359,24 +324,21 @@ public class TournamentOverviewPage extends BasePage {
 			add(new Label("club", new ResourceModel("club")));
 		}
 
-		private void addFinalStandingListView() {
-			add(new PropertyListView<FinalStanding>("rows", finalStandings) {
+		private void addFinalStandingsTable() {
+			add(new PropertyListView<FinalStandingDto>("finalStandings") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected void populateItem(final ListItem<FinalStanding> listItem) {
-					final FinalStanding finalStanding = listItem.getModelObject();
-					listItem.setModel(new CompoundPropertyModel<FinalStanding>(finalStanding));
-					listItem.add(new Label("rank", finalStanding.getFinalRank()));
-					listItem.add(new Label("name", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
-					        .getName() + " " + finalStanding.getPlayer().getSurname() : ""));
-					listItem.add(new Label("club", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
-					        .getClub().toString() : ""));
+				protected void populateItem(final ListItem<FinalStandingDto> listItem) {
+					listItem.add(new Label("name"));
+					listItem.add(new Label("rank"));
+					listItem.add(new Label("club"));
 					listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
 				}
-			}.setReuseItems(true));
+			});
 		}
+
 	}
 
 	@Override

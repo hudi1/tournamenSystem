@@ -12,12 +12,13 @@
 		<form class="compareForm" wicket:id="importForm">
 			<fieldset>
 				<div>
-					<input type="url" wicket:id="url" />
+					<input type="url" wicket:id="url" /> <input type="checkbox"
+						wicket:id="ignoreErrors" />
 				</div>
 
 			</fieldset>
 			<p>
-				<input wicket:id="import" class="tournamentButton" type="submit"
+				<input wicket:id="showModalLinkTournament" class="tournamentButton" type="submit"
 					value="Import" />
 			</p>
 		</form>

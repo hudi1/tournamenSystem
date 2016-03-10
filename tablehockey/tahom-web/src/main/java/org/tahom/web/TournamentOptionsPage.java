@@ -9,8 +9,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -28,14 +30,15 @@ import org.tahom.web.components.TournamentResourceButton;
 public class TournamentOptionsPage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
+	private static final List<GroupsType> TYPES = Arrays
+	        .asList(new GroupsType[] { GroupsType.BASIC, GroupsType.FINAL });
+	private static final List<GroupsPlayOffType> GROUP_PLAY_OFF_TYPE = Arrays.asList(new GroupsPlayOffType[] {
+	        GroupsPlayOffType.CROSS, GroupsPlayOffType.FINAL, GroupsPlayOffType.LOWER });
 
 	private Tournament tournament;
 	private Groups group;
 	boolean isTournamentOptionsOn;
 	boolean isTableOptionsOn;
-
-	private final List<GroupsPlayOffType> groupPlayOffType = Arrays.asList(new GroupsPlayOffType[] {
-	        GroupsPlayOffType.CROSS, GroupsPlayOffType.FINAL, GroupsPlayOffType.LOWER });
 
 	public TournamentOptionsPage() {
 		this(new PageParameters());
@@ -96,7 +99,77 @@ public class TournamentOptionsPage extends TournamentHomePage {
 			add(new CheckBox("playThirdPlace").setVisible(visible));
 
 			add(new ResourceLabel("groupsPlayOffTypeLabel").setVisible(visible));
-			add(new DropDownChoice<GroupsPlayOffType>("groupsPlayOffType", groupPlayOffType).setVisible(visible));
+			add(new DropDownChoice<GroupsPlayOffType>("playOffType", GROUP_PLAY_OFF_TYPE,
+			        new IChoiceRenderer<GroupsPlayOffType>() {
+
+				        private static final long serialVersionUID = 1L;
+
+				        @Override
+				        public Object getDisplayValue(GroupsPlayOffType object) {
+					        return getString(object.toString() + "PLAYOFFTYPE");
+				        }
+
+				        @Override
+				        public String getIdValue(GroupsPlayOffType object, int index) {
+					        return index + "";
+				        }
+
+				        @Override
+				        public GroupsPlayOffType getObject(String id,
+				                IModel<? extends List<? extends GroupsPlayOffType>> choices) {
+					        List<? extends GroupsPlayOffType> _choices = choices.getObject();
+					        for (int index = 0; index < _choices.size(); index++) {
+						        final GroupsPlayOffType choice = _choices.get(index);
+						        if (getIdValue(choice, index) != null && getIdValue(choice, index).equals(id)) {
+							        return choice;
+						        }
+					        }
+					        return null;
+				        }
+			        }).setVisible(visible));
+
+			add(new ResourceLabel("groupsTypeLabel"));
+			add(new DropDownChoice<GroupsType>("type", TYPES, new IChoiceRenderer<GroupsType>() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Object getDisplayValue(GroupsType object) {
+					return getString(object.toString() + "TYPE");
+				}
+
+				@Override
+				public String getIdValue(GroupsType object, int index) {
+					return index + "";
+				}
+
+				@Override
+				public GroupsType getObject(String id, IModel<? extends List<? extends GroupsType>> choices) {
+					List<? extends GroupsType> _choices = choices.getObject();
+					for (int index = 0; index < _choices.size(); index++) {
+						final GroupsType choice = _choices.get(index);
+						if (getIdValue(choice, index) != null && getIdValue(choice, index).equals(id)) {
+							return choice;
+						}
+					}
+					return null;
+				}
+			}));
+			/*
+			 * add(new RadioChoice<GroupsType>("type", TYPES, new IChoiceRenderer<GroupsType>() {
+			 * 
+			 * private static final long serialVersionUID = 1L;
+			 * 
+			 * @Override public Object getDisplayValue(GroupsType object) { return getString(object.toString() +
+			 * "GROUP"); }
+			 * 
+			 * @Override public String getIdValue(GroupsType object, int index) { return index + ""; }
+			 * 
+			 * @Override public GroupsType getObject(String id, IModel<? extends List<? extends GroupsType>> choices) {
+			 * List<? extends GroupsType> _choices = choices.getObject(); for (int index = 0; index < _choices.size();
+			 * index++) { final GroupsType choice = _choices.get(index); if (getIdValue(choice, index) != null &&
+			 * getIdValue(choice, index).equals(id)) { return choice; } } return null; } }));
+			 */
 		}
 
 		private void addLegendLabel() {

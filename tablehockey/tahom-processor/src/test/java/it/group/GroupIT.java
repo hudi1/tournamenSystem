@@ -135,8 +135,9 @@ public class GroupIT {
 	@Test
 	@Verify("copyResultTest-verify.xml")
 	public void copyResultTest() {
-		groupService.copyResult(tournament._setFinalPromoting(2)._setLowerPromoting(2)._setMinPlayersInGroup(1)
-		        ._setPlayOffFinal(2)._setPlayOffLower(2));
+		groupService.processFinalGroup(tournament._setFinalPromoting(2)._setLowerPromoting(2)._setMinPlayersInGroup(1)
+		        ._setPlayOffFinal(2)._setPlayOffLower(2)._setWinPoints(2));
+		groupService.copyResult(tournament);
 	}
 
 }

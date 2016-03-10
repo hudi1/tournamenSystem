@@ -31,6 +31,7 @@ import org.apache.wicket.request.resource.SharedResourceReference;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Player;
+import org.tahom.web.behavior.CloseOnESCBehavior;
 import org.tahom.web.components.ModelAutoCompleteTextField;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentAjaxButton;
@@ -86,6 +87,7 @@ public class RegistrationPage extends TournamentHomePage {
 
 			addShowPlayersButton();
 			add(importModalWindow = createModalWindow());
+			add(new CloseOnESCBehavior(importModalWindow));
 			addModalButton(importModalWindow);
 			addAutoCompletePlayers();
 			addTournamentparticipantListView();
@@ -146,7 +148,7 @@ public class RegistrationPage extends TournamentHomePage {
 
 			};
 
-			playersTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+			playersTextField.add(new AjaxFormComponentUpdatingBehavior("change") {
 
 				private static final long serialVersionUID = 1L;
 				private Component component;
@@ -155,7 +157,6 @@ public class RegistrationPage extends TournamentHomePage {
 				protected void onUpdate(AjaxRequestTarget target) {
 					target.appendJavaScript(("document.getElementById('" + component.getMarkupId() + "').blur();"
 					        + "document.getElementById('" + component.getMarkupId() + "').focus();"));
-
 					registerPlayer();
 					target.add(PlayerForm.this);
 				}
@@ -332,7 +333,7 @@ public class RegistrationPage extends TournamentHomePage {
 					return null;
 				}
 
-			}).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+			}).add(new AjaxFormComponentUpdatingBehavior("change") {
 
 				private static final long serialVersionUID = 1L;
 

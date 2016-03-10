@@ -27,7 +27,7 @@ public class PlayersHtmlImportFactory {
 
 		try {
 			if (url.contains(TREFIK_URL)) {
-				Document doc = Jsoup.connect(url).get();
+				Document doc = Jsoup.connect(url + "index.htm").get();
 				players = getTrefikPlayers(doc);
 			} else if (url.contains(ITHF_URL)) {
 
@@ -45,7 +45,10 @@ public class PlayersHtmlImportFactory {
 				doc = Jsoup.connect(url).data(allFields).post();
 				players = getIthfPlayers(doc);
 			} else {
-				throw new ImportTournamentException();
+				logger.warn("Unknown url: " + url + " . Trying to parse according to trefik.cz");
+				Document doc = Jsoup.connect(url).get();
+				players = getTrefikPlayers(doc);
+				// throw new ImportTournamentException();
 			}
 		} catch (Exception e) {
 			logger.error("Error during importing players", e);

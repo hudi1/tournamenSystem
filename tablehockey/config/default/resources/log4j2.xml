@@ -8,7 +8,7 @@
     <Loggers>
 
         <Logger name="org.tahom" level="debug" />
-        <Logger name="org.apache.wicket" level="error" />
+        <Logger name="org.apache.wicket" level="info" />
         <Logger name="org.sqlproc" level="error" />
 
     </Loggers>

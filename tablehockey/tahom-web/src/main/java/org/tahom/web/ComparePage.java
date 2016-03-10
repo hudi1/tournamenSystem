@@ -14,33 +14,32 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
-import org.apache.wicket.model.PropertyModel;
+import org.tahom.processor.service.participant.dto.ParticipantDto;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.web.components.TournamentAjaxResourceButton;
-import org.tahom.web.util.WebUtil;
 
 @AuthorizeInstantiation(Roles.USER)
 public class ComparePage extends AbstractBasePage {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<Participant> players;
+	private final List<ParticipantDto> players;
 
-	public ComparePage(Groups group, final ModalWindow window, Set<Participant> players) {
-		this.players = new ArrayList<Participant>(players);
+	public ComparePage(Groups group, final ModalWindow window, Set<ParticipantDto> players) {
+		this.players = new ArrayList<ParticipantDto>(players);
 		createPage(window);
 	}
 
 	private void createPage(final ModalWindow window) {
-		add(new PlayerForm(players, window));
+		add(new PlayerForm(window));
 	}
 
-	private class PlayerForm extends Form<Participant> {
+	private class PlayerForm extends Form<Void> {
 
 		private static final long serialVersionUID = 1L;
 
-		public PlayerForm(final List<Participant> players, final ModalWindow window) {
+		public PlayerForm(final ModalWindow window) {
 			super("playerEditForm");
 
 			addParticipantsListView(players);
@@ -57,27 +56,26 @@ public class ComparePage extends AbstractBasePage {
 			});
 		}
 
-		private void addParticipantsListView(final List<Participant> players) {
-			add(new PropertyListView<Participant>("participants", players) {
+		private void addParticipantsListView(final List<ParticipantDto> players) {
+			add(new PropertyListView<ParticipantDto>("participants", players) {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected void populateItem(final ListItem<Participant> listItem) {
-					final Participant participant = listItem.getModelObject();
-					listItem.add(new Label("player", WebUtil.getParticipandPlayerFullName(participant)));
-					listItem.add(new TextField<Integer>("rank", new PropertyModel<Integer>(participant, "rank")).add(
-					        new AjaxFormComponentUpdatingBehavior("onchange") {
+				protected void populateItem(final ListItem<ParticipantDto> listItem) {
+					final ParticipantDto participant = listItem.getModelObject();
+					listItem.add(new Label("name"));
+					listItem.add(new TextField<Integer>("rank").add(new AjaxFormComponentUpdatingBehavior("change") {
 
-						        private static final long serialVersionUID = 1L;
+						private static final long serialVersionUID = 1L;
 
-						        @Override
-						        protected void onUpdate(AjaxRequestTarget target) {
-							        // Participant updatedParticipant = new Participant()._setId(participant.getId())
-							        // ._setRank(participant.getRank());
-							        participantService.updateParticipant(participant); // TODO test
-						        }
-					        }).setVisible(participant.getPlayer() != null));
+						@Override
+						protected void onUpdate(AjaxRequestTarget target) {
+							Participant updatedParticipant = new Participant()._setId(participant.getId())._setRank(
+							        participant.getRank());
+							participantService.updateParticipant(updatedParticipant); // TODO test
+						}
+					}));
 				}
 			});
 		}

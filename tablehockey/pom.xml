@@ -32,6 +32,7 @@
         <version.jsoup>1.8.3</version.jsoup>
         <version.xstream>1.4.8</version.xstream>
         <version.cobertura>2.6</version.cobertura>
+        <version.guava>19.0</version.guava>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -644,6 +645,13 @@
                 </exclusions>
             </dependency>
 
+            <!-- Guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
+            </dependency>
+            
             <!-- Test -->
             <dependency>
                 <groupId>org.springframework</groupId>

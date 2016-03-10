@@ -1,8 +1,11 @@
 package org.tahom.processor.service.game.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tahom.repository.model.GameStatus;
+import org.tahom.repository.model.Result;
 import org.tahom.repository.model.Results;
 
 public class GameDto implements Serializable {
@@ -54,10 +57,15 @@ public class GameDto implements Serializable {
 	}
 
 	public Results getResult() {
-		if (result == null) {
-			result = new Results();
-		}
 		return result;
+	}
+
+	public List<Result> getResults() {
+		if (result == null) {
+			return new ArrayList<>();
+		} else {
+			return result.getResults();
+		}
 	}
 
 	public void setResult(Results result) {

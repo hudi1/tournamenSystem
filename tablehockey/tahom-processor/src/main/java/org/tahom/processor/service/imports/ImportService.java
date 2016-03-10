@@ -10,15 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.tahom.processor.ImportTournamentException;
+import org.tahom.processor.TournamentException;
 import org.tahom.processor.html.PlayerHtmlUpdateFactory;
 import org.tahom.processor.html.PlayersHtmlImportFactory;
 import org.tahom.processor.html.TournamentHtmlImportFactory;
+import org.tahom.processor.service.finalStanding.FinalStandingService;
 import org.tahom.processor.service.game.GameService;
 import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.processor.service.player.PlayerService;
-import org.tahom.processor.service.standing.FinalStandingService;
 import org.tahom.repository.dao.FinalStandingDao;
 import org.tahom.repository.dao.GameDao;
 import org.tahom.repository.dao.ParticipantExtDao;
@@ -63,14 +64,103 @@ public class ImportService {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Transactional
-	public void importTournament(String url, Tournament tournament, User user) {
+	public void importTournament(String url, Tournament tournament, User user, boolean ignoreErrors) {
+		try {
 
-		importPlayers(url + "index.htm", user);
+			try {
+				importPlayers(url, user);
+			} catch (TournamentException e) {
+				if (!ignoreErrors) {
+					throw e;
+				}
+			}
 
+			LinkedList<Participant> savedParticipants = null;
+			try {
+				savedParticipants = importParticipants(url, tournament);
+			} catch (TournamentException e) {
+				logger.error("Error", e);
+				if (!ignoreErrors) {
+					throw e;
+				}
+			}
+
+			if (savedParticipants == null) {
+				return;
+			}
+
+			try {
+				importGames(url, savedParticipants);
+			} catch (TournamentException e) {
+				if (!ignoreErrors) {
+					throw e;
+				}
+			}
+
+			try {
+				importPlayOffGames(url, savedParticipants, tournament);
+			} catch (TournamentException e) {
+				if (!ignoreErrors) {
+					throw e;
+				}
+			}
+			try {
+				importFinalStandings(url, savedParticipants, tournament);
+			} catch (TournamentException e) {
+				if (!ignoreErrors) {
+					throw e;
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error import tournament ", e);
+			throw new ImportTournamentException(e.getMessage());
+		}
+	}
+
+	private void importFinalStandings(String url, LinkedList<Participant> savedParticipants, Tournament tournament) {
+		List<FinalStanding> finalStandings = TournamentHtmlImportFactory.createFinalStandings(url, savedParticipants);
+		for (FinalStanding finalStanding : finalStandings) {
+			finalStanding.setTournament(tournament);
+			finalStandingDao.insert(finalStanding);
+		}
+	}
+
+	private void importPlayOffGames(String url, LinkedList<Participant> savedParticipants, Tournament tournament) {
+		List<PlayOffGame> playOffGames = TournamentHtmlImportFactory.createPlayOffGames(url, savedParticipants,
+		        tournament);
+
+		for (PlayOffGame playOffGame : playOffGames) {
+			Groups group = groupService.getGroup(playOffGame.getGroup());
+			if (group == null) {
+				group = groupService.createGroup(playOffGame.getGroup());
+			}
+
+			playOffGameService.createPlayOffGame(playOffGame._setGroup(group));
+		}
+	}
+
+	private void importGames(String url, LinkedList<Participant> savedParticipants) {
+		TournamentHtmlImportFactory.createImportedGames(url, savedParticipants);
+
+		for (Participant participant : savedParticipants) {
+			participantDao.update(participant);
+			for (Game game : participant.getGames()) {
+				gameDao.insert(game);
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println(TournamentHtmlImportFactory.createImportedParticipants(null,
+		        "http://thcbluedragon.wz.cz/stiga/turnaje/"));
+	}
+
+	private LinkedList<Participant> importParticipants(String url, Tournament tournament) {
 		LinkedList<Participant> participants = TournamentHtmlImportFactory.createImportedParticipants(tournament, url);
+		List<Player> players = playerService.getNotRegisteredPlayers(tournament);
 
 		for (Participant participant : participants) {
-			List<Player> players = playerService.getNotRegisteredPlayers(tournament);
 			List<Player> foundedPlayers = new ArrayList<Player>();
 			for (Player player : players) {
 				if (player.getSurname().getValue().equals(participant.getPlayer().getSurname().getValue())) {
@@ -110,27 +200,7 @@ public class ImportService {
 
 			savedParticipants.add(participantService.createParticipant(participant.getPlayer(), group));
 		}
-
-		TournamentHtmlImportFactory.createImportedGames(url, savedParticipants);
-
-		for (Participant participant : savedParticipants) {
-			participantDao.update(participant);
-			for (Game game : participant.getGames()) {
-				gameDao.insert(game);
-			}
-		}
-
-		List<PlayOffGame> playOffGames = TournamentHtmlImportFactory.createPlayOffGames(url, savedParticipants);
-		for (PlayOffGame playOffGame : playOffGames) {
-			playOffGameService.createPlayOffGame(playOffGame);
-		}
-
-		List<FinalStanding> finalStandings = TournamentHtmlImportFactory.createFinalStandings(url, savedParticipants);
-		for (FinalStanding finalStanding : finalStandings) {
-			finalStanding.setTournament(tournament);
-			finalStandingDao.insert(finalStanding);
-		}
-
+		return savedParticipants;
 	}
 
 	@Transactional
@@ -141,6 +211,7 @@ public class ImportService {
 		}
 	}
 
+	@Transactional
 	public List<Player> updateOnlinePlayers(List<Player> players) {
 		List<Player> notUpdatedPlayer = new ArrayList<Player>();
 

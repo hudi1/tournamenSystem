@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
 	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
 <wicket:head>
-	<title>Tournament System</title>
+	<title>Tablehockey</title>
 </wicket:head>
 <wicket:extend>
 	<form wicket:id="groupForm">
@@ -11,7 +11,7 @@
 			<tr>
 				<th />
 				<th wicket:id="name" />
-				<th wicket:id="nameList"><span wicket:id="playerName"></span></th>
+				<th wicket:id="participantsHeader"><span wicket:id="name"></span></th>
 				<th wicket:id="score" />
 				<th wicket:id="points" />
 				<th wicket:id="rank" />
@@ -19,27 +19,27 @@
 			<tr wicket:id="participants">
 				<td><span wicket:id="index">[index]</span></td>
 				<td><span wicket:id="name">[name]</span></td>
-				<td wicket:id="gameList"><span wicket:id="game"></span></td>
+				<td wicket:id="games"><span wicket:id="result"></span></td>
 				<td><span wicket:id="score">[score]</span></td>
 				<td><span wicket:id="points">[points]</span></td>
 				<td><span wicket:id=rank>[rank]</span></td>
 			</tr>
 		</table>
-		<table>
-			<tr wicket:id="rows">
-				<td wicket:id="cols">
-					<div>
-						<input class="tournamentButton" type="submit" wicket:id="group" />
-					</div>
-				</td>
-			</tr>
-		</table>
+		<div class="groupButtonsMenu">
+			<ul>
+				<li wicket:id="groups">
+					<span>
+						<input class="tournamentButton" type="submit" wicket:id="name" />
+					</span>
+				</li>
+			</ul>
+		</div>
 		<div>
 			<span> <input class="tournamentButton" type="submit"
 				wicket:id="schedule" value="Schedule" />
 			</span> <span> <input class="tournamentButton" type="submit"
 				wicket:id="options" value="Options" />
-			</span> <span> <a class="tournamentLink" wicket:id="sheets">
+			</span> <span> <a class="tournamentLink" wicket:id="printSheets">
 					print sheets </a></span> <span> <a class="tournamentLink" type="submit"
 				wicket:id="printSchedule">print schedule</a>
 			</span> <span> <a class="tournamentLink" type="submit"

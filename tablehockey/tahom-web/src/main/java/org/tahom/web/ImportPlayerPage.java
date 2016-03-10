@@ -55,7 +55,7 @@ public class ImportPlayerPage extends AbstractBasePage {
 		}
 
 		public void addImportButton(final TextField<String> url) {
-			add(new MaskIndicatingAjaxButton("import") {
+			add(new MaskIndicatingAjaxButton("showModalLinkPlayer") {
 
 				private static final long serialVersionUID = 1L;
 

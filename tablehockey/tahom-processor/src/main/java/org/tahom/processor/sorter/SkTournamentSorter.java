@@ -81,7 +81,7 @@ public class SkTournamentSorter extends TournamentSorter {
 						position--;
 					}
 
-					calculateParticipants(temporatyParticipant);
+					calculateParticipants(temporatyParticipant, false);
 				}
 				temporatyParticipant.clear();
 				temporatyParticipant.add(participants.get(i + 1));

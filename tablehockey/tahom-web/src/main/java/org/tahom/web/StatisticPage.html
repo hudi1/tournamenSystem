@@ -3,10 +3,46 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
 	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
 <wicket:head>
-	<title>Examples - Public Page</title>
+	<title>Tablehockey</title>
 </wicket:head>
 <wicket:extend>
-	<form wicket:id="statisticForm">
+	<form wicket:id="playerStatisticForm">
+		<div class="content">
+			<ul id="parametry">
+				<li><select wicket:id="players">
+				</select> <input wicket:id="choosePlayer" type="submit" value="Choose player" /></li>
+			</ul>
+			<br />
+		</div>
+		<div>
+			<table class="finalStandingTable">
+				<tr>
+					<th wicket:id="tournamentName" />
+					<th wicket:id="rank" />
+					<th wicket:id="matches" />
+					<th wicket:id="winners" />
+					<th wicket:id="draws" />
+					<th wicket:id="loses" />
+					<th wicket:id="playerScore" />
+					<th wicket:id="playerPoints" />
+					<th wicket:id="percentage" />
+				</tr>
+				<tr wicket:id="playerInfoValues">
+					<td><span wicket:id="tournamentName" /></td>
+					<td><span wicket:id="finalRank" /></td>
+					<td><span wicket:id="matchesCount" /></td>
+					<td><span wicket:id="winnersCount" /></td>
+					<td><span wicket:id="drawsCount" /></td>
+					<td><span wicket:id="losesCount" /></td>
+					<td><span wicket:id="score" /></td>
+					<td><span wicket:id="points" /></td>
+					<td><span wicket:id="percentage" /></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+
+	<!--  form wicket:id="statisticForm">
 		<div class="content">
 			<ul id="parametry">
 				<li><select wicket:id="tournament">
@@ -26,8 +62,7 @@
 					<th>Matches</th>
 				</tr>
 				<tr wicket:id="players">
-					<td><span wicket:id="surname" /> <span
-						wicket:id="playerDiscriminator" /> <span wicket:id="name" /></td>
+					<td><span wicket:id="surname" /> <span wicket:id="name" /></td>
 					<td><span wicket:id="score" /></td>
 					<td><span wicket:id="zeroCount" /></td>
 					<td><span wicket:id="tenPlusCount" /></td>
@@ -37,6 +72,6 @@
 			<br /> <input wicket:id="showPlayers" class="tournamentButton"
 				type="submit" value="Show players" />
 		</div>
-	</form>
+	</form-->
 </wicket:extend>
 </html>

@@ -102,7 +102,7 @@ public class WChPage extends BasePage {
 					}
 					return null;
 				}
-			}).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+			}).add(new AjaxFormComponentUpdatingBehavior("change") {
 
 				private static final long serialVersionUID = 1L;
 
@@ -140,12 +140,12 @@ public class WChPage extends BasePage {
 		}
 
 		private void addWChTable() {
-			addGWChSeasonTableHeader();
-			addGWChTournamentTableHeader();
+			addWChSeasonTableHeader();
+			addWChTournamentTableHeader();
 			addWChRecordsGroupListView();
 		}
 
-		private void addGWChTournamentTableHeader() {
+		private void addWChTournamentTableHeader() {
 			ListView<String> seasonList = new PropertyListView<String>("wchTournamentHeaders") {
 
 				private static final long serialVersionUID = 1L;
@@ -158,7 +158,7 @@ public class WChPage extends BasePage {
 			add(seasonList);
 		}
 
-		private void addGWChSeasonTableHeader() {
+		private void addWChSeasonTableHeader() {
 			add(new ResourceLabel("name"));
 			add(new ResourceLabel("rank"));
 			add(new ResourceLabel("total"));

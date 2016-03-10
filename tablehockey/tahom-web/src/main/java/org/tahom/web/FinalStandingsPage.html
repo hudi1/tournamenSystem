@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs"
 	dir="ltr" xmlns:wicket="http://wicket.apache.org/">
 <wicket:head>
-	<title>Tournament System</title>
+	<title>Tablehockey</title>
 </wicket:head>
 <wicket:extend>
 	<div>
@@ -11,10 +11,10 @@
 
 			<table class="player">
 				<tbody>
-					<tr wicket:id="rows">
+					<tr wicket:id="finalStandings">
 						<td><span wicket:id="rank">rank</span></td>
-						<td><span wicket:id="surname">surname</span></td>
 						<td><span wicket:id="name">name</span></td>
+						<td><span wicket:id="club">club</span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -22,7 +22,7 @@
 			<div>
 				<input class="tournamentButton" type="submit" wicket:id="back"
 					title="back" value="Back" /> <a class="tournamentLink"
-					wicket:id="finalStandings"> Print final standings </a>
+					wicket:id="printFinalStandings"> Print final standings </a>
 			</div>
 		</form>
 	</div>

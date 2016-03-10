@@ -20,11 +20,14 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.SharedResourceReference;
+import org.apache.wicket.util.convert.IConverter;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.User;
+import org.tahom.web.behavior.CloseOnESCBehavior;
 import org.tahom.web.components.PropertyPageableListView;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentResourceButton;
+import org.tahom.web.converter.SurnameConverter;
 import org.tahom.web.link.AjaxModelLink;
 import org.tahom.web.link.TournamentAjaxLink;
 import org.tahom.web.mask.MaskIndicatingAjaxButton;
@@ -79,6 +82,7 @@ public class PlayerPage extends TournamentHomePage {
 			addNewPlayerButton();
 			addUpdateOnlinePlayerButton(model.getObject().getPlayers());
 			add(modalWindow = createModalWindow());
+			add(new CloseOnESCBehavior(modalWindow));
 			addModalButton(modalWindow);
 		}
 
@@ -92,7 +96,7 @@ public class PlayerPage extends TournamentHomePage {
 				protected void populateItem(final ListItem<Player> listItem) {
 					final Player player = listItem.getModelObject();
 					listItem.setModel(new CompoundPropertyModel<Player>(player));
-					listItem.add(new TextField<String>("name").add(new AjaxFormComponentUpdatingBehavior("onchange") {
+					listItem.add(new TextField<String>("name").add(new AjaxFormComponentUpdatingBehavior("change") {
 
 						private static final long serialVersionUID = 1L;
 
@@ -102,19 +106,27 @@ public class PlayerPage extends TournamentHomePage {
 						}
 					}));
 
-					listItem.add(new TextField<String>("surname", Model.of(player.getSurname().toString()))
-					        .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+					listItem.add(new TextField<String>("surname") {
 
-						        private static final long serialVersionUID = 1L;
+						private static final long serialVersionUID = 1L;
 
-						        @Override
-						        protected void onUpdate(AjaxRequestTarget target) {
-							        Player player = listItem.getModelObject();
-							        playerService.updatePlayer(player);
-						        }
-					        }));
+						@Override
+						@SuppressWarnings("unchecked")
+						public final <Surname> IConverter<Surname> getConverter(Class<Surname> type) {
+							return (IConverter<Surname>) SurnameConverter.getInstance();
+						}
+					}.add(new AjaxFormComponentUpdatingBehavior("change") {
 
-					listItem.add(new TextField<String>("club").add(new AjaxFormComponentUpdatingBehavior("onchange") {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						protected void onUpdate(AjaxRequestTarget target) {
+							Player player = listItem.getModelObject();
+							playerService.updatePlayer(player);
+						}
+					}));
+
+					listItem.add(new TextField<String>("club").add(new AjaxFormComponentUpdatingBehavior("change") {
 
 						private static final long serialVersionUID = 1L;
 
@@ -129,8 +141,12 @@ public class PlayerPage extends TournamentHomePage {
 						private static final long serialVersionUID = 1L;
 
 						public void click(AjaxRequestTarget target) {
-							PlayerForm.this.getModelObject().getPlayers().remove(listItem.getModelObject());
-							playerService.deletePlayer(listItem.getModelObject());
+							Player player = listItem.getModelObject();
+							playerService.deletePlayer(player);
+							PlayerForm.this.getModelObject().getPlayers().remove(player);
+							getFeedbackMessages().clear();
+							info(getString("deletePlayerInfo"));
+							target.add(feedbackPanel);
 							target.add(PlayerForm.this);
 						}
 

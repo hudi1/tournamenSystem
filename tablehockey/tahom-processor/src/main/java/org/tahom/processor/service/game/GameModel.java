@@ -4,7 +4,9 @@ import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.repository.model.Game;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Participant;
+import org.tahom.repository.model.Player;
 import org.tahom.repository.model.Result;
+import org.tahom.repository.model.Results;
 
 public class GameModel {
 
@@ -48,6 +50,34 @@ public class GameModel {
 		game.setId(gameDto.getGameId());
 		game.setResult(gameDto.getResult());
 		return game;
+	}
+
+	public GameDto createGameDto(Game game) {
+		GameDto gameDto = new GameDto();
+		if (game.getHomeParticipant() != null) {
+			gameDto.setPlayerName(getPlayerName(game.getHomeParticipant().getPlayer()));
+			gameDto.setHomeParticipantId(game.getHomeParticipant().getId());
+		}
+		if (game.getAwayParticipant() != null) {
+			gameDto.setOpponentName(getPlayerName(game.getAwayParticipant().getPlayer()));
+			gameDto.setAwayParticipantId(game.getAwayParticipant().getId());
+		}
+		gameDto.setGameId(game.getId());
+		gameDto.setResult(game.getResult());
+		return gameDto;
+	}
+
+	private String getPlayerName(Player player) {
+		if (player != null) {
+			return player.getName() + " " + player.getSurname();
+		}
+		return "";
+	}
+
+	public GameDto createTempResultGame() {
+		GameDto gameDto = new GameDto();
+		gameDto.setResult(new Results(true));
+		return gameDto;
 	}
 
 }

@@ -30,7 +30,11 @@ public class SurnameConverter extends AbstractConverter<Surname> {
 	 * @see org.apache.wicket.util.convert.IConverter#convertToObject(java.lang.String,Locale)
 	 */
 	public Surname convertToObject(final String value, final Locale locale) {
-		return new Surname(value);
+		if (value == null || value.isEmpty()) {
+			return null;
+		} else {
+			return new Surname(value);
+		}
 	}
 
 	/**

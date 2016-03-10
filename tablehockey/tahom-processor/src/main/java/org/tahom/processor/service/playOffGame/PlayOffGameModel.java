@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
+import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
 import org.tahom.processor.util.TournamentUtil;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
@@ -93,6 +94,12 @@ public class PlayOffGameModel {
 			return player.getName() + " " + player.getSurname();
 		}
 		return "";
+	}
+
+	public PlayOffGroupDto createPlayOffGroupDto(Groups group) {
+		PlayOffGroupDto playOffGroupDto = new PlayOffGroupDto();
+		playOffGroupDto.setName(group.getName());
+		return playOffGroupDto;
 	}
 
 }

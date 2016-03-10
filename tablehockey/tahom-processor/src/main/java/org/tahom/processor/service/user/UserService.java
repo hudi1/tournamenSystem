@@ -10,24 +10,24 @@ import org.tahom.repository.model.User;
 
 public class UserService {
 
-    @Inject
-    private UserDao userDao;
+	@Inject
+	private UserDao userDao;
 
-    @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-        return userDao.list(new User());
-    }
+	@Transactional(readOnly = true)
+	public List<User> getAllUsers() {
+		return userDao.list(new User());
+	}
 
-    public User getUser(User user) {
-        return userDao.get(user);
-    }
+	public User getUser(User user) {
+		return userDao.get(user);
+	}
 
-    public int updateUser(User user) {
-        return userDao.update(user);
-    }
+	public int updateUser(User user) {
+		return userDao.update(user._setNull(User.Attribute.name, User.Attribute.surname));
+	}
 
-    public User createUser(User user) {
-        return userDao.insert(user);
-    }
+	public User createUser(User user) {
+		return userDao.insert(user);
+	}
 
 }

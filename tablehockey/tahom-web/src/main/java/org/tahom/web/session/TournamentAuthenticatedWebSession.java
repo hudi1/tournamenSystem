@@ -103,4 +103,8 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
 		this.tournament = tournament;
 	}
 
+	public void setUpdatedUser(User user) {
+		this.user = user;
+	}
+
 }

@@ -5,16 +5,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.sqlproc.engine.impl.SqlStandardControl;
 import org.tahom.processor.comparators.WorldRankingComparator;
+import org.tahom.processor.service.finalStanding.FinalStandingService;
 import org.tahom.processor.service.game.GameService;
+import org.tahom.processor.service.group.dto.GroupPageDto;
+import org.tahom.processor.service.group.dto.GroupPageOverviewDto;
+import org.tahom.processor.service.group.dto.GroupsOverviewDto;
+import org.tahom.processor.service.participant.ParticipantModel;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
-import org.tahom.processor.service.standing.FinalStandingService;
+import org.tahom.processor.service.schedule.ScheduleService;
 import org.tahom.processor.util.GroupsName;
 import org.tahom.processor.util.SnakeList;
 import org.tahom.repository.dao.GameDao;
@@ -24,6 +30,7 @@ import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Groups.Association;
 import org.tahom.repository.model.GroupsPlayOffType;
+import org.tahom.repository.model.GroupsType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Tournament;
 
@@ -52,6 +59,12 @@ public class GroupService {
 
 	@Inject
 	private PlayOffGameService playOffGameService;
+
+	@Inject
+	private ScheduleService scheduleService;
+
+	@Inject
+	private ParticipantModel participantModel;
 
 	@Transactional
 	public Groups createGroup(Groups group) {
@@ -108,6 +121,37 @@ public class GroupService {
 		playOffGameService.processPlayOffGames(tournament);
 	}
 
+	@Transactional
+	public GroupPageOverviewDto getGroupPageOverviewDto(Tournament tournament) {
+		GroupPageOverviewDto groupPageOverviewDto = new GroupPageOverviewDto();
+		groupPageOverviewDto.getGroups().addAll(
+		        groupModel.getGroupsOverviewDto(getGroups(new Groups()._setTournament(tournament))));
+		for (GroupsOverviewDto groupsOverviewDto : groupPageOverviewDto.getGroups()) {
+			List<Participant> participants = participantService.getSortedParticipantByGroup(new Groups()
+			        ._setId(groupsOverviewDto.getId()));
+			groupsOverviewDto.getParticipants().addAll(participantModel.createParticipantsDto(participants));
+		}
+		return groupPageOverviewDto;
+	}
+
+	@Transactional
+	public GroupPageDto getGroupPageDto(Groups group, Tournament tournament) {
+		GroupPageDto groupPageDto = new GroupPageDto();
+		groupPageDto.setGroup(group);
+		groupPageDto.getGroups().addAll(getGroups(new Groups()._setTournament(tournament)));
+		if (group != null) {
+			List<Participant> participants = participantService.getSortedParticipantByGroup(group);
+			Set<Participant> goldGoalParticipants = participantService.getGoldGoalParticipants(participants);
+
+			groupPageDto.getParticipants().addAll(participantModel.createParticipantsDto(participants));
+			groupPageDto.getGoldGoalParticipants().addAll(participantModel.createParticipantsDto(goldGoalParticipants));
+			groupPageDto.getSchedule().addAll(
+			        scheduleService.getSchedule(tournament, group, participants).getSchedule());
+		}
+
+		return groupPageDto;
+	}
+
 	private void deleteFinalGroup(Tournament tournament) {
 		groupsDao.deleteFinalGroups(tournament);
 	}
@@ -123,7 +167,7 @@ public class GroupService {
 		GroupsName groupsName = new GroupsName();
 
 		for (Groups group : basicGroups) {
-			List<Participant> participants = participantService.getParticipandByGroup(group);
+			List<Participant> participants = participantService.getSortedParticipantByGroup(group);
 
 			groupName = groupsName.getFirst();
 			int promotingFinal = Math.min(participants.size(), tournament.getFinalPromoting());
@@ -224,8 +268,13 @@ public class GroupService {
 							}
 						}
 					}
-					List<Participant> savedParticipants = participantDao.list(new Participant()._setGroup(finalGroups));
+
+					List<Participant> savedParticipants = participantService.getParticipantByGroup(finalGroups);
 					participantService.sortParticipantsByRank(savedParticipants, tournament);
+					if (GroupsType.FINAL.equals(finalGroups.getType())) {
+						playOffGameService.updatePlayOffGames(tournament, finalGroups);
+						finalStandingService.updateNotPromotingFinalStandings(tournament, finalGroups);
+					}
 				}
 			}
 		}
@@ -264,4 +313,5 @@ public class GroupService {
 		}
 
 	}
+
 }

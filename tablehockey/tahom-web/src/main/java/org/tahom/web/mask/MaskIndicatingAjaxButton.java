@@ -20,9 +20,7 @@ package org.tahom.web.mask;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.tahom.web.components.TournamentAjaxButton;
+import org.tahom.web.components.TournamentAjaxResourceButton;
 
 /**
  * A variant of the {@link AjaxButton} that displays a busy indicator while the ajax request is in progress.
@@ -30,67 +28,34 @@ import org.tahom.web.components.TournamentAjaxButton;
  * @author evan
  * 
  */
-public abstract class MaskIndicatingAjaxButton extends TournamentAjaxButton implements IAjaxIndicatorAware {
+public abstract class MaskIndicatingAjaxButton extends TournamentAjaxResourceButton implements IAjaxIndicatorAware {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = 1L;
-    private final AjaxIndicatorAppender indicatorAppender;
+	private static final long serialVersionUID = 1L;
+	private final AjaxIndicatorAppender indicatorAppender;
 
-    /**
-     * Constructor
-     * 
-     * @param id
-     */
-    public MaskIndicatingAjaxButton(final String id) {
-        this(id, null, null);
-    }
+	/**
+	 * Constructor
+	 * 
+	 * @param id
+	 */
+	public MaskIndicatingAjaxButton(final String id) {
+		super(id);
+		indicatorAppender = new BusyIndicatingMaskAppender(maskText());
+		add(indicatorAppender);
+	}
 
-    /**
-     * Constructor
-     * 
-     * @param id
-     * @param model
-     *            model used to set <code>value</code> markup attribute
-     */
-    public MaskIndicatingAjaxButton(final String id, final IModel<String> model) {
-        this(id, model, null);
-    }
+	/**
+	 * @see IAjaxIndicatorAware#getAjaxIndicatorMarkupId()
+	 * @return the markup id of the ajax indicator
+	 * 
+	 */
+	public String getAjaxIndicatorMarkupId() {
+		return indicatorAppender.getMarkupId();
+	}
 
-    /**
-     * 
-     * Constructor
-     * 
-     * @param id
-     * @param form
-     */
-    public MaskIndicatingAjaxButton(final String id, final Form<?> form) {
-        this(id, null, form);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param id
-     * @param model
-     * @param form
-     */
-    public MaskIndicatingAjaxButton(final String id, final IModel<String> model, final Form<?> form) {
-        super(id, model, form);
-        indicatorAppender = new BusyIndicatingMaskAppender(maskText());
-        add(indicatorAppender);
-    }
-
-    /**
-     * @see IAjaxIndicatorAware#getAjaxIndicatorMarkupId()
-     * @return the markup id of the ajax indicator
-     * 
-     */
-    public String getAjaxIndicatorMarkupId() {
-        return indicatorAppender.getMarkupId();
-    }
-
-    public abstract String maskText();
+	public abstract String maskText();
 
 }

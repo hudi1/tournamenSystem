@@ -166,10 +166,6 @@
                                 <argument>org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader</argument>
                                 <argument>-control</argument>
                                 <argument>definitions.model</argument>
-                                <argument>-pojo</argument>
-                                <argument>entity.model</argument>
-                                <argument>-dao</argument>
-                                <argument>dao.model</argument>
                                 <argument>-source</argument>
                                 <argument>src/main/resources</argument>
                                 <argument>-target</argument>

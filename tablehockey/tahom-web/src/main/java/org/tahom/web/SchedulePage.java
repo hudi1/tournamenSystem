@@ -18,10 +18,7 @@ import org.tahom.processor.schedule.RoundRobinSchedule;
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
-import org.tahom.repository.model.GroupsType;
-import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Result;
-import org.tahom.repository.model.Tournament;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentBackResourceButton;
 import org.tahom.web.components.TournamentResourceButton;
@@ -34,32 +31,20 @@ public class SchedulePage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
 	private Groups group;
-	private Tournament tournament;
 	private List<GameDto> scheduleGames;
 
 	public SchedulePage() {
 		throw new RestartResponseAtInterceptPageException(GroupPage.class);
 	}
 
-	public SchedulePage(PageParameters parameters) {
-		this.tournament = getTournament(parameters);
+	public SchedulePage(PageParameters parameters, List<GameDto> schedule) {
 		this.group = getGroup(parameters, tournament);
-		this.scheduleGames = getSchedule().getSchedule();
+		this.scheduleGames = schedule;
 		createPage();
 	}
 
 	private void createPage() {
 		add(new ScheduleForm());
-	}
-
-	private RoundRobinSchedule getSchedule() {
-		logger.debug("Creating schedule start");
-		long time = System.currentTimeMillis();
-		List<Participant> participants = participantService.getParticipandByGroup(group);
-		RoundRobinSchedule schedule = scheduleService.getSchedule(tournament, group, participants);
-		time = System.currentTimeMillis() - time;
-		logger.debug("Creating schedule end: " + time + " ms");
-		return schedule;
 	}
 
 	private class ScheduleForm extends Form<RoundRobinSchedule> {
@@ -79,6 +64,12 @@ public class SchedulePage extends TournamentHomePage {
 			addBackButton();
 		}
 
+		@Override
+		protected void onValidate() {
+			// TODO Auto-generated method stub
+			super.onValidate();
+		}
+
 		private void addSaveButton() {
 			add(new TournamentResourceButton("save") {
 
@@ -87,26 +78,11 @@ public class SchedulePage extends TournamentHomePage {
 				@Override
 				public void submit() {
 					logger.debug("Submit schedule start ");
-					long time = System.currentTimeMillis();
-					gameService.updateBothGames(scheduleGames);
-					time = System.currentTimeMillis() - time;
-					List<Participant> participants = sortParticipants();
-
-					if (GroupsType.FINAL.equals(group.getType())) {
-						playOffGameService.updatePlayOffGames(tournament, group);
-						finalStandingService.updateNotPromotingFinalStandings(participants, group, tournament);
-					}
-					logger.debug("Submit schedule end: " + time + " ms");
-					setResponsePage(SchedulePage.class, getPageParameters());
+					scheduleService.saveSchedule(tournament, group, scheduleGames);
+					getSession().info(getString("saveScheduleInfo"));
+					setResponsePage(new SchedulePage(getPageParameters(), scheduleGames));
 				};
 			});
-		}
-
-		private List<Participant> sortParticipants() {
-			List<Participant> participants = participantService.getParticipandByGroup(group);
-
-			participantService.sortParticipantsByRank(participants, tournament);
-			return participants;
 		}
 
 		private void addBackButton() {
@@ -164,14 +140,21 @@ public class SchedulePage extends TournamentHomePage {
 							return (IConverter<Results>) ResultConverter.getInstance();
 						}
 
+						public void validate() {
+							super.validate();
+							if (!isValid()) {
+								add(new AttributeModifier("class", "errorField"));
+							}
+						};
+
 					});
 
 					listItem.add(new Label("round"));
 					listItem.add(new Label("hockey"));
 
 					listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
-
 				}
+
 			}.setReuseItems(true));
 		}
 	}

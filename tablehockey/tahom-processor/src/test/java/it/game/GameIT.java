@@ -38,7 +38,7 @@ public class GameIT {
 	@Test
 	@Verify("updateBothGamesTest-verify.xml")
 	public void updateBothGamesTest() {
-		List<Participant> participants = participantService.getParticipandByGroup(new Groups()._setId(1)
+		List<Participant> participants = participantService.getParticipantByGroup(new Groups()._setId(1)
 		        ._setType(GroupsType.BASIC)._setCopyResult(false));
 		RoundRobinSchedule schedule = scheduleService.getSchedule(new Tournament()._setId(1), new Groups()._setId(1)
 		        ._setType(GroupsType.BASIC)._setCopyResult(false)._setNumberOfHockey(2)._setIndexOfFirstHockey(1),

@@ -1,5 +1,9 @@
 package org.tahom.processor.service.group;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.tahom.processor.service.group.dto.GroupsOverviewDto;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.GroupsType;
@@ -44,6 +48,17 @@ public class GroupModel {
 			group.setCopyResult(true);
 		}
 		return group;
+	}
+
+	public List<GroupsOverviewDto> getGroupsOverviewDto(List<Groups> groups) {
+		List<GroupsOverviewDto> result = new ArrayList<GroupsOverviewDto>();
+		for (Groups group : groups) {
+			GroupsOverviewDto dto = new GroupsOverviewDto();
+			dto.setId(group.getId());
+			dto.setGroupName(group.getName());
+			result.add(dto);
+		}
+		return result;
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.tahom.processor.service.standing;
+package org.tahom.processor.service.finalStanding;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.sqlproc.engine.impl.SqlStandardControl;
 import org.tahom.processor.BadOptionsTournamentException;
 import org.tahom.processor.comparators.RankComparator;
+import org.tahom.processor.service.finalStanding.dto.FinalStandingPageDto;
 import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
@@ -43,6 +44,15 @@ public class FinalStandingService {
 	private FinalStandingModel finalStandingModel;
 
 	@Transactional(readOnly = true)
+	public FinalStanding getFinalStanding(FinalStanding finalStanding) {
+		List<FinalStanding> finalStandings = finalStandingDao.list(finalStanding);
+		if (!finalStandings.isEmpty()) {
+			return finalStandings.get(0);
+		}
+		return null;
+	}
+
+	@Transactional(readOnly = true)
 	public List<FinalStanding> getFinalStandings(Tournament tournament) {
 		SqlStandardControl control = new SqlStandardControl();
 		control.setAscOrder(FinalStanding.ORDER_BY_FINAL_RANK);
@@ -50,6 +60,11 @@ public class FinalStandingService {
 		FinalStanding finalStanding = new FinalStanding()._setTournament(tournament);
 		finalStanding.setInit(FinalStanding.Association.player.name());
 		return finalStandingDao.list(finalStanding, control);
+	}
+
+	@Transactional(readOnly = true)
+	public FinalStandingPageDto getFinalStandingPageDto(Tournament tournament) {
+		return finalStandingModel.createFinalStandingsDto(getFinalStandings(tournament));
 	}
 
 	@Transactional
@@ -68,10 +83,11 @@ public class FinalStandingService {
 	}
 
 	@Transactional
-	public void updateNotPromotingFinalStandings(List<Participant> participants, Groups group, Tournament tournament) {
+	public void updateNotPromotingFinalStandings(Tournament tournament, Groups group) {
 
 		int previousParticipantsCount = getPreviousParticipantsCount(group, tournament);
 		int playOffCountPlayer = getPlayOffCountPlayer(group, tournament);
+		List<Participant> participants = participantService.getSortedParticipantByGroup(group);
 
 		for (int i = participants.size(); i > playOffCountPlayer; i--) {
 			FinalStanding finalStanding = finalStandingDao.get(new FinalStanding()._setFinalRank(
@@ -91,7 +107,7 @@ public class FinalStandingService {
 		List<Groups> finalGroups = groupService.getFinalGroups(tournament);
 		for (Groups groups : finalGroups) {
 			if (actualGroup.getName().compareTo(groups.getName()) == -1) {
-				previousParticipantsCount += participantService.getParticipandByGroup(groups).size();
+				previousParticipantsCount += participantService.getParticipantByGroup(groups).size();
 			}
 		}
 
@@ -129,6 +145,10 @@ public class FinalStandingService {
 		for (Groups group : finalGroups) {
 
 			List<PlayOffGame> playOffGames = playOffGameService.getFullPlayOffGames(group);
+			if (playOffGames.isEmpty()) {
+				continue;
+			}
+
 			if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
 				updateFinalStandings(tournament, playOffGames, 0);
 			} else {
@@ -211,7 +231,7 @@ public class FinalStandingService {
 					position -= 2;
 				}
 
-				startGroupSufix += participantService.getParticipandByGroup(group).size();
+				startGroupSufix += participantService.getParticipantByGroup(group).size();
 				startGroupMinusSufix += startGroupMinusSufixTemp;
 			}
 		}

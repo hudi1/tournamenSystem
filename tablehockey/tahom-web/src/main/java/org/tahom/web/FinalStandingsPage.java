@@ -1,10 +1,6 @@
 package org.tahom.web;
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
@@ -13,8 +9,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.tahom.processor.pdf.PdfFactory;
-import org.tahom.repository.model.FinalStanding;
+import org.tahom.processor.callable.FinalStandingPdfCallable;
+import org.tahom.processor.service.finalStanding.dto.FinalStandingDto;
+import org.tahom.processor.service.finalStanding.dto.FinalStandingPageDto;
 import org.tahom.web.components.TournamentBackResourceButton;
 import org.tahom.web.link.DownloadModelLink;
 import org.tahom.web.model.EvenOddReplaceModel;
@@ -24,14 +21,14 @@ import org.tahom.web.model.TournamentFileReadOnlyModel;
 public class FinalStandingsPage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
-	private List<FinalStanding> finalStandings;
+	private FinalStandingPageDto finalStandingPageDto;
 
 	public FinalStandingsPage() {
 		this(new PageParameters());
 	}
 
 	public FinalStandingsPage(PageParameters parameters) {
-		finalStandings = finalStandingService.getFinalStandings(tournament);
+		finalStandingPageDto = finalStandingService.getFinalStandingPageDto(tournament);
 		createPage();
 	}
 
@@ -39,12 +36,12 @@ public class FinalStandingsPage extends TournamentHomePage {
 		add(new FinalStandingsForm());
 	}
 
-	private class FinalStandingsForm extends Form<Void> {
+	private class FinalStandingsForm extends Form<FinalStandingPageDto> {
 
 		private static final long serialVersionUID = 1L;
 
 		public FinalStandingsForm() {
-			super("finalStandingsForm");
+			super("finalStandingsForm", new CompoundPropertyModel<FinalStandingPageDto>(finalStandingPageDto));
 
 			addFinalStandingsTable();
 			addFinalStandingsButton();
@@ -56,20 +53,15 @@ public class FinalStandingsPage extends TournamentHomePage {
 		}
 
 		private void addFinalStandingsTable() {
-			add(new PropertyListView<FinalStanding>("rows", finalStandings) {
+			add(new PropertyListView<FinalStandingDto>("finalStandings") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected void populateItem(final ListItem<FinalStanding> listItem) {
-					final FinalStanding finalStanding = listItem.getModelObject();
-					listItem.setModel(new CompoundPropertyModel<FinalStanding>(finalStanding));
-					listItem.add(new Label("name", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
-					        .getName() : ""));
-					listItem.add(new Label("surname", (finalStanding.getPlayer() != null) ? finalStanding.getPlayer()
-					        .getSurname().toString() : ""));
-					listItem.add(new Label("rank", finalStanding.getFinalRank() + "."));
-
+				protected void populateItem(final ListItem<FinalStandingDto> listItem) {
+					listItem.add(new Label("rank"));
+					listItem.add(new Label("name"));
+					listItem.add(new Label("club"));
 					listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
 				}
 			});
@@ -88,19 +80,9 @@ public class FinalStandingsPage extends TournamentHomePage {
 		}
 
 		private void addPrintFinalStandingsButton() {
-			add(new DownloadModelLink("finalStandings", new TournamentFileReadOnlyModel() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public Component getFormComponent() {
-					return FinalStandingsForm.this;
-				}
-
-				@Override
-				public File getTournamentObject() {
-					return PdfFactory.createFinalStandings(WicketApplication.getFilesPath(), finalStandings);
-				}
-			}));
+			add(new DownloadModelLink("printFinalStandings", new TournamentFileReadOnlyModel<FinalStandingPageDto>(
+			        callableService, finalStandingPageDto, FinalStandingPdfCallable.class)));
 		}
+
 	}
 }

@@ -1,7 +1,5 @@
 package org.tahom.web;
 
-import java.io.File;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -12,21 +10,17 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.convert.IConverter;
-import org.tahom.processor.pdf.PdfFactory;
+import org.tahom.processor.callable.PlayOffPdfCallable;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
+import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
+import org.tahom.processor.service.playOffGame.dto.PlayOffPageDto;
 import org.tahom.repository.model.GameStatus;
-import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Result;
-import org.tahom.repository.model.Tournament;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentResourceButton;
 import org.tahom.web.converter.ResultConverter;
@@ -39,7 +33,7 @@ import org.tahom.web.model.TournamentFileReadOnlyModel;
 public class PlayOffPage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
-	private Tournament playOffTournament;
+	private PlayOffPageDto playOffPageDto;
 
 	public PlayOffPage() {
 		this(new PageParameters());
@@ -51,22 +45,16 @@ public class PlayOffPage extends TournamentHomePage {
 	}
 
 	protected void createPage() {
-		this.playOffTournament = initPlayOffTournament();
-		add(new PlayOffForm(Model.of(playOffTournament)));
+		this.playOffPageDto = playOffGameService.getPlayOffPageDto(tournament);
+		add(new PlayOffForm());
 	}
 
-	private Tournament initPlayOffTournament() {
-		Tournament tournament = new Tournament();
-		tournament.getGroups().addAll(groupService.getFinalGroups(this.tournament));
-		return tournament;
-	}
-
-	private class PlayOffForm extends Form<Tournament> {
+	private class PlayOffForm extends Form<PlayOffPageDto> {
 
 		private static final long serialVersionUID = 1L;
 
-		public PlayOffForm(IModel<Tournament> model) {
-			super("playOffForm", new CompoundPropertyModel<Tournament>(model));
+		public PlayOffForm() {
+			super("playOffForm", new CompoundPropertyModel<PlayOffPageDto>(playOffPageDto));
 			addPlayOffTable();
 			addSubmitButton();
 			addPdfPlayOffButton();
@@ -77,24 +65,22 @@ public class PlayOffPage extends TournamentHomePage {
 		}
 
 		private void addFinalGroupsGameListView() {
-			add(new PropertyListView<Groups>("groups") {
+			add(new PropertyListView<PlayOffGroupDto>("playOffGroups") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected void populateItem(final ListItem<Groups> listItem) {
+				protected void populateItem(final ListItem<PlayOffGroupDto> listItem) {
 					addPlayOffGames(listItem);
 				}
 
-				private void addPlayOffGames(final ListItem<Groups> groupListItem) {
-					final Groups group = groupListItem.getModelObject();
+				private void addPlayOffGames(final ListItem<PlayOffGroupDto> groupListItem) {
 
-					groupListItem.add(new Label("name", group.getName()));
+					groupListItem.add(new Label("name"));
 					groupListItem.add(new ResourceLabel("round"));
 					groupListItem.add(new ResourceLabel("player"));
 					groupListItem.add(new ResourceLabel("result"));
-					groupListItem.add(new ListView<PlayOffGameDto>("playOffGames", playOffGameService
-					        .getPlayOffGamesByGroup(group, tournament)) {
+					groupListItem.add(new PropertyListView<PlayOffGameDto>("playOffGames") {
 
 						private static final long serialVersionUID = 1L;
 
@@ -102,7 +88,7 @@ public class PlayOffPage extends TournamentHomePage {
 						protected void populateItem(final ListItem<PlayOffGameDto> listItem) {
 							final PlayOffGameDto game = listItem.getModelObject();
 
-							listItem.add(new Label("player", game.getPlayerName()).add(new AttributeModifier("style",
+							listItem.add(new Label("playerName").add(new AttributeModifier("style",
 							        new FontStyleReplaceModel(game)) {
 								private static final long serialVersionUID = 1L;
 
@@ -112,8 +98,8 @@ public class PlayOffPage extends TournamentHomePage {
 								}
 							}));
 
-							listItem.add(new Label("opponent", game.getOpponentName()).add(new AttributeModifier(
-							        "style", new FontStyleReplaceModel(game)) {
+							listItem.add(new Label("opponentName").add(new AttributeModifier("style",
+							        new FontStyleReplaceModel(game)) {
 								private static final long serialVersionUID = 1L;
 
 								@Override
@@ -122,7 +108,7 @@ public class PlayOffPage extends TournamentHomePage {
 								}
 							}));
 							listItem.add(new Label("roundName", new ResourceModel(game.getRoundName())));
-							listItem.add(new TextField<Result>("result", new PropertyModel<Result>(game, "result")) {
+							listItem.add(new TextField<Result>("result") {
 								private static final long serialVersionUID = 1L;
 
 								@Override
@@ -130,7 +116,8 @@ public class PlayOffPage extends TournamentHomePage {
 								public final <Results> IConverter<Results> getConverter(Class<Results> type) {
 									return (IConverter<Results>) ResultConverter.getInstance();
 								}
-							}.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+
+							}.add(new AjaxFormComponentUpdatingBehavior("change") {
 
 								private static final long serialVersionUID = 1L;
 
@@ -138,6 +125,10 @@ public class PlayOffPage extends TournamentHomePage {
 								protected void onUpdate(AjaxRequestTarget target) {
 									playOffGameService.updatePlayOffGameResult(game);
 								}
+
+								protected void onError(AjaxRequestTarget target, RuntimeException e) {
+									target.add(feedbackPanel);
+								};
 							}));
 
 							listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
@@ -148,19 +139,8 @@ public class PlayOffPage extends TournamentHomePage {
 		}
 
 		private void addPdfPlayOffButton() {
-			add(new DownloadModelLink("printPlayOff", new TournamentFileReadOnlyModel() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public File getTournamentObject() {
-					return PdfFactory.createPlayOff(WicketApplication.getFilesPath(), playOffTournament);
-				}
-
-				@Override
-				public Component getFormComponent() {
-					return PlayOffForm.this;
-				}
-			}));
+			add(new DownloadModelLink("printPlayOff", new TournamentFileReadOnlyModel<PlayOffPageDto>(callableService,
+			        playOffPageDto, PlayOffPdfCallable.class)));
 		}
 
 		private void addSubmitButton() {

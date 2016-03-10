@@ -20,7 +20,7 @@ public abstract class TournamentSorter {
 	@Transactional
 	public abstract void sort(List<Participant> participants);
 
-	protected void calculateParticipants(List<Participant> participants) {
+	protected void calculateParticipants(List<Participant> participants, boolean resetEqualRank) {
 		logger.debug("Calculate participant: " + Arrays.toString(participants.toArray()));
 		long time = System.currentTimeMillis();
 
@@ -50,11 +50,18 @@ public abstract class TournamentSorter {
 
 			participant.setPoints(points);
 			participant.setScore(new Score(homeScore, awayScore));
-			participant.setEqualRank(null);
+			if (resetEqualRank) {
+				participant.setEqualRank(null);
+			}
 		}
 
 		time = System.currentTimeMillis() - time;
 		logger.debug("End: Calculate participant: " + time + " ms");
+
+	}
+
+	protected void calculateParticipants(List<Participant> participants) {
+		calculateParticipants(participants, true);
 	}
 
 	protected void calculateInnerParticipantsPoint(List<Participant> participants) {

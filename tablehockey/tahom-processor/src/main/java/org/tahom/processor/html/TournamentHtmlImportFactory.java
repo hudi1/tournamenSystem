@@ -75,7 +75,13 @@ public class TournamentHtmlImportFactory {
 						player.setSurname(new Surname("Vépy I"));
 						player.setName("Martin");
 					} else {
-						player.setSurname(new Surname(playerName.split("\\.", 2)[1]));
+
+						String surname = playerName.split("\\.", 2)[1];
+						if (surname.contains("(HUN)") || surname.contains("(CZE)")) {
+							surname = surname.substring(0, surname.length() - 6);
+						}
+
+						player.setSurname(new Surname(surname));
 						player.setName(playerName.split("\\.")[0]);
 					}
 				}
@@ -134,7 +140,8 @@ public class TournamentHtmlImportFactory {
 		}
 	}
 
-	public static List<PlayOffGame> createPlayOffGames(String urlBase, List<Participant> savedParticipants) {
+	public static List<PlayOffGame> createPlayOffGames(String urlBase, List<Participant> savedParticipants,
+	        Tournament tournament) {
 		List<PlayOffGame> playOffGames = new ArrayList<PlayOffGame>();
 
 		try {
@@ -164,13 +171,7 @@ public class TournamentHtmlImportFactory {
 						PlayOffGame playOffGameTemp = new PlayOffGame();
 						playOffGameTemp.setPosition(position--);
 						playOffGames.add(playOffGameTemp);
-
-						for (Participant participant : savedParticipants) {
-							if (participant.getGroup().getName().equals(groupName)) {
-								playOffGameTemp.setGroup(participant.getGroup());
-								break;
-							}
-						}
+						playOffGameTemp.setGroup(new Groups()._setName(groupName)._setTournament(tournament));
 						first = false;
 					}
 
@@ -199,6 +200,7 @@ public class TournamentHtmlImportFactory {
 						if (!participant.getGroup().getName().equals(groupName)) {
 							continue;
 						}
+
 						if (!homeFounded && isEqualPlayer(playerHome, participant.getPlayer())) {
 							playOffGame.setHomeParticipant(participant);
 							playOffGame.setGroup(participant.getGroup());
@@ -331,10 +333,14 @@ public class TournamentHtmlImportFactory {
 			player.setSurname(new Surname(playerName.split(" ")[0]));
 			player.setName(playerName.split(" ")[1]);
 		} else if (playerName.split(" ").length == 3) {
-			player.setSurname(new Surname(playerName.split(" ")[0] + " " + playerName.split(" ")[1]));
-			player.setName(playerName.split(" ")[2]);
+			if (playerName.split(" ")[1].equals("(CZE)") || playerName.split(" ")[1].equals("(HUN)")) {
+				player.setSurname(new Surname(playerName.split(" ")[0]));
+				player.setName(playerName.split(" ")[2]);
+			} else {
+				player.setSurname(new Surname(playerName.split(" ")[0] + " " + playerName.split(" ")[1]));
+				player.setName(playerName.split(" ")[2]);
+			}
 		}
 		return player;
 	}
-
 }

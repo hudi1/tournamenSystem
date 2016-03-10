@@ -62,7 +62,7 @@ public class ParticipantIT {
 	@Test
 	@Verify("getParticipantTest-verify.xml")
 	public void getParticipandByGroup() {
-		List<Participant> participants = participantService.getParticipandByGroup(new Groups()._setId(1));
+		List<Participant> participants = participantService.getParticipantByGroup(new Groups()._setId(1));
 		Assert.assertSame(4, participants.size());
 	}
 
@@ -102,7 +102,7 @@ public class ParticipantIT {
 	public void getAdvancedPlayersByGroupFinal() {
 		LinkedList<List<Participant>> participantsByGroup = participantService.getAdvancedPlayersByGroup(new Groups()
 		        ._setId(3)._setPlayOffType(GroupsPlayOffType.FINAL), new Tournament()._setId(1)._setFinalPromoting(2),
-		        participantService.getParticipandByGroup(new Groups()._setId(3)));
+		        participantService.getParticipantByGroup(new Groups()._setId(3)));
 		Assert.assertSame(2, participantsByGroup.size());
 		Assert.assertSame(2, participantsByGroup.get(0).size());
 		Assert.assertSame(2, participantsByGroup.get(1).size());
@@ -113,7 +113,7 @@ public class ParticipantIT {
 	public void getAdvancedPlayersByGroupLower() {
 		LinkedList<List<Participant>> participantsByGroup = participantService.getAdvancedPlayersByGroup(new Groups()
 		        ._setId(4)._setPlayOffType(GroupsPlayOffType.LOWER), new Tournament()._setId(1)._setLowerPromoting(2)
-		        ._setFinalPromoting(2), participantService.getParticipandByGroup(new Groups()._setId(4)));
+		        ._setFinalPromoting(2), participantService.getParticipantByGroup(new Groups()._setId(4)));
 		Assert.assertSame(2, participantsByGroup.size());
 		Assert.assertSame(2, participantsByGroup.get(0).size());
 		Assert.assertSame(2, participantsByGroup.get(1).size());
@@ -125,7 +125,7 @@ public class ParticipantIT {
 		try {
 			participantService.getAdvancedPlayersByGroup(new Groups()._setId(4)
 			        ._setPlayOffType(GroupsPlayOffType.CROSS), new Tournament()._setId(1)._setLowerPromoting(2)
-			        ._setFinalPromoting(1), participantService.getParticipandByGroup(new Groups()._setId(4)));
+			        ._setFinalPromoting(1), participantService.getParticipantByGroup(new Groups()._setId(4)));
 			Assert.fail();
 		} catch (BadOptionsTournamentException e) {
 			Assert.assertSame("bad.options.exception", e.getCode());
@@ -137,7 +137,7 @@ public class ParticipantIT {
 	public void getAdvancedPlayersByGroupCross() {
 		LinkedList<List<Participant>> participantsByGroup = participantService.getAdvancedPlayersByGroup(new Groups()
 		        ._setId(4)._setPlayOffType(GroupsPlayOffType.CROSS), new Tournament()._setId(1)._setLowerPromoting(2)
-		        ._setFinalPromoting(2), participantService.getParticipandByGroup(new Groups()._setId(4)));
+		        ._setFinalPromoting(2), participantService.getParticipantByGroup(new Groups()._setId(4)));
 		Assert.assertSame(2, participantsByGroup.size());
 		Assert.assertSame(2, participantsByGroup.get(0).size());
 		Assert.assertSame(2, participantsByGroup.get(1).size());
@@ -146,7 +146,7 @@ public class ParticipantIT {
 	@Test
 	@Verify("getParticipantTest-verify.xml")
 	public void sortParticipantsByRank() {
-		List<Participant> participants = participantService.getParticipandByGroup(new Groups()._setId(1));
+		List<Participant> participants = participantService.getParticipantByGroup(new Groups()._setId(1));
 		participantService.sortParticipantsByRank(participants, new Tournament()._setWinPoints(2));
 
 		Assert.assertSame(4, participants.size());
@@ -159,7 +159,7 @@ public class ParticipantIT {
 	@Test
 	@Verify("getParticipantTest-verify.xml")
 	public void getGoldGoalParticipants() {
-		List<Participant> participants = participantService.getParticipandByGroup(new Groups()._setId(4));
+		List<Participant> participants = participantService.getParticipantByGroup(new Groups()._setId(4));
 		Set<Participant> goldenParticipants = participantService.getGoldGoalParticipants(participants);
 
 		Assert.assertSame(1, goldenParticipants.size());

@@ -9,9 +9,12 @@ import org.tahom.processor.schedule.BasicLessHockeyRoundRobinSchedule;
 import org.tahom.processor.schedule.BasicRoundRobinSchedule;
 import org.tahom.processor.schedule.EmptyRoundRobinSchedule;
 import org.tahom.processor.schedule.RoundRobinSchedule;
+import org.tahom.processor.service.finalStanding.FinalStandingService;
 import org.tahom.processor.service.game.GameModel;
+import org.tahom.processor.service.game.GameService;
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.processor.service.participant.ParticipantService;
+import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsType;
 import org.tahom.repository.model.Participant;
@@ -24,6 +27,15 @@ public class ScheduleService {
 
 	@Inject
 	private GameModel gameModel;
+
+	@Inject
+	private GameService gameService;
+
+	@Inject
+	private PlayOffGameService playOffGameService;
+
+	@Inject
+	private FinalStandingService finalStandingService;
 
 	public RoundRobinSchedule getSchedule(Tournament tournament, Groups group, List<Participant> participants) {
 		RoundRobinSchedule roundRobinSchedule;
@@ -47,6 +59,18 @@ public class ScheduleService {
 		}
 
 		return roundRobinSchedule;
+	}
+
+	public void saveSchedule(Tournament tournament, Groups group, List<GameDto> scheduleGames) {
+		gameService.updateBothGames(scheduleGames);
+		List<Participant> participants = participantService.getParticipantByGroup(group);
+		participantService.sortParticipantsByRank(participants, tournament);
+
+		if (GroupsType.FINAL.equals(group.getType())) {
+			playOffGameService.updatePlayOffGames(tournament, group);
+			finalStandingService.updateNotPromotingFinalStandings(tournament, group);
+		}
+		scheduleGames = getSchedule(tournament, group, participants).getSchedule();
 	}
 
 }

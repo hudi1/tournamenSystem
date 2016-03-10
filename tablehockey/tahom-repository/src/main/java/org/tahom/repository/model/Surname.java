@@ -10,11 +10,13 @@ public class Surname implements Serializable {
 	private String discriminant;
 
 	public Surname(String value) {
+		value = value.trim();
 		if (value.contains(" ")) {
 			this.value = value.split(" ")[0];
 			this.discriminant = value.split(" ")[1];
 		} else {
 			this.value = value;
+			this.discriminant = "";
 		}
 	}
 
@@ -58,7 +60,7 @@ public class Surname implements Serializable {
 
 	@Override
 	public String toString() {
-		if (discriminant == null) {
+		if (discriminant == null || discriminant.isEmpty()) {
 			return value;
 		} else {
 			return value + " " + discriminant;

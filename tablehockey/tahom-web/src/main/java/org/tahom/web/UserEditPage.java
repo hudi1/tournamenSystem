@@ -63,7 +63,7 @@ public class UserEditPage extends BasePage {
 			addName();
 			addSurname();
 			addUsername(user);
-			addPassword();
+			addPassword(user);
 			addEmail(user);
 			addValidity();
 			addAuthorization();
@@ -93,6 +93,7 @@ public class UserEditPage extends BasePage {
 					if (user.getId() != null) {
 						userService.updateUser(user);
 						getSession().info(getString("updateUserEditInfo"));
+						getTournamentSession().setUpdatedUser(user);
 						setResponsePage(UserEditPage.class);
 					} else {
 						userService.createUser(user);
@@ -120,7 +121,7 @@ public class UserEditPage extends BasePage {
 			        .setVisible(!showHideField));
 		}
 
-		private void addPassword() {
+		private void addPassword(UserImpl user) {
 			PasswordTextField passwordInput;
 			add(new ResourceLabel("passwordLabel").setVisible(!showHideField));
 			add(passwordInput = new PasswordTextField("password") {
@@ -162,6 +163,11 @@ public class UserEditPage extends BasePage {
 				passwordInput.setVisible(false);
 				passwordInput.setRequired(false);
 				confirmPasswordInput.setVisible(false);
+				confirmPasswordInput.setRequired(false);
+			}
+
+			if (user.getId() != null) {
+				passwordInput.setRequired(false);
 				confirmPasswordInput.setRequired(false);
 			}
 		}

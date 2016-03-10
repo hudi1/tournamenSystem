@@ -32,7 +32,12 @@
 			<div>
 				<label class="option"> <span
 					wicket:id="groupsPlayOffTypeLabel"> Group play off type: </span>
-				</label><select wicket:id="groupsPlayOffType" />
+				</label><select wicket:id="playOffType" />
+			</div>
+			<div>
+				<label class="option"> <span wicket:id="groupsTypeLabel">
+						Group type: </span>
+				</label><select wicket:id="type" />
 			</div>
 		</fieldset>
 
@@ -49,8 +54,8 @@
 			<legend wicket:id="tournamentLegend"></legend>
 			<div>
 				<label class="option" wicket:for="winPoints"> <span
-					wicket:id="winPointsLabel">Points for win: </span></label><input type="text"
-					wicket:id="winPoints" />
+					wicket:id="winPointsLabel">Points for win: </span></label><input
+					type="text" wicket:id="winPoints" />
 			</div>
 			<div>
 				<label class="option" wicket:for="finalPromoting"> <span
@@ -96,9 +101,10 @@
 
 	<form wicket:id="selectOptionsForm">
 		<div>
-			<input class="tournamentButton" type="submit" wicket:id="groupOptions"
-				value="Group" /> <input class="tournamentButton" type="submit"
-				wicket:id="tournamentOptions" value="Tournament" />
+			<input class="tournamentButton" type="submit"
+				wicket:id="groupOptions" value="Group" /> <input
+				class="tournamentButton" type="submit" wicket:id="tournamentOptions"
+				value="Tournament" />
 		</div>
 	</form>
 

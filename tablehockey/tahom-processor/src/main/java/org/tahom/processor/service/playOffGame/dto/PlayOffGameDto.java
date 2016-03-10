@@ -15,5 +15,4 @@ public class PlayOffGameDto extends GameDto {
 	public void setRoundName(String roundName) {
 		this.roundName = roundName;
 	}
-
 }

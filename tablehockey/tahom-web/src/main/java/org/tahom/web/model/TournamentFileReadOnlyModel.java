@@ -1,32 +1,35 @@
 package org.tahom.web.model;
 
 import java.io.File;
+import java.util.UUID;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tahom.processor.TournamentException;
+import org.tahom.processor.callable.AbstractPdfCallable;
+import org.tahom.processor.service.callable.CallableService;
+import org.tahom.web.WicketApplication;
 
-public abstract class TournamentFileReadOnlyModel extends AbstractReadOnlyModel<File> {
+public class TournamentFileReadOnlyModel<I> extends AbstractReadOnlyModel<File> {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+	private CallableService callableService;
+	private String uuid;
 
-    @Override
-    public File getObject() {
-        try {
-            return getTournamentObject();
-        } catch (TournamentException ex) {
-            logger.error("Error when submiting button " + this, ex);
-            getFormComponent().error(getFormComponent().getString(ex.getCode()));
-            return null;
-        }
-    }
+	public TournamentFileReadOnlyModel(CallableService callableService, I input,
+	        Class<? extends AbstractPdfCallable<I>> callableClass) {
+		this.uuid = UUID.randomUUID().toString();
+		this.callableService = callableService;
+		callableService.createFile(uuid, WicketApplication.getFilesPath(), input, callableClass);
+	}
 
-    public abstract Component getFormComponent();
+	@Override
+	public File getObject() {
+		return callableService.getFile(uuid);
+	}
 
-    public abstract File getTournamentObject();
-
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		callableService.finalizeFile(uuid);
+	}
 }

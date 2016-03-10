@@ -13,6 +13,8 @@ import org.tahom.processor.BadOptionsTournamentException;
 import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
+import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
+import org.tahom.processor.service.playOffGame.dto.PlayOffPageDto;
 import org.tahom.processor.util.PositionCounter;
 import org.tahom.repository.dao.PlayOffGameDao;
 import org.tahom.repository.model.GameStatus;
@@ -107,7 +109,7 @@ public class PlayOffGameService {
 			List<Participant> players = new ArrayList<Participant>();
 			if (GroupsPlayOffType.CROSS.equals(group.getPlayOffType())) {
 				groupIndex++;
-				List<Participant> tempPart = participantService.getSortedParticipandByGroup(group);
+				List<Participant> tempPart = participantService.getSortedParticipantByGroup(group);
 				if (groupIndex % 2 == 0) {
 					Collections.reverse(tempPart);
 				}
@@ -116,7 +118,7 @@ public class PlayOffGameService {
 					continue;
 				}
 			} else {
-				players = participantService.getSortedParticipandByGroup(group);
+				players = participantService.getSortedParticipantByGroup(group);
 			}
 			int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
@@ -132,7 +134,7 @@ public class PlayOffGameService {
 	@Transactional
 	public void updatePlayOffGames(Tournament tournament, Groups group) {
 
-		List<Participant> players = participantService.getSortedParticipandByGroup(group);
+		List<Participant> players = participantService.getSortedParticipantByGroup(group);
 
 		int playOffPlayerCount = getPlayOffPlayerCount(group, tournament);
 
@@ -143,8 +145,9 @@ public class PlayOffGameService {
 		LinkedList<Participant> playOffPlayer = new LinkedList<Participant>(players.subList(0, playOffPlayerCount));
 
 		List<PlayOffGame> finalgames = getPlayOffGames(new PlayOffGame()._setGroup(group));
-		updatePlayOffGames(playOffPlayer, finalgames, group, playOffPlayerCount);
-
+		if (!finalgames.isEmpty()) {
+			updatePlayOffGames(playOffPlayer, finalgames, group, playOffPlayerCount);
+		}
 	}
 
 	@Transactional
@@ -166,6 +169,24 @@ public class PlayOffGameService {
 				updatePlayOffGame(playOffGames, i + 1, playerPlayOffCount);
 			}
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public PlayOffPageDto getPlayOffPageDto(Tournament tournament) {
+		PlayOffPageDto playOffPageDto = new PlayOffPageDto();
+
+		List<Groups> groups = groupService.getFinalGroups(tournament);
+		if (groups.isEmpty()) {
+			groups = groupService.getBasicGroups(tournament);
+		}
+
+		for (Groups group : groups) {
+			PlayOffGroupDto playOffGroupDto = playOffGameModel.createPlayOffGroupDto(group);
+			playOffPageDto.getPlayOffGroups().add(playOffGroupDto);
+			playOffGroupDto.getPlayOffGames().addAll(getPlayOffGamesByGroup(group, tournament));
+		}
+
+		return playOffPageDto;
 	}
 
 	private int getPlayOffPlayerCount(Groups group, Tournament tournament) {

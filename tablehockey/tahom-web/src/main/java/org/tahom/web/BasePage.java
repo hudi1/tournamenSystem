@@ -109,7 +109,7 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 
 		homePage.setVisible(true);
 
-		if (this instanceof TournamentHomePage) {
+		if (this instanceof TournamentHomePage && !(this instanceof TournamentOverviewPage)) {
 			registrationPage.setVisible(true);
 			groupPage.setVisible(true);
 			playOffPage.setVisible(true);
@@ -117,11 +117,11 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 			logoutPage.setVisible(true);
 		} else {
 			publicTournamentPage.setVisible(true);
+			statisticPage.setVisible(true);
 			// wch2017Page.setVisible(true);
 			if (getTournamentSession().isSignedIn()) {
 				seasonPage.setVisible(true);
 				tournamentPage.setVisible(true);
-				statisticPage.setVisible(true);
 				logoutPage.setVisible(true);
 			} else {
 				loginPage.setVisible(true);

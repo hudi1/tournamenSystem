@@ -106,13 +106,16 @@ SELECT_PLAYER_GAME(QRY,in=StatisticForm,outx=Player,tab=player=p,tab=participant
          %g1.ID @participants.games.id(id), %g1.HOME_PARTICIPANT_ID @participants.games.homeParticipant.id, %g1.AWAY_PARTICIPANT_ID @participants.games.awayParticipant.id, %g1.RESULT @participants.games.result(type=result),
   	     %g2.NAME @participants.group.name, %g2.NUMBER_OF_HOCKEY @participants.group.numberOfHockey, %g2.TYPE @participants.group.type, %g2.INDEX_OF_FIRST_HOCKEY @participants.group.indexOfFirstHockey, %g2.TOURNAMENT_ID @participants.group.tournament.id, %g2.COPY_RESULT @participants.group.copyResult, %g2.PLAY_THIRD_PLACE @participants.group.playThirdPlace, %g2.PLAY_OFF @participants.group.playOff, %g2.PLAY_OFF_TYPE @participants.group.playOffType,
   	     %t.NAME @participants.group.tournament.name, %t.SEASON_ID @participants.group.tournament.season.id, %t.FINAL_PROMOTING @participants.group.tournament.finalPromoting, %t.LOWER_PROMOTING @participants.group.tournament.lowerPromoting, %t.WIN_POINTS @participants.group.tournament.winPoints, %t.PLAY_OFF_FINAL @participants.group.tournament.playOffFinal, %t.PLAY_OFF_LOWER @participants.group.tournament.playOffLower, %t.MIN_PLAYERS_IN_GROUP @participants.group.tournament.minPlayersInGroup, %t.SORT_TYPE @participants.group.tournament.sortType,
-         %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.VALIDITY @user.validity, %u.OPEN @user.open
+         %u.NAME @user.name, %u.SURNAME @user.surname, %u.EMAIL @user.email, %u.USER_NAME @user.userName, %u.PASSWORD @user.password, %u.ROLE @user.role, %u.VALIDITY @user.validity, %u.OPEN @user.open,
+         %f.ID @finalStandings.id(id), %f.PLAYER_ID @finalStandings.player.id, %f.FINAL_RANK @finalStandings.finalRank, %f.TOURNAMENT_ID @finalStandings.tournament.id
   from %%player p
   left join %%participant p1 on %p.ID = %p1.PLAYER_ID
   left join %%game g1 on %p1.ID = %g1.HOME_PARTICIPANT_ID
   left join %%groups g2 on %p1.GROUP_ID = %g2.ID
   left join %%tournament t on %g2.TOURNAMENT_ID = %t.ID
   left join %%user u on %p.USER_ID = %u.ID
+  left join %%final_standing f on %p.ID = %f.PLAYER_ID
+  left join %%final_standing f1 on %t.ID = %f1.TOURNAMENT_ID
   {= where
   	{& %u.ID = :user.id(notnull,id) }
     {& %t.ID = :tournament.id(notnull,id) }

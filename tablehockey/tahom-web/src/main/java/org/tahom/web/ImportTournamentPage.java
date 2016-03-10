@@ -2,11 +2,13 @@ package org.tahom.web;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.UrlTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.UrlValidator;
 import org.tahom.repository.model.Tournament;
 import org.tahom.repository.model.User;
@@ -41,13 +43,17 @@ public class ImportTournamentPage extends AbstractBasePage {
 
 	private class ImportForm extends Form<Void> {
 
+		private boolean ignoreErrors = false;
+
 		private static final long serialVersionUID = 1L;
 
 		private ImportForm() {
 			super("importForm");
 
 			TextField<String> url = addUrlField();
+
 			addImportButton(url);
+			addCheckBOx();
 		}
 
 		private TextField<String> addUrlField() {
@@ -59,15 +65,19 @@ public class ImportTournamentPage extends AbstractBasePage {
 			return url;
 		}
 
+		private void addCheckBOx() {
+			add(new CheckBox("ignoreErrors", new PropertyModel<Boolean>(this, "ignoreErrors")));
+		}
+
 		public void addImportButton(final TextField<String> url) {
-			add(new MaskIndicatingAjaxButton("import") {
+			add(new MaskIndicatingAjaxButton("showModalLinkTournament") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				protected void submit(AjaxRequestTarget target, Form<?> form) {
 					target.add(feedBackPanel);
-					importService.importTournament(url.getInput(), tournament, user);
+					importService.importTournament(url.getInput(), tournament, user, ignoreErrors);
 					modalWindow.close(target);
 				}
 

@@ -15,10 +15,10 @@
         play_off="true" play_third_place="true" tournament_id="1" type="B" />
     <groups id="2" copy_result="true" index_of_first_hockey="1" name="2" number_of_hockey="1" play_off_type="F"
         play_off="true" play_third_place="true" tournament_id="1" type="B" />
-    <groups id="3" copy_result="true" index_of_first_hockey="1" name="A" number_of_hockey="1" play_off_type="F"
-        play_off="true" play_third_place="true" tournament_id="1" type="F" />
-    <groups id="4" copy_result="true" index_of_first_hockey="1" name="B" number_of_hockey="1" play_off_type="F"
-        play_off="true" play_third_place="true" tournament_id="1" type="F" />
+    <groups id="$group_idA" copy_result="true" index_of_first_hockey="1" name="A" number_of_hockey="2" play_off_type="F"
+        play_off="true" play_third_place="false" tournament_id="1" type="F" />
+    <groups id="$group_idB" copy_result="false" index_of_first_hockey="1" name="B" number_of_hockey="2" play_off_type="L"
+        play_off="true" play_third_place="false" tournament_id="1" type="F" />
 
     <groups id="5" copy_result="true" index_of_first_hockey="1" name="A" number_of_hockey="1" play_off_type="F"
         play_off="true" play_third_place="true" tournament_id="2" type="F" />        
@@ -42,18 +42,18 @@
     <participant id="6" group_id="2" player_id="6" rank="2" />
     <participant id="7" group_id="2" player_id="7" rank="3" />
     <participant id="8" group_id="2" player_id="8" rank="4" />
-
-    <participant id="9" group_id="3" player_id="1" rank="1" />
-    <participant id="10" group_id="3" player_id="2" rank="2"/>
-    <participant id="11" group_id="3" player_id="5" rank="3" />
-    <participant id="12" group_id="3" player_id="6" rank="4" />
-
-    <participant id="13" group_id="4" player_id="3" rank="1" />
-    <participant id="14" group_id="4" player_id="4" rank="2" />
-    <participant id="15" group_id="4" player_id="7" rank="3" />
-    <participant id="16" group_id="4" player_id="8" rank="4" />
     
-    <participant id="17" group_id="5" player_id="1" rank="1" />    
+    <participant id="17" group_id="5" player_id="1" rank="1" />   
+
+    <participant id="$participant1" group_id="$group_idA" player_id="1" />   
+    <participant id="$participant2" group_id="$group_idA" player_id="2" />   
+    <participant id="$participant5" group_id="$group_idA" player_id="5" />   
+    <participant id="$participant6" group_id="$group_idA" player_id="6" />   
+
+    <participant id="$participant3" group_id="$group_idB" player_id="3" />   
+    <participant id="$participant4" group_id="$group_idB" player_id="4" />   
+    <participant id="$participant7" group_id="$group_idB" player_id="7" />   
+    <participant id="$participant8" group_id="$group_idB" player_id="8" />   
 
     <game id="@any" away_participant_id="1" home_participant_id="2" result="0:1" />
     <game id="@any" away_participant_id="1" home_participant_id="3" result="0:1" />
@@ -70,19 +70,40 @@
     <game id="@any" away_participant_id="3" home_participant_id="4" result="0:1" />
     <game id="@any" away_participant_id="4" home_participant_id="3" result="1:0" />
     
-    <game id="@any" away_participant_id="9" home_participant_id="10" result="0:1" />
-    <game id="@any" away_participant_id="9" home_participant_id="11" result="@null" />
-    <game id="@any" away_participant_id="9" home_participant_id="12" result="@null" />
-    <game id="@any" away_participant_id="10" home_participant_id="9" result="1:0" />
-    <game id="@any" away_participant_id="11" home_participant_id="9" result="@null" />
-    <game id="@any" away_participant_id="12" home_participant_id="9" result="@null" />    
-
-    <game id="@any" away_participant_id="10" home_participant_id="11" result="@null" />
-    <game id="@any" away_participant_id="10" home_participant_id="12" result="@null" />
-    <game id="@any" away_participant_id="11" home_participant_id="10" result="@null" />
-    <game id="@any" away_participant_id="12" home_participant_id="10" result="@null" />
+    <game id="@any" away_participant_id="$participant1" home_participant_id="$participant2" result="0:1" />
+    <game id="@any" away_participant_id="$participant2" home_participant_id="$participant1" result="1:0" />
     
-    <game id="@any" away_participant_id="12" home_participant_id="11" result="@null" />
-    <game id="@any" away_participant_id="11" home_participant_id="12" result="@null" />
+    <game id="@any" away_participant_id="$participant3" home_participant_id="$participant4" result="@null" />
+    <game id="@any" away_participant_id="$participant4" home_participant_id="$participant3" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant1" home_participant_id="$participant5" result="@null" />
+    <game id="@any" away_participant_id="$participant5" home_participant_id="$participant1" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant2" home_participant_id="$participant5" result="@null" />
+    <game id="@any" away_participant_id="$participant5" home_participant_id="$participant2" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant1" home_participant_id="$participant6" result="@null" />
+    <game id="@any" away_participant_id="$participant6" home_participant_id="$participant1" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant2" home_participant_id="$participant6" result="@null" />
+    <game id="@any" away_participant_id="$participant6" home_participant_id="$participant2" result="@null" />
 
+    <game id="@any" away_participant_id="$participant5" home_participant_id="$participant6" result="@null" />
+    <game id="@any" away_participant_id="$participant6" home_participant_id="$participant5" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant3" home_participant_id="$participant7" result="@null" />
+    <game id="@any" away_participant_id="$participant7" home_participant_id="$participant3" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant4" home_participant_id="$participant7" result="@null" />
+    <game id="@any" away_participant_id="$participant7" home_participant_id="$participant4" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant3" home_participant_id="$participant8" result="@null" />
+    <game id="@any" away_participant_id="$participant8" home_participant_id="$participant3" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant4" home_participant_id="$participant8" result="@null" />
+    <game id="@any" away_participant_id="$participant8" home_participant_id="$participant4" result="@null" />
+    
+    <game id="@any" away_participant_id="$participant7" home_participant_id="$participant8" result="@null" />
+    <game id="@any" away_participant_id="$participant8" home_participant_id="$participant7" result="@null" />
+        
 </dataset>
