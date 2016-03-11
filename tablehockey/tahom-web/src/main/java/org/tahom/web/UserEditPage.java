@@ -94,11 +94,11 @@ public class UserEditPage extends BasePage {
 						userService.updateUser(user);
 						getSession().info(getString("updateUserEditInfo"));
 						getTournamentSession().setUpdatedUser(user);
-						setResponsePage(UserEditPage.class);
+						setResponsePage(new UserEditPage(user, showHideField, showUsername));
 					} else {
 						userService.createUser(user);
 						getSession().info(getString("addUserEditInfo"));
-						setResponsePage(new LoginPage());
+						setResponsePage(LoginPage.class);
 					}
 				}
 			});

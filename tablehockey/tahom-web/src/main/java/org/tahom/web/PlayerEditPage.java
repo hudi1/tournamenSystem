@@ -6,14 +6,13 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.convert.IConverter;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.User;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentBackResourceButton;
 import org.tahom.web.components.TournamentResourceButton;
-import org.tahom.web.converter.SurnameConverter;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerEditPage extends TournamentHomePage {
@@ -72,11 +71,14 @@ public class PlayerEditPage extends TournamentHomePage {
 				public void submit() {
 					if (player.getId() != null) {
 						playerService.updatePlayer(player);
+						getSession().info(getString("updatePlayerInfo"));
+						setResponsePage(new PlayerEditPage(player, getPageParameters()));
 					} else {
 						playerService.createPlayer(user, player);
+						getSession().info(getString("addPlayerInfo", Model.of(player)));
+						setResponsePage(new PlayerPage(getPageParameters(), player));
 					}
 
-					setResponsePage(PlayerPage.class, getPageParameters());
 				}
 			});
 		}
@@ -86,16 +88,7 @@ public class PlayerEditPage extends TournamentHomePage {
 			add(new ResourceLabel("nameLabel"));
 			add(new RequiredTextField<String>("name"));
 			add(new ResourceLabel("surnameLabel"));
-			add(new RequiredTextField<String>("surname") {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				@SuppressWarnings("unchecked")
-				public final <Surname> IConverter<Surname> getConverter(Class<Surname> type) {
-					return (IConverter<Surname>) SurnameConverter.getInstance();
-				}
-			});
+			add(new RequiredTextField<String>("surname"));
 			add(new ResourceLabel("clubLabel"));
 			add(new TextField<String>("club"));
 			add(new ResourceLabel("worldRankingLabel"));

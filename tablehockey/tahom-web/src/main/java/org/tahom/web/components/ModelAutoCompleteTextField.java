@@ -15,9 +15,9 @@ public abstract class ModelAutoCompleteTextField<T> extends AutoCompleteTextFiel
 	private static final long serialVersionUID = 1L;
 	private List<T> allChoices;
 
-	public ModelAutoCompleteTextField(String id, IModel<T> model, Class<T> type, IAutoCompleteRenderer<T> renderer,
+	public ModelAutoCompleteTextField(String id, IModel<T> model, IAutoCompleteRenderer<T> renderer,
 	        AutoCompleteSettings settings, List<T> allChoices) {
-		super(id, model, type, renderer, settings);
+		super(id, model, null, renderer, settings);
 		this.allChoices = new ArrayList<T>(allChoices);
 	}
 

@@ -66,10 +66,6 @@ public class ImportPlayerPage extends AbstractBasePage {
 					modalWindow.close(target);
 				}
 
-				@Override
-				public String maskText() {
-					return getString("maskText");
-				}
 			});
 		}
 	}

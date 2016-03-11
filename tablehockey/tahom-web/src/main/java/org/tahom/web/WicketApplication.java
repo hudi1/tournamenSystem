@@ -1,6 +1,8 @@
 package org.tahom.web;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.ConverterLocator;
+import org.apache.wicket.IConverterLocator;
 import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
@@ -21,6 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.tahom.processor.TournamentException;
+import org.tahom.repository.model.Results;
+import org.tahom.repository.model.Surname;
+import org.tahom.web.converter.ResultConverter;
+import org.tahom.web.converter.SurnameConverter;
 import org.tahom.web.finder.SpringStringResourceLoader;
 import org.tahom.web.session.TournamentAuthenticatedWebSession;
 
@@ -111,6 +117,14 @@ public class WicketApplication extends AuthenticatedWebApplication {
 			});
 			loadI18nMessages();
 		}
+	}
+
+	@Override
+	protected IConverterLocator newConverterLocator() {
+		ConverterLocator converter = new ConverterLocator();
+		converter.set(Results.class, ResultConverter.getInstance());
+		converter.set(Surname.class, SurnameConverter.getInstance());
+		return converter;
 	}
 
 	private void loadI18nMessages() {

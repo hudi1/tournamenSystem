@@ -14,7 +14,6 @@ import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.convert.IConverter;
 import org.tahom.processor.callable.PlayOffPdfCallable;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
@@ -23,7 +22,6 @@ import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Result;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentResourceButton;
-import org.tahom.web.converter.ResultConverter;
 import org.tahom.web.link.DownloadModelLink;
 import org.tahom.web.model.EvenOddReplaceModel;
 import org.tahom.web.model.FontStyleReplaceModel;
@@ -108,16 +106,8 @@ public class PlayOffPage extends TournamentHomePage {
 								}
 							}));
 							listItem.add(new Label("roundName", new ResourceModel(game.getRoundName())));
-							listItem.add(new TextField<Result>("result") {
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								@SuppressWarnings("unchecked")
-								public final <Results> IConverter<Results> getConverter(Class<Results> type) {
-									return (IConverter<Results>) ResultConverter.getInstance();
-								}
-
-							}.add(new AjaxFormComponentUpdatingBehavior("change") {
+							listItem.add(new TextField<Result>("result").add(new AjaxFormComponentUpdatingBehavior(
+							        "change") {
 
 								private static final long serialVersionUID = 1L;
 

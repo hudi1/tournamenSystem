@@ -13,16 +13,14 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.convert.IConverter;
 import org.tahom.processor.schedule.RoundRobinSchedule;
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
-import org.tahom.repository.model.Result;
+import org.tahom.repository.model.Results;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentBackResourceButton;
 import org.tahom.web.components.TournamentResourceButton;
-import org.tahom.web.converter.ResultConverter;
 import org.tahom.web.model.EvenOddReplaceModel;
 import org.tahom.web.model.FontStyleReplaceModel;
 
@@ -62,12 +60,6 @@ public class SchedulePage extends TournamentHomePage {
 			addScheduleListView();
 			addSaveButton();
 			addBackButton();
-		}
-
-		@Override
-		protected void onValidate() {
-			// TODO Auto-generated method stub
-			super.onValidate();
 		}
 
 		private void addSaveButton() {
@@ -130,15 +122,9 @@ public class SchedulePage extends TournamentHomePage {
 						}
 					}));
 
-					listItem.add(new TextField<Result>("result") {
+					listItem.add(new TextField<Results>("result") {
 
 						private static final long serialVersionUID = 1L;
-
-						@SuppressWarnings("unchecked")
-						@Override
-						public final <Results> IConverter<Results> getConverter(Class<Results> type) {
-							return (IConverter<Results>) ResultConverter.getInstance();
-						}
 
 						public void validate() {
 							super.validate();
@@ -151,7 +137,6 @@ public class SchedulePage extends TournamentHomePage {
 
 					listItem.add(new Label("round"));
 					listItem.add(new Label("hockey"));
-
 					listItem.add(new AttributeModifier("class", new EvenOddReplaceModel(listItem.getIndex())));
 				}
 

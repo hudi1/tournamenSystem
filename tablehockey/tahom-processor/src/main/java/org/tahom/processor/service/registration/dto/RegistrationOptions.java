@@ -1,4 +1,4 @@
-package org.tahom.web.util;
+package org.tahom.processor.service.registration.dto;
 
 import java.util.LinkedList;
 

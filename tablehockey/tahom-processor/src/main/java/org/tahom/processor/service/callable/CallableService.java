@@ -35,6 +35,7 @@ public class CallableService {
 
 	public <I> void createFile(String uuid, String path, I input, Class<? extends AbstractPdfCallable<I>> callableClass) {
 		try {
+			logger.debug("Creating file with uuid" + uuid);
 			AbstractPdfCallable<I> callable = callableClass.getConstructor(path.getClass(), input.getClass())
 			        .newInstance(path, input);
 			FutureTask<File> future = executeCallable(callable);

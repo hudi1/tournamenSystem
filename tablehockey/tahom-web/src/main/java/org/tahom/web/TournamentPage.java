@@ -63,11 +63,11 @@ public class TournamentPage extends BasePage {
 			super("tournamentForm", new CompoundPropertyModel<Season>(model));
 			addSeasonLabel();
 			addSeasonDropDownChoice(model);
-			addTournamentListView();
-			addTournamentAddButton();
+			AjaxPagingNavigator navigator = addTournamentListView();
+			addTournamentAddButton(navigator);
 		}
 
-		private void addTournamentAddButton() {
+		private void addTournamentAddButton(final AjaxPagingNavigator navigator) {
 			add(new TournamentAjaxButton("addTournament", new ResourceModel("addTournament")) {
 
 				private static final long serialVersionUID = 1L;
@@ -79,10 +79,16 @@ public class TournamentPage extends BasePage {
 					tournamentService.createTournament(selectedSeason, tournament);
 					// because of default value we need to read it
 					selectedSeason.getTournaments().add(tournamentService.getTournament(tournament));
+					setNavigatorPage(navigator, tournament);
 					getFeedbackMessages().clear();
 					info(getString("addTournamentInfo"));
 					target.add(feedbackPanel);
 					target.add(TournamentForm.this);
+				}
+
+				private void setNavigatorPage(AjaxPagingNavigator navigator, Tournament tournament) {
+					int page = getObjectPage(selectedSeason.getTournaments(), tournament);
+					navigator.getPageable().setCurrentPage(page);
 				}
 
 				@Override
@@ -92,7 +98,7 @@ public class TournamentPage extends BasePage {
 			});
 		}
 
-		private void addTournamentListView() {
+		private AjaxPagingNavigator addTournamentListView() {
 			PropertyPageableListView<Tournament> listView;
 			add(listView = new PropertyPageableListView<Tournament>("tournaments", ITEM_PER_PAGE) {
 
@@ -147,6 +153,7 @@ public class TournamentPage extends BasePage {
 			});
 			AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
 			add(navigator);
+			return navigator;
 		}
 
 		private void addSeasonDropDownChoice(final IModel<Season> model) {

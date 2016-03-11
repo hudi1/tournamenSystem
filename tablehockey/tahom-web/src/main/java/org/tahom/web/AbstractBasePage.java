@@ -14,6 +14,7 @@ import org.tahom.processor.service.imports.ImportService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.processor.service.player.PlayerService;
+import org.tahom.processor.service.registration.RegistrationService;
 import org.tahom.processor.service.schedule.ScheduleService;
 import org.tahom.processor.service.season.SeasonService;
 import org.tahom.processor.service.statistic.StatisticService;
@@ -66,6 +67,9 @@ public class AbstractBasePage extends WebPage {
 
 	@SpringBean(name = "callableService")
 	protected CallableService callableService;
+
+	@SpringBean(name = "registrationService")
+	protected RegistrationService registrationService;
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -2,6 +2,7 @@ package org.tahom.processor.service.participant;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -45,14 +46,16 @@ public class ParticipantModel {
 	}
 
 	private List<GameDto> getGames(Participant currentParticipant, Collection<Participant> participants) {
-		List<GameDto> games = new ArrayList<GameDto>();
+		List<GameDto> games = new LinkedList<GameDto>();
 		for (Participant participant : participants) {
+
 			if (participant.equals(currentParticipant)) {
 				games.add(gameModel.createTempResultGame());
 			} else {
-				for (Game game : participant.getGames()) {
-					if (game.getAwayParticipant().equals(currentParticipant)) {
+				for (Game game : currentParticipant.getGames()) {
+					if (game.getAwayParticipant().equals(participant)) {
 						games.add(gameModel.createGameDto(game));
+						break;
 					}
 				}
 			}

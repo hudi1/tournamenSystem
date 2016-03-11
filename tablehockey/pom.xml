@@ -62,6 +62,16 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>
@@ -651,7 +661,7 @@
                 <artifactId>guava</artifactId>
                 <version>${version.guava}</version>
             </dependency>
-            
+
             <!-- Test -->
             <dependency>
                 <groupId>org.springframework</groupId>

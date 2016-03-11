@@ -12,37 +12,33 @@ import org.apache.wicket.request.Response;
  */
 
 public class BusyIndicatingMaskAppender extends AjaxIndicatorAppender {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final String busyIndicatorText;
+	private final String maskKey;
 
-    public BusyIndicatingMaskAppender() {
-        this("Please wait...");
-    }
+	public BusyIndicatingMaskAppender() {
+		this("maskText");
+	}
 
-    public BusyIndicatingMaskAppender(final String busyText) {
-        this(busyText, null);
-    }
+	public BusyIndicatingMaskAppender(final String maskKey) {
+		this.maskKey = maskKey;
+	}
 
-    public BusyIndicatingMaskAppender(final String busyText, final String indicatorUrl) {
-        busyIndicatorText = busyText;
-    }
+	@Override
+	public void afterRender(Component component) {
+		final Response r = component.getResponse();
 
-    @Override
-    public void afterRender(Component component) {
-        final Response r = component.getResponse();
-
-        r.write("<div style=\"display:none; text-align: center;\" class=\"");
-        r.write(getSpanClass());
-        r.write("\" ");
-        r.write("id=\"");
-        r.write(getMarkupId());
-        r.write("\">");
-        r.write("<img src=\"");
-        r.write(getIndicatorUrl());
-        r.write("\" alt=\"\"/></span>");
-        r.write(busyIndicatorText);
-        r.write("</div>");
-    }
+		r.write("<div style=\"display:none; text-align: center;\" class=\"");
+		r.write(getSpanClass());
+		r.write("\" ");
+		r.write("id=\"");
+		r.write(getMarkupId());
+		r.write("\">");
+		r.write("<img src=\"");
+		r.write(getIndicatorUrl());
+		r.write("\" alt=\"\"/></span>");
+		r.write(component.getString(maskKey));
+		r.write("</div>");
+	}
 
 }

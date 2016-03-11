@@ -155,21 +155,6 @@ public class TournamentOptionsPage extends TournamentHomePage {
 					return null;
 				}
 			}));
-			/*
-			 * add(new RadioChoice<GroupsType>("type", TYPES, new IChoiceRenderer<GroupsType>() {
-			 * 
-			 * private static final long serialVersionUID = 1L;
-			 * 
-			 * @Override public Object getDisplayValue(GroupsType object) { return getString(object.toString() +
-			 * "GROUP"); }
-			 * 
-			 * @Override public String getIdValue(GroupsType object, int index) { return index + ""; }
-			 * 
-			 * @Override public GroupsType getObject(String id, IModel<? extends List<? extends GroupsType>> choices) {
-			 * List<? extends GroupsType> _choices = choices.getObject(); for (int index = 0; index < _choices.size();
-			 * index++) { final GroupsType choice = _choices.get(index); if (getIdValue(choice, index) != null &&
-			 * getIdValue(choice, index).equals(id)) { return choice; } } return null; } }));
-			 */
 		}
 
 		private void addLegendLabel() {

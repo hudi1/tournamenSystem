@@ -38,4 +38,5 @@ public class SeasonService {
 	public List<Season> getAllSeasons() {
 		return seasonDao.list(new Season()._setInit(Season.Association.tournaments));
 	}
+
 }

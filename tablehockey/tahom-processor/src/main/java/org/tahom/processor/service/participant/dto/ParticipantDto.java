@@ -1,7 +1,7 @@
 package org.tahom.processor.service.participant.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.tahom.processor.service.game.dto.GameDto;
@@ -61,17 +61,17 @@ public class ParticipantDto implements Serializable {
 
 	public List<GameDto> getGames() {
 		if (games == null) {
-			games = new ArrayList<GameDto>();
+			games = new LinkedList<GameDto>();
 		}
 		return games;
 	}
 
 	public Integer getId() {
-	    return id;
-    }
+		return id;
+	}
 
 	public void setId(Integer id) {
-	    this.id = id;
-    }
+		this.id = id;
+	}
 
 }

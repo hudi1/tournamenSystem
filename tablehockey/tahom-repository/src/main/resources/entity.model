@@ -12,7 +12,7 @@ package org.tahom.repository.model {
         #Values(CROSS = "C",FINAL = "F",LOWER = "L")
         #Attr String value
     }
-
+    
     #Serializable(1)
     final #Enum GroupsType {
         #Values(BASIC = "B",FINAL = "F",PLAY_OFF = "P")

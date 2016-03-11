@@ -1,5 +1,6 @@
 package org.tahom.web;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -256,6 +257,19 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 
 	public TournamentAuthenticatedWebSession getTournamentSession() {
 		return ((TournamentAuthenticatedWebSession) getSession());
+	}
+
+	public <O> int getObjectPage(List<O> objects, O object) {
+		int page = 0;
+		if (object != null) {
+			for (int i = 0; i < objects.size(); i++) {
+				if (objects.get(i).equals(object)) {
+					page = i / ITEM_PER_PAGE;
+					break;
+				}
+			}
+		}
+		return page;
 	}
 
 	@Override

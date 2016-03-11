@@ -52,9 +52,6 @@ public abstract class AbstractPdfCallable<I> implements Callable<File> {
 	}
 
 	private File createFile(String path, I input) {
-		logger.debug("Creating file " + getClass().getSimpleName() + " start");
-		long time = System.currentTimeMillis();
-
 		Document document = new Document(PageSize.A4, 5, 5, 5, 5);
 		File file = null;
 		try {
@@ -71,8 +68,6 @@ public abstract class AbstractPdfCallable<I> implements Callable<File> {
 			if (file != null) {
 				file.deleteOnExit();
 			}
-			time = System.currentTimeMillis() - time;
-			logger.debug("Creating file " + getClass().getSimpleName() + " end : " + time + " ms");
 		}
 		return file;
 	}

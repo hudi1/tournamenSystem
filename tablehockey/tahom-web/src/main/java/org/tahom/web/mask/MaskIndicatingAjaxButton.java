@@ -43,7 +43,13 @@ public abstract class MaskIndicatingAjaxButton extends TournamentAjaxResourceBut
 	 */
 	public MaskIndicatingAjaxButton(final String id) {
 		super(id);
-		indicatorAppender = new BusyIndicatingMaskAppender(maskText());
+		indicatorAppender = new BusyIndicatingMaskAppender();
+		add(indicatorAppender);
+	}
+
+	public MaskIndicatingAjaxButton(final String id, final String maskKey) {
+		super(id);
+		indicatorAppender = new BusyIndicatingMaskAppender(maskKey);
 		add(indicatorAppender);
 	}
 
@@ -55,7 +61,5 @@ public abstract class MaskIndicatingAjaxButton extends TournamentAjaxResourceBut
 	public String getAjaxIndicatorMarkupId() {
 		return indicatorAppender.getMarkupId();
 	}
-
-	public abstract String maskText();
 
 }

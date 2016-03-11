@@ -28,7 +28,8 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.SharedResourceReference;
-import org.tahom.repository.model.Groups;
+import org.tahom.processor.service.registration.dto.RegistrationOptions;
+import org.tahom.processor.service.registration.dto.RegistrationPageDto;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Player;
 import org.tahom.web.behavior.CloseOnESCBehavior;
@@ -40,17 +41,13 @@ import org.tahom.web.components.TournamentResourceButton;
 import org.tahom.web.link.AjaxModelLink;
 import org.tahom.web.link.TournamentAjaxLink;
 import org.tahom.web.model.EvenOddReplaceModel;
-import org.tahom.web.util.RegistrationOptions;
 
 @AuthorizeInstantiation(Roles.USER)
 public class RegistrationPage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
-	private Groups group;
-	private final List<Participant> tournamentParticipants;
-	private final List<Player> notRegistratedPlayers;
-	private final RegistrationOptions registrationOptions = new RegistrationOptions();
-	private String selectOptions;
+
+	private RegistrationPageDto registrationPageDto;
 
 	public RegistrationPage() {
 		this(new PageParameters());
@@ -58,10 +55,7 @@ public class RegistrationPage extends TournamentHomePage {
 
 	public RegistrationPage(PageParameters parameters) {
 		super(parameters);
-		createGroup(parameters);
-		this.tournamentParticipants = participantService.getRegistratedParticipant(tournament);
-		this.notRegistratedPlayers = playerService.getNotRegisteredPlayers(tournament);
-		this.selectOptions = registrationOptions.get(0);
+		registrationPageDto = registrationService.getRegistrationPageDto(tournament, getGroupName(parameters));
 		createPage();
 	}
 
@@ -70,13 +64,13 @@ public class RegistrationPage extends TournamentHomePage {
 		add(new PlayerForm());
 	}
 
-	private class PlayerForm extends Form<Void> {
+	private class PlayerForm extends Form<RegistrationPageDto> {
 
 		private static final long serialVersionUID = 1L;
 		private final Model<Player> playerModel = new Model<Player>(null);
 
 		public PlayerForm() {
-			super("playerForm");
+			super("playerForm", new CompoundPropertyModel<RegistrationPageDto>(registrationPageDto));
 			add(new ResourceLabel("choosePlayer"));
 			add(new ResourceLabel("chooseRegistrationSystem"));
 			add(new ResourceLabel("name"));
@@ -92,7 +86,7 @@ public class RegistrationPage extends TournamentHomePage {
 			addAutoCompletePlayers();
 			addTournamentparticipantListView();
 			setDefaultButton(getRegisterPlayersButton());
-			addSeasonDropDownChoice(Model.of(selectOptions));
+			addSeasonDropDownChoice();
 			addProcessRegistrationButton();
 		}
 
@@ -103,13 +97,14 @@ public class RegistrationPage extends TournamentHomePage {
 
 				@Override
 				public void submit() {
-					groupService.createGroupsWithSnakeSystem(tournament, tournamentParticipants, group.getName());
+					groupService.createGroupsWithSnakeSystem(tournament, registrationPageDto.getParticipants(),
+					        registrationPageDto.getGroupName());
 					setResponsePage(RegistrationPage.class, getPageParameters());
 				}
 
 				@Override
 				public boolean isVisible() {
-					return selectOptions.equals(RegistrationOptions.SNAKE);
+					return registrationPageDto.getSelectOptions().equals(RegistrationOptions.SNAKE);
 				}
 			});
 
@@ -118,7 +113,7 @@ public class RegistrationPage extends TournamentHomePage {
 		private ModelAutoCompleteTextField<Player> addAutoCompletePlayers() {
 
 			ModelAutoCompleteTextField<Player> playersTextField = new ModelAutoCompleteTextField<Player>("allPlayers",
-			        playerModel, null, new AbstractAutoCompleteRenderer<Player>() {
+			        playerModel, new AbstractAutoCompleteRenderer<Player>() {
 
 				        private static final long serialVersionUID = 1L;
 
@@ -132,7 +127,7 @@ public class RegistrationPage extends TournamentHomePage {
 					        return (player.getName() + " " + player.getSurname()).trim();
 				        }
 
-			        }, getCustomSettings(), notRegistratedPlayers) {
+			        }, getCustomSettings(), registrationPageDto.getNotRegistratedPlayers()) {
 
 				private static final long serialVersionUID = 1L;
 
@@ -184,7 +179,7 @@ public class RegistrationPage extends TournamentHomePage {
 		}
 
 		private void addTournamentparticipantListView() {
-			add(new PropertyListView<Participant>("participants", tournamentParticipants) {
+			add(new PropertyListView<Participant>("participants") {
 
 				private static final long serialVersionUID = 1L;
 
@@ -202,8 +197,8 @@ public class RegistrationPage extends TournamentHomePage {
 
 						public void click(AjaxRequestTarget target) {
 							participantService.deletePlayerParticipant(participant, tournament);
-							tournamentParticipants.remove(participant);
-							notRegistratedPlayers.add(participant.getPlayer());
+							registrationPageDto.getTournamentParticipants().remove(participant);
+							registrationPageDto.getNotRegistratedPlayers().add(participant.getPlayer());
 							target.add(PlayerForm.this);
 						}
 
@@ -290,68 +285,69 @@ public class RegistrationPage extends TournamentHomePage {
 				Player player = playerModel.getObject();
 
 				Participant particiapnt = null;
-				if (selectOptions.equals(RegistrationOptions.MANUAL)) {
-					particiapnt = participantService.createBasicParticipant(tournament, player, group.getName());
-					gameService.createGames(tournamentParticipants, particiapnt);
-				} else if (selectOptions.equals(RegistrationOptions.SNAKE)) {
+				if (registrationPageDto.getSelectOptions().equals(RegistrationOptions.MANUAL)) {
+					particiapnt = participantService.createBasicParticipant(tournament, player,
+					        registrationPageDto.getGroupName());
+					gameService.createGames(registrationPageDto.getParticipants(), particiapnt);
+				} else if (registrationPageDto.getSelectOptions().equals(RegistrationOptions.SNAKE)) {
 					particiapnt = participantService.createBasicParticipant(tournament, player, null);
 				}
 
 				if (particiapnt != null) {
-					tournamentParticipants.add(particiapnt);
+					registrationPageDto.getParticipants().add(particiapnt);
 				}
-				notRegistratedPlayers.remove(player);
 
+				registrationPageDto.getNotRegistratedPlayers().remove(player);
 				playerModel.setObject(null);
 			}
 		}
 
-		private void addSeasonDropDownChoice(final IModel<String> model) {
-			add(new DropDownChoice<String>("options", model, registrationOptions, new IChoiceRenderer<String>() {
+		private void addSeasonDropDownChoice() {
+			add(new DropDownChoice<String>("selectOptions", registrationPageDto.getRegistrationOptions(),
+			        new IChoiceRenderer<String>() {
 
-				private static final long serialVersionUID = 1L;
+				        private static final long serialVersionUID = 1L;
 
-				@Override
-				public Object getDisplayValue(String object) {
-					return getString(object);
-				}
+				        @Override
+				        public Object getDisplayValue(String object) {
+					        return getString(object);
+				        }
 
-				@Override
-				public String getIdValue(String object, int index) {
-					return index + "";
-				}
+				        @Override
+				        public String getIdValue(String object, int index) {
+					        return index + "";
+				        }
 
-				@Override
-				public String getObject(String id, IModel<? extends List<? extends String>> choices) {
-					List<? extends String> _choices = choices.getObject();
-					for (int index = 0; index < _choices.size(); index++) {
-						final String choice = _choices.get(index);
-						if (getIdValue(choice, index).equals(id)) {
-							return choice;
-						}
-					}
-					return null;
-				}
+				        @Override
+				        public String getObject(String id, IModel<? extends List<? extends String>> choices) {
+					        List<? extends String> _choices = choices.getObject();
+					        for (int index = 0; index < _choices.size(); index++) {
+						        final String choice = _choices.get(index);
+						        if (getIdValue(choice, index).equals(id)) {
+							        return choice;
+						        }
+					        }
+					        return null;
+				        }
 
-			}).add(new AjaxFormComponentUpdatingBehavior("change") {
+			        }).add(new AjaxFormComponentUpdatingBehavior("change") {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				protected void onUpdate(AjaxRequestTarget target) {
-					selectOptions = model.getObject();
 					target.add(PlayerForm.this);
 				}
 			}));
 		}
 	}
 
-	private class GroupForm extends Form<Groups> {
+	private class GroupForm extends Form<RegistrationPageDto> {
 
 		private static final long serialVersionUID = 1L;
 
 		public GroupForm() {
-			super("groupForm", new CompoundPropertyModel<Groups>(group));
+			super("groupForm", new CompoundPropertyModel<RegistrationPageDto>(registrationPageDto));
 			add(new ResourceLabel("group"));
 
 			TextField<String> groupTextField = getGroupTextField();
@@ -366,11 +362,11 @@ public class RegistrationPage extends TournamentHomePage {
 
 				@Override
 				public void submit(AjaxRequestTarget target, Form<?> form) {
-					Integer groupName = Integer.parseInt(group.getName());
+					Integer groupName = Integer.parseInt(registrationPageDto.getGroupName());
 					if (groupName > 1) {
 						groupName--;
 					}
-					group.setName(groupName.toString());
+					registrationPageDto.setGroupName(groupName.toString());
 					getPageParameters().set(GID, groupName.toString());
 					target.add(groupTextField);
 				}
@@ -384,9 +380,9 @@ public class RegistrationPage extends TournamentHomePage {
 
 				@Override
 				public void submit(AjaxRequestTarget target, Form<?> form) {
-					Integer groupName = Integer.parseInt(group.getName());
+					Integer groupName = Integer.parseInt(registrationPageDto.getGroupName());
 					groupName++;
-					group.setName(groupName.toString());
+					registrationPageDto.setGroupName(groupName.toString());
 					getPageParameters().set(GID, groupName.toString());
 					target.add(groupTextField);
 				}
@@ -394,16 +390,15 @@ public class RegistrationPage extends TournamentHomePage {
 		}
 
 		private TextField<String> getGroupTextField() {
-			final TextField<String> groupTextField = new TextField<String>("name");
+			final TextField<String> groupTextField = new TextField<String>("groupName");
 			groupTextField.setOutputMarkupId(true);
 			add(groupTextField);
 			return groupTextField;
 		}
 	}
 
-	private void createGroup(PageParameters parameters) {
-		group = new Groups();
-		group.setName(parameters.get("gid").isNull() ? "1" : parameters.get("gid").toString());
+	private String getGroupName(PageParameters parameters) {
+		return parameters.get("gid").isNull() ? "1" : parameters.get("gid").toString();
 	}
 
 	@Override

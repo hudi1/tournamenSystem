@@ -36,21 +36,21 @@ public class StatisticPage extends BasePage {
 	private final User user;
 	private final Season actualSeason;
 	private List<Player> players;
-	private PlayerStatisticDto selectedDto;
+	private PlayerStatisticDto statisticDto;
 
 	public StatisticPage() {
 		this.user = getTournamentSession().getUser();
 		this.actualSeason = null;
 		// TODO user's player ?
-		this.players = playerService.getSortedUserPlayers(null, getTournamentSession().getLocale());
-		this.selectedDto = new PlayerStatisticDto();
-		selectedDto.setPlayer(players.get(0));
+		this.players = playerService.getSortedUserPlayers(null, getSession().getLocale());
+		this.statisticDto = new PlayerStatisticDto();
+		statisticDto.setPlayer(players.get(0));
 		createPage();
 	}
 
 	private void createPage() {
 		// add(new TournamentStatisticWebForm(new StatisticForm()._setUser(user)));
-		add(new PlayerStatisticWebForm(Model.of(selectedDto)));
+		add(new PlayerStatisticWebForm(Model.of(statisticDto)));
 		// add(new Image("work", new ContextRelativeResource(getLocaleImagePath("/img/work.png"))));
 	}
 
@@ -138,7 +138,7 @@ public class StatisticPage extends BasePage {
 				protected void onUpdate(AjaxRequestTarget target) {
 
 				}
-			}).add(new BusyIndicatingMaskAppender(getString("maskText"))));
+			}).add(new BusyIndicatingMaskAppender()));
 		}
 
 		private void addSubmitButton(final Model<Player> playerModel) {
@@ -148,17 +148,12 @@ public class StatisticPage extends BasePage {
 
 				@Override
 				protected void submit(AjaxRequestTarget target, Form<?> form) {
-					selectedDto.getPlayerInfos().clear();
+					statisticDto.getPlayerInfos().clear();
 					target.add(PlayerStatisticWebForm.this);
 
 					PlayerStatisticDto dto = statisticService.getPlayerStatistic(playerModel.getObject());
-					selectedDto.getPlayerInfos().putAll(dto.getPlayerInfos());
+					statisticDto.getPlayerInfos().putAll(dto.getPlayerInfos());
 					target.add(PlayerStatisticWebForm.this);
-				}
-
-				@Override
-				public String maskText() {
-					return getString("maskText");
 				}
 
 			});
@@ -320,11 +315,6 @@ public class StatisticPage extends BasePage {
 					TournamentStatisticWebForm.this.getModelObject().getPlayers()
 					        .addAll(playerService.getPlayersGames(statisticForm));
 					target.add(TournamentStatisticWebForm.this);
-				}
-
-				@Override
-				public String maskText() {
-					return getString("maskText");
 				}
 
 			});

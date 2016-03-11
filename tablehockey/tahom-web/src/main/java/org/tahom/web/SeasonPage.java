@@ -40,11 +40,11 @@ public class SeasonPage extends BasePage {
 
 		public SeasonForm(User user) {
 			super("seasonForm", new CompoundPropertyModel<User>(user));
-			addSeasonListView();
-			addSeasonAddButton();
+			AjaxPagingNavigator navigator = addSeasonListView();
+			addSeasonAddButton(navigator);
 		}
 
-		private void addSeasonListView() {
+		private AjaxPagingNavigator addSeasonListView() {
 			PropertyPageableListView<Season> listView;
 			add(listView = new PropertyPageableListView<Season>("seasons", ITEM_PER_PAGE) {
 
@@ -85,10 +85,12 @@ public class SeasonPage extends BasePage {
 				}
 
 			});
-			add(new AjaxPagingNavigator("navigator", listView));
+			AjaxPagingNavigator navigator;
+			add(navigator = new AjaxPagingNavigator("navigator", listView));
+			return navigator;
 		}
 
-		private void addSeasonAddButton() {
+		private void addSeasonAddButton(final AjaxPagingNavigator navigator) {
 			add(new TournamentAjaxResourceButton("addSeason") {
 
 				private static final long serialVersionUID = 1L;
@@ -99,10 +101,17 @@ public class SeasonPage extends BasePage {
 					season.setName(getString("enterName"));
 					seasonService.createSeason(user, season);
 					SeasonForm.this.getModelObject().getSeasons().add(season);
+					setNavigatorPage(navigator, season);
+					setNavigatorPage(navigator, season);
 					getFeedbackMessages().clear();
 					info(getString("addSeasonInfo"));
 					target.add(feedbackPanel);
 					target.add(SeasonForm.this);
+				}
+
+				private void setNavigatorPage(AjaxPagingNavigator navigator, Season season) {
+					int page = getObjectPage(SeasonForm.this.getModelObject().getSeasons(), season);
+					navigator.getPageable().setCurrentPage(page);
 				}
 			});
 		}

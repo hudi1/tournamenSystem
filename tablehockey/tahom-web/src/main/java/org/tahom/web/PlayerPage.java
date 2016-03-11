@@ -1,7 +1,5 @@
 package org.tahom.web;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
@@ -17,52 +15,49 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.SharedResourceReference;
-import org.apache.wicket.util.convert.IConverter;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.User;
 import org.tahom.web.behavior.CloseOnESCBehavior;
 import org.tahom.web.components.PropertyPageableListView;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentResourceButton;
-import org.tahom.web.converter.SurnameConverter;
 import org.tahom.web.link.AjaxModelLink;
 import org.tahom.web.link.TournamentAjaxLink;
 import org.tahom.web.mask.MaskIndicatingAjaxButton;
 import org.tahom.web.model.EvenOddReplaceModel;
-import org.tahom.web.util.WebUtil;
 
 @AuthorizeInstantiation(Roles.USER)
 public class PlayerPage extends TournamentHomePage {
 
 	private static final long serialVersionUID = 1L;
 	private User user;
+	private Player newPlayer;
 
 	public PlayerPage() {
 		this(new PageParameters());
 	}
 
 	public PlayerPage(PageParameters pageParameters) {
+		this(new PageParameters(), null);
+	}
+
+	public PlayerPage(PageParameters pageParameters, Player player) {
 		super(pageParameters);
-		this.user = getTournamentSession().getUser();
+		this.user = getUserWithPlayers();
+		this.newPlayer = player;
 		createPage();
 	}
 
 	protected void createPage() {
-		add(new PlayerForm(Model.of(getUserWithPlayers())));
+		add(new PlayerForm(user));
 	}
 
 	private User getUserWithPlayers() {
 		User user = new User();
-		user.getPlayers().addAll(playerService.getUserPlayers(this.user));
-		Collections.sort(user.getPlayers(), new Comparator<Player>() {
-			@Override
-			public int compare(Player p1, Player p2) {
-				return p1.getSurname().toString().compareTo(p2.getSurname().toString());
-			}
-		});
+		user.getPlayers().addAll(
+		        playerService.getSortedUserPlayers(getTournamentSession().getUser(), getSession().getLocale()));
 		return user;
 	}
 
@@ -70,8 +65,8 @@ public class PlayerPage extends TournamentHomePage {
 
 		private static final long serialVersionUID = 1L;
 
-		public PlayerForm(Model<User> model) {
-			super("playerForm", new CompoundPropertyModel<User>(model));
+		public PlayerForm(User user) {
+			super("playerForm", new CompoundPropertyModel<User>(user));
 			ModalWindow modalWindow;
 
 			add(new ResourceLabel("name"));
@@ -80,7 +75,7 @@ public class PlayerPage extends TournamentHomePage {
 
 			addPlayerListView();
 			addNewPlayerButton();
-			addUpdateOnlinePlayerButton(model.getObject().getPlayers());
+			addUpdateOnlinePlayerButton(user.getPlayers());
 			add(modalWindow = createModalWindow());
 			add(new CloseOnESCBehavior(modalWindow));
 			addModalButton(modalWindow);
@@ -106,16 +101,7 @@ public class PlayerPage extends TournamentHomePage {
 						}
 					}));
 
-					listItem.add(new TextField<String>("surname") {
-
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						@SuppressWarnings("unchecked")
-						public final <Surname> IConverter<Surname> getConverter(Class<Surname> type) {
-							return (IConverter<Surname>) SurnameConverter.getInstance();
-						}
-					}.add(new AjaxFormComponentUpdatingBehavior("change") {
+					listItem.add(new TextField<String>("surname").add(new AjaxFormComponentUpdatingBehavior("change") {
 
 						private static final long serialVersionUID = 1L;
 
@@ -168,6 +154,7 @@ public class PlayerPage extends TournamentHomePage {
 
 			});
 			AjaxPagingNavigator navigator = new AjaxPagingNavigator("navigator", listView);
+			navigator.getPageable().setCurrentPage(getObjectPage(user.getPlayers(), newPlayer));
 			add(navigator);
 		}
 
@@ -210,18 +197,15 @@ public class PlayerPage extends TournamentHomePage {
 					target.add(PlayerForm.this);
 				}
 
-				@Override
-				public String maskText() {
-					return getString("maskText");
-				}
 			});
 		}
 
 		protected void logWarnMessage(List<Player> players) {
 			warn(getString("playersNotFound"));
 
+			// TODO
 			for (Player player : players) {
-				warn(WebUtil.getPlayerFullName(player));
+				warn(player.getName() + " " + player.getSurname());
 			}
 		}
 

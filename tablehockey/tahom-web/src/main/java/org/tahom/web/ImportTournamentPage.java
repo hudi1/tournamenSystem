@@ -81,10 +81,6 @@ public class ImportTournamentPage extends AbstractBasePage {
 					modalWindow.close(target);
 				}
 
-				@Override
-				public String maskText() {
-					return getString("maskText");
-				}
 			});
 		}
 	}

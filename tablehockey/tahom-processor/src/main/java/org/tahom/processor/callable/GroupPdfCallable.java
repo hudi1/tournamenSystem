@@ -82,7 +82,11 @@ public class GroupPdfCallable extends AbstractPdfCallable<GroupPageDto> {
 
 			pdfTable.addCell(createCenterAlignBorderSmallCell(participant.getScore().toString()));
 			pdfTable.addCell(createCenterAlignBorderSmallCell(participant.getPoints().toString()));
-			pdfTable.addCell(createCenterAlignBorderSmallCell(participant.getRank().toString()));
+			if (participant.getRank() != null) {
+				pdfTable.addCell(createCenterAlignBorderSmallCell(participant.getRank().toString()));
+			} else {
+				pdfTable.addCell(createCenterAlignBorderSmallCell(""));
+			}
 		}
 
 		document.add(new Paragraph("Group: " + groupPageDto.getGroup().getName()));
