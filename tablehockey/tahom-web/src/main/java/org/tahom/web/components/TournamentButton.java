@@ -21,6 +21,7 @@ public abstract class TournamentButton extends Button {
 		super(id, model);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public TournamentButton(String id) {
 		this(id, (IModel) null);
 	}

@@ -20,6 +20,7 @@ import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.processor.service.player.PlayerService;
+import org.tahom.processor.service.tournament.TournamentService;
 import org.tahom.repository.dao.FinalStandingDao;
 import org.tahom.repository.dao.GameDao;
 import org.tahom.repository.dao.ParticipantExtDao;
@@ -60,6 +61,9 @@ public class ImportService {
 
 	@Inject
 	private GroupService groupService;
+
+	@Inject
+	private TournamentService tournamentService;
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -112,10 +116,23 @@ public class ImportService {
 				}
 			}
 
+			try {
+				importTournament(tournament);
+			} catch (TournamentException e) {
+				if (!ignoreErrors) {
+					throw e;
+				}
+			}
+
 		} catch (Exception e) {
 			logger.error("Error import tournament ", e);
 			throw new ImportTournamentException(e.getMessage());
 		}
+	}
+
+	private void importTournament(Tournament tournament) {
+		tournament.setOpen(true);
+		tournamentService.updateTournament(tournament);
 	}
 
 	private void importFinalStandings(String url, LinkedList<Participant> savedParticipants, Tournament tournament) {
@@ -152,8 +169,10 @@ public class ImportService {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(TournamentHtmlImportFactory.createImportedParticipants(null,
-		        "http://thcbluedragon.wz.cz/stiga/turnaje/"));
+
+		TournamentHtmlImportFactory.createImportedParticipants(new Tournament()._setName("xxx"),
+		        "http://trefik.cz/stiga/turnaje2014/kladno/");
+
 	}
 
 	private LinkedList<Participant> importParticipants(String url, Tournament tournament) {
@@ -176,6 +195,7 @@ public class ImportService {
 				participant.setPlayer(foundedPlayers.get(0));
 			} else {
 				for (Player player : foundedPlayers) {
+					// TODO ako vyriesit ak je tu viac hracov (Napr Pelkonen Jan vs Pelkonen Jouko)
 					if (player.getSurname().getDiscriminant()
 					        .equals(participant.getPlayer().getSurname().getDiscriminant())) {
 						participant.setPlayer(player);

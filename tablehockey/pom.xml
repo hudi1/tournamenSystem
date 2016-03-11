@@ -169,14 +169,16 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.6</version>
                     <configuration>
-                        <classifier>${config}</classifier>
                         <warName>${project.artifactId}</warName>
-                        <webXml>${basedir}/target/${project.build.finalName}/WEB-INF/web.xml</webXml>
                         <webResources>
                             <resource>
                                 <filtering>true</filtering>
                                 <directory>${basedir}/../config/default/WEB-INF</directory>
                                 <targetPath>WEB-INF</targetPath>
+                            </resource>
+                            <resource>
+                                <filtering>true</filtering>
+                                <directory>src/main/webapp</directory>
                             </resource>
                         </webResources>
                     </configuration>
@@ -272,19 +274,6 @@
                                         <execute>
                                             <runOnIncremental>false</runOnIncremental>
                                         </execute>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-enforcer-plugin</artifactId>
-                                        <versionRange>[1.0.0,)</versionRange>
-                                        <goals>
-                                            <goal>enforce</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

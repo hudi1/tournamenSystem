@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -64,9 +65,10 @@ public class TournamentHtmlImportFactory {
 					participant.setPlayer(player);
 					participant.setGroup(group);
 
-					// new get(2)
 					String playerName = rowElement.select("td").get(1).ownText();
-					// System.out.println("Parsing player: " + playerName);
+					if (!playerName.contains(".")) {
+						playerName = rowElement.select("td").get(2).ownText();
+					}
 
 					if (playerName.contains("Chylík")) {
 						player.setSurname(new Surname("Chylík ml."));
@@ -75,7 +77,6 @@ public class TournamentHtmlImportFactory {
 						player.setSurname(new Surname("Vépy I"));
 						player.setName("Martin");
 					} else {
-
 						String surname = playerName.split("\\.", 2)[1];
 						if (surname.contains("(HUN)") || surname.contains("(CZE)")) {
 							surname = surname.substring(0, surname.length() - 6);
@@ -107,19 +108,32 @@ public class TournamentHtmlImportFactory {
 				tableRows.remove(0);
 
 				for (Element rowElement : tableRows) {
+
 					Participant homeParticipant = participantIterator.next();
 					Elements columns = rowElement.select("td");
+
+					int start = 2;
+					String playerName = rowElement.select("td").get(1).ownText();
+					if (!playerName.contains("\\.")) {
+						playerName = rowElement.select("td").get(2).ownText();
+						start = 3;
+					}
+					int end = columns.size() - 4;
 
 					String rank = columns.get(columns.size() - 1).ownText();
 					String points = columns.get(columns.size() - 2).ownText();
 					String score = columns.get(columns.size() - 4).ownText();
+					if (!score.contains(":")) {
+						score = columns.get(columns.size() - 5).ownText();
+						end = columns.size() - 5;
+					}
 
 					homeParticipant.setPoints(Integer.parseInt(points));
 					homeParticipant.setRank(Integer.parseInt(rank.replace(".", "")));
 					homeParticipant.setScore(new Score(Integer.parseInt(score.split(":")[0]), Integer.parseInt(score
 					        .split(":")[1])));
 
-					for (int i = 2; i < columns.size() - 4; i++) {
+					for (int i = start; i < end; i++) {
 						String result = columns.get(i).ownText();
 						if (result.contains("*")) {
 							continue;
@@ -127,7 +141,7 @@ public class TournamentHtmlImportFactory {
 
 						Game game = new Game();
 						game.setHomeParticipant(homeParticipant);
-						game.setAwayParticipant(tournamentParticipants.get(i - 2 + groupPlayerPrefix));
+						game.setAwayParticipant(tournamentParticipants.get(i - start + groupPlayerPrefix));
 						homeParticipant.getGames().add(game);
 						game.setResult(new Results(result));
 					}
@@ -147,21 +161,83 @@ public class TournamentHtmlImportFactory {
 		try {
 			String startOfHeading = " ";
 
-			Document doc = Jsoup.connect(urlBase + "umisteni.htm").get();
+			Document doc;
+			try {
+				doc = Jsoup.connect(urlBase + "umisteni.htm").get();
+			} catch (Exception e) {
+				// one more try aspx
+				doc = Jsoup.connect(urlBase + "umisteni.aspx").get();
+			}
 
 			for (Element element : doc.select("p.v")) {
 				Element body = element.nextElementSibling().select("tbody").get(1);
 				Elements tableRows = body.select("tr");
+
+				int indexPlayer = 1;
+				if (tableRows.get(0).select("th").size() == 1) {
+					indexPlayer = 0;
+				}
+
 				tableRows.remove(0);
 
 				String groupName = "A";
 				int position = 16;
 				boolean first = true;
+				if (tournament.getName().contains("Czech Open")) {
+					position = 32;
+				}
 
 				for (Element rowElement : tableRows) {
 					Elements columns = rowElement.select("td");
+					String header;
 
-					if (columns.get(0).ownText().contains("B Finals")) {
+					if (columns.size() == 0) {
+						columns = rowElement.select("th").select("font").select("strong");
+						header = columns.get(0).ownText();
+
+						if (header.contains("B Finals")) {
+							groupName = "B";
+							position = 8;
+							first = true;
+							if (tournament.getName().contains("Czech Open")) {
+								position = 4;
+							}
+						}
+
+						if (header.contains("C Finals")) {
+							groupName = "C";
+							position = 4;
+							first = true;
+						}
+
+						if (header.contains("D Finals")) {
+							groupName = "D";
+							position = 4;
+							first = true;
+						}
+
+						if (header.contains("E Finals")) {
+							groupName = "E";
+							position = 4;
+							first = true;
+						}
+
+						if (header.contains("F Finals")) {
+							groupName = "F";
+							position = 4;
+							first = true;
+						}
+
+						if (header.contains("G Finals")) {
+							groupName = "G";
+							position = 4;
+							first = true;
+						}
+						continue;
+					}
+
+					header = columns.get(0).ownText();
+					if (header.contains("B Finals")) {
 						groupName = "B";
 						position = 8;
 						first = true;
@@ -181,23 +257,27 @@ public class TournamentHtmlImportFactory {
 
 					playOffGame.setResult(new Results());
 
-					String playerNameHome = columns.get(1).ownText().trim().replaceAll("\\(.*\\)", "");
-					if (playerNameHome.isEmpty()) {
-						playerNameHome = columns.get(1).select("b").first().ownText().trim().replaceAll("\\(.*\\)", "");
-					}
-					String playerNameAway = columns.get(2).ownText().replace("- ", "").trim()
-					        .replaceAll("\\(.*\\)", "");
-					if (playerNameAway.isEmpty()) {
-						playerNameAway = columns.get(2).select("b").first().ownText().replace("- ", "").trim()
+					String playerNameHome = columns.get(indexPlayer).ownText().trim().replaceAll("\\(.*\\)", "");
+
+					if (StringUtils.isBlank(playerNameHome.replaceAll(String.valueOf((char) 160), " "))) {
+						playerNameHome = columns.get(indexPlayer).select("b").first().ownText().trim()
 						        .replaceAll("\\(.*\\)", "");
 					}
+					String playerNameAway = columns.get(indexPlayer + 1).ownText().replace("- ", "").trim()
+					        .replaceAll("\\(.*\\)", "");
+
+					if (StringUtils.isBlank(playerNameAway.replaceAll(String.valueOf((char) 160), " "))) {
+						playerNameAway = columns.get(indexPlayer + 1).select("b").first().ownText().replace("- ", "")
+						        .trim().replaceAll("\\(.*\\)", "");
+					}
+
 					Player playerHome = parsePlayer(playerNameHome);
 					Player playerAway = parsePlayer(playerNameAway);
 					boolean homeFounded = false;
 					boolean awayFouned = false;
 
 					for (Participant participant : savedParticipants) {
-						if (!participant.getGroup().getName().equals(groupName)) {
+						if (!participant.getGroup().getName().startsWith(groupName)) {
 							continue;
 						}
 
@@ -222,7 +302,7 @@ public class TournamentHtmlImportFactory {
 					}
 
 					if (!awayFouned) {
-						throw new RuntimeException("Player: " + awayFouned + " not found");
+						throw new RuntimeException("Player: " + playerAway + " not found");
 					}
 
 					for (int i = 3; i < columns.size(); i++) {
@@ -327,18 +407,21 @@ public class TournamentHtmlImportFactory {
 	}
 
 	public static Player parsePlayer(String playerName) {
-		// System.out.println("Parse name: " + playerName);
+		playerName = playerName.replaceAll(String.valueOf((char) 160), " ");
 		Player player = new Player();
-		if (playerName.split(" ").length == 2) {
+		if (playerName.contains("Pokovič Radoslav ml.")) {
+			player.setName("Radoslav");
+			player.setSurname(new Surname("Pokovič ml."));
+		} else if (playerName.split(" ").length == 2) {
 			player.setSurname(new Surname(playerName.split(" ")[0]));
-			player.setName(playerName.split(" ")[1]);
+			player.setName(playerName.split(" ")[1].trim());
 		} else if (playerName.split(" ").length == 3) {
 			if (playerName.split(" ")[1].equals("(CZE)") || playerName.split(" ")[1].equals("(HUN)")) {
 				player.setSurname(new Surname(playerName.split(" ")[0]));
-				player.setName(playerName.split(" ")[2]);
+				player.setName(playerName.split(" ")[2].trim());
 			} else {
 				player.setSurname(new Surname(playerName.split(" ")[0] + " " + playerName.split(" ")[1]));
-				player.setName(playerName.split(" ")[2]);
+				player.setName(playerName.split(" ")[2].trim());
 			}
 		}
 		return player;

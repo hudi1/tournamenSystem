@@ -71,6 +71,7 @@ public class PlayersHtmlImportFactory {
 			try {
 				club = tableRows.get(i).select("td").get(2).select("a").first().ownText();
 			} catch (Exception e) {
+				logger.warn("Ignoring club of imported player: " + nameAndSurname, e);
 			}
 			Player player = new Player();
 			player.setClub(club);
