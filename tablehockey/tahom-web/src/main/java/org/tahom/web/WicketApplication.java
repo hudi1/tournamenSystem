@@ -17,6 +17,7 @@ import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ContextRelativeResource;
+import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.lang.Exceptions;
 import org.slf4j.Logger;
@@ -68,6 +69,8 @@ public class WicketApplication extends AuthenticatedWebApplication {
 		mountPage("publicTournament", PublicTournamentPage.class);
 		mountPage("tournamentOverview", TournamentOverviewPage.class);
 		mountPage("wchPage", WChPage.class);
+		mountPage("error404", ErrorPage404.class);
+		mountPage("error500", ErrorPage500.class);
 	}
 
 	private void mountResource() {
@@ -87,12 +90,13 @@ public class WicketApplication extends AuthenticatedWebApplication {
 			mountResource();
 			getMarkupSettings().setStripWicketTags(true);
 			getMarkupSettings().setCompressWhitespace(true);
-			// getMarkupSettings().setDefaultAfterDisabledLink("");
 			this.getResourceSettings().setResourcePollFrequency(null);
 			getDebugSettings().setDevelopmentUtilitiesEnabled(true);
 			getApplicationSettings().setAccessDeniedPage(HomePage.class);
-			// getApplicationSettings().setInternalErrorPage(HomePage.class);
-			// getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE);
+			getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+
+			// TODO https
+			// setRootRequestMapper(new HttpsMapper(getRootRequestMapper(), new HttpsConfig()));
 
 			this.getRequestCycleListeners().add(new AbstractRequestCycleListener() {
 				@Override
@@ -108,8 +112,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
 							}
 						}
 					} else {
-						// TODO errorPage
-						// return new RenderPageRequestHandler(new PageProvider(ErrorPage.class));
+						return new RenderPageRequestHandler(new PageProvider(ErrorPage500.class));
 					}
 
 					return super.onException(cycle, e);

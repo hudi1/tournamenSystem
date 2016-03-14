@@ -707,3 +707,13 @@ table.playOffTable .playOffTableResultNo {
 	padding: 6px 0px 7px;
 	vertical-align: top;
 }
+
+div.error404 {
+    color: #F00;
+    font-weight: bold;
+    background: #FFD6D6 none repeat scroll 0% 0%;
+    text-align: center;
+    border: 1px solid #F00;
+    padding: 10px 0px;
+    margin: 10px auto 0px;
+}
