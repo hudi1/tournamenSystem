@@ -112,6 +112,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
 							}
 						}
 					} else {
+						logger.error("Unexpected error: ", e);
 						return new RenderPageRequestHandler(new PageProvider(ErrorPage500.class));
 					}
 

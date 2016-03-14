@@ -14,6 +14,7 @@ public class PlayerStatisticDto implements Serializable {
 
 	private Player player;
 	private Map<String, PlayerStatisticInfo> playerInfos;
+	private List<Player> players;
 
 	public Player getPlayer() {
 		return player;
@@ -36,6 +37,13 @@ public class PlayerStatisticDto implements Serializable {
 
 	public List<PlayerStatisticInfo> getPlayerInfoValues() {
 		return new ArrayList<PlayerStatisticInfo>(getPlayerInfos().values());
+	}
+
+	public List<Player> getPlayers() {
+		if (players == null) {
+			players = new ArrayList<Player>();
+		}
+		return players;
 	}
 
 }

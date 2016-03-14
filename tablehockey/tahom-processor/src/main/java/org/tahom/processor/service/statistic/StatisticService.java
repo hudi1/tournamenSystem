@@ -2,16 +2,20 @@ package org.tahom.processor.service.statistic;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.tahom.processor.service.finalStanding.FinalStandingService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
+import org.tahom.processor.service.player.PlayerService;
 import org.tahom.processor.service.statistic.dto.PlayerStatisticDto;
 import org.tahom.processor.service.statistic.dto.PlayerStatisticInfo;
 import org.tahom.processor.service.tournament.TournamentService;
+import org.tahom.processor.service.user.UserService;
 import org.tahom.repository.model.FinalStanding;
 import org.tahom.repository.model.Game;
 import org.tahom.repository.model.GroupsType;
@@ -21,6 +25,7 @@ import org.tahom.repository.model.Player;
 import org.tahom.repository.model.Result;
 import org.tahom.repository.model.Score;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.User;
 
 public class StatisticService {
 
@@ -35,6 +40,12 @@ public class StatisticService {
 
 	@Inject
 	private PlayOffGameService playOffGameService;
+
+	@Inject
+	private UserService userService;
+
+	@Inject
+	private PlayerService playerService;
 
 	public PlayerStatisticDto getPlayerStatistic(Player player) {
 		PlayerStatisticDto dto = new PlayerStatisticDto();
@@ -165,5 +176,23 @@ public class StatisticService {
 		}
 
 		return infos;
+	}
+
+	public PlayerStatisticDto getStatisticDto(User user, Locale locale) {
+		PlayerStatisticDto statisticDto = new PlayerStatisticDto();
+		if (user != null) {
+			statisticDto.getPlayers().addAll(playerService.getSortedUserPlayers(user, locale));
+		} else {
+			List<User> users = userService.getAllUsers();
+			for (User userDb : users) {
+				if (BooleanUtils.isTrue(userDb.getOpen())) {
+					statisticDto.getPlayers().addAll(playerService.getSortedUserPlayers(userDb, locale));
+				}
+			}
+		}
+		if (statisticDto.getPlayers().size() > 0) {
+			statisticDto.setPlayer(statisticDto.getPlayers().get(0));
+		}
+		return statisticDto;
 	}
 }

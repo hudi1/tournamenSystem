@@ -228,12 +228,13 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 			tournament = tournamentService.getTournament(new Tournament()._setId(tournamentId));
 		}
 
-		if (tournament != null) {
-			if (this instanceof TournamentOverviewPage) {
-				if (BooleanUtils.isNotTrue(tournament.getOpen())) {
-					throw new RestartResponseAtInterceptPageException(PublicTournamentPage.class);
-				}
+		if (this instanceof TournamentOverviewPage) {
+			if (tournament == null || BooleanUtils.isNotTrue(tournament.getOpen())) {
+				throw new RestartResponseAtInterceptPageException(PublicTournamentPage.class);
 			}
+		}
+
+		if (tournament != null) {
 			return tournament;
 		}
 
