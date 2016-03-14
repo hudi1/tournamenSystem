@@ -4,19 +4,16 @@ import org.apache.wicket.Component;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebSession;
-import org.sqlproc.engine.SqlProcessorException;
 import org.tahom.repository.model.User;
 import org.tahom.repository.model.UserRole;
+import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentResourceButton;
 
 /**
@@ -143,12 +140,7 @@ public class TournamentSignInPanel extends Panel {
 	 * @return True if signin was successful
 	 */
 	private boolean signIn(String username, String password) {
-		try {
-			return AuthenticatedWebSession.get().signIn(username, password);
-		} catch (SqlProcessorException e) {
-			onSignInError();
-			return false;
-		}
+		return AuthenticatedWebSession.get().signIn(username, password);
 	}
 
 	/**
@@ -156,13 +148,6 @@ public class TournamentSignInPanel extends Panel {
 	 */
 	protected void onSignInFailed() {
 		error(getString("signInFailed"));
-	}
-
-	/**
-	 * Called when sign in error
-	 */
-	protected void onSignInError() {
-		error(getString("sql.db.exception"));
 	}
 
 	/**
@@ -183,17 +168,14 @@ public class TournamentSignInPanel extends Panel {
 
 			setModel(new CompoundPropertyModel<TournamentSignInPanel>(TournamentSignInPanel.this));
 
-			add(new Label("username", new ResourceModel("username")));
-			add(new TextField<String>("usernameInput",
-			        new PropertyModel<String>(TournamentSignInPanel.this, "username")).setRequired(true));
+			add(new ResourceLabel("usernameLabel"));
+			add(new TextField<String>("username").setRequired(true));
 
-			add(new Label("password", new ResourceModel("password")));
-			add(new PasswordTextField("passwordInput",
-			        new PropertyModel<String>(TournamentSignInPanel.this, "password")).setRequired(true));
+			add(new ResourceLabel("passwordLabel"));
+			add(new PasswordTextField("password").setRequired(true));
 
-			Component rememberMeLabel = new Label("rememberMe", new ResourceModel("rememberMe")).setVisible(false);
-			Component copyResultInput = new CheckBox("rememberMeInput", new PropertyModel<Boolean>(
-			        TournamentSignInPanel.this, "rememberMe")).setVisible(false);
+			Component rememberMeLabel = new ResourceLabel("rememberMeLabel").setVisible(false);
+			Component copyResultInput = new CheckBox("rememberMe").setVisible(false);
 			add(rememberMeLabel);
 			add(copyResultInput);
 

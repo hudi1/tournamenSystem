@@ -41,6 +41,9 @@
         <local.db.url>jdbc:mysql://localhost/${local.db.databaseName}?characterEncoding=UTF-8</local.db.url>
         <local.db.user>root</local.db.user>
         <local.db.password>root</local.db.password>
+
+        <configdir>${basedir}/../config/default/</configdir>
+        <konfigurace>${configdir}/build.properties</konfigurace>
     </properties>
 
     <parent>
@@ -102,56 +105,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.6</version>
-                    <executions>
-                        <execution>
-                            <id>copy-resources</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <encoding>UTF-8</encoding>
-                                <outputDirectory>${basedir}/target/${project.build.finalName}/WEB-INF/classes</outputDirectory>
-                                <resources>
-                                    <resource>
-                                        <filtering>true</filtering>
-                                        <directory>${basedir}/../config/default/resources</directory>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>copy-webapp-resources</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${basedir}/target/${project.build.finalName}</outputDirectory>
-                                <resources>
-                                    <resource>
-                                        <directory>${configdir}/webapp</directory>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>copy-webinf-resources</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <overwrite>true</overwrite>
-                                <outputDirectory>${basedir}/target/${project.build.finalName}/WEB-INF</outputDirectory>
-                                <resources>
-                                    <resource>
-                                        <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -169,6 +122,7 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.6</version>
                     <configuration>
+                        <classifier>${config}</classifier>
                         <warName>${project.artifactId}</warName>
                         <webResources>
                             <resource>
@@ -733,6 +687,34 @@
             </properties>
         </profile>
 
+
+        <profile>
+            <id>config</id>
+            <activation>
+                <property>
+                    <name>config</name>
+                </property>
+            </activation>
+            <properties>
+                <konfigurace>${basedir}/../config/${config}/build.properties</konfigurace>
+                <configdir>${basedir}/../config/${config}/</configdir>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <profile>
             <id>itest-local</id>

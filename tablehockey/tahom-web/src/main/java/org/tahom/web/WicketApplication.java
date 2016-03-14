@@ -23,6 +23,7 @@ import org.apache.wicket.util.lang.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.sqlproc.engine.SqlProcessorException;
 import org.tahom.processor.TournamentException;
 import org.tahom.repository.model.Results;
 import org.tahom.repository.model.Surname;
@@ -102,6 +103,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
 				@Override
 				public IRequestHandler onException(RequestCycle cycle, Exception e) {
 					TournamentException myE = Exceptions.findCause(e, TournamentException.class);
+					SqlProcessorException dbE = Exceptions.findCause(e, SqlProcessorException.class);
 					if (myE != null) {
 						IPageRequestHandler handler = cycle.find(IPageRequestHandler.class);
 						if (handler != null) {
@@ -111,7 +113,17 @@ public class WicketApplication extends AuthenticatedWebApplication {
 								return new RenderPageRequestHandler(new PageProvider(page));
 							}
 						}
+					} else if (dbE != null) {
+						IPageRequestHandler handler = cycle.find(IPageRequestHandler.class);
+						if (handler != null) {
+							if (handler.isPageInstanceCreated()) {
+								WebPage page = (WebPage) (handler.getPage());
+								page.error(page.getString("sql.db.exception"));
+								return new RenderPageRequestHandler(new PageProvider(page));
+							}
+						}
 					} else {
+
 						logger.error("Unexpected error: ", e);
 						return new RenderPageRequestHandler(new PageProvider(ErrorPage500.class));
 					}
