@@ -17,7 +17,7 @@ import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.processor.util.TournamentUtil;
-import org.tahom.repository.dao.FinalStandingDao;
+import org.tahom.repository.dao.FinalStandingExtDao;
 import org.tahom.repository.model.FinalStanding;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
@@ -38,7 +38,7 @@ public class FinalStandingService {
 	private PlayOffGameService playOffGameService;
 
 	@Inject
-	private FinalStandingDao finalStandingDao;
+	private FinalStandingExtDao finalStandingDao;
 
 	@Inject
 	private FinalStandingModel finalStandingModel;
@@ -70,10 +70,7 @@ public class FinalStandingService {
 	@Transactional
 	public void processFinalStandings(Tournament tournament) {
 		int playerCount = participantService.getRegistratedParticipant(tournament).size();
-		List<FinalStanding> finalStandings = getFinalStandings(tournament);
-		for (FinalStanding finalStanding : finalStandings) {
-			finalStandingDao.delete(finalStanding);
-		}
+		finalStandingDao.deleteByTournament(tournament);
 		for (int i = 1; i < playerCount + 1; i++) {
 			FinalStanding finalStanding = new FinalStanding();
 			finalStanding.setFinalRank(i);

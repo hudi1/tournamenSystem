@@ -151,3 +151,10 @@ GET_PARTICIPANT_IN_TOURNAMENT(QRY,inx=Tournament,outx=Participant,tab=player=p,t
 	    {& %p.USER_ID = :season.user.id}	 
 	 }
 ;
+
+DELETE_FINAL_STANDING_BY_TOURNAMENT(CRUD,in=Tournament,out=FinalStanding,tab=finalStanding)=
+  delete from %%final_standing
+  {= where
+    {& %TOURNAMENT_ID = :id(!empty) }
+  }
+;
