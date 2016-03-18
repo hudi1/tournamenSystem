@@ -113,11 +113,6 @@ public class TournamentHtmlImportFactory {
 					Elements columns = rowElement.select("td");
 
 					int start = 2;
-					String playerName = rowElement.select("td").get(1).ownText();
-					if (!playerName.contains("\\.")) {
-						playerName = rowElement.select("td").get(2).ownText();
-						start = 3;
-					}
 					int end = columns.size() - 4;
 
 					String rank = columns.get(columns.size() - 1).ownText();
@@ -126,6 +121,9 @@ public class TournamentHtmlImportFactory {
 					if (!score.contains(":")) {
 						score = columns.get(columns.size() - 5).ownText();
 						end = columns.size() - 5;
+					}
+					if (!score.contains(":")) {
+						start = 3;
 					}
 
 					homeParticipant.setPoints(Integer.parseInt(points));

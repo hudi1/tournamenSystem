@@ -26,6 +26,7 @@ import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffPageDto;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Result;
+import org.tahom.repository.model.Tournament;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.link.TournamentLink;
 import org.tahom.web.model.EvenOddReplaceModel;
@@ -54,6 +55,11 @@ public class TournamentOverviewPage extends TournamentHomePage {
 		prepareData(parameters);
 		initFormVisibility(parameters);
 		createPage();
+	}
+
+	@Override
+	protected Tournament getTournament(PageParameters pageParameters) {
+		return getTournament(pageParameters, true);
 	}
 
 	private void createPage() {
