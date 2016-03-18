@@ -231,8 +231,10 @@ public class GroupService {
 
 	private int getHockeyCount(int promotingFinal, int basicGroupsSize) {
 		int hockeyCount;
-		if (promotingFinal % 2 == 0) {
+		if (promotingFinal % 2 == 0 && basicGroupsSize % 2 == 0) {
 			hockeyCount = (promotingFinal * basicGroupsSize) / 2;
+		} else if (promotingFinal % 2 == 0 && basicGroupsSize % 2 == 1) {
+			hockeyCount = promotingFinal * (basicGroupsSize / 2);
 		} else {
 			hockeyCount = promotingFinal;
 		}

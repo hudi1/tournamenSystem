@@ -89,7 +89,9 @@ public class GroupPdfCallable extends AbstractPdfCallable<GroupPageDto> {
 			}
 		}
 
-		document.add(new Paragraph("Group: " + groupPageDto.getGroup().getName()));
+		if (groupPageDto.getGroup() != null) {
+			document.add(new Paragraph("Group: " + groupPageDto.getGroup().getName()));
+		}
 		document.add(new Paragraph(""));
 		document.add(pdfTable);
 	}

@@ -61,7 +61,12 @@ public class CallableService {
 	}
 
 	public void finalizeFile(String uuid) {
-		cache.invalidate(uuid);
-		logger.info("Cleaning file from cache with uuid: " + uuid);
+		try {
+			cache.getIfPresent(uuid).get().delete();
+			cache.invalidate(uuid);
+			logger.info("Cleaning file from cache with uuid: " + uuid);
+		} catch (Exception e) {
+			logger.info("Error when cleaning file from cache with uuid: " + uuid, e);
+		}
 	}
 }

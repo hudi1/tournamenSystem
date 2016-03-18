@@ -40,11 +40,28 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
 		if (groupCount % 2 == 0) {
 			for (int i = 0; i < groupCount - 1; i++) {
 				createEvenGroupRound();
-				rotatePlayerPerBasicGroup();
+				rotatePlayerPerEvenBasicGroup();
 			}
 		} else {
 			// TODO neparny pocet skupin
-			createOddGroupRound();
+			for (int i = 0; i < groupCount; i++) {
+				createOddGroupRound();
+				rotatePlayerPerOddBasicGroup();
+			}
+		}
+	}
+
+	private void createOddGroupRound() {
+		List<Round> rounds = new ArrayList<Round>();
+		for (int i = 0; i < playerPerBasicGroup.size() / 2; i++) {
+			rounds.add(new Round(playerPerBasicGroup.get(i),
+			        playerPerBasicGroup.get(playerPerBasicGroup.size() - i - 1)));
+		}
+
+		for (int i = 0; i < playerCount; i++) {
+			for (Round round : rounds) {
+				round.addNextGames();
+			}
 		}
 	}
 
@@ -71,7 +88,7 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
 		}
 	}
 
-	private void createOddGroupRound() {
+	private void createOddGroupRoundOld() {
 		List<Round> rounds = new ArrayList<Round>();
 
 		for (int j = 0; j < 2; j++) {
@@ -110,9 +127,14 @@ public class AdvancedRoundRobinSchedule extends RoundRobinSchedule {
 		}
 	}
 
-	private void rotatePlayerPerBasicGroup() {
+	private void rotatePlayerPerEvenBasicGroup() {
 		List<Participant> lastGroupPlayer = playerPerBasicGroup.removeLast();
 		playerPerBasicGroup.add(1, lastGroupPlayer);
+	}
+
+	private void rotatePlayerPerOddBasicGroup() {
+		List<Participant> lastGroupPlayer = playerPerBasicGroup.removeLast();
+		playerPerBasicGroup.add(0, lastGroupPlayer);
 	}
 
 	private void fillUpHorizontalGroup(List<Round> rounds, int i, LinkedList<List<Participant>> playerByGroup) {
