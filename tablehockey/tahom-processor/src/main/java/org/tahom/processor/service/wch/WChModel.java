@@ -12,7 +12,6 @@ import org.tahom.repository.model.WchQualification;
 import org.tahom.repository.model.WchTournament;
 import org.tahom.repository.model.wch.WChSeason;
 import org.tahom.repository.model.wch.WChSeasonRecord;
-import org.tahom.repository.model.wch.WChTableHeader;
 import org.tahom.repository.model.wch.WChTableRecord;
 import org.tahom.repository.model.wch.WChTournamentDetailsRecord;
 import org.tahom.repository.model.wch.season.WChRecord;
@@ -22,7 +21,7 @@ public class WChModel {
 	public WChTableRecord map(WChSeason wChSeason, List<WchQualification> wchQualifications) {
 		WChTableRecord wchTableRecord = new WChTableRecord();
 		wchTableRecord.setRecords(getWChRecords(wChSeason, wchQualifications));
-		getWChTableHeader(wchTableRecord, wChSeason);
+		mapWChTableHeader(wchTableRecord, wChSeason);
 		return wchTableRecord;
 	}
 
@@ -112,8 +111,7 @@ public class WChModel {
 		return wChRecords;
 	}
 
-	private WChTableHeader getWChTableHeader(WChTableRecord wChTableRecord, WChSeason wChSeason) {
-		WChTableHeader wChTableHeader = new WChTableHeader();
+	private void mapWChTableHeader(WChTableRecord wChTableRecord, WChSeason wChSeason) {
 		if (!wChTableRecord.getRecords().isEmpty()) {
 			WChRecord record = wChTableRecord.getRecords().get(0);
 			for (Entry<String, WChSeasonRecord> entry : record.getWchSeasonRecords().entrySet()) {
@@ -128,6 +126,5 @@ public class WChModel {
 				}
 			}
 		}
-		return wChTableHeader;
 	}
 }

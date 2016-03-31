@@ -27,9 +27,4 @@ public class TournamentFileReadOnlyModel<I> extends AbstractReadOnlyModel<File> 
 		return callableService.getFile(uuid);
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		callableService.finalizeFile(uuid);
-	}
 }

@@ -1,5 +1,6 @@
 package org.tahom.processor.service.schedule;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,7 +11,6 @@ import org.tahom.processor.schedule.BasicRoundRobinSchedule;
 import org.tahom.processor.schedule.EmptyRoundRobinSchedule;
 import org.tahom.processor.schedule.RoundRobinSchedule;
 import org.tahom.processor.service.finalStanding.FinalStandingService;
-import org.tahom.processor.service.game.GameModel;
 import org.tahom.processor.service.game.GameService;
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.processor.service.participant.ParticipantService;
@@ -26,9 +26,6 @@ public class ScheduleService {
 	private ParticipantService participantService;
 
 	@Inject
-	private GameModel gameModel;
-
-	@Inject
 	private GameService gameService;
 
 	@Inject
@@ -40,10 +37,10 @@ public class ScheduleService {
 	public RoundRobinSchedule getSchedule(Tournament tournament, Groups group, List<Participant> participants) {
 		RoundRobinSchedule roundRobinSchedule;
 
-		// TODO optimalizacia
 		if (group.getType() != GroupsType.BASIC && group.getCopyResult()) {
-			roundRobinSchedule = new AdvancedRoundRobinSchedule(group, participantService.getAdvancedPlayersByGroup(
-			        group, tournament, participants));
+			LinkedList<List<Participant>> participantByGroup = participantService.getAdvancedPlayersByGroup(group,
+			        tournament, participants);
+			return new AdvancedRoundRobinSchedule(group, participantByGroup);
 		} else {
 			if (participants.size() < 2) {
 				roundRobinSchedule = new EmptyRoundRobinSchedule();
@@ -53,11 +50,6 @@ public class ScheduleService {
 				roundRobinSchedule = new BasicLessHockeyRoundRobinSchedule(group, participants);
 			}
 		}
-
-		for (GameDto game : roundRobinSchedule.getSchedule()) {
-			gameModel.assignWinner(game);
-		}
-
 		return roundRobinSchedule;
 	}
 
@@ -70,7 +62,6 @@ public class ScheduleService {
 			playOffGameService.updatePlayOffGames(tournament, group);
 			finalStandingService.updateNotPromotingFinalStandings(tournament, group);
 		}
-		scheduleGames = getSchedule(tournament, group, participants).getSchedule();
 	}
 
 }

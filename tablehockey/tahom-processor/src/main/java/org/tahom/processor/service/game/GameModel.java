@@ -14,6 +14,11 @@ public class GameModel {
 		Participant temp = game.getAwayParticipant();
 		game.setAwayParticipant(game.getHomeParticipant());
 		game.setHomeParticipant(temp);
+		if (GameStatus.WIN.equals(game.getStatus())) {
+			game.setStatus(GameStatus.LOSE);
+		} else if (GameStatus.LOSE.equals(game.getStatus())) {
+			game.setStatus(GameStatus.WIN);
+		}
 	}
 
 	public void assignWinner(GameDto gameDto) {
@@ -49,35 +54,40 @@ public class GameModel {
 		game.setHomeParticipant(new Participant()._setId(gameDto.getHomeParticipantId()));
 		game.setId(gameDto.getGameId());
 		game.setResult(gameDto.getResult());
+		game.setStatus(gameDto.getGameStatus());
 		return game;
-	}
-
-	public GameDto createGameDto(Game game) {
-		GameDto gameDto = new GameDto();
-		if (game.getHomeParticipant() != null) {
-			gameDto.setPlayerName(getPlayerName(game.getHomeParticipant().getPlayer()));
-			gameDto.setHomeParticipantId(game.getHomeParticipant().getId());
-		}
-		if (game.getAwayParticipant() != null) {
-			gameDto.setOpponentName(getPlayerName(game.getAwayParticipant().getPlayer()));
-			gameDto.setAwayParticipantId(game.getAwayParticipant().getId());
-		}
-		gameDto.setGameId(game.getId());
-		gameDto.setResult(game.getResult());
-		return gameDto;
-	}
-
-	private String getPlayerName(Player player) {
-		if (player != null) {
-			return player.getName() + " " + player.getSurname();
-		}
-		return "";
 	}
 
 	public GameDto createTempResultGame() {
 		GameDto gameDto = new GameDto();
 		gameDto.setResult(new Results(true));
 		return gameDto;
+	}
+
+	public static GameDto createGameDto(Game game) {
+		GameDto gameDto = new GameDto();
+		if (game != null) {
+			if (game.getHomeParticipant() != null) {
+				gameDto.setPlayerName(getPlayerName(game.getHomeParticipant().getPlayer()));
+				gameDto.setHomeParticipantId(game.getHomeParticipant().getId());
+			}
+			if (game.getAwayParticipant() != null) {
+				gameDto.setOpponentName(getPlayerName(game.getAwayParticipant().getPlayer()));
+				gameDto.setAwayParticipantId(game.getAwayParticipant().getId());
+			}
+			gameDto.setGameId(game.getId());
+			gameDto.setResult(game.getResult());
+			gameDto.setGameStatus(game.getStatus());
+		}
+		return gameDto;
+
+	}
+
+	private static String getPlayerName(Player player) {
+		if (player != null) {
+			return player.getName() + " " + player.getSurname();
+		}
+		return "";
 	}
 
 }

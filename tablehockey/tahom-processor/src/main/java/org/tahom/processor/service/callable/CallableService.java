@@ -14,18 +14,33 @@ import org.tahom.processor.callable.AbstractPdfCallable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 public class CallableService {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private Executor executor = Executors.newFixedThreadPool(3);
 	private Cache<String, FutureTask<File>> cache;
 
 	public CallableService() {
-		cache = CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(10000).expireAfterWrite(1, TimeUnit.DAYS)
-		        .build();
-	}
+		// TODO dynamic configuration
+		cache = CacheBuilder.newBuilder().concurrencyLevel(4).maximumSize(100).expireAfterWrite(1, TimeUnit.DAYS)
+		        .removalListener(new RemovalListener<String, FutureTask<File>>() {
 
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
+			        @Override
+			        public void onRemoval(RemovalNotification<String, FutureTask<File>> notification) {
+
+				        try {
+					        notification.getValue().get().delete();
+					        logger.info("Cleaning file from cache with uuid: " + notification.getKey());
+				        } catch (Exception e) {
+					        logger.warn("Error when cleaning file from cache with uuid: " + notification.getKey(), e);
+				        }
+			        }
+		        }).build();
+	}
 
 	private FutureTask<File> executeCallable(Callable<File> callable) {
 		FutureTask<File> futureTask = new FutureTask<File>(callable);
@@ -35,7 +50,7 @@ public class CallableService {
 
 	public <I> void createFile(String uuid, String path, I input, Class<? extends AbstractPdfCallable<I>> callableClass) {
 		try {
-			logger.debug("Creating file with uuid" + uuid);
+			logger.debug("Creating file with uuid: " + uuid);
 			AbstractPdfCallable<I> callable = callableClass.getConstructor(path.getClass(), input.getClass())
 			        .newInstance(path, input);
 			FutureTask<File> future = executeCallable(callable);
@@ -60,13 +75,4 @@ public class CallableService {
 		}
 	}
 
-	public void finalizeFile(String uuid) {
-		try {
-			cache.getIfPresent(uuid).get().delete();
-			cache.invalidate(uuid);
-			logger.info("Cleaning file from cache with uuid: " + uuid);
-		} catch (Exception e) {
-			logger.info("Error when cleaning file from cache with uuid: " + uuid, e);
-		}
-	}
 }

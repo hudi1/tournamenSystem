@@ -45,6 +45,7 @@ public class GameService {
 			if (game.getGameId() == null) {
 				continue;
 			}
+			gameModel.assignWinner(game);
 			updateBothGames(game);
 		}
 	}

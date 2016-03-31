@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.tahom.processor.service.game.GameModel;
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Groups;
@@ -89,13 +90,11 @@ public class BasicLessHockeyRoundRobinSchedule extends RoundRobinSchedule {
 			for (Game game : homePlayer.getGames()) {
 				if (game.getAwayParticipant().equals(awayPlayer)) {
 					game._setHomeParticipant(homePlayer)._setAwayParticipant(awayPlayer);
-
-					GameDto gameDto = createGameDto(game);
+					GameDto gameDto = GameModel.createGameDto(game);
 					checkAndAddGame(actualRound, gameDto);
 					if (scheduleByRound.get(actualRound).size() == group.getNumberOfHockey()) {
 						actualRound++;
 					}
-
 					break;
 				}
 			}

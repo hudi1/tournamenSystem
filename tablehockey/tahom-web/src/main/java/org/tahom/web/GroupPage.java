@@ -62,7 +62,9 @@ public class GroupPage extends TournamentHomePage {
 			createModalWindow(groupPageDto.getGoldGoalParticipants());
 		}
 		addModalWindow();
-		add(new CloseOnESCBehavior(modalWindow));
+		if (modalWindow != null) {
+			add(new CloseOnESCBehavior(modalWindow));
+		}
 		add(new GroupForm());
 	}
 
