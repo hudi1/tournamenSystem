@@ -34,8 +34,9 @@ public class ScheduleService {
 	@Inject
 	private FinalStandingService finalStandingService;
 
-	public RoundRobinSchedule getSchedule(Tournament tournament, Groups group, List<Participant> participants) {
+	public RoundRobinSchedule getSchedule(Tournament tournament, Groups group) {
 		RoundRobinSchedule roundRobinSchedule;
+		List<Participant> participants = participantService.getParticipantByGroup(group);
 
 		if (group.getType() != GroupsType.BASIC && group.getCopyResult()) {
 			LinkedList<List<Participant>> participantByGroup = participantService.getAdvancedPlayersByGroup(group,

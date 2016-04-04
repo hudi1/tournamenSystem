@@ -145,8 +145,7 @@ public class GroupService {
 
 			groupPageDto.getParticipants().addAll(participantModel.createParticipantsDto(participants));
 			groupPageDto.getGoldGoalParticipants().addAll(participantModel.createParticipantsDto(goldGoalParticipants));
-			groupPageDto.getSchedule().addAll(
-			        scheduleService.getSchedule(tournament, group, participants).getSchedule());
+			groupPageDto.getSchedule().addAll(scheduleService.getSchedule(tournament, group).getSchedule());
 		}
 
 		return groupPageDto;
