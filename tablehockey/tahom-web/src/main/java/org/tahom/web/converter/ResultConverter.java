@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.converter.AbstractConverter;
-import org.tahom.repository.model.Results;
+import org.tahom.repository.model.impl.Results;
 
 public class ResultConverter extends AbstractConverter<Results> {
 	private static final long serialVersionUID = 1L;

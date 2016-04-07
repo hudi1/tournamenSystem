@@ -21,16 +21,17 @@
     <bean id="playOffGameService" class="org.tahom.processor.service.playOffGame.PlayOffGameService" />
     <bean id="finalStandingService" class="org.tahom.processor.service.finalStanding.FinalStandingService" />
     <bean id="importService" class="org.tahom.processor.service.imports.ImportService" />
-    <bean id="wChService" class="org.tahom.processor.service.wch.WChService" />
+    <bean id="ithfService" class="org.tahom.processor.service.ithf.IthfService" />
     <bean id="statisticService" class="org.tahom.processor.service.statistic.StatisticService" />
     <bean id="callableService" class="org.tahom.processor.service.callable.CallableService" />
     <bean id="registrationService" class="org.tahom.processor.service.registration.RegistrationService" />
+    <bean id="eventService" class="org.tahom.processor.service.event.EventService" />
 
     <bean id="groupModel" class="org.tahom.processor.service.group.GroupModel" />
     <bean id="gameModel" class="org.tahom.processor.service.game.GameModel" />
     <bean id="finalStandingModel" class="org.tahom.processor.service.finalStanding.FinalStandingModel" />
-    <bean id="WChModel" class="org.tahom.processor.service.wch.WChModel" />
     <bean id="playOffGameModel" class="org.tahom.processor.service.playOffGame.PlayOffGameModel" />
     <bean id="participantModel" class="org.tahom.processor.service.participant.ParticipantModel" />
+    <bean id="eventModel" class="org.tahom.processor.service.event.EventModel" />
 
 </beans>

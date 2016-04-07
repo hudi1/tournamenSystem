@@ -2,7 +2,7 @@ package org.tahom.processor.service.statistic.dto;
 
 import java.io.Serializable;
 
-import org.tahom.repository.model.Score;
+import org.tahom.repository.model.impl.Score;
 
 public class PlayerStatisticInfo implements Serializable {
 

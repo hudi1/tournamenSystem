@@ -20,8 +20,8 @@ import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Participant.Association;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Score;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Score;
 
 public class ParticipantService {
 
@@ -184,6 +184,7 @@ public class ParticipantService {
 
 	public List<Participant> getParticipantByGroup(Groups group) {
 		SqlStandardControl control = new SqlStandardControl();
+		control.setAscOrder(Participant.ORDER_BY_ID);
 
 		return getParticipantByGroup(group, control);
 	}

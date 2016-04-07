@@ -18,7 +18,6 @@ import org.tahom.processor.service.statistic.dto.PlayerStatisticInfo;
 import org.tahom.repository.model.Player;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.mask.BusyIndicatingMaskAppender;
-import org.tahom.web.mask.MaskIndicatingAjaxButton;
 
 public class StatisticPage extends BasePage {
 
@@ -46,7 +45,6 @@ public class StatisticPage extends BasePage {
 			addPlayerDropDown();
 			addPlayerStatisticListView();
 			addPlayerStatisticHeader();
-			addSubmitButton();
 		}
 
 		private void addPlayerStatisticHeader() {
@@ -119,28 +117,13 @@ public class StatisticPage extends BasePage {
 
 				@Override
 				protected void onUpdate(AjaxRequestTarget target) {
+					PlayerStatisticDto dto = statisticService.getPlayerStatistic(playerModel.getObject());
+					statisticDto.getPlayerInfos().putAll(dto.getPlayerInfos());
+					PlayerStatisticWebForm.this.setModelObject(dto);
 
+					target.add(PlayerStatisticWebForm.this);
 				}
 			}).add(new BusyIndicatingMaskAppender()));
 		}
-
-		private void addSubmitButton() {
-			add(new MaskIndicatingAjaxButton("choosePlayer") {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				protected void submit(AjaxRequestTarget target, Form<?> form) {
-					statisticDto.getPlayerInfos().clear();
-					target.add(PlayerStatisticWebForm.this);
-
-					PlayerStatisticDto dto = statisticService.getPlayerStatistic(playerModel.getObject());
-					statisticDto.getPlayerInfos().putAll(dto.getPlayerInfos());
-					target.add(PlayerStatisticWebForm.this);
-				}
-
-			});
-		}
 	}
-
 }

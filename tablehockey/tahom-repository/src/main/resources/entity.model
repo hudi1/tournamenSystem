@@ -1,6 +1,5 @@
 package org.tahom.repository.model {
 
-
     #Serializable(1)
     final #Enum GameStatus {
         #Values(DRAW = "DRAW",LOSE = "LOSE",WIN = "WIN")
@@ -22,6 +21,12 @@ package org.tahom.repository.model {
     #Serializable(1)
     final #Enum TournamentSortType {
         #Values(CZ = "CZ",SK = "SK")
+        #Attr String value
+    }
+
+    #Serializable(1)
+    final #Enum TournamentType {
+        #Values(A = "A",B = "B")
         #Attr String value
     }
 
@@ -56,7 +61,7 @@ package org.tahom.repository.model {
         #IsDef
         #Attr GameStatus status
         #IsDef
-        #Attr org.tahom.repository.model.Results result
+        #Attr org.tahom.repository.model.impl.Results result
         #Attr boolean onlyIds
         #Attr java.util.List <Integer> ids
     }
@@ -91,6 +96,26 @@ package org.tahom.repository.model {
         #Attr java.util.List <Integer> ids
     }
 
+    #Operators #Serializable(1) #Equals(id) #ToString(id,name,series,date,points,rank)
+    final #Pojo IthfTournament {
+        #PrimaryKey() #Index
+        #Attr Integer id
+        #ToInit #Required #Index
+        #Attr Player player
+        #IsDef
+        #Attr String name
+        #IsDef
+        #Attr String series
+        #Required
+        #Attr java.util.Date date
+        #IsDef
+        #Attr Integer points
+        #IsDef
+        #Attr Integer rank
+        #Attr boolean onlyIds
+        #Attr java.util.List <Integer> ids
+    }
+
     #Operators #Serializable(1) #Equals(id) #ToString(id,points,rank,score,equalRank,temp)
     final #Pojo Participant {
         #PrimaryKey() #Index
@@ -104,7 +129,7 @@ package org.tahom.repository.model {
         #ToInit #Required #Index
         #Attr Player player
         #Required
-        #Attr org.tahom.repository.model.Score score
+        #Attr org.tahom.repository.model.impl.Score score
         #IsDef
         #Attr Integer equalRank
         #IsDef
@@ -128,7 +153,7 @@ package org.tahom.repository.model {
         #IsDef
         #Attr GameStatus status
         #IsDef
-        #Attr org.tahom.repository.model.Results result
+        #Attr org.tahom.repository.model.impl.Results result
         #ToInit #Required #Index
         #Attr Groups group
         #Required #Index
@@ -137,14 +162,14 @@ package org.tahom.repository.model {
         #Attr java.util.List <Integer> ids
     }
 
-    #Operators #Serializable(1) #Equals(id) #ToString(id,name,surname,club,worldRanking,ithfId)
+    #Operators #Serializable(1) #Equals(id) #ToString(id,name,surname,club,worldRanking,ithfId,country,lastUpdate)
     final #Pojo Player {
         #PrimaryKey() #Index
         #Attr Integer id
         #Required
         #Attr String name
         #Required
-        #Attr org.tahom.repository.model.Surname surname
+        #Attr org.tahom.repository.model.impl.Surname surname
         #IsDef
         #Attr String club
         #IsDef
@@ -153,8 +178,14 @@ package org.tahom.repository.model {
         #Attr User user
         #IsDef
         #Attr Integer ithfId
+        #IsDef
+        #Attr String country
+        #Required
+        #Attr java.util.Date lastUpdate
         #ToInit
         #Attr java.util.List <FinalStanding> finalStandings
+        #ToInit
+        #Attr java.util.List <IthfTournament> ithfTournaments
         #ToInit
         #Attr java.util.List <Participant> participants
         #Attr boolean onlyIds
@@ -175,7 +206,7 @@ package org.tahom.repository.model {
         #Attr java.util.List <Integer> ids
     }
 
-    #Operators #Serializable(1) #Equals(id) #ToString(id,name,finalPromoting,lowerPromoting,winPoints,playOffFinal,playOffLower,minPlayersInGroup,sortType,open)
+    #Operators #Serializable(1) #Equals(id) #ToString(id,name,finalPromoting,lowerPromoting,winPoints,playOffFinal,playOffLower,minPlayersInGroup,sortType,open,type)
     final #Pojo Tournament {
         #PrimaryKey() #Index
         #Attr Integer id
@@ -199,6 +230,8 @@ package org.tahom.repository.model {
         #Attr TournamentSortType sortType
         #Required
         #Attr Boolean open
+        #Required
+        #Attr TournamentType type
         #ToInit
         #Attr java.util.List <FinalStanding> finalStandings
         #ToInit
@@ -235,37 +268,18 @@ package org.tahom.repository.model {
         #Attr java.util.List <Integer> ids
     }
 
-    #Operators #Serializable(1) #Equals(id) #ToString(id,ithfId,lastUpdate,name)
-    final #Pojo WchQualification {
-        #PrimaryKey() #Index
-        #Attr Integer id
-        #Required #Index
-        #Attr Integer ithfId
-        #Required
-        #Attr java.util.Date lastUpdate
-        #Required
-        #Attr String name
-        #ToInit
-        #Attr java.util.List <WchTournament> wchTournaments
-        #Attr boolean onlyIds
-        #Attr java.util.List <Integer> ids
-    }
+// Model statistics
+// Tables=10
+// Columns=73
+// Primary Keys=10
+// Exports=14
+// Imports=14
+// Indexes=33
+// Check Constraints=37
+// Procedures=0
+// Procedures Columns=0
+// Functions=0
+// Functions Columns=0
 
-    #Operators #Serializable(1) #Equals(id) #ToString(id,name,series,date,points)
-    final #Pojo WchTournament {
-        #PrimaryKey() #Index
-        #Attr Integer id
-        #ToInit #Required #Index
-        #Attr WchQualification wchQualification
-        #IsDef
-        #Attr String name
-        #IsDef
-        #Attr String series
-        #Required
-        #Attr java.util.Date date
-        #IsDef
-        #Attr Integer points
-        #Attr boolean onlyIds
-        #Attr java.util.List <Integer> ids
-    }
+
 }

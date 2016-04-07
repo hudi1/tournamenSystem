@@ -21,7 +21,6 @@
     <bean id="tournamentDao" class="org.tahom.repository.dao.impl.TournamentDaoImpl" parent="dao" />
     <bean id="userDao" class="org.tahom.repository.dao.impl.UserDaoImpl" parent="dao" />
     <bean id="finalStandingDao" class="org.tahom.repository.dao.impl.FinalStandingExtDaoImp" parent="dao" />
-    <bean id="wchQualificationDao" class="org.tahom.repository.dao.impl.WchQualificationDaoImpl" parent="dao" />
-    <bean id="wchTournamentDaoImpl" class="org.tahom.repository.dao.impl.WchTournamentDaoImpl" parent="dao" />
+    <bean id="ithfTournamentDao" class="org.tahom.repository.dao.impl.IthfTournamentExtDaoImpl" parent="dao" />
 
 </beans>

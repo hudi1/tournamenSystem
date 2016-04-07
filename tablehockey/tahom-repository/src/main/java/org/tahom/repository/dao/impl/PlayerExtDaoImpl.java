@@ -8,8 +8,8 @@ import org.sqlproc.engine.SqlSessionFactory;
 import org.tahom.repository.dao.PlayerExtDao;
 import org.tahom.repository.dao.impl.PlayerDaoImpl;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.StatisticForm;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.StatisticForm;
 
 public class PlayerExtDaoImpl extends PlayerDaoImpl implements PlayerExtDao {
 

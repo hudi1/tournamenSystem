@@ -3,11 +3,10 @@ SEQ=PLAYER(OPT)=select auto_increment from information_schema.tables where table
 SEQ=PLAY_OFF_GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'play_off_game' and table_schema = 'tablehockey';
 SEQ=SEASON(OPT)=select auto_increment from information_schema.tables where table_name = 'season' and table_schema = 'tablehockey';
 SEQ=PARTICIPANT(OPT)=select auto_increment from information_schema.tables where table_name = 'participant' and table_schema = 'tablehockey';
-SEQ=WCH_TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_tournament' and table_schema = 'tablehockey';
+SEQ=ITHF_TOURNAMENT(OPT)=select auto_increment from information_schema.tables where table_name = 'ithf_tournament' and table_schema = 'tablehockey';
 SEQ=GAME(OPT)=select auto_increment from information_schema.tables where table_name = 'game' and table_schema = 'tablehockey';
 SEQ=GROUPS(OPT)=select auto_increment from information_schema.tables where table_name = 'groups' and table_schema = 'tablehockey';
 SEQ=FINAL_STANDING(OPT)=select auto_increment from information_schema.tables where table_name = 'final_standing' and table_schema = 'tablehockey';
-SEQ=WCH_QUALIFICATION(OPT)=select auto_increment from information_schema.tables where table_name = 'wch_qualification' and table_schema = 'tablehockey';
 SEQ=USER(OPT)=select auto_increment from information_schema.tables where table_name = 'user' and table_schema = 'tablehockey';
 
 INSERT_PLAYER(CRUD,inx=Player,outx=Player,tab=player)=
@@ -92,6 +91,7 @@ DELETE_FINAL_GROUPS(CRUD,inx=Tournament,outx=Groups,tab=groups)=
 UPDATE_OPPOSITE_GAME(CRUD,inx=Game,outx=Game,tab=game)=
   update %%game
   {= set
+    { ,%STATUS = :status(call=isDef) }
     { ,%RESULT = :result(type=result,call=isDef) }
   }
   {= where
@@ -157,4 +157,23 @@ DELETE_FINAL_STANDING_BY_TOURNAMENT(CRUD,in=Tournament,out=FinalStanding,tab=fin
   {= where
     {& %TOURNAMENT_ID = :id(!empty) }
   }
+;
+
+SELECT_CUSTOM_ITHF_TOURNAMENT(QRY,in=IthfTournamentForm,out=IthfTournament,tab=ithfTournament=i,tab=player=p)=
+  select distinct
+    %i.NAME @name  
+  from %%ithf_tournament i
+  {? :player(call=toInit) | left join %%player p on %i.PLAYER_ID = %p.ID }
+  {= where
+    {& %i.ID ::= :id }
+    {& %i.PLAYER_ID ::= :player.id }
+    {& UPPER(%i.NAME) like :+name }
+    {& UPPER(%i.SERIES) like :+series }
+    {& %i.DATE BETWEEN :startDate and  :endDate}
+    {& %i.POINTS ::= :points }
+    {& %i.RANK ::= :rank }
+    {& %i.ID in :ids }
+  }
+  {#ID order by %i.ID }
+  {#PLAYER order by %i.PLAYER_ID }
 ;

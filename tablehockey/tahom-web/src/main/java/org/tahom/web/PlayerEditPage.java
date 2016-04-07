@@ -91,6 +91,8 @@ public class PlayerEditPage extends TournamentHomePage {
 			add(new RequiredTextField<String>("surname"));
 			add(new ResourceLabel("clubLabel"));
 			add(new TextField<String>("club"));
+			add(new ResourceLabel("countryLabel"));
+			add(new TextField<String>("country"));
 			add(new ResourceLabel("worldRankingLabel"));
 			add(new TextField<String>("worldRanking"));
 			add(new ResourceLabel("ithfIdLabel"));

@@ -3,7 +3,7 @@ package org.tahom.processor.callable;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffPageDto;
-import org.tahom.repository.model.Results;
+import org.tahom.repository.model.impl.Results;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;

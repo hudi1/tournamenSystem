@@ -92,6 +92,10 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 		        PublicTournamentPage.class, groupPageParameter, this instanceof PublicTournamentPage);
 		Component wchPage = new BookmarkableModelPageLink<Void>("wchPage", WChPage.class, groupPageParameter,
 		        this instanceof WChPage);
+		Component nationalCupPage = new BookmarkableModelPageLink<Void>("nationalCupPage", NationalCupPage.class,
+		        groupPageParameter, this instanceof NationalCupPage);
+		Component eventPage = new BookmarkableModelPageLink<Void>("eventPage", HomePage.class, groupPageParameter,
+		        (this instanceof NationalCupPage || this instanceof WChPage));
 
 		add(homePage);
 		add(seasonPage);
@@ -106,7 +110,9 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 		add(playOffPage);
 		add(finalRankingPage);
 		add(publicTournamentPage);
-		// add(wchPage);
+		add(wchPage);
+		add(nationalCupPage);
+		add(eventPage);
 
 		homePage.setVisible(true);
 
@@ -119,7 +125,9 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 		} else {
 			publicTournamentPage.setVisible(true);
 			statisticPage.setVisible(true);
-			// wch2017Page.setVisible(true);
+			wchPage.setVisible(true);
+			nationalCupPage.setVisible(true);
+			eventPage.setVisible(true);
 			if (getTournamentSession().isSignedIn()) {
 				seasonPage.setVisible(true);
 				tournamentPage.setVisible(true);

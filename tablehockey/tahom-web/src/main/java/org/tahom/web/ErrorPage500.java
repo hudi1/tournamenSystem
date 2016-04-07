@@ -1,6 +1,8 @@
 package org.tahom.web;
 
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.ContextRelativeResource;
 
 public class ErrorPage500 extends BasePage {
 
@@ -11,6 +13,7 @@ public class ErrorPage500 extends BasePage {
 	}
 
 	private void createPage() {
+		add(new Image("error", new ContextRelativeResource("/img/error-lolcat-problemz.jpg")));
 	}
 
 	@Override

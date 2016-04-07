@@ -11,7 +11,7 @@ import org.sqlproc.engine.SqlQuery;
 import org.sqlproc.engine.SqlRuntimeContext;
 import org.sqlproc.engine.SqlRuntimeException;
 import org.sqlproc.engine.type.SqlInternalType;
-import org.tahom.repository.model.Results;
+import org.tahom.repository.model.impl.Results;
 
 public class ResultType extends SqlInternalType {
 

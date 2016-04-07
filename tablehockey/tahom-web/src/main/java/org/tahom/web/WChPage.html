@@ -6,39 +6,7 @@
 	<title>Tablehockey</title>
 </wicket:head>
 <wicket:extend>
-	<form wicket:id="wchForm">
-		<div>
-			<span wicket:id="season">Season</span> <select wicket:id="seasons"></select>
-			<table class="groupTable">
-				<tr>
-					<th colspan="2" />
-					<wicket:container wicket:id="wchSeasonHeaders">
-						<th wicket:id="season">[season]</th>
-					</wicket:container>
-				</tr>
-				<tr>
-					<th />
-					<th wicket:id="name" />
-					<th wicket:id="wchTournamentHeaders"><span
-						wicket:id="tournament">[tournament]</span></th>
-					<th wicket:id="total" />
-					<th wicket:id="rank" />
-				</tr>
-				<tr wicket:id="records">
-					<td><span wicket:id="index">[index]</span></td>
-					<td><span wicket:id="playerName">[name]</span></td>
-					<td wicket:id="seasonRecords"><span wicket:id="points">[records]</span></td>
-					<td><span wicket:id="totalPoints">[total]</span></td>
-					<td><span wicket:id="rank">[rank]</span></td>
-				</tr>
-			</table>
-			<div>
-				<span> <input class="tournamentButton" type="submit"
-					wicket:id="update" value="Update" />
-				</span>
-			</div>
-		</div>
-	</form>
+
 </wicket:extend>
 </html>
 

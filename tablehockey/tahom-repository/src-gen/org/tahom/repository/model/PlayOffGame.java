@@ -8,7 +8,7 @@ import org.sqlproc.engine.annotation.Pojo;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
-import org.tahom.repository.model.Results;
+import org.tahom.repository.model.impl.Results;
 
 @Pojo
 @SuppressWarnings("all")

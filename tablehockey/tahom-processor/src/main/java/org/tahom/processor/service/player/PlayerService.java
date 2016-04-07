@@ -3,6 +3,7 @@ package org.tahom.processor.service.player;
 import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tahom.repository.dao.PlayerExtDao;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.Player.Attribute;
-import org.tahom.repository.model.StatisticForm;
 import org.tahom.repository.model.Tournament;
 import org.tahom.repository.model.User;
+import org.tahom.repository.model.impl.StatisticForm;
 
 public class PlayerService {
 
@@ -24,7 +25,7 @@ public class PlayerService {
 	@Transactional
 	public Player createPlayer(User user, Player player) {
 		player.setUser(user);
-		Player playerForm = new Player(player.getName(), player.getSurname(), user);
+		Player playerForm = new Player(player.getName(), player.getSurname(), user, new Date());
 		Player dbPlayer = playerDao.get(playerForm);
 
 		if (dbPlayer == null) {
@@ -52,6 +53,14 @@ public class PlayerService {
 		Player player = new Player();
 		player.setUser(user);
 		player.setInit(Player.Association.user.name());
+		return playerDao.list(player);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Player> getUserPlayersIthfTournament(User user) {
+		Player player = new Player();
+		player.setUser(user);
+		player.setInit(Player.Association.user.name(), Player.Association.ithfTournaments.name());
 		return playerDao.list(player);
 	}
 
@@ -86,6 +95,12 @@ public class PlayerService {
 	@Transactional(readOnly = true)
 	public List<Player> getPlayersGames(StatisticForm statisticForm) {
 		return playerDao.listPlayersGames(statisticForm);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Player> listPlayers(Player player) {
+		player._setInit(Player.Association.ithfTournaments);
+		return playerDao.list(player);
 	}
 
 }

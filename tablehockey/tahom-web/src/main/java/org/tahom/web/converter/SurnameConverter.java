@@ -3,7 +3,7 @@ package org.tahom.web.converter;
 import java.util.Locale;
 
 import org.apache.wicket.util.convert.converter.AbstractConverter;
-import org.tahom.repository.model.Surname;
+import org.tahom.repository.model.impl.Surname;
 
 public class SurnameConverter extends AbstractConverter<Surname> {
 	private static final long serialVersionUID = 1L;

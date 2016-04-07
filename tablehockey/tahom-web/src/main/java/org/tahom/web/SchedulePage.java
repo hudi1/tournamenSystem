@@ -17,7 +17,7 @@ import org.tahom.processor.schedule.RoundRobinSchedule;
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
-import org.tahom.repository.model.Results;
+import org.tahom.repository.model.impl.Results;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentBackResourceButton;
 import org.tahom.web.components.TournamentResourceButton;

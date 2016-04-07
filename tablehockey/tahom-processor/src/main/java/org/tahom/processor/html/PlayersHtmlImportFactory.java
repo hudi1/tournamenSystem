@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tahom.processor.ImportTournamentException;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Surname;
+import org.tahom.repository.model.impl.Surname;
 
 public class PlayersHtmlImportFactory {
 

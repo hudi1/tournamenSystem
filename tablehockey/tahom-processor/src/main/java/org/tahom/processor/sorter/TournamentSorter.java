@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Participant;
-import org.tahom.repository.model.Result;
-import org.tahom.repository.model.Score;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Result;
+import org.tahom.repository.model.impl.Score;
 
 public abstract class TournamentSorter {
 

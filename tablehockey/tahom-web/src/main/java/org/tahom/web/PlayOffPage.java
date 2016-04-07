@@ -19,7 +19,7 @@ import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffPageDto;
 import org.tahom.repository.model.GameStatus;
-import org.tahom.repository.model.Result;
+import org.tahom.repository.model.impl.Result;
 import org.tahom.web.components.ResourceLabel;
 import org.tahom.web.components.TournamentResourceButton;
 import org.tahom.web.link.DownloadModelLink;

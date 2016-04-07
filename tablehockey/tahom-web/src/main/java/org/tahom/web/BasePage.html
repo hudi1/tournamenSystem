@@ -26,8 +26,8 @@
 					<span wicket:id="language">language</span> <a href="#"
 						wicket:id="goEn">EN</a>&#160; <a href="#" wicket:id="goSk">SK</a>&#160;
 				</div>
-				<div class="mainmenu">
-					<ul class="menu">
+				<div id="mainmenu">
+					<ul id="menu">
 						<li><a wicket:id="homePage"> Main Page </a></li>
 						<li><a wicket:id="seasonPage"> Seasons </a></li>
 						<li><a wicket:id="tournamentPage"> Tournaments </a></li>
@@ -41,6 +41,11 @@
 						<li><a wicket:id="statisticPage"> Statistic page </a></li>
 						<li><a wicket:id="publicTournamentPage"> PublicTournament
 								page </a></li>
+						<li class="has-sub"><a wicket:id="eventPage"> Events </a>
+							<ul>
+								<li><a wicket:id="wchPage"> Wch page </a></li>
+								<li><a wicket:id="nationalCupPage"> National cup </a></li>
+							</ul></li>
 						<li><a wicket:id="logoutPage"> Logout </a></li>
 					</ul>
 				</div>

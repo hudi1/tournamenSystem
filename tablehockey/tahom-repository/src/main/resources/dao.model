@@ -13,6 +13,10 @@ package org.tahom.repository.dao {
     #Dao GroupsDao {
     }
 
+    #CRUD(org.tahom.repository.model.IthfTournament) #Query(org.tahom.repository.model.IthfTournament)
+    #Dao IthfTournamentDao {
+    }
+
     #CRUD(org.tahom.repository.model.Participant) #Query(org.tahom.repository.model.Participant)
     #Dao ParticipantDao {
     }
@@ -37,11 +41,4 @@ package org.tahom.repository.dao {
     #Dao UserDao {
     }
 
-    #CRUD(org.tahom.repository.model.WchQualification) #Query(org.tahom.repository.model.WchQualification)
-    #Dao WchQualificationDao {
-    }
-
-    #CRUD(org.tahom.repository.model.WchTournament) #Query(org.tahom.repository.model.WchTournament)
-    #Dao WchTournamentDao {
-    }
 }

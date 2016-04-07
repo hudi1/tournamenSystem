@@ -9,7 +9,7 @@ import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.PlayOffGame;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Score;
+import org.tahom.repository.model.impl.Score;
 
 @Pojo
 @SuppressWarnings("all")

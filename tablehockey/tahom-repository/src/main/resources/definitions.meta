@@ -22,10 +22,10 @@ pojogen-ignore-one-to-many player ID->FINAL_STANDING->PLAYER_ID;
 pojogen-implements-interfaces java.io.Serializable;
 pojogen-generate-methods equals toString toInit isDef;
 
-pojogen-types-for-columns participant SCORE->org.tahom.repository.model.Score;
-pojogen-types-for-columns game RESULT->org.tahom.repository.model.Results;
-pojogen-types-for-columns play_off_game RESULT->org.tahom.repository.model.Results;
-pojogen-types-for-columns player SURNAME->org.tahom.repository.model.Surname;
+pojogen-types-for-columns participant SCORE->org.tahom.repository.model.impl.Score;
+pojogen-types-for-columns game RESULT->org.tahom.repository.model.impl.Results;
+pojogen-types-for-columns play_off_game RESULT->org.tahom.repository.model.impl.Results;
+pojogen-types-for-columns player SURNAME->org.tahom.repository.model.impl.Surname;
 
 metagen-column-meta-type participant SCORE->score;
 metagen-column-meta-type game RESULT->result;
@@ -48,14 +48,13 @@ pojogen-enum-for-check-constraints GameStatus game_STATUS play_off_game_STATUS;
 table finalStanding final_standing;
 table game game;
 table groups groups;
+table ithfTournament ithf_tournament;
 table participant participant;
 table playOffGame play_off_game;
 table player player;
 table season season;
 table tournament tournament;
 table user user;
-table wchQualification wch_qualification;
-table wchTournament wch_tournament;
 
 compress-meta-directives;
 pojogen-package org.tahom.repository.model;
@@ -65,19 +64,18 @@ daogen-package org.tahom.repository.dao;
 pojo FinalStanding org.tahom.repository.model.FinalStanding;
 pojo Game org.tahom.repository.model.Game;
 pojo Groups org.tahom.repository.model.Groups;
+pojo IthfTournament org.tahom.repository.model.IthfTournament;
+pojo IthfTournamentForm org.tahom.repository.model.impl.IthfTournamentForm;
 pojo Participant org.tahom.repository.model.Participant;
 pojo PlayOffGame org.tahom.repository.model.PlayOffGame;
 pojo Player org.tahom.repository.model.Player;
-pojo Result org.tahom.repository.model.Result;
-pojo Results org.tahom.repository.model.Results;
-pojo Score org.tahom.repository.model.Score;
+pojo Result org.tahom.repository.model.impl.Result;
+pojo Results org.tahom.repository.model.impl.Results;
+pojo Score org.tahom.repository.model.impl.Score;
 pojo Season org.tahom.repository.model.Season;
-pojo StatisticForm org.tahom.repository.model.StatisticForm;
+pojo StatisticForm org.tahom.repository.model.impl.StatisticForm;
 pojo Tournament org.tahom.repository.model.Tournament;
 pojo User org.tahom.repository.model.User;
-pojo WchQualification org.tahom.repository.model.WchQualification;
-pojo WchTournament org.tahom.repository.model.WchTournament;
-
 
 
 //database-debug-level TRACE;

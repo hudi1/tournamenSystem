@@ -12,12 +12,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.sqlproc.engine.SqlProcessorException;
 import org.tahom.processor.service.player.PlayerService;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.StatisticForm;
-import org.tahom.repository.model.Surname;
 import org.tahom.repository.model.Tournament;
 import org.tahom.repository.model.User;
+import org.tahom.repository.model.impl.StatisticForm;
+import org.tahom.repository.model.impl.Surname;
 
 @RunWith(LightAirSpringRunner.class)
 @ContextConfiguration(locations = { "/spring/application-context-test.xml" })
@@ -45,12 +46,12 @@ public class PlayerIT {
 		Assert.assertNotNull(player.getId());
 	}
 
-	@Test
+	@Test(expected = SqlProcessorException.class)
 	@Verify("getUserPlayersTest-verify.xml")
 	public void createExistingPlayerTest() {
-		Player player = playerService.createPlayer(user, new Player()._setClub("adminClub")._setName("adminName")
-		        ._setSurname(new Surname("adminSurname")));
-		Assert.assertEquals((Integer) 1, player.getId());
+		playerService.createPlayer(user,
+		        new Player()._setClub("adminClub")._setName("adminName")._setSurname(new Surname("adminSurname")));
+		Assert.fail();
 	}
 
 	@Test

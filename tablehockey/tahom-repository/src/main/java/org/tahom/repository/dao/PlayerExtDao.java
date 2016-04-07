@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.tahom.repository.dao.PlayerDao;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.StatisticForm;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.StatisticForm;
 
 public interface PlayerExtDao extends PlayerDao {
 

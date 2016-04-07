@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Participant;
-import org.tahom.repository.model.Result;
+import org.tahom.repository.model.impl.Result;
 
 public class SkInnerParticipantComparator implements Comparator<Participant> {
 

@@ -7,10 +7,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tahom.processor.service.callable.CallableService;
+import org.tahom.processor.service.event.EventService;
 import org.tahom.processor.service.finalStanding.FinalStandingService;
 import org.tahom.processor.service.game.GameService;
 import org.tahom.processor.service.group.GroupService;
 import org.tahom.processor.service.imports.ImportService;
+import org.tahom.processor.service.ithf.IthfService;
 import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.playOffGame.PlayOffGameService;
 import org.tahom.processor.service.player.PlayerService;
@@ -20,7 +22,6 @@ import org.tahom.processor.service.season.SeasonService;
 import org.tahom.processor.service.statistic.StatisticService;
 import org.tahom.processor.service.tournament.TournamentService;
 import org.tahom.processor.service.user.UserService;
-import org.tahom.processor.service.wch.WChService;
 
 public class AbstractBasePage extends WebPage {
 
@@ -59,8 +60,8 @@ public class AbstractBasePage extends WebPage {
 	@SpringBean(name = "importService")
 	protected ImportService importService;
 
-	@SpringBean(name = "wChService")
-	protected WChService wChService;
+	@SpringBean(name = "ithfService")
+	protected IthfService ithfService;
 
 	@SpringBean(name = "statisticService")
 	protected StatisticService statisticService;
@@ -70,6 +71,9 @@ public class AbstractBasePage extends WebPage {
 
 	@SpringBean(name = "registrationService")
 	protected RegistrationService registrationService;
+
+	@SpringBean(name = "eventService")
+	protected EventService eventService;
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 

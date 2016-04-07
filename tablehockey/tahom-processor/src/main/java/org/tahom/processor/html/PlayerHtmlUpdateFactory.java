@@ -35,6 +35,7 @@ public class PlayerHtmlUpdateFactory {
 					int playerId = Integer.parseInt(playerLine[1]);
 					String playerName = konvertujNaAscii(playerLine[2].trim()).toUpperCase();
 					String club = playerLine[3];
+					String nation = playerLine[4];
 
 					Player foundedPlayer = null;
 
@@ -56,6 +57,12 @@ public class PlayerHtmlUpdateFactory {
 
 					if (foundedPlayer != null) {
 						foundedPlayer.setWorldRanking(rank);
+						// TODO
+						if (nation.equals("SVK")) {
+							foundedPlayer.setCountry("Slovakia");
+						} else if (nation.equals("CZE")) {
+							foundedPlayer.setCountry("Czech Republic");
+						}
 						if (!UNKNOWN_CLUB.equals(club)) {
 							foundedPlayer.setClub(club);
 						}

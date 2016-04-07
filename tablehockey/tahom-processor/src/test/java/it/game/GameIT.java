@@ -17,9 +17,8 @@ import org.tahom.processor.service.participant.ParticipantService;
 import org.tahom.processor.service.schedule.ScheduleService;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsType;
-import org.tahom.repository.model.Participant;
-import org.tahom.repository.model.Results;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Results;
 
 @RunWith(LightAirSpringRunner.class)
 @ContextConfiguration(locations = { "/spring/application-context-test.xml" })
@@ -38,11 +37,8 @@ public class GameIT {
 	@Test
 	@Verify("updateBothGamesTest-verify.xml")
 	public void updateBothGamesTest() {
-		List<Participant> participants = participantService.getParticipantByGroup(new Groups()._setId(1)
-		        ._setType(GroupsType.BASIC)._setCopyResult(false));
 		RoundRobinSchedule schedule = scheduleService.getSchedule(new Tournament()._setId(1), new Groups()._setId(1)
-		        ._setType(GroupsType.BASIC)._setCopyResult(false)._setNumberOfHockey(2)._setIndexOfFirstHockey(1),
-		        participants);
+		        ._setType(GroupsType.BASIC)._setCopyResult(false)._setNumberOfHockey(2)._setIndexOfFirstHockey(1));
 		List<GameDto> games = schedule.getSchedule();
 		for (GameDto gameDto : games) {
 			gameDto.setResult(new Results("9:9"));

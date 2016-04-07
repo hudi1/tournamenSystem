@@ -49,7 +49,7 @@ a, a:link, a:visited {
 }
 
 .logo span {
-	background: url(../img/logo.png) no-repeat;
+	/*background: url(../img/logo.png) no-repeat;*/
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -98,44 +98,6 @@ body {
 	position: relative;
 }
 
-.mainmenu {
-	width: 968px;
-	height: 51px;
-	margin: 9px 0 0 11px;
-	background: url(../img/mainmenu.png) no-repeat;
-}
-
-.menu {
-	float: left;
-	height: 42px;
-	margin: 4px 0 0 4px;
-	width: 968px;
-	display: inline;
-}
-
-.menu li {
-	height: 42px;
-	float: left;
-	background: url(../img/sepmenu.png) no-repeat 100% 0;
-	position: relative;
-	display: inline;
-}
-
-.menu li a, .menu li a:link, .menu li a:visited {
-	height: 30px;
-	color: #2e577a;
-	float: left;
-	padding: 12px 15px 0 15px;
-	font-weight: bold;
-}
-
-.menu li:hover a, .menu li:hover a:link, .menu li:hover a:visited, .menu li.active a,
-	.menu li.active a:link, .menu li.active a:visited {
-	background: url(../img/menu_hover.png) repeat-x;
-	color: #fff;
-	text-decoration: none;
-}
-
 .page {
 	clear: both;
 	padding: 20px;
@@ -165,8 +127,74 @@ body {
 	color: #888;
 }
 
+
+#mainmenu {
+	width: 975px;
+	height: 50px;  	
+	margin: 9px 0 0 11px;
+	background: url(../img/mainmenu.png) no-repeat;
+}
+
+#menu {
+	float: left;
+	height: 45px;
+	margin: 4px 0 0 4px;
+	width: 975px;
+}
+
+#menu li {
+	height: 42px;
+	float: left;
+	background: url(../img/sepmenu.png) no-repeat 100% 0;
+	position: relative;
+	display: inline;
+}
+
+#menu li a, .menu li a:link, .menu li a:visited {
+	height: 30px;
+	color: #2e577a;
+	float: left;
+	padding: 12px 15px 0 15px;
+	font-weight: bold;
+}
+
+#menu li:hover a, .menu li:hover a:link, .menu li:hover a:visited, .menu li.active a,
+	.menu li.active a:link, .menu li.active a:visited {
+	background: url(../img/menu_hover.png) repeat-x;
+	color: #fff;
+	text-decoration: none;
+}
+
+#mainmenu ul {
+  list-style: none;
+}
+#mainmenu > ul > li {
+  display: inline-block;
+  float: left;
+  margin: 0;
+}
+
+#mainmenu .has-sub:hover > ul {
+  display: block;
+}
+#mainmenu .has-sub ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+#mainmenu .has-sub ul li a {
+  border-bottom: 1px dotted #31b7f1;
+  font-size: 11px;
+  filter: none;
+  display: block;
+  line-height: 120%;
+  padding: 10px;
+}
+
 h2 {
-	background: url(../images/septitle.png) repeat-x 0 100%;
+	/*background: url(../images/septitle.png) repeat-x 0 100%;*/
 	font-family: Georgia, "Times New Roman", Times, serif;
 	color: #525252;
 	padding: 4px 0 10px 0;

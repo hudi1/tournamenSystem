@@ -18,8 +18,8 @@ import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
-import org.tahom.repository.model.Results;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Results;
 
 @RunWith(LightAirSpringRunner.class)
 @ContextConfiguration(locations = { "/spring/application-context-test.xml" })

@@ -16,7 +16,7 @@ import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Surname;
+import org.tahom.repository.model.impl.Surname;
 
 @RunWith(value = Parameterized.class)
 public class AdvancedRoundScheduleTest extends AbstractScheduleTest {

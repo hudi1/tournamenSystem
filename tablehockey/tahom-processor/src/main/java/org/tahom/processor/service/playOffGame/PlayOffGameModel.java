@@ -12,8 +12,8 @@ import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Result;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Result;
 
 public class PlayOffGameModel {
 

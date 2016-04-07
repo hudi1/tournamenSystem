@@ -1,14 +1,16 @@
 package org.tahom.repository.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.sqlproc.engine.annotation.Pojo;
 import org.tahom.repository.model.FinalStanding;
+import org.tahom.repository.model.IthfTournament;
 import org.tahom.repository.model.Participant;
-import org.tahom.repository.model.Surname;
 import org.tahom.repository.model.User;
+import org.tahom.repository.model.impl.Surname;
 
 @Pojo
 @SuppressWarnings("all")
@@ -22,11 +24,12 @@ public class Player implements Serializable {
   public Player() {
   }
   
-  public Player(final String name, final Surname surname, final User user) {
+  public Player(final String name, final Surname surname, final User user, final Date lastUpdate) {
     super();
     setName(name);
     setSurname(surname);
     setUser(user);
+    setLastUpdate(lastUpdate);
   }
   
   private Integer id;
@@ -134,6 +137,36 @@ public class Player implements Serializable {
     return this;
   }
   
+  private String country;
+  
+  public String getCountry() {
+    return this.country;
+  }
+  
+  public void setCountry(final String country) {
+    this.country = country;
+  }
+  
+  public Player _setCountry(final String country) {
+    this.country = country;
+    return this;
+  }
+  
+  private Date lastUpdate;
+  
+  public Date getLastUpdate() {
+    return this.lastUpdate;
+  }
+  
+  public void setLastUpdate(final Date lastUpdate) {
+    this.lastUpdate = lastUpdate;
+  }
+  
+  public Player _setLastUpdate(final Date lastUpdate) {
+    this.lastUpdate = lastUpdate;
+    return this;
+  }
+  
   private List<FinalStanding> finalStandings = new java.util.ArrayList<FinalStanding>();
   
   public List<FinalStanding> getFinalStandings() {
@@ -146,6 +179,21 @@ public class Player implements Serializable {
   
   public Player _setFinalStandings(final List<FinalStanding> finalStandings) {
     this.finalStandings = finalStandings;
+    return this;
+  }
+  
+  private List<IthfTournament> ithfTournaments = new java.util.ArrayList<IthfTournament>();
+  
+  public List<IthfTournament> getIthfTournaments() {
+    return this.ithfTournaments;
+  }
+  
+  public void setIthfTournaments(final List<IthfTournament> ithfTournaments) {
+    this.ithfTournaments = ithfTournaments;
+  }
+  
+  public Player _setIthfTournaments(final List<IthfTournament> ithfTournaments) {
+    this.ithfTournaments = ithfTournaments;
     return this;
   }
   
@@ -210,11 +258,11 @@ public class Player implements Serializable {
   
   @Override
   public String toString() {
-    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", worldRanking=" + worldRanking + ", ithfId=" + ithfId + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", worldRanking=" + worldRanking + ", ithfId=" + ithfId + ", country=" + country + ", lastUpdate=" + lastUpdate + "]";
   }
   
   public String toStringFull() {
-    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", worldRanking=" + worldRanking + ", user=" + user + ", ithfId=" + ithfId + ", finalStandings=" + finalStandings + ", participants=" + participants + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
+    return "Player [id=" + id + ", name=" + name + ", surname=" + surname + ", club=" + club + ", worldRanking=" + worldRanking + ", user=" + user + ", ithfId=" + ithfId + ", country=" + country + ", lastUpdate=" + lastUpdate + ", finalStandings=" + finalStandings + ", ithfTournaments=" + ithfTournaments + ", participants=" + participants + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
   }
   
   public enum Attribute {
@@ -222,7 +270,9 @@ public class Player implements Serializable {
     
     worldRanking,
     
-    ithfId;
+    ithfId,
+    
+    country;
   }
   
   private Set<String> nullValues =  new java.util.HashSet<String>();
@@ -305,6 +355,8 @@ public class Player implements Serializable {
     user,
     
     finalStandings,
+    
+    ithfTournaments,
     
     participants;
   }
@@ -398,7 +450,13 @@ public class Player implements Serializable {
     
     ithfId,
     
+    country,
+    
+    lastUpdate,
+    
     finalStandings,
+    
+    ithfTournaments,
     
     participants,
     

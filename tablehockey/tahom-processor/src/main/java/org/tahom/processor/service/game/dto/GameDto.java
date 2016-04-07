@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tahom.repository.model.GameStatus;
-import org.tahom.repository.model.Result;
-import org.tahom.repository.model.Results;
+import org.tahom.repository.model.impl.Result;
+import org.tahom.repository.model.impl.Results;
 
 public class GameDto implements Serializable {
 

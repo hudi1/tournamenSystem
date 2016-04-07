@@ -9,6 +9,7 @@ import org.tahom.repository.model.FinalStanding;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Season;
 import org.tahom.repository.model.TournamentSortType;
+import org.tahom.repository.model.TournamentType;
 
 @Pojo
 @SuppressWarnings("all")
@@ -22,7 +23,7 @@ public class Tournament implements Serializable {
   public Tournament() {
   }
   
-  public Tournament(final String name, final Season season, final Integer finalPromoting, final Integer lowerPromoting, final Integer winPoints, final Integer playOffFinal, final Integer playOffLower, final Integer minPlayersInGroup, final TournamentSortType sortType, final Boolean open) {
+  public Tournament(final String name, final Season season, final Integer finalPromoting, final Integer lowerPromoting, final Integer winPoints, final Integer playOffFinal, final Integer playOffLower, final Integer minPlayersInGroup, final TournamentSortType sortType, final Boolean open, final TournamentType type) {
     super();
     setName(name);
     setSeason(season);
@@ -34,6 +35,7 @@ public class Tournament implements Serializable {
     setMinPlayersInGroup(minPlayersInGroup);
     setSortType(sortType);
     setOpen(open);
+    setType(type);
   }
   
   private Integer id;
@@ -201,6 +203,21 @@ public class Tournament implements Serializable {
     return this;
   }
   
+  private TournamentType type;
+  
+  public TournamentType getType() {
+    return this.type;
+  }
+  
+  public void setType(final TournamentType type) {
+    this.type = type;
+  }
+  
+  public Tournament _setType(final TournamentType type) {
+    this.type = type;
+    return this;
+  }
+  
   private List<FinalStanding> finalStandings = new java.util.ArrayList<FinalStanding>();
   
   public List<FinalStanding> getFinalStandings() {
@@ -277,11 +294,11 @@ public class Tournament implements Serializable {
   
   @Override
   public String toString() {
-    return "Tournament [id=" + id + ", name=" + name + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffFinal=" + playOffFinal + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", sortType=" + sortType + ", open=" + open + "]";
+    return "Tournament [id=" + id + ", name=" + name + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffFinal=" + playOffFinal + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", sortType=" + sortType + ", open=" + open + ", type=" + type + "]";
   }
   
   public String toStringFull() {
-    return "Tournament [id=" + id + ", name=" + name + ", season=" + season + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffFinal=" + playOffFinal + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", sortType=" + sortType + ", open=" + open + ", finalStandings=" + finalStandings + ", groups=" + groups + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
+    return "Tournament [id=" + id + ", name=" + name + ", season=" + season + ", finalPromoting=" + finalPromoting + ", lowerPromoting=" + lowerPromoting + ", winPoints=" + winPoints + ", playOffFinal=" + playOffFinal + ", playOffLower=" + playOffLower + ", minPlayersInGroup=" + minPlayersInGroup + ", sortType=" + sortType + ", open=" + open + ", type=" + type + ", finalStandings=" + finalStandings + ", groups=" + groups + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
   }
   
   public enum Association {
@@ -388,6 +405,8 @@ public class Tournament implements Serializable {
     sortType,
     
     open,
+    
+    type,
     
     finalStandings,
     

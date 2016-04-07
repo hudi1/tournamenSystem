@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.tahom.processor.service.game.dto.GameDto;
-import org.tahom.repository.model.Score;
+import org.tahom.repository.model.impl.Score;
 
 public class ParticipantDto implements Serializable {
 

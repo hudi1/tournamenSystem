@@ -21,11 +21,11 @@ import org.tahom.repository.model.GroupsType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Result;
-import org.tahom.repository.model.Results;
-import org.tahom.repository.model.Score;
-import org.tahom.repository.model.Surname;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Result;
+import org.tahom.repository.model.impl.Results;
+import org.tahom.repository.model.impl.Score;
+import org.tahom.repository.model.impl.Surname;
 
 public class TournamentHtmlImportFactory {
 	// http://trefik.cz/stiga/turnaje2014/kladno/kriz.htm

@@ -1,6 +1,7 @@
 package org.tahom.processor.schedule;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ import org.tahom.repository.model.Game;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Surname;
+import org.tahom.repository.model.impl.Surname;
 
 @RunWith(value = Parameterized.class)
 public class BasicRoundScheduleTest extends AbstractScheduleTest {
@@ -38,8 +39,8 @@ public class BasicRoundScheduleTest extends AbstractScheduleTest {
 		participants = new ArrayList<Participant>();
 
 		for (int i = 0; i < playerCount; i++) {
-			participants.add(new Participant()._setPlayer(new Player(i + 1 + "", new Surname(i + 1 + ""), null))
-			        ._setId(i + 1));
+			participants.add(new Participant()._setPlayer(
+			        new Player(i + 1 + "", new Surname(i + 1 + ""), null, new Date()))._setId(i + 1));
 		}
 
 		for (Participant participant1 : participants) {

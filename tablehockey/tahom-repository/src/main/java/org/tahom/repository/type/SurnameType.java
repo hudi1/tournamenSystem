@@ -10,7 +10,7 @@ import org.sqlproc.engine.SqlQuery;
 import org.sqlproc.engine.SqlRuntimeContext;
 import org.sqlproc.engine.SqlRuntimeException;
 import org.sqlproc.engine.type.SqlInternalType;
-import org.tahom.repository.model.Surname;
+import org.tahom.repository.model.impl.Surname;
 
 public class SurnameType extends SqlInternalType {
 

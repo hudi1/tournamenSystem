@@ -4,6 +4,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.ConverterLocator;
 import org.apache.wicket.IConverterLocator;
 import org.apache.wicket.Page;
+import org.apache.wicket.SystemMapper;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
@@ -14,6 +15,7 @@ import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ContextRelativeResource;
@@ -25,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.sqlproc.engine.SqlProcessorException;
 import org.tahom.processor.TournamentException;
-import org.tahom.repository.model.Results;
-import org.tahom.repository.model.Surname;
+import org.tahom.repository.model.impl.Results;
+import org.tahom.repository.model.impl.Surname;
 import org.tahom.web.converter.ResultConverter;
 import org.tahom.web.converter.SurnameConverter;
 import org.tahom.web.finder.SpringStringResourceLoader;
@@ -72,6 +74,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
 		mountPage("wchPage", WChPage.class);
 		mountPage("error404", ErrorPage404.class);
 		mountPage("error500", ErrorPage500.class);
+		mountPage("nationalCup", NationalCupPage.class);
 	}
 
 	private void mountResource() {
@@ -83,6 +86,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
 	protected void init() {
 		if (!isInitialized) {
 			super.init();
+			setRequestMapper();
 			addListeners();
 			isInitialized = true;
 			Injector.get().inject(this);
@@ -122,17 +126,33 @@ public class WicketApplication extends AuthenticatedWebApplication {
 								return new RenderPageRequestHandler(new PageProvider(page));
 							}
 						}
-					} else {
-
-						logger.error("Unexpected error: ", e);
-						return new RenderPageRequestHandler(new PageProvider(ErrorPage500.class));
 					}
-
-					return super.onException(cycle, e);
+					logger.error("Unexpected error: ", e);
+					return new RenderPageRequestHandler(new PageProvider(ErrorPage500.class));
+					// return super.onException(cycle, e);
 				}
 			});
 			loadI18nMessages();
 		}
+	}
+
+	private void setRequestMapper() {
+		setRootRequestMapper(new SystemMapper(this) {
+
+			@Override
+			public IRequestHandler mapRequest(Request request) {
+				IRequestHandler handler = super.mapRequest(request);
+				// ignoring folders in webapp
+				if (request.getUrl().toString().contains("css/") || request.getUrl().toString().contains("img/")) {
+					return handler;
+				}
+
+				if (handler == null) {
+					return new RenderPageRequestHandler(new PageProvider(ErrorPage404.class));
+				}
+				return handler;
+			}
+		});
 	}
 
 	@Override
@@ -163,6 +183,13 @@ public class WicketApplication extends AuthenticatedWebApplication {
 
 	public static String getFilesPath() {
 		String path = WebApplication.get().getServletContext().getRealPath("/") + "/";
+
+		System.out.println(WebApplication.get().getServletContext()
+		        .getRealPath(RequestCycle.get().getRequest().getContextPath())
+		        + " 1");
+		System.out.println(WebApplication.get().getServletContext().getContextPath() + " 2");
+		System.out.println(WebApplication.get().getServletContext().getRealPath("/") + " 3");
+
 		return path;
 	}
 
