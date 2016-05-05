@@ -198,33 +198,33 @@ public class User implements Serializable {
     return this;
   }
   
-  private boolean onlyIds;
+  private boolean onlyIds_;
   
-  public boolean isOnlyIds() {
-    return this.onlyIds;
+  public boolean isOnlyIds_() {
+    return this.onlyIds_;
   }
   
-  public void setOnlyIds(final boolean onlyIds) {
-    this.onlyIds = onlyIds;
+  public void setOnlyIds_(final boolean onlyIds_) {
+    this.onlyIds_ = onlyIds_;
   }
   
-  public User _setOnlyIds(final boolean onlyIds) {
-    this.onlyIds = onlyIds;
+  public User _setOnlyIds_(final boolean onlyIds_) {
+    this.onlyIds_ = onlyIds_;
     return this;
   }
   
-  private List<Integer> ids = new java.util.ArrayList<Integer>();
+  private List<Integer> ids_ = new java.util.ArrayList<Integer>();
   
-  public List<Integer> getIds() {
-    return this.ids;
+  public List<Integer> getIds_() {
+    return this.ids_;
   }
   
-  public void setIds(final List<Integer> ids) {
-    this.ids = ids;
+  public void setIds_(final List<Integer> ids_) {
+    this.ids_ = ids_;
   }
   
-  public User _setIds(final List<Integer> ids) {
-    this.ids = ids;
+  public User _setIds_(final List<Integer> ids_) {
+    this.ids_ = ids_;
     return this;
   }
   
@@ -248,7 +248,7 @@ public class User implements Serializable {
   }
   
   public String toStringFull() {
-    return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", userName=" + userName + ", password=" + password + ", role=" + role + ", validity=" + validity + ", open=" + open + ", players=" + players + ", seasons=" + seasons + ", onlyIds=" + onlyIds + ", ids=" + ids + "]";
+    return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", userName=" + userName + ", password=" + password + ", role=" + role + ", validity=" + validity + ", open=" + open + ", players=" + players + ", seasons=" + seasons + ", onlyIds_=" + onlyIds_ + ", ids_=" + ids_ + "]";
   }
   
   public enum Attribute {
@@ -257,80 +257,80 @@ public class User implements Serializable {
     surname;
   }
   
-  private Set<String> nullValues =  new java.util.HashSet<String>();
+  private Set<String> nullValues_ =  new java.util.HashSet<String>();
   
-  public void setNull(final User.Attribute... attributes) {
+  public void setNull_(final User.Attribute... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (Attribute attribute : attributes)
-    	nullValues.add(attribute.name());
+    	nullValues_.add(attribute.name());
   }
   
-  public User _setNull(final User.Attribute... attributes) {
-    setNull(attributes);
+  public User _setNull_(final User.Attribute... attributes) {
+    setNull_(attributes);
     return this;
   }
   
-  public void clearNull(final User.Attribute... attributes) {
+  public void clearNull_(final User.Attribute... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (Attribute attribute : attributes)
-    	nullValues.remove(attribute.name());
+    	nullValues_.remove(attribute.name());
   }
   
-  public User _clearNull(final User.Attribute... attributes) {
-    clearNull(attributes);
+  public User _clearNull_(final User.Attribute... attributes) {
+    clearNull_(attributes);
     return this;
   }
   
-  public void setNull(final String... attributes) {
+  public void setNull_(final String... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (String attribute : attributes)
-    	nullValues.add(attribute);
+    	nullValues_.add(attribute);
   }
   
-  public User _setNull(final String... attributes) {
-    setNull(attributes);
+  public User _setNull_(final String... attributes) {
+    setNull_(attributes);
     return this;
   }
   
-  public void clearNull(final String... attributes) {
+  public void clearNull_(final String... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (String attribute : attributes)
-    	nullValues.remove(attribute);
+    	nullValues_.remove(attribute);
   }
   
-  public User _clearNull(final String... attributes) {
-    clearNull(attributes);
+  public User _clearNull_(final String... attributes) {
+    clearNull_(attributes);
     return this;
   }
   
-  public Boolean isNull(final User.Attribute attribute) {
+  public Boolean isNull_(final User.Attribute attribute) {
     if (attribute == null)
     	throw new IllegalArgumentException();
-    return nullValues.contains(attribute.name());
+    return nullValues_.contains(attribute.name());
   }
   
-  public Boolean isNull(final String attrName) {
+  public Boolean isNull_(final String attrName) {
     if (attrName == null)
     	throw new IllegalArgumentException();
-    return nullValues.contains(attrName);
+    return nullValues_.contains(attrName);
   }
   
-  public Boolean isDef(final String attrName, final Boolean isAttrNotNull) {
+  public Boolean isDef_(final String attrName, final Boolean isAttrNotNull) {
     if (attrName == null)
     	throw new IllegalArgumentException();
-    if (nullValues.contains(attrName))
+    if (nullValues_.contains(attrName))
     	return true;
     if (isAttrNotNull != null)
     	return isAttrNotNull;
     return false;
   }
   
-  public void clearAllNull() {
-    nullValues = new java.util.HashSet<String>();
+  public void clearAllNull_() {
+    nullValues_ = new java.util.HashSet<String>();
   }
   
   public enum Association {
@@ -339,78 +339,78 @@ public class User implements Serializable {
     seasons;
   }
   
-  private Set<String> initAssociations =  new java.util.HashSet<String>();
+  private Set<String> initAssociations_ =  new java.util.HashSet<String>();
   
-  public Set<String> getInitAssociations() {
-    return this.initAssociations;
+  public Set<String> getInitAssociations_() {
+    return this.initAssociations_;
   }
   
-  public void setInitAssociations(final Set<String> initAssociations) {
-    this.initAssociations = initAssociations;
+  public void setInitAssociations_(final Set<String> initAssociations_) {
+    this.initAssociations_ = initAssociations_;
   }
   
-  public void setInit(final User.Association... associations) {
+  public void setInit_(final User.Association... associations) {
     if (associations == null)
     	throw new IllegalArgumentException();
     for (Association association : associations)
-    	initAssociations.add(association.name());
+    	initAssociations_.add(association.name());
   }
   
-  public User _setInit(final User.Association... associations) {
-    setInit(associations);
+  public User _setInit_(final User.Association... associations) {
+    setInit_(associations);
     return this;
   }
   
-  public void clearInit(final User.Association... associations) {
+  public void clearInit_(final User.Association... associations) {
     if (associations == null)
     	throw new IllegalArgumentException();
     for (Association association : associations)
-    	initAssociations.remove(association.name());
+    	initAssociations_.remove(association.name());
   }
   
-  public User _clearInit(final User.Association... associations) {
-    clearInit(associations);
+  public User _clearInit_(final User.Association... associations) {
+    clearInit_(associations);
     return this;
   }
   
-  public void setInit(final String... associations) {
+  public void setInit_(final String... associations) {
     if (associations == null)
     	throw new IllegalArgumentException();
     for (String association : associations)
-    	initAssociations.add(association);
+    	initAssociations_.add(association);
   }
   
-  public User _setInit(final String... associations) {
-    setInit(associations);
+  public User _setInit_(final String... associations) {
+    setInit_(associations);
     return this;
   }
   
-  public void clearInit(final String... associations) {
+  public void clearInit_(final String... associations) {
     if (associations == null)
     	throw new IllegalArgumentException();
     for (String association : associations)
-    	initAssociations.remove(association);
+    	initAssociations_.remove(association);
   }
   
-  public User _clearInit(final String... associations) {
-    clearInit(associations);
+  public User _clearInit_(final String... associations) {
+    clearInit_(associations);
     return this;
   }
   
-  public Boolean toInit(final User.Association association) {
+  public Boolean toInit_(final User.Association association) {
     if (association == null)
     	throw new IllegalArgumentException();
-    return initAssociations.contains(association.name());
+    return initAssociations_.contains(association.name());
   }
   
-  public Boolean toInit(final String association) {
+  public Boolean toInit_(final String association) {
     if (association == null)
     	throw new IllegalArgumentException();
-    return initAssociations.contains(association);
+    return initAssociations_.contains(association);
   }
   
-  public void clearAllInit() {
-    initAssociations = new java.util.HashSet<String>();
+  public void clearAllInit_() {
+    initAssociations_ = new java.util.HashSet<String>();
   }
   
   public enum OpAttribute {
@@ -436,90 +436,96 @@ public class User implements Serializable {
     
     seasons,
     
-    onlyIds,
+    onlyIds_,
     
-    ids;
+    ids_;
   }
   
-  private Map<String, String> operators =  new java.util.HashMap<String, String>();
+  private Map<String, String> operators_ =  new java.util.HashMap<String, String>();
   
-  public Map<String, String> getOperators() {
-    return operators;
+  public Map<String, String> getOperators_() {
+    return operators_;
   }
   
-  public void setOp(final String operator, final User.OpAttribute... attributes) {
+  public String getOp_(final String attrName) {
+    if (attrName == null)
+    	throw new IllegalArgumentException();
+    return operators_.get(attrName);
+  }
+  
+  public void setOp_(final String operator, final User.OpAttribute... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (OpAttribute attribute : attributes)
-    	operators.put(attribute.name(), operator);
+    	operators_.put(attribute.name(), operator);
   }
   
-  public User _setOp(final String operator, final User.OpAttribute... attributes) {
-    setOp(operator, attributes);
+  public User _setOp_(final String operator, final User.OpAttribute... attributes) {
+    setOp_(operator, attributes);
     return this;
   }
   
-  public void clearOp(final User.OpAttribute... attributes) {
+  public void clearOp_(final User.OpAttribute... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (OpAttribute attribute : attributes)
-    	operators.remove(attribute.name());
+    	operators_.remove(attribute.name());
   }
   
-  public User _clearOp(final User.OpAttribute... attributes) {
-    clearOp(attributes);
+  public User _clearOp_(final User.OpAttribute... attributes) {
+    clearOp_(attributes);
     return this;
   }
   
-  public void setOp(final String operator, final String... attributes) {
+  public void setOp_(final String operator, final String... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (String attribute : attributes)
-    	operators.put(attribute, operator);
+    	operators_.put(attribute, operator);
   }
   
-  public User _setOp(final String operator, final String... attributes) {
-    setOp(operator, attributes);
+  public User _setOp_(final String operator, final String... attributes) {
+    setOp_(operator, attributes);
     return this;
   }
   
-  public void clearOp(final String... attributes) {
+  public void clearOp_(final String... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (String attribute : attributes)
-    	operators.remove(attribute);
+    	operators_.remove(attribute);
   }
   
-  public User _clearOp(final String... attributes) {
-    clearOp(attributes);
+  public User _clearOp_(final String... attributes) {
+    clearOp_(attributes);
     return this;
   }
   
-  public void setNullOp(final User.OpAttribute... attributes) {
+  public void setNullOp_(final User.OpAttribute... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (OpAttribute attribute : attributes)
-    	operators.put(attribute.name(), "is null");
+    	operators_.put(attribute.name(), "is null");
   }
   
-  public User _setNullOp(final User.OpAttribute... attributes) {
-    setNullOp(attributes);
+  public User _setNullOp_(final User.OpAttribute... attributes) {
+    setNullOp_(attributes);
     return this;
   }
   
-  public void setNullOp(final String... attributes) {
+  public void setNullOp_(final String... attributes) {
     if (attributes == null)
     	throw new IllegalArgumentException();
     for (String attribute : attributes)
-    	operators.put(attribute, "is null");
+    	operators_.put(attribute, "is null");
   }
   
-  public User _setNullOp(final String... attributes) {
-    setNullOp(attributes);
+  public User _setNullOp_(final String... attributes) {
+    setNullOp_(attributes);
     return this;
   }
   
-  public void clearAllOps() {
-    operators = new java.util.HashMap<String, String>();
+  public void clearAllOps_() {
+    operators_ = new java.util.HashMap<String, String>();
   }
 }

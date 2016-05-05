@@ -172,7 +172,7 @@ SELECT_CUSTOM_ITHF_TOURNAMENT(QRY,in=IthfTournamentForm,out=IthfTournament,tab=i
     {& %i.DATE BETWEEN :startDate and  :endDate}
     {& %i.POINTS ::= :points }
     {& %i.RANK ::= :rank }
-    {& %i.ID in :ids }
+    {& %i.ID in :ids_ }
   }
   {#ID order by %i.ID }
   {#PLAYER order by %i.PLAYER_ID }

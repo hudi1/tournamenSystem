@@ -48,7 +48,7 @@ public class ParticipantService {
 	public int deletePlayerParticipant(Participant participant, Tournament tournament) {
 		int count = 0;
 		List<Participant> participants = participantDao.list(new Participant()._setPlayer(participant.getPlayer())
-		        ._setInit(Participant.Association.group));
+		        ._setInit_(Participant.Association.group));
 
 		for (Participant deletedParticipant : participants) {
 			if (deletedParticipant.getGroup().getTournament().equals(tournament)) {
@@ -95,7 +95,7 @@ public class ParticipantService {
 		sorter.sort(participants);
 
 		for (Participant participant : participants) {
-			participantDao.update(participant._setNull(Participant.Attribute.equalRank));
+			participantDao.update(participant._setNull_(Participant.Attribute.equalRank));
 		}
 
 	}
@@ -193,14 +193,19 @@ public class ParticipantService {
 
 		Participant participant = new Participant();
 		participant.setGroup(group);
-		participant.setInit(Association.player, Association.games);
+		participant.setInit_(Association.player, Association.games);
 
 		List<Participant> participants = participantDao.list(participant, control);
 		return participants;
 	}
 
-	public List<Participant> getParticipant(Participant participant) {
-		participant.setInit(Association.player, Association.games, Association.group, Association.playOffGames);
+	public List<Participant> getFullParticipants(Participant participant) {
+		participant.setInit_(Association.player, Association.games, Association.group, Association.playOffGames);
+		List<Participant> participants = participantDao.list(participant);
+		return participants;
+	}
+
+	public List<Participant> getParticipants(Participant participant) {
 		List<Participant> participants = participantDao.list(participant);
 		return participants;
 	}

@@ -40,7 +40,7 @@ public class BasicRoundScheduleTest extends AbstractScheduleTest {
 
 		for (int i = 0; i < playerCount; i++) {
 			participants.add(new Participant()._setPlayer(
-			        new Player(i + 1 + "", new Surname(i + 1 + ""), null, new Date()))._setId(i + 1));
+			        new Player(i + 1 + "", new Surname(i + 1 + ""), null))._setId(i + 1));
 		}
 
 		for (Participant participant1 : participants) {

@@ -187,14 +187,14 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineFinalStanding = sqlEngineFactory.getCheckedQueryEngine("SELECT_FINAL_STANDING");
     //sqlControl = getMoreResultClasses(finalStanding, sqlControl);
-    finalStanding.setOnlyIds(true);
-    java.util.Set<String> initAssociations = finalStanding.getInitAssociations();
-    finalStanding.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineFinalStanding.query(sqlSession, java.lang.Integer.class, finalStanding, sqlControl);
-    finalStanding.setInitAssociations(initAssociations);
+    finalStanding.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = finalStanding.getInitAssociations_();
+    finalStanding.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineFinalStanding.query(sqlSession, java.lang.Integer.class, finalStanding, sqlControl);
+    finalStanding.setInitAssociations_(initAssociations);
     
     List<FinalStanding> finalStandingList = new java.util.ArrayList<FinalStanding>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class FinalStandingDaoImpl implements FinalStandingDao {
     			return true;
     		}
     	};
-    	sqlEngineFinalStanding.query(sqlSession, FinalStanding.class, new FinalStanding()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineFinalStanding.query(sqlSession, FinalStanding.class, new FinalStanding()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		finalStandingList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

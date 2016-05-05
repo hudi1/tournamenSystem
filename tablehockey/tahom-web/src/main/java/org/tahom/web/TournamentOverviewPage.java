@@ -71,7 +71,7 @@ public class TournamentOverviewPage extends TournamentHomePage {
 
 	private void prepareData(PageParameters parameters) {
 		groupPageDto = groupService.getGroupPageOverviewDto(tournament);
-		playOffPageDto = playOffGameService.getPlayOffPageDto(tournament);
+		playOffPageDto = playOffGameService.getPlayOffPageDto(tournament, getLocale());
 		finalStandingPageDto = finalStandingService.getFinalStandingPageDto(tournament);
 	}
 

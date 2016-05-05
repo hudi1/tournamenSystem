@@ -81,7 +81,7 @@ public abstract class BasePage extends AbstractBasePage implements TournamentPag
 		Component loginPage = new BookmarkableModelPageLink<Void>("loginPage", LoginPage.class,
 		        this instanceof LoginPage);
 		Component registrationPage = new BookmarkableModelPageLink<Void>("registrationPage", RegistrationPage.class,
-		        this instanceof RegistrationPage);
+		        getPageParameters(), this instanceof RegistrationPage);
 		Component groupPage = new BookmarkableModelPageLink<Void>("groupPage", GroupPage.class, groupPageParameter,
 		        this instanceof RegistrationPage);
 		Component playOffPage = new BookmarkableModelPageLink<Void>("playOffPage", PlayOffPage.class,

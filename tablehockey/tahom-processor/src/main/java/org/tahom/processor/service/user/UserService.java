@@ -23,11 +23,16 @@ public class UserService {
 	}
 
 	public int updateUser(User user) {
-		return userDao.update(user._setNull(User.Attribute.name, User.Attribute.surname));
+		return userDao.update(user._setNull_(User.Attribute.name, User.Attribute.surname));
 	}
 
 	public User createUser(User user) {
 		return userDao.insert(user);
+	}
+	
+	public User getUserWithSeason(User user) {
+		user._setInit_(User.Association.seasons);
+		return userDao.get(user);
 	}
 
 }

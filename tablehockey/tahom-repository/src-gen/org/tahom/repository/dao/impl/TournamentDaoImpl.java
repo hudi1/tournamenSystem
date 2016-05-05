@@ -187,14 +187,14 @@ public class TournamentDaoImpl implements TournamentDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineTournament = sqlEngineFactory.getCheckedQueryEngine("SELECT_TOURNAMENT");
     //sqlControl = getMoreResultClasses(tournament, sqlControl);
-    tournament.setOnlyIds(true);
-    java.util.Set<String> initAssociations = tournament.getInitAssociations();
-    tournament.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineTournament.query(sqlSession, java.lang.Integer.class, tournament, sqlControl);
-    tournament.setInitAssociations(initAssociations);
+    tournament.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = tournament.getInitAssociations_();
+    tournament.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineTournament.query(sqlSession, java.lang.Integer.class, tournament, sqlControl);
+    tournament.setInitAssociations_(initAssociations);
     
     List<Tournament> tournamentList = new java.util.ArrayList<Tournament>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class TournamentDaoImpl implements TournamentDao {
     			return true;
     		}
     	};
-    	sqlEngineTournament.query(sqlSession, Tournament.class, new Tournament()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineTournament.query(sqlSession, Tournament.class, new Tournament()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		tournamentList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

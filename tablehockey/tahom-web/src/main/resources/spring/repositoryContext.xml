@@ -44,6 +44,7 @@
                 <bean class="org.tahom.repository.type.ScoreType"></bean>
                 <bean class="org.tahom.repository.type.ResultType"></bean>
                 <bean class="org.tahom.repository.type.SurnameType"></bean>
+                <bean class="org.tahom.repository.type.SeriesType"></bean>
             </list>
         </property>
         <property name="filter" value="MYSQL" />

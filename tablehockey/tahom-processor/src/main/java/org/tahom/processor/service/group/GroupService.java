@@ -33,6 +33,7 @@ import org.tahom.repository.model.GroupsPlayOffType;
 import org.tahom.repository.model.GroupsType;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.Tournament;
+import org.tahom.repository.model.impl.Result;
 
 public class GroupService {
 
@@ -194,7 +195,7 @@ public class GroupService {
 				String previousGroupName = groupsName.getPrevious(groupName);
 				participant.setGroup(groupByName.get(previousGroupName));
 				Groups previosFinalGroup = getGroup(new Groups()._setTournament(tournament)._setName(previousGroupName)
-				        ._setInit(Association.participants));
+				        ._setInit_(Association.participants));
 				gameService.createGames(previosFinalGroup.getParticipants(), participant);
 			}
 
@@ -261,6 +262,9 @@ public class GroupService {
 										if (finalGame.getAwayParticipant().getPlayer().getId()
 										        .equals(basicGame.getAwayParticipant().getPlayer().getId())) {
 											finalGame.setResult(basicGame.getResult());
+											for (Result result : finalGame.getResult().getResults()) {
+												result.setContumacy(true);
+											}
 											gameDao.update(finalGame);
 											break;
 										}

@@ -1,6 +1,7 @@
 package it.playOffGame;
 
 import java.util.List;
+import java.util.Locale;
 
 import net.sf.lightair.LightAirSpringRunner;
 import net.sf.lightair.annotation.Setup;
@@ -98,7 +99,7 @@ public class PlayOffGameIT {
 	@Verify("getPlayOffGamesByGroupTest-verify.xml")
 	public void getPlayOffGamesByGroupTest() {
 		List<PlayOffGameDto> playOffGames = playOffGameService.getPlayOffGamesByGroup(new Groups()._setId(4),
-		        new Tournament()._setPlayOffFinal(16)._setPlayOffLower(8));
+		        Locale.ENGLISH);
 		Assert.assertSame(8, playOffGames.size());
 	}
 

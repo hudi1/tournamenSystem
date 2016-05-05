@@ -43,7 +43,7 @@ public class PlayOffPage extends TournamentHomePage {
 	}
 
 	protected void createPage() {
-		this.playOffPageDto = playOffGameService.getPlayOffPageDto(tournament);
+		this.playOffPageDto = playOffGameService.getPlayOffPageDto(tournament, getLocale());
 		add(new PlayOffForm());
 	}
 

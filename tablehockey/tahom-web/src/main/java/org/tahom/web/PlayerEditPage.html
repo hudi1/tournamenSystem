@@ -27,21 +27,30 @@
 			<div>
 				<label wicket:for="country"> <span wicket:id="countryLabel">Country:</span>
 				</label><input type="text" wicket:id="country" />
-			</div>			
+			</div>
 			<div>
-				<label wicket:for="worldRanking"> <span wicket:id="worldRankingLabel">World Ranking:</span>
+				<label wicket:for="worldRanking"> <span
+					wicket:id="worldRankingLabel">World Ranking:</span>
 				</label><input type="text" wicket:id="worldRanking" />
 			</div>
 			<div>
 				<label wicket:for="ithfId"> <span wicket:id="ithfIdLabel">Ithf:</span>
 				</label><input type="text" wicket:id="ithfId" />
 			</div>
+			<div>
+				<ul id="parametry">
+					<li><select wicket:id="players">
+					</select></li>
+				</ul>
+			</div>
 		</fieldset>
 
 		<div>
 			<input class="tournamentButton" type="submit" wicket:id="submit"
 				value="Save" /> <input class="tournamentButton" type="submit"
-				wicket:id="back" title="back" value="Back" />
+				wicket:id="back" title="back" value="Back" /><input
+				class="tournamentButton" type="submit" wicket:id="merge" title="merge"
+				value="Merge" />
 		</div>
 
 	</form>

@@ -30,6 +30,20 @@ import org.tahom.repository.model.impl.Surname;
 public class TournamentHtmlImportFactory {
 	// http://trefik.cz/stiga/turnaje2014/kladno/kriz.htm
 
+	public static void main(String[] args) {
+		/*
+		 * createImportedParticipants(null, "http://thcbluedragon.wz.cz/stiga/turnaje/SlovakianOpen2016/");
+		 * 
+		 * LinkedList<Participant> a = TournamentHtmlImportFactory.createImportedParticipants(null,
+		 * "http://thcbluedragon.wz.cz/stiga/turnaje/SlovakianOpen2016/");
+		 * 
+		 * for (Participant participant : a) { System.out.println(participant.getPlayer()); }
+		 */
+
+		createPlayOffGames("http://thcbluedragon.wz.cz/stiga/turnaje/SlovakianOpen2016/", null,
+		        new Tournament()._setName("aaa"));
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(TournamentHtmlImportFactory.class);
 
 	public static LinkedList<Participant> createImportedParticipants(Tournament tournament, String urlBase) {
@@ -64,26 +78,40 @@ public class TournamentHtmlImportFactory {
 					participants.add(participant);
 					participant.setPlayer(player);
 					participant.setGroup(group);
-
+					boolean newExport = false;
 					String playerName = rowElement.select("td").get(1).ownText();
 					if (!playerName.contains(".")) {
 						playerName = rowElement.select("td").get(2).ownText();
+						newExport = true;
 					}
 
 					if (playerName.contains("Chylík")) {
 						player.setSurname(new Surname("Chylík ml."));
 						player.setName("Jiří");
-					} else if (playerName.contains("I.Vépy")) {
+					} else if (playerName.contains("I.Vépy") || playerName.contains("I Vépy")) {
 						player.setSurname(new Surname("Vépy I"));
 						player.setName("Martin");
+					} else if (playerName.contains("Pe Pokorný")) {
+						player.setSurname(new Surname("Pokorný st."));
+						player.setName("Peter");
 					} else {
-						String surname = playerName.split("\\.", 2)[1];
-						if (surname.contains("(HUN)") || surname.contains("(CZE)")) {
-							surname = surname.substring(0, surname.length() - 6);
-						}
+						if (!newExport) {
+							String surname = playerName.split("\\.", 2)[1];
+							if (surname.contains("(HUN)") || surname.contains("(CZE)")) {
+								surname = surname.substring(0, surname.length() - 6);
+							}
 
-						player.setSurname(new Surname(surname));
-						player.setName(playerName.split("\\.")[0]);
+							player.setSurname(new Surname(surname));
+							player.setName(playerName.split("\\.")[0]);
+						} else if (playerName.contains(" ")) {
+							String surname = playerName.split(" ", 2)[1];
+							if (surname.contains("(HUN)") || surname.contains("(CZE)")) {
+								surname = surname.substring(0, surname.length() - 6);
+							}
+
+							player.setSurname(new Surname(surname));
+							player.setName(playerName.split(" ")[0]);
+						}
 					}
 				}
 				tournamentParticipants.addAll(participants);
@@ -121,8 +149,6 @@ public class TournamentHtmlImportFactory {
 					if (!score.contains(":")) {
 						score = columns.get(columns.size() - 5).ownText();
 						end = columns.size() - 5;
-					}
-					if (!score.contains(":")) {
 						start = 3;
 					}
 
@@ -181,6 +207,8 @@ public class TournamentHtmlImportFactory {
 				String groupName = "A";
 				int position = 16;
 				boolean first = true;
+				PlayOffGame _3rdPlayOffGame = null;
+				boolean is3rdPlayOffGame = false;
 				if (tournament.getName().contains("Czech Open")) {
 					position = 32;
 				}
@@ -231,27 +259,29 @@ public class TournamentHtmlImportFactory {
 							position = 4;
 							first = true;
 						}
+						if (header.contains("3rd") || header.contains("27th")) {
+							is3rdPlayOffGame = true;
+						}
+
 						continue;
 					}
-
-					header = columns.get(0).ownText();
-					if (header.contains("B Finals")) {
-						groupName = "B";
-						position = 8;
-						first = true;
-					}
-
 					if (first) {
 						PlayOffGame playOffGameTemp = new PlayOffGame();
 						playOffGameTemp.setPosition(position--);
 						playOffGames.add(playOffGameTemp);
 						playOffGameTemp.setGroup(new Groups()._setName(groupName)._setTournament(tournament));
+						_3rdPlayOffGame = playOffGameTemp;
 						first = false;
 					}
 
 					PlayOffGame playOffGame = new PlayOffGame();
-					playOffGame.setPosition(position--);
-					playOffGames.add(playOffGame);
+					if (is3rdPlayOffGame) {
+						playOffGame = _3rdPlayOffGame;
+						is3rdPlayOffGame = false;
+					} else {
+						playOffGame.setPosition(position--);
+						playOffGames.add(playOffGame);
+					}
 
 					playOffGame.setResult(new Results());
 
@@ -296,11 +326,11 @@ public class TournamentHtmlImportFactory {
 					}
 
 					if (!homeFounded) {
-						throw new RuntimeException("Player: " + playerHome + "  not found");
+						// throw new RuntimeException("Player: " + playerHome + "  not found");
 					}
 
 					if (!awayFouned) {
-						throw new RuntimeException("Player: " + playerAway + " not found");
+						// throw new RuntimeException("Player: " + playerAway + " not found");
 					}
 
 					for (int i = 3; i < columns.size(); i++) {
@@ -410,6 +440,9 @@ public class TournamentHtmlImportFactory {
 		if (playerName.contains("Pokovič Radoslav ml.")) {
 			player.setName("Radoslav");
 			player.setSurname(new Surname("Pokovič ml."));
+		} else if (playerName.contains("Pokorný Peter st.")) {
+			player.setName("Peter");
+			player.setSurname(new Surname("Pokorný st."));
 		} else if (playerName.split(" ").length == 2) {
 			player.setSurname(new Surname(playerName.split(" ")[0]));
 			player.setName(playerName.split(" ")[1].trim());

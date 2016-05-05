@@ -26,11 +26,13 @@ pojogen-types-for-columns participant SCORE->org.tahom.repository.model.impl.Sco
 pojogen-types-for-columns game RESULT->org.tahom.repository.model.impl.Results;
 pojogen-types-for-columns play_off_game RESULT->org.tahom.repository.model.impl.Results;
 pojogen-types-for-columns player SURNAME->org.tahom.repository.model.impl.Surname;
+pojogen-types-for-columns ithf_tournament SERIES->org.tahom.repository.model.impl.Series;
 
 metagen-column-meta-type participant SCORE->score;
 metagen-column-meta-type game RESULT->result;
 metagen-column-meta-type play_off_game RESULT->result;
 metagen-column-meta-type player SURNAME->surname;
+metagen-column-meta-type ithf_tournament SERIES->series;
 
 pojogen-rename-columns groups_TYPE B->BASIC F->FINAL P->PLAY_OFF; 
 
@@ -45,37 +47,37 @@ metagen-generate-sequences;
 
 pojogen-enum-for-check-constraints GameStatus game_STATUS play_off_game_STATUS;
 
-table finalStanding final_standing;
-table game game;
-table groups groups;
-table ithfTournament ithf_tournament;
-table participant participant;
-table playOffGame play_off_game;
-table player player;
-table season season;
-table tournament tournament;
-table user user;
+is-table finalStanding final_standing;
+is-table game game;
+is-table groups groups;
+is-table ithfTournament ithf_tournament;
+is-table participant participant;
+is-table playOffGame play_off_game;
+is-table player player;
+is-table season season;
+is-table tournament tournament;
+is-table user user;
 
 compress-meta-directives;
 pojogen-package org.tahom.repository.model;
 daogen-implementation-package impl;
 daogen-package org.tahom.repository.dao;
 
-pojo FinalStanding org.tahom.repository.model.FinalStanding;
-pojo Game org.tahom.repository.model.Game;
-pojo Groups org.tahom.repository.model.Groups;
-pojo IthfTournament org.tahom.repository.model.IthfTournament;
-pojo IthfTournamentForm org.tahom.repository.model.impl.IthfTournamentForm;
-pojo Participant org.tahom.repository.model.Participant;
-pojo PlayOffGame org.tahom.repository.model.PlayOffGame;
-pojo Player org.tahom.repository.model.Player;
-pojo Result org.tahom.repository.model.impl.Result;
-pojo Results org.tahom.repository.model.impl.Results;
-pojo Score org.tahom.repository.model.impl.Score;
-pojo Season org.tahom.repository.model.Season;
-pojo StatisticForm org.tahom.repository.model.impl.StatisticForm;
-pojo Tournament org.tahom.repository.model.Tournament;
-pojo User org.tahom.repository.model.User;
+is-pojo FinalStanding org.tahom.repository.model.FinalStanding;
+is-pojo Game org.tahom.repository.model.Game;
+is-pojo Groups org.tahom.repository.model.Groups;
+is-pojo IthfTournament org.tahom.repository.model.IthfTournament;
+is-pojo IthfTournamentForm org.tahom.repository.model.impl.IthfTournamentForm;
+is-pojo Participant org.tahom.repository.model.Participant;
+is-pojo PlayOffGame org.tahom.repository.model.PlayOffGame;
+is-pojo Player org.tahom.repository.model.Player;
+is-pojo Result org.tahom.repository.model.impl.Result;
+is-pojo Results org.tahom.repository.model.impl.Results;
+is-pojo Score org.tahom.repository.model.impl.Score;
+is-pojo Season org.tahom.repository.model.Season;
+is-pojo StatisticForm org.tahom.repository.model.impl.StatisticForm;
+is-pojo Tournament org.tahom.repository.model.Tournament;
+is-pojo User org.tahom.repository.model.User;
 
 
 //database-debug-level TRACE;

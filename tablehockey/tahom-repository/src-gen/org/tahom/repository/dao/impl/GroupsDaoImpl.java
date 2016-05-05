@@ -187,14 +187,14 @@ public class GroupsDaoImpl implements GroupsDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineGroups = sqlEngineFactory.getCheckedQueryEngine("SELECT_GROUPS");
     //sqlControl = getMoreResultClasses(groups, sqlControl);
-    groups.setOnlyIds(true);
-    java.util.Set<String> initAssociations = groups.getInitAssociations();
-    groups.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineGroups.query(sqlSession, java.lang.Integer.class, groups, sqlControl);
-    groups.setInitAssociations(initAssociations);
+    groups.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = groups.getInitAssociations_();
+    groups.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineGroups.query(sqlSession, java.lang.Integer.class, groups, sqlControl);
+    groups.setInitAssociations_(initAssociations);
     
     List<Groups> groupsList = new java.util.ArrayList<Groups>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class GroupsDaoImpl implements GroupsDao {
     			return true;
     		}
     	};
-    	sqlEngineGroups.query(sqlSession, Groups.class, new Groups()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineGroups.query(sqlSession, Groups.class, new Groups()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		groupsList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

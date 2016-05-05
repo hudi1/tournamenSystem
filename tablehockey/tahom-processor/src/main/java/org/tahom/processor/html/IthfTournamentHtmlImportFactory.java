@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tahom.processor.ImportTournamentException;
 import org.tahom.repository.model.IthfTournament;
+import org.tahom.repository.model.impl.Series;
 
 public class IthfTournamentHtmlImportFactory {
 
@@ -34,6 +35,10 @@ public class IthfTournamentHtmlImportFactory {
 			logger.error("Error during importing players", e);
 			throw new ImportTournamentException(e.getMessage());
 		}
+	}
+
+	public static void main(String[] args) {
+		getIthfTournaments(100132, "Finland");
 	}
 
 	private static List<IthfTournament> getTournaments(Document doc, String dbCountry) throws Exception {
@@ -64,15 +69,20 @@ public class IthfTournamentHtmlImportFactory {
 				rank = rank.substring(0, rank.indexOf("."));
 			}
 
-			String series = null;
+			StringBuilder series = new StringBuilder();
 			if (tableRows.get(i).select("td").get(3).select("a").size() > 0) {
-				series = tableRows.get(i).select("td").get(3).select("a").first().ownText();
+				for (int j = 0; j < tableRows.get(i).select("td").get(3).select("a").size(); j++) {
+					if (j > 0) {
+						series.append(Series.SERIES_DELIMETER);
+					}
+					series.append(tableRows.get(i).select("td").get(3).select("a").get(j).ownText());
+				}
 			}
 			String date = tableRows.get(i).select("td").get(0).ownText();
 			String name = tableRows.get(i).select("td").get(1).select("a").first().ownText();
 
 			ithfTournament.setPoints(Integer.parseInt(points));
-			ithfTournament.setSeries(series);
+			ithfTournament.setSeries(new Series(series.toString()));
 			ithfTournament.setDate(df.parse(date));
 			ithfTournament.setName(name);
 			ithfTournament.setRank(Integer.parseInt(rank));

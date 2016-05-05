@@ -2,6 +2,7 @@ package org.tahom.processor.service.ithf;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -45,11 +46,11 @@ public class IthfService {
 
 	@Transactional
 	public void updateIthfTournaments(User user, EventSeason eventSeason) {
-		List<Player> players = playerService.getUserPlayers(user);
+		List<Player> players = playerService.getUserPlayersIthfTournament(user);
 		for (Player player : players) {
 			if (player.getIthfId() != null) {
-				List<IthfTournament> tournaments = IthfTournamentHtmlImportFactory.getIthfTournaments(
-				        player.getIthfId(), eventSeason.getCountry());
+				List<IthfTournament> tournaments = IthfTournamentHtmlImportFactory
+						.getIthfTournaments(player.getIthfId(), eventSeason.getCountry());
 
 				for (IthfTournament ithfTournament : tournaments) {
 
@@ -65,7 +66,9 @@ public class IthfService {
 						createIthfTournament(ithfTournament);
 					} else {
 						// TODO not necessary in future when db model will be completed
-						if (founded.getPoints() != ithfTournament.getPoints() || founded.getRank() != founded.getRank()) {
+						if (!Objects.equals(founded.getPoints(), ithfTournament.getPoints())
+								|| !Objects.equals(founded.getRank(), founded.getRank())) {
+
 							founded.setPoints(ithfTournament.getPoints());
 							founded.setRank(ithfTournament.getRank());
 							updateIthfTournament(founded);

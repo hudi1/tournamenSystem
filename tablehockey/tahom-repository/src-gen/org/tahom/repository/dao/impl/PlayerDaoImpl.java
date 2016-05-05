@@ -187,14 +187,14 @@ public class PlayerDaoImpl implements PlayerDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEnginePlayer = sqlEngineFactory.getCheckedQueryEngine("SELECT_PLAYER");
     //sqlControl = getMoreResultClasses(player, sqlControl);
-    player.setOnlyIds(true);
-    java.util.Set<String> initAssociations = player.getInitAssociations();
-    player.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEnginePlayer.query(sqlSession, java.lang.Integer.class, player, sqlControl);
-    player.setInitAssociations(initAssociations);
+    player.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = player.getInitAssociations_();
+    player.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEnginePlayer.query(sqlSession, java.lang.Integer.class, player, sqlControl);
+    player.setInitAssociations_(initAssociations);
     
     List<Player> playerList = new java.util.ArrayList<Player>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class PlayerDaoImpl implements PlayerDao {
     			return true;
     		}
     	};
-    	sqlEnginePlayer.query(sqlSession, Player.class, new Player()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEnginePlayer.query(sqlSession, Player.class, new Player()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		playerList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

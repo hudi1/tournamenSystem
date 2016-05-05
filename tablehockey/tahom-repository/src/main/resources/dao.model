@@ -1,6 +1,7 @@
 #Implementation(impl)
 package org.tahom.repository.dao {
 
+
     #CRUD(org.tahom.repository.model.FinalStanding) #Query(org.tahom.repository.model.FinalStanding)
     #Dao FinalStandingDao {
     }

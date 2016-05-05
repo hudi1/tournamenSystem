@@ -187,14 +187,14 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEnginePlayOffGame = sqlEngineFactory.getCheckedQueryEngine("SELECT_PLAY_OFF_GAME");
     //sqlControl = getMoreResultClasses(playOffGame, sqlControl);
-    playOffGame.setOnlyIds(true);
-    java.util.Set<String> initAssociations = playOffGame.getInitAssociations();
-    playOffGame.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEnginePlayOffGame.query(sqlSession, java.lang.Integer.class, playOffGame, sqlControl);
-    playOffGame.setInitAssociations(initAssociations);
+    playOffGame.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = playOffGame.getInitAssociations_();
+    playOffGame.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEnginePlayOffGame.query(sqlSession, java.lang.Integer.class, playOffGame, sqlControl);
+    playOffGame.setInitAssociations_(initAssociations);
     
     List<PlayOffGame> playOffGameList = new java.util.ArrayList<PlayOffGame>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class PlayOffGameDaoImpl implements PlayOffGameDao {
     			return true;
     		}
     	};
-    	sqlEnginePlayOffGame.query(sqlSession, PlayOffGame.class, new PlayOffGame()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEnginePlayOffGame.query(sqlSession, PlayOffGame.class, new PlayOffGame()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		playOffGameList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

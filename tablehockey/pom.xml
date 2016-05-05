@@ -16,7 +16,7 @@
         <version.commons-codec>1.10</version.commons-codec>
         <version.commons-lang>3.4</version.commons-lang>
         <version.commons-http>4.5.1</version.commons-http>
-        <version.sql-processor>3.1.3</version.sql-processor>
+        <version.sql-processor>3.1.8</version.sql-processor>
         <version.eclipse-xtext>2.8.2</version.eclipse-xtext>
         <version.wicket>7.1.0</version.wicket>
         <version.wicket-minis>7.1.0</version.wicket-minis>
@@ -37,7 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <local.db.driver>com.mysql.jdbc.Driver</local.db.driver>
-        <local.db.databaseName>tournamentsystem</local.db.databaseName>
+        <local.db.databaseName>tablehockey</local.db.databaseName>
         <local.db.url>jdbc:mysql://localhost/${local.db.databaseName}?characterEncoding=UTF-8</local.db.url>
         <local.db.user>root</local.db.user>
         <local.db.password>root</local.db.password>

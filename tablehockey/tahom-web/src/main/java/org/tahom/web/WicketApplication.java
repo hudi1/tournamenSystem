@@ -108,6 +108,8 @@ public class WicketApplication extends AuthenticatedWebApplication {
 				public IRequestHandler onException(RequestCycle cycle, Exception e) {
 					TournamentException myE = Exceptions.findCause(e, TournamentException.class);
 					SqlProcessorException dbE = Exceptions.findCause(e, SqlProcessorException.class);
+					logger.error("Unexpected error: ", e);
+
 					if (myE != null) {
 						IPageRequestHandler handler = cycle.find(IPageRequestHandler.class);
 						if (handler != null) {
@@ -127,7 +129,6 @@ public class WicketApplication extends AuthenticatedWebApplication {
 							}
 						}
 					}
-					logger.error("Unexpected error: ", e);
 					return new RenderPageRequestHandler(new PageProvider(ErrorPage500.class));
 					// return super.onException(cycle, e);
 				}
@@ -182,15 +183,12 @@ public class WicketApplication extends AuthenticatedWebApplication {
 	}
 
 	public static String getFilesPath() {
-		String path = WebApplication.get().getServletContext().getRealPath("/") + "/";
+		String path = WebApplication.get().getServletContext().getRealPath("/");
+		if (path == null) {
+			path = System.getenv("OPENSHIFT_DATA_DIR");
+		}
 
-		System.out.println(WebApplication.get().getServletContext()
-		        .getRealPath(RequestCycle.get().getRequest().getContextPath())
-		        + " 1");
-		System.out.println(WebApplication.get().getServletContext().getContextPath() + " 2");
-		System.out.println(WebApplication.get().getServletContext().getRealPath("/") + " 3");
-
-		return path;
+		return path + "/";
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class PlayerPage extends TournamentHomePage {
 	}
 
 	public PlayerPage(PageParameters pageParameters) {
-		this(new PageParameters(), null);
+		this(pageParameters, null);
 	}
 
 	public PlayerPage(PageParameters pageParameters, Player player) {

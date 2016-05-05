@@ -2,20 +2,23 @@ package org.tahom.processor.service.playOffGame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.tahom.processor.service.game.dto.GameDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGameDto;
 import org.tahom.processor.service.playOffGame.dto.PlayOffGroupDto;
+import org.tahom.processor.util.MessageProvider;
 import org.tahom.processor.util.TournamentUtil;
 import org.tahom.repository.model.GameStatus;
 import org.tahom.repository.model.Groups;
 import org.tahom.repository.model.Participant;
 import org.tahom.repository.model.PlayOffGame;
 import org.tahom.repository.model.Player;
-import org.tahom.repository.model.Tournament;
 import org.tahom.repository.model.impl.Result;
 
 public class PlayOffGameModel {
+
+	private static final MessageProvider messageProvider = new MessageProvider();
 
 	public PlayOffGame createPlayOffGame(Participant homeParticipant, Participant awayParticipant, Groups group,
 	        int position) {
@@ -62,17 +65,16 @@ public class PlayOffGameModel {
 		return game;
 	}
 
-	protected List<PlayOffGameDto> createPlayOffGamesDto(List<PlayOffGame> playOffGames, Groups group,
-	        Tournament tournament) {
+	protected List<PlayOffGameDto> createPlayOffGamesDto(List<PlayOffGame> playOffGames, Groups group, Locale locale) {
 		List<PlayOffGameDto> gamesDto = new ArrayList<PlayOffGameDto>();
 
 		for (PlayOffGame playOffGame : playOffGames) {
-			gamesDto.add(getPlayOffGameDto(playOffGame, group, tournament));
+			gamesDto.add(getPlayOffGameDto(playOffGame, group, locale, playOffGames.size()));
 		}
 		return gamesDto;
 	}
 
-	public PlayOffGameDto getPlayOffGameDto(PlayOffGame game, Groups group, Tournament tournament) {
+	public PlayOffGameDto getPlayOffGameDto(PlayOffGame game, Groups group, Locale locale, int playOfGameCount) {
 		PlayOffGameDto gameDto = new PlayOffGameDto();
 		if (game.getHomeParticipant() != null) {
 			gameDto.setPlayerName(getPlayerName(game.getHomeParticipant().getPlayer()));
@@ -84,7 +86,7 @@ public class PlayOffGameModel {
 		}
 		gameDto.setGameId(game.getId());
 		gameDto.setResult(game.getResult());
-		gameDto.setRoundName(TournamentUtil.getRoundName(tournament, group, game.getPosition()));
+		gameDto.setRoundName(TournamentUtil.getRoundName(locale, group, game.getPosition(), playOfGameCount));
 		assignWinner(gameDto);
 		return gameDto;
 	}

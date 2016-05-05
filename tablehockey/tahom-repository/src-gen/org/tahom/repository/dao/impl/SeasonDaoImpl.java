@@ -187,14 +187,14 @@ public class SeasonDaoImpl implements SeasonDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineSeason = sqlEngineFactory.getCheckedQueryEngine("SELECT_SEASON");
     //sqlControl = getMoreResultClasses(season, sqlControl);
-    season.setOnlyIds(true);
-    java.util.Set<String> initAssociations = season.getInitAssociations();
-    season.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineSeason.query(sqlSession, java.lang.Integer.class, season, sqlControl);
-    season.setInitAssociations(initAssociations);
+    season.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = season.getInitAssociations_();
+    season.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineSeason.query(sqlSession, java.lang.Integer.class, season, sqlControl);
+    season.setInitAssociations_(initAssociations);
     
     List<Season> seasonList = new java.util.ArrayList<Season>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class SeasonDaoImpl implements SeasonDao {
     			return true;
     		}
     	};
-    	sqlEngineSeason.query(sqlSession, Season.class, new Season()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineSeason.query(sqlSession, Season.class, new Season()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		seasonList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

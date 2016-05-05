@@ -53,18 +53,28 @@ public class FinalStandingService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<FinalStanding> getFinalStandings(FinalStanding finalStanding) {
+		return finalStandingDao.list(finalStanding);
+	}
+
+	@Transactional(readOnly = true)
 	public List<FinalStanding> getFinalStandings(Tournament tournament) {
 		SqlStandardControl control = new SqlStandardControl();
 		control.setAscOrder(FinalStanding.ORDER_BY_FINAL_RANK);
 
 		FinalStanding finalStanding = new FinalStanding()._setTournament(tournament);
-		finalStanding.setInit(FinalStanding.Association.player.name());
+		finalStanding.setInit_(FinalStanding.Association.player.name());
 		return finalStandingDao.list(finalStanding, control);
 	}
 
 	@Transactional(readOnly = true)
 	public FinalStandingPageDto getFinalStandingPageDto(Tournament tournament) {
 		return finalStandingModel.createFinalStandingsDto(getFinalStandings(tournament));
+	}
+
+	@Transactional(readOnly = true)
+	public int updateFinalStanding(FinalStanding finalStanding) {
+		return finalStandingDao.update(finalStanding);
 	}
 
 	@Transactional

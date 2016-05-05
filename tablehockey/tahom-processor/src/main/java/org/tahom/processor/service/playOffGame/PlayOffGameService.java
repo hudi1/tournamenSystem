@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -51,7 +52,7 @@ public class PlayOffGameService {
 
 	@Transactional
 	public int updatePlayOffGame(PlayOffGame playOffGame) {
-		playOffGame.setNull(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
+		playOffGame.setNull_(PlayOffGame.Attribute.homeParticipant, PlayOffGame.Attribute.awayParticipant,
 		        PlayOffGame.Attribute.result, PlayOffGame.Attribute.status);
 		return playOffGameDao.update(playOffGame);
 	}
@@ -66,29 +67,29 @@ public class PlayOffGameService {
 		SqlStandardControl control = new SqlStandardControl();
 		control.setAscOrder(PlayOffGame.ORDER_BY_POSITION);
 
-		playOffGame.setInit(PlayOffGame.Association.awayParticipant.name(),
+		playOffGame.setInit_(PlayOffGame.Association.awayParticipant.name(),
 		        PlayOffGame.Association.homeParticipant.name());
 		return playOffGameDao.list(playOffGame, control);
 	}
 
 	@Transactional(readOnly = true)
-	public List<PlayOffGameDto> getPlayOffGamesByGroup(Groups group, Tournament tournament) {
+	public List<PlayOffGameDto> getPlayOffGamesByGroup(Groups group, Locale locale) {
 		PlayOffGame playOffGame = new PlayOffGame();
 		playOffGame.setGroup(group);
 		SqlStandardControl control = new SqlStandardControl();
 		control.setAscOrder(PlayOffGame.ORDER_BY_POSITION);
 
-		playOffGame.setInit(PlayOffGame.Association.awayParticipant.name(),
+		playOffGame.setInit_(PlayOffGame.Association.awayParticipant.name(),
 		        PlayOffGame.Association.homeParticipant.name());
 		List<PlayOffGame> playOffGames = playOffGameDao.list(playOffGame, control);
-		return playOffGameModel.createPlayOffGamesDto(playOffGames, group, tournament);
+		return playOffGameModel.createPlayOffGamesDto(playOffGames, group, locale);
 	}
 
 	@Transactional(readOnly = true)
 	public List<PlayOffGame> getFullPlayOffGames(Groups group) {
 		PlayOffGame playOffGame = new PlayOffGame();
 		playOffGame.setGroup(group);
-		playOffGame.setInit(Association.awayParticipant, Association.homeParticipant);
+		playOffGame.setInit_(Association.awayParticipant, Association.homeParticipant);
 		return playOffGameDao.list(playOffGame);
 	}
 
@@ -172,7 +173,7 @@ public class PlayOffGameService {
 	}
 
 	@Transactional(readOnly = true)
-	public PlayOffPageDto getPlayOffPageDto(Tournament tournament) {
+	public PlayOffPageDto getPlayOffPageDto(Tournament tournament, Locale locale) {
 		PlayOffPageDto playOffPageDto = new PlayOffPageDto();
 
 		List<Groups> groups = groupService.getFinalGroups(tournament);
@@ -183,7 +184,7 @@ public class PlayOffGameService {
 		for (Groups group : groups) {
 			PlayOffGroupDto playOffGroupDto = playOffGameModel.createPlayOffGroupDto(group);
 			playOffPageDto.getPlayOffGroups().add(playOffGroupDto);
-			playOffGroupDto.getPlayOffGames().addAll(getPlayOffGamesByGroup(group, tournament));
+			playOffGroupDto.getPlayOffGames().addAll(getPlayOffGamesByGroup(group, locale));
 		}
 
 		return playOffPageDto;

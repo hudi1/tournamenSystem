@@ -17,6 +17,7 @@ import org.tahom.repository.model.IthfTournament;
 import org.tahom.repository.model.Player;
 import org.tahom.repository.model.event.EventSeason;
 import org.tahom.repository.model.impl.IthfTournamentForm;
+import org.tahom.repository.model.impl.Series;
 
 public class EventModel {
 
@@ -33,12 +34,12 @@ public class EventModel {
 		IthfTournamentForm form = new IthfTournamentForm();
 		form.setStartDate(eventSeason.getStartSeason());
 		form.setEndDate(eventSeason.getEndSeason());
-		form.setSeries(eventSeason.getNationalSeriesName());
+		form.setSeries(new Series(eventSeason.getNationalSeriesName()));
 		return form;
 	}
 
 	private List<EventRecordDto> getEventRecords(EventSeason eventSeason, List<Player> players,
-	        int playedNationTournament) {
+			int playedNationTournament) {
 		Collection<String> excludedSeries = eventSeason.getExcludedSeries();
 		List<EventRecordDto> eventRecords = new ArrayList<EventRecordDto>();
 
@@ -61,31 +62,32 @@ public class EventModel {
 			int total = 0;
 			EventDetailRecordDto eventDetailRecord = null;
 			for (IthfTournament ithfTournament : player.getIthfTournaments()) {
-				if (excludedSeries.contains(ithfTournament.getSeries())
-				        || eventSeason.getSeason(ithfTournament) == null) {
+				if ((ithfTournament.getSeries() != null
+						&& excludedSeries.containsAll(ithfTournament.getSeries().getSeries()))
+						|| eventSeason.getSeason(ithfTournament) == null) {
 					continue;
 				}
 
-				EventSeasonRecordDto eventSeasonRecord = eventRecord.getEventSeasonRecords().get(
-				        eventSeason.getSeason(ithfTournament));
+				EventSeasonRecordDto eventSeasonRecord = eventRecord.getEventSeasonRecords()
+						.get(eventSeason.getSeason(ithfTournament));
 				if (isIthfTournamentInSeries(eventSeason.getNationalChampionshipSeriesName(), ithfTournament)) {
 					eventDetailRecord = setNationalChampionship(eventSeasonRecord, ithfTournament);
 				} else if (isIthfTournamentInSeries(eventSeason.getNationalSeriesName(), ithfTournament)
-				        || isSlovakianOpen(ithfTournament, eventSeason)) {
+						|| isSlovakianOpen(ithfTournament, eventSeason)) {
 					if (eventRecord.getEventSeasonRecords().get(eventSeason.getSeason(ithfTournament))
-					        .getNationTournamentDetails().size() >= (eventSeason.getNationalSeriesCount())) {
+							.getNationTournamentDetails().size() >= (eventSeason.getNationalSeriesCount())) {
 						continue;
 					}
 
 					eventDetailRecord = addEventDetailRecords(eventSeasonRecord.getNationTournamentDetails(),
-					        ithfTournament, eventSeason, false);
+							ithfTournament, eventSeason, false);
 				} else {
 					if (eventRecord.getEventSeasonRecords().get(eventSeason.getSeason(ithfTournament))
-					        .getOtherTournamentDetails().size() >= eventSeason.getOtherSeriesCount()) {
+							.getOtherTournamentDetails().size() >= eventSeason.getOtherSeriesCount()) {
 						continue;
 					}
 					eventDetailRecord = addEventDetailRecords(eventSeasonRecord.getOtherTournamentDetails(),
-					        ithfTournament, eventSeason, true);
+							ithfTournament, eventSeason, true);
 				}
 
 				if (eventDetailRecord != null) {
@@ -94,16 +96,16 @@ public class EventModel {
 			}
 
 			for (Entry<String, EventSeasonRecordDto> record : eventRecord.getEventSeasonRecords().entrySet()) {
-				setEmptyEventDetailRecord(record.getValue().getNationalChampionship(), eventSeason);
-				addEmptyEventDetailRecords(eventSeason.getNationalSeriesCount(), record.getValue()
-				        .getNationTournamentDetails());
-				addEmptyEventDetailRecords(eventSeason.getOtherSeriesCount(), record.getValue()
-				        .getOtherTournamentDetails());
+				setEmptyNationalChampionship(eventSeason, record.getValue());
+				addEmptyEventDetailRecords(eventSeason.getNationalSeriesCount(),
+						record.getValue().getNationTournamentDetails());
+				addEmptyEventDetailRecords(eventSeason.getOtherSeriesCount(),
+						record.getValue().getOtherTournamentDetails());
 
 				sortEventDetailRecords(record.getValue().getOtherTournamentDetails());
 				sortEventDetailRecords(record.getValue().getNationTournamentDetails());
 				total -= getExcludeTournamentDetailPoints(record.getValue().getNationTournamentDetails(), eventSeason,
-				        playedNationTournament);
+						playedNationTournament);
 			}
 
 			eventRecord.setTotalPoints(total);
@@ -117,7 +119,7 @@ public class EventModel {
 	}
 
 	private EventDetailRecordDto addEventDetailRecords(List<EventDetailRecordDto> eventDetailRecords,
-	        IthfTournament ithfTournament, EventSeason eventSeason, boolean ignoreScoring) {
+			IthfTournament ithfTournament, EventSeason eventSeason, boolean ignoreScoring) {
 		Integer points;
 
 		if (!eventSeason.getScoring().isEmpty() && ithfTournament.getRank() != null && !ignoreScoring) {
@@ -125,6 +127,12 @@ public class EventModel {
 		} else {
 			points = ithfTournament.getPoints();
 		}
+
+		if (eventSeason.getExtraBonusTournamentName() != null
+				&& eventSeason.getExtraBonusTournamentName().equals(ithfTournament.getName())) {
+			points += eventSeason.getExtraBonusPoints();
+		}
+
 		EventDetailRecordDto eventDetailRecord = new EventDetailRecordDto(points.toString(), ithfTournament.getName());
 		eventDetailRecords.add(eventDetailRecord);
 		return eventDetailRecord;
@@ -138,23 +146,24 @@ public class EventModel {
 	}
 
 	private EventDetailRecordDto setNationalChampionship(EventSeasonRecordDto eventSeasonRecord,
-	        IthfTournament ithfTournament) {
+			IthfTournament ithfTournament) {
 		EventDetailRecordDto eventDetailRecord = new EventDetailRecordDto(ithfTournament.getPoints().toString(),
-		        ithfTournament.getName());
+				ithfTournament.getName());
 		eventSeasonRecord.setNationalChampionship(eventDetailRecord);
 		return eventDetailRecord;
 	}
 
 	private boolean isIthfTournamentInSeries(String seriesName, IthfTournament ithfTournament) {
-		if (seriesName != null && seriesName.equals(ithfTournament.getSeries())) {
+		if (ithfTournament.getSeries() != null && ithfTournament.getSeries().getSeries().contains(seriesName)) {
 			return true;
 		}
 		return false;
 	}
 
-	private void setEmptyEventDetailRecord(EventDetailRecordDto eventDetailRecord, EventSeason eventSeason) {
-		if (eventDetailRecord == null && eventSeason.getNationalChampionshipSeriesName() != null) {
-			eventDetailRecord = new EventDetailRecordDto(EMPTY_POINTS, null);
+	private void setEmptyNationalChampionship(EventSeason eventSeason, EventSeasonRecordDto eventSeasonRecordDto) {
+		if (eventSeasonRecordDto.getNationalChampionship() == null
+				&& eventSeason.getNationalChampionshipSeriesName() != null) {
+			eventSeasonRecordDto.setNationalChampionship(new EventDetailRecordDto(EMPTY_POINTS, null));
 		}
 	}
 
@@ -166,8 +175,8 @@ public class EventModel {
 		}
 	}
 
-	private int getExcludeTournamentDetailPoints(List<EventDetailRecordDto> eventDetailsRecord,
-	        EventSeason eventSeason, int playedNationTournament) {
+	private int getExcludeTournamentDetailPoints(List<EventDetailRecordDto> eventDetailsRecord, EventSeason eventSeason,
+			int playedNationTournament) {
 		int points = 0;
 		if (!eventDetailsRecord.isEmpty() && eventDetailsRecord.size() > playedNationTournament) {
 			for (int i = 0; i < eventSeason.getNationalSeriesExcludedCount(); i++) {
@@ -194,6 +203,7 @@ public class EventModel {
 
 	private void sortEventRecords(List<EventRecordDto> eventRecords) {
 
+		// TODO deeper sort when same points based on better tournament
 		Collections.sort(eventRecords, new Comparator<EventRecordDto>() {
 			@Override
 			public int compare(EventRecordDto o1, EventRecordDto o2) {
@@ -218,9 +228,9 @@ public class EventModel {
 				}
 
 				if (entry.getValue().getNationalChampionship() != null
-				        && eventSeason.getNationalChampionshipSeriesIndexName() != null) {
-					eventTableRecord.getEventTournamentHeaders().add(
-					        eventSeason.getNationalChampionshipSeriesIndexName());
+						&& eventSeason.getNationalChampionshipSeriesIndexName() != null) {
+					eventTableRecord.getEventTournamentHeaders()
+							.add(eventSeason.getNationalChampionshipSeriesIndexName());
 				}
 			}
 		}

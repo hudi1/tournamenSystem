@@ -187,14 +187,14 @@ public class GameDaoImpl implements GameDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineGame = sqlEngineFactory.getCheckedQueryEngine("SELECT_GAME");
     //sqlControl = getMoreResultClasses(game, sqlControl);
-    game.setOnlyIds(true);
-    java.util.Set<String> initAssociations = game.getInitAssociations();
-    game.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineGame.query(sqlSession, java.lang.Integer.class, game, sqlControl);
-    game.setInitAssociations(initAssociations);
+    game.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = game.getInitAssociations_();
+    game.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineGame.query(sqlSession, java.lang.Integer.class, game, sqlControl);
+    game.setInitAssociations_(initAssociations);
     
     List<Game> gameList = new java.util.ArrayList<Game>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class GameDaoImpl implements GameDao {
     			return true;
     		}
     	};
-    	sqlEngineGame.query(sqlSession, Game.class, new Game()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineGame.query(sqlSession, Game.class, new Game()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		gameList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

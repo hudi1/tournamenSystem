@@ -14,7 +14,7 @@ public class FinalStandingModel {
 		FinalStanding finalStanding = new FinalStanding();
 		finalStanding.setFinalRank(rank);
 		finalStanding.setTournament(tournament);
-		finalStanding.setNull(Attribute.player);
+		finalStanding.setNull_(Attribute.player);
 		return finalStanding;
 	}
 

@@ -58,7 +58,7 @@ public class StatisticService {
 
 	private Map<String, PlayerStatisticInfo> getPlayerInfos(Player player) {
 		Map<String, PlayerStatisticInfo> infos = new HashMap<String, PlayerStatisticInfo>();
-		List<Participant> participants = participantService.getParticipant(new Participant()._setPlayer(player));
+		List<Participant> participants = participantService.getFullParticipants(new Participant()._setPlayer(player));
 
 		for (Participant participant : participants) {
 			Integer matches = 0;

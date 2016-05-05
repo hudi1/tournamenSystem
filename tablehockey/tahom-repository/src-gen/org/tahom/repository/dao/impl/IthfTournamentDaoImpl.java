@@ -187,14 +187,14 @@ public class IthfTournamentDaoImpl implements IthfTournamentDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineIthfTournament = sqlEngineFactory.getCheckedQueryEngine("SELECT_ITHF_TOURNAMENT");
     //sqlControl = getMoreResultClasses(ithfTournament, sqlControl);
-    ithfTournament.setOnlyIds(true);
-    java.util.Set<String> initAssociations = ithfTournament.getInitAssociations();
-    ithfTournament.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineIthfTournament.query(sqlSession, java.lang.Integer.class, ithfTournament, sqlControl);
-    ithfTournament.setInitAssociations(initAssociations);
+    ithfTournament.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = ithfTournament.getInitAssociations_();
+    ithfTournament.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineIthfTournament.query(sqlSession, java.lang.Integer.class, ithfTournament, sqlControl);
+    ithfTournament.setInitAssociations_(initAssociations);
     
     List<IthfTournament> ithfTournamentList = new java.util.ArrayList<IthfTournament>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class IthfTournamentDaoImpl implements IthfTournamentDao {
     			return true;
     		}
     	};
-    	sqlEngineIthfTournament.query(sqlSession, IthfTournament.class, new IthfTournament()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineIthfTournament.query(sqlSession, IthfTournament.class, new IthfTournament()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		ithfTournamentList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

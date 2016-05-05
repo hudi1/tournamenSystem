@@ -187,14 +187,14 @@ public class ParticipantDaoImpl implements ParticipantDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineParticipant = sqlEngineFactory.getCheckedQueryEngine("SELECT_PARTICIPANT");
     //sqlControl = getMoreResultClasses(participant, sqlControl);
-    participant.setOnlyIds(true);
-    java.util.Set<String> initAssociations = participant.getInitAssociations();
-    participant.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineParticipant.query(sqlSession, java.lang.Integer.class, participant, sqlControl);
-    participant.setInitAssociations(initAssociations);
+    participant.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = participant.getInitAssociations_();
+    participant.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineParticipant.query(sqlSession, java.lang.Integer.class, participant, sqlControl);
+    participant.setInitAssociations_(initAssociations);
     
     List<Participant> participantList = new java.util.ArrayList<Participant>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class ParticipantDaoImpl implements ParticipantDao {
     			return true;
     		}
     	};
-    	sqlEngineParticipant.query(sqlSession, Participant.class, new Participant()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineParticipant.query(sqlSession, Participant.class, new Participant()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		participantList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

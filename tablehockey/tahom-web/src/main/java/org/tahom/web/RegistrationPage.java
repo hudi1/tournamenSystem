@@ -83,8 +83,8 @@ public class RegistrationPage extends TournamentHomePage {
 			add(importModalWindow = createModalWindow());
 			add(new CloseOnESCBehavior(importModalWindow));
 			addModalButton(importModalWindow);
-			addAutoCompletePlayers();
-			addTournamentparticipantListView();
+			ModelAutoCompleteTextField<Player> field = addAutoCompletePlayers();
+			addTournamentparticipantListView(field);
 			setDefaultButton(getRegisterPlayersButton());
 			addSeasonDropDownChoice();
 			addProcessRegistrationButton();
@@ -127,7 +127,7 @@ public class RegistrationPage extends TournamentHomePage {
 					        return (player.getName() + " " + player.getSurname()).trim();
 				        }
 
-			        }, getCustomSettings(), registrationPageDto.getNotRegistratedPlayers()) {
+			        }, getCustomSettings(), getModelObject().getNotRegistratedPlayers()) {
 
 				private static final long serialVersionUID = 1L;
 
@@ -178,7 +178,7 @@ public class RegistrationPage extends TournamentHomePage {
 			return settings;
 		}
 
-		private void addTournamentparticipantListView() {
+		private void addTournamentparticipantListView(final ModelAutoCompleteTextField<Player> field) {
 			add(new PropertyListView<Participant>("participants") {
 
 				private static final long serialVersionUID = 1L;
@@ -197,8 +197,11 @@ public class RegistrationPage extends TournamentHomePage {
 
 						public void click(AjaxRequestTarget target) {
 							participantService.deletePlayerParticipant(participant, tournament);
-							registrationPageDto.getTournamentParticipants().remove(participant);
-							registrationPageDto.getNotRegistratedPlayers().add(participant.getPlayer());
+							registrationPageDto = registrationService.getRegistrationPageDto(tournament,
+							        getGroupName(getPageParameters()));
+							PlayerForm.this.setModelObject(registrationPageDto);
+							field.getAllChoices().clear();
+							field.getAllChoices().addAll(registrationPageDto.getNotRegistratedPlayers());
 							target.add(PlayerForm.this);
 						}
 

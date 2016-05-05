@@ -31,12 +31,12 @@ public class SeasonService {
 
 	@Transactional(readOnly = true)
 	public List<Season> getUserSeasons(User user) {
-		return seasonDao.list(new Season()._setUser(user)._setInit(Season.Association.tournaments));
+		return seasonDao.list(new Season()._setUser(user)._setInit_(Season.Association.tournaments));
 	}
 
 	@Transactional(readOnly = true)
 	public List<Season> getAllSeasons() {
-		return seasonDao.list(new Season()._setInit(Season.Association.tournaments));
+		return seasonDao.list(new Season()._setInit_(Season.Association.tournaments));
 	}
 
 }

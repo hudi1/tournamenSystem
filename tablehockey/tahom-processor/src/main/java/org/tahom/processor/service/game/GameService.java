@@ -21,7 +21,7 @@ public class GameService {
 
 	@Transactional(readOnly = true)
 	public List<Game> getFullGames(Game game) {
-		game.setInit(Game.Association.homeParticipant.name(), Game.Association.awayParticipant.name());
+		game.setInit_(Game.Association.homeParticipant.name(), Game.Association.awayParticipant.name());
 		return gameDao.list(game);
 	}
 
@@ -52,7 +52,7 @@ public class GameService {
 
 	private void updateBothGames(GameDto gameDto) {
 		Game game = gameModel.createGameFromDto(gameDto);
-		game._setNull(Attribute.result);
+		game._setNull_(Attribute.result);
 		gameDao.update(game);
 
 		gameModel.changeParticipants(game);

@@ -187,14 +187,14 @@ public class UserDaoImpl implements UserDao {
     }
     org.sqlproc.engine.SqlQueryEngine sqlEngineUser = sqlEngineFactory.getCheckedQueryEngine("SELECT_USER");
     //sqlControl = getMoreResultClasses(user, sqlControl);
-    user.setOnlyIds(true);
-    java.util.Set<String> initAssociations = user.getInitAssociations();
-    user.setInitAssociations(new java.util.HashSet<String>());
-    final java.util.List<java.lang.Integer> ids = sqlEngineUser.query(sqlSession, java.lang.Integer.class, user, sqlControl);
-    user.setInitAssociations(initAssociations);
+    user.setOnlyIds_(true);
+    java.util.Set<String> initAssociations = user.getInitAssociations_();
+    user.setInitAssociations_(new java.util.HashSet<String>());
+    final java.util.List<java.lang.Integer> ids_ = sqlEngineUser.query(sqlSession, java.lang.Integer.class, user, sqlControl);
+    user.setInitAssociations_(initAssociations);
     
     List<User> userList = new java.util.ArrayList<User>();
-    if (!ids.isEmpty()) {
+    if (!ids_.isEmpty()) {
     	org.sqlproc.engine.impl.SqlStandardControl sqlc = new org.sqlproc.engine.impl.SqlStandardControl(sqlControl);
     	sqlc.setFirstResult(0);
     	sqlc.setMaxResults(0);
@@ -207,8 +207,8 @@ public class UserDaoImpl implements UserDao {
     			return true;
     		}
     	};
-    	sqlEngineUser.query(sqlSession, User.class, new User()._setIds(ids), sqlc, sqlRowProcessor);
-    	for (java.lang.Integer id : ids)
+    	sqlEngineUser.query(sqlSession, User.class, new User()._setIds_(ids_), sqlc, sqlRowProcessor);
+    	for (java.lang.Integer id : ids_)
     		userList.add(map.get(id));
     }
     if (logger.isTraceEnabled()) {

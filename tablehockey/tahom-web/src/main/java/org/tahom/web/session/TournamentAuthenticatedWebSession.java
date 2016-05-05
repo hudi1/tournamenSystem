@@ -65,7 +65,7 @@ public class TournamentAuthenticatedWebSession extends AuthenticatedWebSession {
 
 	@Override
 	public boolean authenticate(final String username, final String password) {
-		User user = userService.getUser(new User()._setUserName(username)._setInit(User.Association.seasons));
+		User user = userService.getUserWithSeason(new User()._setUserName(username));
 		roles.clear();
 		if (user != null && user.getPassword().equals(TournamentUtil.encryptUserPassword(password))) {
 			this.user = user;
