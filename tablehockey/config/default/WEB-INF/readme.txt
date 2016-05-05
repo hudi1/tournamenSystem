@@ -1,0 +1,1 @@
+git nevie commitovat prazdne foldre
