@@ -766,6 +766,44 @@
                 </plugins>
             </build>
         </profile>
+        
+        <profile>
+            <id>itest-openshift</id>
+
+            <properties>
+                <local.db.driver>com.mysql.jdbc.Driver</local.db.driver>
+                <local.db.databaseName>tablehockeyTest</local.db.databaseName>
+                <local.db.url>jdbc:mysql://127.2.210.130/${local.db.databaseName}?characterEncoding=UTF-8</local.db.url>
+                <local.db.user>admincEsm1GT</local.db.user>
+                <local.db.password>F-qJ253_n8XK</local.db.password>
+                <!--TODO  hide passwd-->
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>surefire-itest</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*IT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>        
 
     </profiles>
 
