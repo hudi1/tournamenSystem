@@ -18,7 +18,7 @@
         <version.commons-http>4.5.1</version.commons-http>
         <version.sql-processor>3.1.8</version.sql-processor>
         <version.eclipse-xtext>2.8.2</version.eclipse-xtext>
-        <version.wicket>7.1.0</version.wicket>
+        <version.wicket>7.17.0</version.wicket>
         <version.wicket-minis>7.1.0</version.wicket-minis>
         <version.cglib>3.2.0</version.cglib>
         <version.itextpdf>5.5.8</version.itextpdf>
