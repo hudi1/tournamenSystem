@@ -15,7 +15,7 @@
         <version.commons-io>2.4</version.commons-io>
         <version.commons-codec>1.10</version.commons-codec>
         <version.commons-lang>3.4</version.commons-lang>
-        <version.commons-http>4.5.1</version.commons-http>
+        <version.commons-http>4.5.13</version.commons-http>
         <version.sql-processor>3.1.8</version.sql-processor>
         <version.eclipse-xtext>2.8.2</version.eclipse-xtext>
         <version.wicket>7.1.0</version.wicket>
