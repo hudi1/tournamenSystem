@@ -10,7 +10,7 @@
 
     <properties>
         <version.spring>4.2.4.RELEASE</version.spring>
-        <version.log4j>2.5</version.log4j>
+        <version.log4j>2.16.0</version.log4j>
         <version.junit>4.12</version.junit>
         <version.commons-io>2.4</version.commons-io>
         <version.commons-codec>1.10</version.commons-codec>
