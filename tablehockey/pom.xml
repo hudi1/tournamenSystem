@@ -21,7 +21,7 @@
         <version.wicket>7.1.0</version.wicket>
         <version.wicket-minis>7.1.0</version.wicket-minis>
         <version.cglib>3.2.0</version.cglib>
-        <version.itextpdf>5.5.8</version.itextpdf>
+        <version.itextpdf>5.5.12</version.itextpdf>
         <version.itextpdf-tool>5.5.8</version.itextpdf-tool>
         <version.seaf>1.6</version.seaf>
         <version.jmock>2.8.1</version.jmock>
