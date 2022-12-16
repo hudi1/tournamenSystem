@@ -9,7 +9,7 @@
     <description>System for managing tablehockey tournaments</description>
 
     <properties>
-        <version.spring>4.2.4.RELEASE</version.spring>
+        <version.spring>5.2.20.RELEASE</version.spring>
         <version.log4j>2.5</version.log4j>
         <version.junit>4.12</version.junit>
         <version.commons-io>2.4</version.commons-io>
